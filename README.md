@@ -35,7 +35,7 @@ function draw() {
 }
 ```
 
-See [this example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
+See [the glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
 
 ## Polyomino methods
 
@@ -51,6 +51,15 @@ function keyPressed() {
 }
 ```
 
+Once again see [the glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
+
 ### `update(memory2D, x, y)`
 
-[Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game) instructions to come...
+[Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game) instructions / snippets to come...
+
+## [vs-code](https://code.visualstudio.com/) / [vs-codium](https://vscodium.com/) [gitpod](https://www.gitpod.io/) hacking instructions
+
+To run and hack the [the glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js):
+
+1. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
+2. Head over `examples/glyphs/index.html` and press your editor `Go Live` button.
