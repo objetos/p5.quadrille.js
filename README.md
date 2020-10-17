@@ -1,10 +1,10 @@
 # p5.polyomino.js
 
-[p5.js](https://p5js.org/) library to create, draw and handle [polyominos](https://en.wikipedia.org/wiki/Polyomino).
+[p5.js](https://p5js.org/) library to play with [polyominos](https://en.wikipedia.org/wiki/Polyomino).
 
 ## Polyomino p5.js functions
 
-A polyomino is created from a 2D array _shape_ which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars and [emojis](https://emojipedia.org/), using the `createPolyomino` command:
+A polyomino is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars and [emojis](https://emojipedia.org/), using the `createPolyomino` command:
 
 ```js
 const ROWS = 20;
@@ -22,6 +22,8 @@ function setup() {
 }
 ```
 
+note that the `polyomino.shape` [computed property](https://www.w3schools.com/js/js_object_accessors.asp) references the 2D array used to create the `polyomino` instance.
+
 Use `drawPolyomino(polyomino, row, col)` to draw the polyomino:
 
 ```js
@@ -37,7 +39,7 @@ See [this example](https://github.com/nakednous/p5.polyomino.js/blob/master/exam
 
 ## Polyomino methods
 
-The `reflect()` and `rotate()` geometrically transforms the polyomino.
+### `reflect()` and `rotate()`
 
 ```js
 function keyPressed() {
@@ -49,10 +51,6 @@ function keyPressed() {
 }
 ```
 
-See the same [example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js) as above.
+### `update(memory2D, x, y)`
 
-<!-- Write your comments here -->
-The `shape` property reads (and writes) the polyomino 2D array shape.
-
-The `update(memory2D, x, y)` method checks the polyomino for collisions against the `memory2D` array having free cells as `0`. It throws 'No row' and 'Out-of-bounds' memory2D reading exceptions and returns a `{ buffer, memoryHitCounter }` object literal, where `buffer` is a copy of the `memory2D` array after adding the polyomino at position `(x, y)`, and `memoryHitCounter` counts the `memory2D` number of cells hit by the polyomino. Good for [tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game).
--->
+[Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game) instructions to come...
