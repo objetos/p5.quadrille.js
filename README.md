@@ -39,9 +39,9 @@ See the [glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/maste
 
 ## Polyomino methods
 
-Arrow keys snippet:
-
 ### `reflect()` and `rotate()`
+
+Arrow keys snippet:
 
 ```js
 function keyPressed() {
