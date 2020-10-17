@@ -35,7 +35,7 @@ function draw() {
 }
 ```
 
-See the [glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
+See the [glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
 
 ## Polyomino methods
 
@@ -53,7 +53,7 @@ function keyPressed() {
 }
 ```
 
-Once again see [the glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
+Once again see [the glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
 
 ### `update(memory2D, x, y)`
 
@@ -61,7 +61,7 @@ Once again see [the glyphs example](https://github.com/nakednous/p5.polyomino.js
 
 ## [vs-code](https://code.visualstudio.com/) / [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
 
-To run and hack the [glyphs example](https://github.com/nakednous/p5.polyomino.js/blob/master/examples/glyphs/sketch.js):
+To run and hack the [glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js):
 
 1. Clone the repo (`git clone https://github.com/objetos/p5.polyomino.js`) and open it with your favorite editor.
 2. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
