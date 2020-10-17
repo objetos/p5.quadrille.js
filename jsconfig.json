@@ -1,0 +1,7 @@
+{
+  "include": [
+    "examples/*.js",
+    "libraries/*.js",
+    "/home/pierre/.vscode-oss/extensions/samplavigne.p5-vscode-1.2.3/p5types/global.d.ts"
+  ]
+}
