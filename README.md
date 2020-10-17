@@ -4,7 +4,7 @@
 
 ## Polyomino p5.js functions
 
-A polyomino is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars and [emojis](https://emojipedia.org/), using the `createPolyomino` command:
+A polyomino is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createPolyomino` command:
 
 ```js
 const ROWS = 20;
