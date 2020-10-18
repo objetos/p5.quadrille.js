@@ -52,9 +52,9 @@ class Polyomino {
         if (buffer[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
-        // ii. write only polyomino squares covering (i,j)
+        // write only polyomino squares covering (i,j)
         if (this._shape[i][j]) {
-          // iii. check if returned buffered overrides memory2D
+          // check if returned buffer overrides memory2D
           if (buffer[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
