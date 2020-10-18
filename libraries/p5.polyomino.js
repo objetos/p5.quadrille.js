@@ -62,7 +62,7 @@ class Polyomino {
         }
       }
     }
-    // iv. return buffer and memory hit counter
+    // iii. return buffer and memory hit counter
     return { buffer, memoryHitCounter };
   }
 }
