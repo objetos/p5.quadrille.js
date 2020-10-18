@@ -4,7 +4,8 @@ const LENGTH = 20;
 var polyomino;
 var tableau;
 
-(() => {
+function setup() {
+  createCanvas(COLS * LENGTH, ROWS * LENGTH);
   tableau = Array(ROWS);
   for (let i = 0; i < tableau.length; i++) {
     tableau[i] = Array(COLS);
@@ -12,10 +13,6 @@ var tableau;
       tableau[i][j] = 0;
     }
   }
-})()
-
-function setup() {
-  createCanvas(COLS * LENGTH, ROWS * LENGTH);
   polyomino = createPolyomino([[color('cyan'), '👽',             0    ],
                                [0,             '🤔',            '🙈' ],
                                [0,             color('#770811'), 0   ],
