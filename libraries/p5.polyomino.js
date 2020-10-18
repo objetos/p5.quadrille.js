@@ -22,7 +22,7 @@ class Polyomino {
   }
 
   /**
-   * Clockwise rotation
+   * π/2 clockwise rotation
    */
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
@@ -31,23 +31,26 @@ class Polyomino {
   }
 
   /**
-   * @param {Array} memory2D buffer[rows][cols]
+   * @param {Array} memory2D buffer[rows][cols] where empty cells are filled with 0
    * @param {number} x memory2D row index
    * @param {number} y memory2D column index
-   * @throws 'No row' and 'Out-of-bounds' memory2D reading exceptions
+   * @throws 'To far down' and 'To far right' memory2D reading exceptions
    * @returns { Array, number } { buffer, memoryHitCounter } object literal
    */
   update(memory2D, x, y) {
     let memoryHitCounter = 0;
-    // i. clone memory
+    // i. clone memory into buffer
     let buffer = memory2D.map(arr => { return arr.slice(); });
+    // ii. fill in buffer with this polyomino
     for (let i = 0; i < this._shape.length; i++) {
+      // (e1) Check if current polyomino cell is too far down
       if (buffer[x + i] === undefined) {
-        throw new Error(`No row(${x + i})`);
+        throw new Error(`Too far down`);
       }
       for (let j = 0; j < this._shape[i].length; j++) {
+        // (e2) Check if current polyomino cell is too far right
         if (buffer[x + i][y + j] === undefined) {
-          throw new Error(`Out-of-bounds @(${x + i}, ${y + j})`);
+          throw new Error(`Too far right`);
         }
         // ii. write only polyomino squares covering (i,j)
         if (this._shape[i][j]) {
