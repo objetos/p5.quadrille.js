@@ -93,13 +93,13 @@ class Quadrille {
       }
       for (let j = 0; j < quadrile.memory2D[i].length; j++) {
         // (e2) Check if current polyomino cell is too far right
-        if (clonedQuadrile[x + i][y + j] === undefined) {
+        if (clonedQuadrile.memory2D[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
         // write only polyomino cells covering (i,j)
         if (quadrile.memory2D[i][j]) {
           // check if returned buffer overrides memory2D
-          if (clonedQuadrile[x + i][y + j] !== 0) {
+          if (clonedQuadrile.memory2D[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
           clonedQuadrile.memory2D[x + i][y + j] = quadrile.memory2D[i][j];

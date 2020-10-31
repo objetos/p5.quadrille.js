@@ -21,7 +21,8 @@ function setup() {
                                [0,             color('#770811'), 0   ],
                                ['g',           'o',             'l'  ]
                               ]);
-  tableau = polyomino.clone();
+  //tableau = polyomino.clone();
+  tableau.glue(polyomino, 2, 2);
 }
 
 function draw() {
