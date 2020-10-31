@@ -21,13 +21,18 @@ function setup() {
                                [0,             color('#770811'), 0   ],
                                ['g',           'o',             'l'  ]
                               ]);
-  //tableau = polyomino.clone();
-  tableau.glue(polyomino, 2, 2);
+  glue(polyomino, 2, 2);
 }
 
 function draw() {
   background('#060621');
   //drawQuadrille(polyomino, 0, 0, LENGTH);
-  //drawQuadrille(tableau, 0, 0, LENGTH);
   drawTableau(tableau, LENGTH);
+}
+
+function glue(polyomino, row, col) {
+  let update = tableau.update(polyomino, row, col);
+  if (update.memoryHitCounter === 0) {
+    tableau.memory2D = update.quadrile.memory2D;
+  }
 }

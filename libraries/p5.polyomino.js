@@ -19,13 +19,7 @@ class Quadrille {
       this._memory2D = arguments[0];
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(arguments[0]);
-      for (let i = 0; i < this._memory2D.length; i++) {
-        this._memory2D[i] = Array(arguments[1]);
-        for (let j = 0; j < this._memory2D[i].length; j++) {
-          this._memory2D[i][j] = 0;
-        }
-      }
+      this._memory2D = Array(arguments[0]).fill().map(() => Array(arguments[1]).fill(0));
     }
   }
 
