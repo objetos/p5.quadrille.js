@@ -1,3 +1,15 @@
+/**
+ * In geometry, the square-tiling, square-tessellation or square-grid is a
+ * regular tiling of the Euclidean plane.
+ *
+ * John Horton Conway called it a quadrille.
+ *
+ * The internal angle of the square is 90 degrees so four squares at a point make a full 360 degrees.
+ * It is one of three regular tilings of the plane. The other two are the triangular-tiling
+ * and the hexagonal-tiling.
+ *
+ * See the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling) article for details.
+ */
 class Quadrille {
   /**
    * @param {Array} memory[rowIndex][columnIndex] where empty cells are filled with 0
@@ -67,66 +79,66 @@ class Quadrille {
     this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
   }
 
-  glue(quadrile, row, col) {
-    let clone = this.update(quadrile, row, col);
+  glue(quadrille, row, col) {
+    let clone = this.update(quadrille, row, col);
     if (clone.memoryHitCounter === 0) {
-      this._memory2D = clone.buffer.memory2D;
+      this._memory2D = clone.quadrile.memory2D;
     }
   }
 
   /**
-   * @param {Array} quadrile buffer[rows][cols] where empty cells are filled with 0
+   * @param {Quadrille} quadrille buffer[rows][cols]
    * @param {number} x memory2D row index
    * @param {number} y memory2D column index
    * @throws 'To far down' and 'To far right' memory2D reading exceptions
-   * @returns { Array, number } { buffer, memoryHitCounter } object literal
+   * @returns { Quadrille, number } { quadrille, memoryHitCounter } object literal
    */
-  update(quadrile, x, y) {
+  update(quadrille, x, y) {
     let memoryHitCounter = 0;
     // i. clone memory into buffer
     let clonedQuadrile = this.clone();
     // ii. fill in buffer with this polyomino
-    for (let i = 0; i < quadrile.memory2D.length; i++) {
+    for (let i = 0; i < quadrille.memory2D.length; i++) {
       // (e1) Check if current polyomino cell is too far down
       if (clonedQuadrile.memory2D[x + i] === undefined) {
         throw new Error(`Too far down`);
       }
-      for (let j = 0; j < quadrile.memory2D[i].length; j++) {
+      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         // (e2) Check if current polyomino cell is too far right
         if (clonedQuadrile.memory2D[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
         // write only polyomino cells covering (i,j)
-        if (quadrile.memory2D[i][j]) {
+        if (quadrille.memory2D[i][j]) {
           // check if returned buffer overrides memory2D
           if (clonedQuadrile.memory2D[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
-          clonedQuadrile.memory2D[x + i][y + j] = quadrile.memory2D[i][j];
+          clonedQuadrile.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
         }
       }
     }
     // iii. return buffer and memory hit counter
-    return { buffer: clonedQuadrile, memoryHitCounter };
+    return { quadrile: clonedQuadrile, memoryHitCounter };
   }
 }
 
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
-  p5.prototype.createQuadrille = function (shape) {
+  p5.prototype.createQuadrille = function(shape) {
     return new Quadrille(shape);
   };
 
-  p5.prototype.createTableau = function (width, height) {
+  p5.prototype.createTableau = function(width, height) {
     return new Quadrille(width, height);
   };
 
-  p5.prototype.drawTableau = function (quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.drawTableau = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
     drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
   }
 
-  p5.prototype.drawQuadrille = function (quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
     push();
     translate(row * LENGTH, col * LENGTH);
     stroke(outline);
