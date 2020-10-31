@@ -42,11 +42,7 @@ class Quadrille {
   }
   
   clear() {
-    for (let i = 0; i < this._memory2D.length; i++) {
-      for (let j = 0; j < this._memory2D[i].length; j++) {
-        this._memory2D[i][j] = 0;
-      }
-    }
+    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
   }
 
   set memory2D(memory) {
