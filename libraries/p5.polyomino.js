@@ -2,8 +2,10 @@ class Quadrille {
   /**
    * @param {Array} memory[rowIndex][columnIndex]
    */
-  constructor(memory) {
-    this._memory2D = memory;
+  constructor() {
+    if (arguments.length === 1 && Array.isArray(arguments[0])) {
+      this._memory2D = arguments[0];
+    }
   }
 
   set memory2D(memory) {
@@ -70,27 +72,27 @@ class Quadrille {
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
-  p5.prototype.createQuadrille = function (memory) {
-    return new Quadrille(memory);
+  p5.prototype.createQuadrille = function(shape) {
+    return new Quadrille(shape);
   };
 
-  p5.prototype.drawQuadrille = function (polyomino, row, col, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.drawQuadrille = function(quadrille, row, col, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
     push();
     translate(row * LENGTH, col * LENGTH);
     stroke(outline);
     strokeWeight(outlineWeight);
-    for (let i = 0; i < polyomino.memory2D.length; i++) {
-      for (let j = 0; j < polyomino.memory2D[i].length; j++) {
+    for (let i = 0; i < quadrille.memory2D.length; i++) {
+      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         // handles both zero and empty (undefined) entries as well
-        if (polyomino.memory2D[i][j]) {
+        if (quadrille.memory2D[i][j]) {
           push();
-          if (polyomino.memory2D[i][j] instanceof p5.Color) {
-            fill(polyomino.memory2D[i][j]);
+          if (quadrille.memory2D[i][j] instanceof p5.Color) {
+            fill(quadrille.memory2D[i][j]);
             rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
-          else if (typeof polyomino.memory2D[i][j] === 'string') {
+          else if (typeof quadrille.memory2D[i][j] === 'string') {
             textSize(LENGTH);
-            text(polyomino.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           pop();
         }
