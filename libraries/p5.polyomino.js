@@ -26,20 +26,6 @@ class Quadrille {
   clone() {
     return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
   }
-
-  debug() {
-    console.log(this._memory2D);
-  }
-
-  log(entire = false) {
-    for (let i = 0; i < this._memory2D.length; i++) {
-      for (let j = 0; j < this._memory2D[i].length; j++) {
-        if (this._memory2D[i][j] !== 0 || entire) {
-          console.log(i, j, this._memory2D[i][j]);
-        }
-      }
-    }
-  }
   
   clear() {
     this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
@@ -69,13 +55,6 @@ class Quadrille {
     this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
   }
 
-  glue(quadrille, row, col) {
-    let clone = this.update(quadrille, row, col);
-    if (clone.memoryHitCounter === 0) {
-      this._memory2D = clone.quadrile.memory2D;
-    }
-  }
-
   /**
    * @param {Quadrille} quadrille buffer[rows][cols]
    * @param {number} x memory2D row index
@@ -85,22 +64,22 @@ class Quadrille {
    */
   update(quadrille, x, y) {
     let memoryHitCounter = 0;
-    // i. clone memory into buffer
+    // i. clone this quadrille
     let clonedQuadrile = this.clone();
-    // ii. fill in buffer with this polyomino
+    // ii. fill in cloned quadrille with quadrille param
     for (let i = 0; i < quadrille.memory2D.length; i++) {
-      // (e1) Check if current polyomino cell is too far down
+      // (e1) Check if current quadrille cell is too far down
       if (clonedQuadrile.memory2D[x + i] === undefined) {
         throw new Error(`Too far down`);
       }
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // (e2) Check if current polyomino cell is too far right
+        // (e2) Check if current quadrille cell is too far right
         if (clonedQuadrile.memory2D[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
-        // write only polyomino cells covering (i,j)
+        // write only quadrille cells covering (i,j)
         if (quadrille.memory2D[i][j]) {
-          // check if returned buffer overrides memory2D
+          // check if current quadrille hits cloned quadrille memory2D
           if (clonedQuadrile.memory2D[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
@@ -109,7 +88,7 @@ class Quadrille {
       }
     }
     // iii. return buffer and memory hit counter
-    return { quadrile: clonedQuadrile, memoryHitCounter };
+    return { quadrille: clonedQuadrile, memoryHitCounter };
   }
 }
 

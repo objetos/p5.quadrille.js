@@ -33,6 +33,7 @@ function draw() {
 function glue(polyomino, row, col) {
   let update = tableau.update(polyomino, row, col);
   if (update.memoryHitCounter === 0) {
-    tableau.memory2D = update.quadrile.memory2D;
+    //tableau.memory2D = update.quadrille.memory2D;
+    tableau = update.quadrille;
   }
 }
