@@ -1,10 +1,45 @@
 class Quadrille {
   /**
-   * @param {Array} memory[rowIndex][columnIndex]
+   * @param {Array} memory[rowIndex][columnIndex] where empty cells are filled with 0
    */
   constructor() {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
       this._memory2D = arguments[0];
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      this._memory2D = Array(arguments[0]);
+      for (let i = 0; i < this._memory2D.length; i++) {
+        this._memory2D[i] = Array(arguments[1]);
+        for (let j = 0; j < this._memory2D[i].length; j++) {
+          this._memory2D[i][j] = 0;
+        }
+      }
+    }
+  }
+
+  clone() {
+    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
+  }
+
+  debug() {
+    console.log(this._memory2D);
+  }
+
+  log(entire = false) {
+    for (let i = 0; i < this._memory2D.length; i++) {
+      for (let j = 0; j < this._memory2D[i].length; j++) {
+        if (this._memory2D[i][j] !== 0 || entire) {
+          console.log(i, j, this._memory2D[i][j]);
+        }
+      }
+    }
+  }
+  
+  clear() {
+    for (let i = 0; i < this._memory2D.length; i++) {
+      for (let j = 0; j < this._memory2D[i].length; j++) {
+        this._memory2D[i][j] = 0;
+      }
     }
   }
 
@@ -72,11 +107,15 @@ class Quadrille {
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
-  p5.prototype.createQuadrille = function(shape) {
+  p5.prototype.createQuadrille = function (shape) {
     return new Quadrille(shape);
   };
 
-  p5.prototype.drawQuadrille = function(quadrille, row, col, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.createTableau = function (width, height) {
+    return new Quadrille(width, height);
+  };
+
+  p5.prototype.drawQuadrille = function (quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
     push();
     translate(row * LENGTH, col * LENGTH);
     stroke(outline);
