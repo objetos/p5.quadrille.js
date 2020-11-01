@@ -53,6 +53,15 @@ function keyPressed() {
 }
 ```
 
+### `clone()`
+
+Performs a deep copy of the polyomino. May be used in conjunction with `reflect` & `rotate` to
+create different polyomino instances.
+
+### `clear()`
+
+Fills polyomino memory with 0's.
+
 Once again see [the glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
 
 ### `update(memory2D, x, y)`
