@@ -15,6 +15,14 @@ class Polyomino {
   }
 
   /**
+   * Returns a deep copy of this polyomino. May be used in conjunction with
+   * {@link reflect} and {@link rotate} to create different polyomino instances.
+   */
+  clone() {
+    return new Polyomino(this._shape.map(arr => { return arr.slice(); }));
+  }
+
+  /**
    * Horizontal reflection
    */
   reflect() {

@@ -39,7 +39,7 @@ See the [glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/
 
 ## Polyomino methods
 
-### `reflect()` and `rotate()`
+### `reflect()` & `rotate()`
 
 Arrow keys snippet:
 
@@ -55,11 +55,15 @@ function keyPressed() {
 
 Once again see [the glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js).
 
+### `clone()`
+
+Performs a deep copy of the polyomino. May be used in conjunction with [reflect & rotate](#reflect()-&-rotate()) to create different polyomino instances.
+
 ### `update(memory2D, x, y)`
 
 [Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game) instructions / snippets to come...
 
-## [vs-code](https://code.visualstudio.com/) / [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
+## [vs-code](https://code.visualstudio.com/) & [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
 
 To run and hack the [glyphs example](https://github.com/objetos/p5.polyomino.js/blob/master/examples/glyphs/sketch.js):
 
