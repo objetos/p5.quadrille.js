@@ -29,7 +29,7 @@ class Quadrille {
 
   /**
    * Returns a deep copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different polyomino instances.
+   * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone() {
     return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
