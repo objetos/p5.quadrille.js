@@ -57,7 +57,8 @@ Once again see [the glyphs example](https://github.com/objetos/p5.polyomino.js/b
 
 ### `clone()`
 
-Performs a deep copy of the polyomino. May be used in conjunction with [reflect & rotate](#reflect()-&-rotate()) to create different polyomino instances.
+Performs a deep copy of the polyomino. May be used in conjunction with `reflect` & `rotate` to
+create different polyomino instances.
 
 ### `update(memory2D, x, y)`
 
