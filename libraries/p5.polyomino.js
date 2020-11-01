@@ -4,15 +4,19 @@
  *
  * John Horton Conway called it a quadrille.
  *
- * The internal angle of the square is 90 degrees so four squares at a point make a full 360 degrees.
- * It is one of three regular tilings of the plane. The other two are the triangular-tiling
- * and the hexagonal-tiling.
+ * The internal angle of the square is 90 degrees so four squares at a point
+ * make a full 360 degrees. It is one of three regular tilings of the plane.
+ * The other two are the triangular-tiling and the hexagonal-tiling.
  *
- * See the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling) article for details.
+ * Refer to the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling)
+ * article for details.
  */
 class Quadrille {
   /**
-   * @param {Array} memory[rowIndex][columnIndex] where empty cells are filled with 0
+   * Constructs either an empty or a filled quadrille:
+   * 1. Pass width and heigth to construct and empty quadrille (filled with 0's).
+   * 2. Pass a 2D array of p5 colors, chars, emojis and zeros (for empty cells)
+   * to construct a filled quadrille. 
    */
   constructor() {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
@@ -23,10 +27,17 @@ class Quadrille {
     }
   }
 
+  /**
+   * Returns a deep copy of this quadrille. May be used in conjunction with
+   * {@link reflect} and {@link rotate} to create different polyomino instances.
+   */
   clone() {
     return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
   }
   
+  /**
+   * Sets all quadrille memory entries to 0.
+   */
   clear() {
     this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
   }
@@ -56,6 +67,9 @@ class Quadrille {
   }
 
   /**
+   * Clones this object and updates it with the passed quadrille which is to be inserted at (x,y).
+   * The updated quadrille is returned with the number of memory collisions encountered.
+   * 
    * @param {Quadrille} quadrille buffer[rows][cols]
    * @param {number} x memory2D row index
    * @param {number} y memory2D column index
@@ -65,30 +79,30 @@ class Quadrille {
   update(quadrille, x, y) {
     let memoryHitCounter = 0;
     // i. clone this quadrille
-    let clonedQuadrile = this.clone();
+    let clonedQuadrille = this.clone();
     // ii. fill in cloned quadrille with quadrille param
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       // (e1) Check if current quadrille cell is too far down
-      if (clonedQuadrile.memory2D[x + i] === undefined) {
+      if (clonedQuadrille.memory2D[x + i] === undefined) {
         throw new Error(`Too far down`);
       }
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         // (e2) Check if current quadrille cell is too far right
-        if (clonedQuadrile.memory2D[x + i][y + j] === undefined) {
+        if (clonedQuadrille.memory2D[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
         // write only quadrille cells covering (i,j)
         if (quadrille.memory2D[i][j]) {
           // check if current quadrille hits cloned quadrille memory2D
-          if (clonedQuadrile.memory2D[x + i][y + j] !== 0) {
+          if (clonedQuadrille.memory2D[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
-          clonedQuadrile.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
+          clonedQuadrille.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
         }
       }
     }
     // iii. return buffer and memory hit counter
-    return { quadrille: clonedQuadrile, memoryHitCounter };
+    return { quadrille: clonedQuadrille, memoryHitCounter };
   }
 }
 
