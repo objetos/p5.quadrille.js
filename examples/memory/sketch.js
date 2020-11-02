@@ -6,15 +6,6 @@ var tableau;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  /*
-  tableau = Array(ROWS);
-  for (let i = 0; i < tableau.length; i++) {
-    tableau[i] = Array(COLS);
-    for (let j = 0; j < tableau[i].length; j++) {
-      tableau[i][j] = 0;
-    }
-  }
-  */
   tableau = createTableau(ROWS, COLS);
   polyomino = createQuadrille([[color('cyan'), '👽',             0    ],
                                [0,             '🤔',            '🙈' ],
@@ -31,7 +22,7 @@ function draw() {
 }
 
 function glue(polyomino, row, col) {
-  let update = tableau.update(polyomino, row, col);
+  let update = tableau.add(polyomino, row, col);
   if (update.memoryHitCounter === 0) {
     //tableau.memory2D = update.quadrille.memory2D;
     tableau = update.quadrille;

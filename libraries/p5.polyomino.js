@@ -32,7 +32,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone() {
-    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
+    return new Quadrille(this._memory2D.map(x => { return x.slice(); }));
   }
   
   /**
@@ -67,8 +67,10 @@ class Quadrille {
   }
 
   /**
-   * Clones this object and updates it with the passed quadrille which is to be inserted at (x,y).
-   * The updated quadrille is returned with the number of memory collisions encountered.
+   * Adds given quadrille to this quadrille at (x,y) and returns the resulted 
+   * quadrille together with the number of memory collisions encountered.
+   * 
+   * This quadrille is not altered by a call to this method.
    * 
    * @param {Quadrille} quadrille buffer[rows][cols]
    * @param {number} x memory2D row index
@@ -76,33 +78,33 @@ class Quadrille {
    * @throws 'To far down' and 'To far right' memory2D reading exceptions
    * @returns { Quadrille, number } { quadrille, memoryHitCounter } object literal
    */
-  update(quadrille, x, y) {
+  add(quadrille, x, y) {
     let memoryHitCounter = 0;
     // i. clone this quadrille
-    let clonedQuadrille = this.clone();
-    // ii. fill in cloned quadrille with quadrille param
+    let result = this.clone();
+    // ii. fill cloned quadrille with passed quadrille
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       // (e1) Check if current quadrille cell is too far down
-      if (clonedQuadrille.memory2D[x + i] === undefined) {
+      if (result.memory2D[x + i] === undefined) {
         throw new Error(`Too far down`);
       }
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // (e2) Check if current quadrille cell is too far right
-        if (clonedQuadrille.memory2D[x + i][y + j] === undefined) {
+        // (e2) Check if current passed quadrille cell is too far right
+        if (result.memory2D[x + i][y + j] === undefined) {
           throw new Error(`Too far right`);
         }
-        // write only quadrille cells covering (i,j)
+        // write only cloned quadrille cells covering (i,j)
         if (quadrille.memory2D[i][j]) {
-          // check if current quadrille hits cloned quadrille memory2D
-          if (clonedQuadrille.memory2D[x + i][y + j] !== 0) {
+          // update memory collisions counter if needed
+          if (result.memory2D[x + i][y + j] !== 0) {
             memoryHitCounter++;
           }
-          clonedQuadrille.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
+          result.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
         }
       }
     }
-    // iii. return buffer and memory hit counter
-    return { quadrille: clonedQuadrille, memoryHitCounter };
+    // iii. return resulted quadrille and memory hit counter
+    return { quadrille: result, memoryHitCounter };
   }
 }
 
