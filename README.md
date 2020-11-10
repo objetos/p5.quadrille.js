@@ -1,6 +1,6 @@
 # p5.quadrille.js
 
-[p5.js](https://p5js.org/) library to play with [quadrilles](https://en.wikipedia.org/wiki/Quadrille).
+[p5.js](https://p5js.org/) library to play with [quadrilles](https://en.wikipedia.org/wiki/Polyomino).
 
 ## Quadrille p5.js functions
 
