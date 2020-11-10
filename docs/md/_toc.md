@@ -1,0 +1,2 @@
+[Home](/)
+[Color](/docs/colors)
