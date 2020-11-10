@@ -26,14 +26,6 @@ class Quadrille {
       this._memory2D = Array(arguments[0]).fill().map(() => Array(arguments[1]).fill(0));
     }
   }
-
-  /**
-   * Returns a deep copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different quadrille instances.
-   */
-  clone() {
-    return new Quadrille(this._memory2D.map(x => { return x.slice(); }));
-  }
   
   /**
    * Sets all quadrille memory entries to 0.
@@ -51,14 +43,6 @@ class Quadrille {
   }
 
   /**
-   * Returns a deep copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different quadrille instances.
-   */
-  clone() {
-    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
-  }
-
-  /**
    * Horizontal reflection
    */
   reflect() {
@@ -72,6 +56,14 @@ class Quadrille {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
     // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
     this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
+  }
+
+  /**
+   * Returns a deep copy of this quadrille. May be used in conjunction with
+   * {@link reflect} and {@link rotate} to create different quadrille instances.
+   */
+  clone() {
+    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
   }
 
   /**
