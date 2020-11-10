@@ -55,7 +55,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different polyomino instances.
    */
   clone() {
-    return new Polyomino(this._shape.map(arr => { return arr.slice(); }));
+    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
   }
 
   /**

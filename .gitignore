@@ -6,7 +6,7 @@ dist/
 
 # dependencies
 libraries/*
-!libraries/p5.polyomino.js
+!libraries/p5.quadrille.js
 
 # Logs
 logs
