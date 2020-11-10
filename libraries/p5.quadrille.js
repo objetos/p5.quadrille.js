@@ -26,13 +26,6 @@ class Quadrille {
       this._memory2D = Array(arguments[0]).fill().map(() => Array(arguments[1]).fill(0));
     }
   }
-  
-  /**
-   * Sets all quadrille memory entries to 0.
-   */
-  clear() {
-    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
-  }
 
   set memory2D(memory) {
     this._memory2D = memory;
@@ -40,6 +33,13 @@ class Quadrille {
 
   get memory2D() {
     return this._memory2D;
+  }
+
+  /**
+   * Sets all quadrille memory entries to 0.
+   */
+  clear() {
+    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
   }
 
   /**
@@ -63,7 +63,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone() {
-    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
+    return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
   /**
