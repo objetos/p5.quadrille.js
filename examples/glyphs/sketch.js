@@ -13,7 +13,7 @@ function setup() {
                               ]);
   quadrille.reflect();
   clone = quadrille.clone();
-  quadrille.reflect();
+  clone.reflect();
 }
 
 function draw() {

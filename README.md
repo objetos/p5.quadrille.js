@@ -53,20 +53,19 @@ function keyPressed() {
 }
 ```
 
+See the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js).
+
 ### `clone()`
 
-Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to
-create different quadrille instances.
+Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. Once again see the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js).
+
+### `add(quadrille, x, y)`
+
+Adds passed `quadrille` at `(x, y)`. May be used for [Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game). See the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory).
 
 ### `clear()`
 
 Fills quadrille memory with 0's.
-
-Once again see [the glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js).
-
-### `add(quadrille, x, y)`
-
-[Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game) instructions / snippets to come...
 
 ## [vs-code](https://code.visualstudio.com/) & [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
 

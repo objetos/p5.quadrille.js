@@ -115,11 +115,11 @@ class Quadrille {
     return new Quadrille(shape);
   };
 
-  p5.prototype.createTableau = function(width, height) {
+  p5.prototype.createBoard = function(width, height) {
     return new Quadrille(width, height);
   };
 
-  p5.prototype.drawTableau = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
     drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
   }
 
