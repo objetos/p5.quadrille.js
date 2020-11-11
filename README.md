@@ -61,7 +61,7 @@ Performs a deep copy of the quadrille. May be used in conjunction with `reflect`
 
 ### `add(quadrille, x, y)`
 
-Adds passed `quadrille` at `(x, y)`. May be used for [Tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game). See the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory).
+Adds passed `quadrille` at `(x, y)`. May be used for [tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game). See the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory).
 
 ### `clear()`
 
