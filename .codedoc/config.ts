@@ -1,5 +1,6 @@
-import { configuration } from '@codedoc/core';
+import { configuration, DefaultMarkdownCustomComponents } from '@codedoc/core'; // --> make sure to import the default components
 import { theme } from './theme';
+import { P5 } from './components/p5';      // --> import the card component itself
 
 export const config = configuration({
   theme,
@@ -29,5 +30,11 @@ export const config = configuration({
       large: true,                 // --> whether to show a `large` GitHub button
       standardIcon: false,         // --> whether to use the GitHub icon on the GitHub button or use an action specific icon
     }
-  },  
+  },
+  markdown: {                                  // --> update markdown config
+    customComponents: {                        // --> add to custom components
+      ...DefaultMarkdownCustomComponents,      // --> make sure to add default markdown components. otherwise the default components will not work!
+      P5,                                      // --> add our own p5 component
+    }
+  },
 });
