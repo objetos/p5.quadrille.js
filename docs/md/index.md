@@ -8,23 +8,6 @@ Pend
 
 # Installation
 
-> :P5
->
-> ![P5 Hero](https://i.etsystatic.com/14457190/r/il/3cb8ff/1676245710/il_570xN.1676245710_ba0u.jpg)
->
-> **Banksy**
-> Banksy is an anonymous England-based street artist, political activist, and film director, active since the 1990s. 
-> His satirical street art combine dark humour with graffiti executed in a distinctive stenciling technique.
-> > :Buttons
-> > > :Button label=Wiki, url=https://en.wikipedia.org/wiki/Banksy
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js" integrity="sha512-WIklPM6qPCIp6d3fSSr90j+1unQHUOoWDS4sdTiR8gxUTnyZ8S2Mr8e10sKKJ/bhJgpAa/qG068RDkg6fIlNFA==" crossorigin="anonymous"></script> <script src="/docs/sketches/p5.quadrille.js"></script>
 
-> :P5 raise=1
->
-> ![P5 what](https://www.tate.org.uk/art/images/work/T/T00/T00384_9.jpg)
->
-> **Jackson Pollock**
-> Paul Jackson Pollock was an American painter and a major figure in the abstract expressionist movement. 
-> He was widely noticed for his technique of pouring or splashing liquid household paint onto a horizontal surface, 
-> enabling him to view and paint his canvases from all angles
-> > :Buttons
-> > > :Button label=Wiki, url=https://en.wikipedia.org/wiki/Jackson_Pollock
+> :P5 sketch=/docs/sketches/colors.js

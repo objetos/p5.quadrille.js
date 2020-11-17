@@ -6,6 +6,7 @@ import { P5Style } from './style';                          // @see tab:style.ts
 
 export interface P5Options {                                // --> a nice interface for possible props
   raise: string;                                            // --> which is the raise level of our sketches. Note that all props MUST be of type `string`
+  sketch: string;
 }
 
 export function P5(
@@ -20,6 +21,6 @@ export function P5(
   if (options && options.raise === '2') raise = 'raised-2';
 
   return <div class={`${classes.p5} ${raise}`}>
-    {content}
+    <script src={`${options.sketch}`}></script>
   </div>;
 }
