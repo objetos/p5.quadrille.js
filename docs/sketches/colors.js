@@ -17,7 +17,7 @@ function setup() {
 }
 
 function draw() {
-  background('#EEE8D5');
+  background('#859900');
   drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'red');
   drawQuadrille(clone, 12, 2, LENGTH, 2, 'blue');
 }
