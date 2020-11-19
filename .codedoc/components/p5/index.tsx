@@ -5,8 +5,7 @@ import { CodedocTheme } from '@codedoc/core';               // --> Type helper f
 import { P5Style } from './style';                          // @see tab:style.ts
 
 export interface P5Options {                                // --> a nice interface for possible props
-  raise: string;                                            // --> which is the raise level of our sketches. Note that all props MUST be of type `string`
-  sketch: string;
+  sketch: string;                                            // --> sketche location. Note that all props MUST be of type `string`
 }
 
 export function P5(
@@ -16,11 +15,9 @@ export function P5(
   content: any,                                             // --> the content of the component
 ) {
   const classes = this.theme.classes(P5Style);              // --> fetch the theme-based classes
-  let raise = 'raised-0';
-  if (options && options.raise === '1') raise = 'raised-1'; // --> determine the proper raise level based on given attributes
-  if (options && options.raise === '2') raise = 'raised-2';
+  let center = 'center';
 
-  return <div class={`${classes.p5} ${raise}`}>
+  return <div class={`${classes.p5} ${center}`}>
     <script src={`${options.sketch}`}></script>
   </div>;
 }

@@ -1,12 +1,12 @@
 const ROWS = 20;
-const COLS = 10;
+const COLS = 20;
 const LENGTH = 20;
 var quadrille;
 var clone;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
+  quadrille = createQuadrille([[color('cyan'), '👽',             'a'    ],
                                [0,             '🤔',            '🙈' ],
                                [0,             color('#770811'), 0   ],
                                ['g',           'o',             'l'  ]
@@ -17,9 +17,9 @@ function setup() {
 }
 
 function draw() {
-  background('#060621');
+  background('#EEE8D5');
   drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'red');
-  drawQuadrille(clone, 2, 8, LENGTH, 2, 'blue');
+  drawQuadrille(clone, 12, 2, LENGTH, 2, 'blue');
 }
 
 function keyPressed() {
