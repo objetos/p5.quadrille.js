@@ -1,4 +1,4 @@
-var sketch = function (p) {
+let myp5 = new p5((p) => {
   p.setup = function () {
     p.createCanvas(400, 400);
     p.strokeWeight(3); // medium weight lines
@@ -32,6 +32,4 @@ var sketch = function (p) {
       }
     }
   };
-};
-
-new p5(sketch, "scintillating_id");
+}, "scintillating");
