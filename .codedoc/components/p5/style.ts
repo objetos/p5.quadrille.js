@@ -7,7 +7,7 @@ export const P5Style = themedStyle<CodedocTheme>(theme => ({
     verticalAlign: 'middle',
     borderRadius: 8,
     padding: 8,
-    maxWidth: 1024,
+    maxWidth: 400,
     margin: 16,
     overflow: 'hidden',
     cursor: 'pointer',

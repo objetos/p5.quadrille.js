@@ -1,2 +1,1 @@
 [Home](/)
-[Color](/docs/colors)

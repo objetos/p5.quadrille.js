@@ -27,21 +27,6 @@ class Quadrille {
     }
   }
 
-  /**
-   * Returns a deep copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different quadrille instances.
-   */
-  clone() {
-    return new Quadrille(this._memory2D.map(x => { return x.slice(); }));
-  }
-  
-  /**
-   * Sets all quadrille memory entries to 0.
-   */
-  clear() {
-    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
-  }
-
   set memory2D(memory) {
     this._memory2D = memory;
   }
@@ -51,11 +36,10 @@ class Quadrille {
   }
 
   /**
-   * Returns a deep copy of this polyomino. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different polyomino instances.
+   * Sets all quadrille memory entries to 0.
    */
-  clone() {
-    return new Quadrille(this._memory2D.map(arr => { return arr.slice(); }));
+  clear() {
+    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
   }
 
   /**
@@ -72,6 +56,14 @@ class Quadrille {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
     // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
     this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
+  }
+
+  /**
+   * Returns a deep copy of this quadrille. May be used in conjunction with
+   * {@link reflect} and {@link rotate} to create different quadrille instances.
+   */
+  clone() {
+    return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
   /**
@@ -123,12 +115,12 @@ class Quadrille {
     return new Quadrille(shape);
   };
 
-  p5.prototype.createTableau = function(width, height) {
+  p5.prototype.createBoard = function(width, height) {
     return new Quadrille(width, height);
   };
 
-  p5.prototype.drawTableau = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
-    drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
+  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
   }
 
   p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
