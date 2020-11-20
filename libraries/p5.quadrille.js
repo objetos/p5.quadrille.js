@@ -124,27 +124,27 @@ class Quadrille {
   }
 
   p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
-    push();
-    translate(row * LENGTH, col * LENGTH);
-    stroke(outline);
-    strokeWeight(outlineWeight);
+    this.push();
+    this.translate(row * LENGTH, col * LENGTH);
+    this.stroke(outline);
+    this.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         // handles both zero and empty (undefined) entries as well
         if (quadrille.memory2D[i][j]) {
-          push();
+          this.push();
           if (quadrille.memory2D[i][j] instanceof p5.Color) {
-            fill(quadrille.memory2D[i][j]);
-            rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.fill(quadrille.memory2D[i][j]);
+            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           else if (typeof quadrille.memory2D[i][j] === 'string') {
-            textSize(LENGTH);
-            text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.textSize(LENGTH);
+            this.text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
-          pop();
+          this.pop();
         }
       }
     }
-    pop();
+    this.pop();
   }
 })();
