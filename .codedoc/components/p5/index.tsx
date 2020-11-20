@@ -25,5 +25,3 @@ export function P5(
     <script src={`${options.sketch}`}></script>
   </div>;
 }
-
-//P5.IDS = 0;

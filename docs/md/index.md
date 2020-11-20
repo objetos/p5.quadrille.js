@@ -8,4 +8,4 @@ Pend
 
 # Installation
 
-> :P5 sketch=/docs/sketches/scintillating.js
+> :P5 sketch=/docs/sketches/colors.js
