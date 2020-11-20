@@ -8,4 +8,7 @@ Pend
 
 # Installation
 
-> :P5 sketch=/docs/sketches/colors.js
+> :P5
+> 
+> fill(51);
+> rect(20, 20, 60, 60);
