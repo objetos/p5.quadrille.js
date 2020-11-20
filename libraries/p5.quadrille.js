@@ -120,7 +120,7 @@ class Quadrille {
   };
 
   p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
-    drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
+    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
   }
 
   p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
