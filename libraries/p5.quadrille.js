@@ -119,11 +119,11 @@ class Quadrille {
     return new Quadrille(width, height);
   };
 
-  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
-    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline);
+  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04')) {
+    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, this.color('#859900'));
   }
 
-  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta') {
+  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', fill = 'noColor') {
     this.push();
     this.translate(row * LENGTH, col * LENGTH);
     this.stroke(outline);
@@ -131,8 +131,8 @@ class Quadrille {
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         // handles both zero and empty (undefined) entries as well
+        this.push();
         if (quadrille.memory2D[i][j]) {
-          this.push();
           if (quadrille.memory2D[i][j] instanceof p5.Color) {
             this.fill(quadrille.memory2D[i][j]);
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
@@ -140,9 +140,15 @@ class Quadrille {
           else if (typeof quadrille.memory2D[i][j] === 'string') {
             this.textSize(LENGTH);
             this.text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.noFill();
+            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
-          this.pop();
         }
+        else if (fill !== 'noColor') {
+          this.fill(fill);
+          this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+        }
+        this.pop();
       }
     }
     this.pop();

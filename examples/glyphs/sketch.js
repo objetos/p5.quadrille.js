@@ -18,8 +18,8 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'red');
-  drawQuadrille(clone, 2, 8, LENGTH, 2, 'blue');
+  drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'green');
+  drawQuadrille(clone, 2, 8, LENGTH, 0);
 }
 
 function keyPressed() {
