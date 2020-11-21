@@ -4,6 +4,7 @@ var myp5 = new p5((p) => {
   const LENGTH = 20;
   var quadrille;
   var clone;
+  var x = 2, y = 2;
 
   p.setup = function () {
     p.createCanvas(COLS * LENGTH, ROWS * LENGTH);
@@ -19,7 +20,7 @@ var myp5 = new p5((p) => {
 
   p.draw = function () {
     p.background('#859900');
-    p.drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'green');
+    p.drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
     p.drawQuadrille(clone, 12, 2, LENGTH, 0);
   };
 
@@ -28,6 +29,22 @@ var myp5 = new p5((p) => {
       quadrille.reflect();
     } else if (p.keyCode === p.RIGHT_ARROW) {
       quadrille.rotate();
+    }
+    if (p.key === 'a') {
+      x--;
+      //x = x > 0 ? x-- : x;
+    }
+    if (p.key === 's') {
+      //x++;
+      x = x < (ROWS - quadrille.width) ? x++ : x;
+    }
+    if (p.key === 'w') {
+      y--;
+      //y = y > 0 ? y-- : y;
+    }
+    if (p.key === 'z') {
+      //y++;
+      y = y < (COLS - quadrille.height) ? y++ : y;
     }
   };
 }, "colors");

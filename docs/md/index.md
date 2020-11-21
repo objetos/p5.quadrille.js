@@ -7,7 +7,7 @@
 
 # p5.js quadrille functions
 
-A quadrille is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createQuadrille` command:
+A quadrille is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createQuadrille` command. 
 
 ```js
 const ROWS = 20;

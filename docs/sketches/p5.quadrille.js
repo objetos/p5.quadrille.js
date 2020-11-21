@@ -35,6 +35,14 @@ class Quadrille {
     return this._memory2D;
   }
 
+  get width() {
+    return this._memory2D[0] ? this._memory2D[0].length : 0;
+  }
+
+  get height() {
+    return this._memory2D.length;
+  }
+
   /**
    * Sets all quadrille memory entries to 0.
    */
