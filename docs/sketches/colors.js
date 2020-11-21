@@ -19,14 +19,14 @@ var myp5 = new p5((p) => {
 
   p.draw = function () {
     p.background('#859900');
-    p.drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'red');
-    p.drawQuadrille(clone, 12, 2, LENGTH, 2, 'blue');
+    p.drawQuadrille(quadrille, 2, 2, LENGTH, 2, 'green');
+    p.drawQuadrille(clone, 12, 2, LENGTH, 0);
   };
 
   p.keyPressed = function () {
-    if (p.keyCode === p.UP_ARROW) {
+    if (p.keyCode === p.LEFT_ARROW) {
       quadrille.reflect();
-    } else if (p.keyCode === p.DOWN_ARROW) {
+    } else if (p.keyCode === p.RIGHT_ARROW) {
       quadrille.rotate();
     }
   };
