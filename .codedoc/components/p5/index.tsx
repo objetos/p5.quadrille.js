@@ -23,16 +23,12 @@ export function P5(
     let name: string = filename!.substr(0, filename!.lastIndexOf('.'));
     return (
       <div id={`${name}`} class={`${classes.p5} center`}>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js'></script>
-        <script src='/docs/sketches/p5.quadrille.js'></script>
         <script src={`${options.sketch}`}></script>
       </div>
     );
   } else {
     return (
       <div class={`${classes.p5} center`}>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js'></script>
-        <script src='/docs/sketches/p5.quadrille.js'></script>
         <script> {content} </script>
       </div>
     );

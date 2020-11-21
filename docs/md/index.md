@@ -1,3 +1,6 @@
+<script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js'></script>
+<script src='/docs/sketches/p5.quadrille.js'></script>
+
 # p5.quadrille.js
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
@@ -40,7 +43,7 @@ Use `drawQuadrille(quadrille, row, col)` to draw the quadrille:
 >
 > > :Tab title=Running code, icon=code
 > >
-> > Pending P5 sketch=/docs/sketches/colors.js
+> > > :P5 sketch=/docs/sketches/colors.js
 
 # Quadrille methods
 
