@@ -31,20 +31,16 @@ var myp5 = new p5((p) => {
       quadrille.rotate();
     }
     if (p.key === 'a') {
-      x--;
-      //x = x > 0 ? x-- : x;
+      x = x > 0 ? x - 1 : x;
     }
     if (p.key === 's') {
-      //x++;
-      x = x < (ROWS - quadrille.width) ? x++ : x;
+      x = x < COLS - quadrille.width ? x + 1 : x;
     }
     if (p.key === 'w') {
-      y--;
-      //y = y > 0 ? y-- : y;
+      y = y > 0 ? y - 1 : y;
     }
     if (p.key === 'z') {
-      //y++;
-      y = y < (COLS - quadrille.height) ? y++ : y;
+      y = y < ROWS - quadrille.height ? y + 1 : y;
     }
   };
 }, "colors");
