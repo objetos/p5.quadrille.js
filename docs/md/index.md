@@ -106,7 +106,7 @@ Create a board and fill it with some quadrilles. Excerpt from the [memory exampl
    1. Study the [SageMath](https://www.sagemath.org/) [tiling solver](https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/tiling.html) which may provide such functionality.
    2. Use a [SageCell](https://sagecell.sagemath.org/) to interface to SageMath from the web.
 3. Implement other [2D tilings](https://en.wikipedia.org/wiki/Square_tiling) different then the quadrille. See also [tesselation](https://en.wikipedia.org/wiki/Tessellation).
-4. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature.
+4. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature. See also [Wolfram](https://en.wikipedia.org/wiki/Wolfram_Language) [ArrayMesh](https://reference.wolfram.com/language/ref/ArrayMesh.html).
 5. Improve this this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
    1. Improve the [codedoc](https://codedoc.cc/) [p5 component](https://github.com/objetos/p5.quadrille.js/tree/pages/.codedoc/components/p5) used to deploy the page.
    2. Customize the theme.
