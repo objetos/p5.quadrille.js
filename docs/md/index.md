@@ -7,16 +7,12 @@
 
 # p5.js quadrille functions
 
-A quadrille is created from a 2D array `shape` which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createQuadrille` command. 
+A quadrille is created from an array2D which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createQuadrille(array2D)` command. 
 
 ```js
-const ROWS = 20;
-const COLS = 10;
-const LENGTH = 20;
 var quadrille;
 
 function setup() {
-  createCanvas(COLS * LENGTH, ROWS * LENGTH);
   quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
                                [0,             '🤔',            '🙈' ],
                                [0,             color('#770811'), 0   ],
@@ -28,6 +24,15 @@ function setup() {
 note that the `quadrille.memory2d` [computed property](https://www.w3schools.com/js/js_object_accessors.asp) references the 2D array used to create the `quadrille` instance.
 
 Use `drawQuadrille(quadrille, row, col)` to draw the quadrille:
+
+> > ```js
+> > function draw() {
+> >   background('#060621');
+> >   // the last three params are optional and they set the quadrille
+> >   // length, strokeWeight and stroke visual properties
+> >   drawQuadrille(quadrille, 2, 4, LENGTH, 2, 'green');
+> > }
+> > ``` 
 
 > :Tabs
 > > :Tab title=Code snippet, icon=settings
