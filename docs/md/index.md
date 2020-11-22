@@ -12,12 +12,14 @@
 * `drawQuadrille(quadrille, row, col)`: Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
 * `drawBoard()`: Draws the board `quadrille` at `(0, 0)`. [See the examples](#examples).
 
-# Quadrille properties
+# Quadrille
+
+## Properties
 
 * `memory2d`: [Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array used to create the `quadrille` instance. [See the examples](#examples)
 * `width` & `height`: Properties that store the quadrille width and height. [See the examples](#examples).
 
-# Quadrille methods
+## Methods
 
 * `reflect()` & `rotate()`: Methods to reflect and rotate the quadrille in place. [See the examples](#examples).
 * `clone()`: Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. [See the examples](#examples).
@@ -26,17 +28,34 @@
 
 # Examples
 
-Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js):
+Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js) (use the *a*, *s*, *w* and *z* to move the quadrille):
 
 > :Tabs
 > > :Tab title=Code snippet, icon=settings
 > >
 > > ```js
+> > const ROWS = 20;
+> > const COLS = 10;
+> > const LENGTH = 20;
+> > var quadrille;
+> > var clone;
+> > 
+> > function setup() {
+> >  createCanvas(COLS * LENGTH, ROWS * LENGTH);
+> >  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
+> >                               [0,             '🤔',            '🙈' ],
+> >                               [0,             color('#770811'), 0   ],
+> >                               ['g',           'o',             'l'  ]
+> >                              ]);
+> >  quadrille.reflect();
+> >  clone = quadrille.clone();
+> >  clone.reflect();
+> > }
+> >
 > > function draw() {
 > >   background('#060621');
-> >   // the last three params are optional and they set the quadrille
-> >   // length, strokeWeight and stroke visual properties
-> >   drawQuadrille(quadrille, 2, 4, LENGTH, 2, 'green');
+> >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+> >   drawQuadrille(clone, 2, 8, LENGTH, 0);
 > > }
 > > ``` 
 >
@@ -44,17 +63,33 @@ Create and manipulate a quadrille. Excerpt from the [glyphs example](https://git
 > >
 > > > :P5 sketch=/docs/sketches/colors.js
 
-Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory):
+Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory) (use the *a*, *s*, *w* and *z* to move the quadrille and *g* or *v* to stick it):
 
 > :Tabs
 > > :Tab title=Code snippet, icon=settings
 > >
 > > ```js
+> > const ROWS = 20;
+> > const COLS = 10;
+> > const LENGTH = 20;
+> > var quadrille;
+> > var board;
+> > var x = 2, y = 2;
+> > 
+> > function setup() {
+> >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+> >   board = createBoard(ROWS, COLS);
+> >   quadrille = createQuadrille([[color('cyan'), '👽', 0],
+> >   [0, '🤔', '🙈'],
+> >   [0, color('#770811'), 0],
+> >   ['g', 'o', 'l']
+> >   ]);
+> > }
+> > 
 > > function draw() {
 > >   background('#060621');
-> >   // the last three params are optional and they set the quadrille
-> >   // length, strokeWeight and stroke visual properties
-> >   drawQuadrille(quadrille, 2, 4, LENGTH, 2, 'green');
+> >   drawBoard(board, LENGTH);
+> >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
 > > }
 > > ``` 
 >
