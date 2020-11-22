@@ -13,9 +13,8 @@ var myp5 = new p5((p) => {
                                    [0,               p.color('#770811'), 0   ],
                                    ['g',             'o',                'l' ]
                                   ]);
-    quadrille.reflect();
     clone = quadrille.clone();
-    quadrille.reflect();
+    clone.reflect();
   };
 
   p.draw = function () {

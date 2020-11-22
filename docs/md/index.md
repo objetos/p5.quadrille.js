@@ -48,7 +48,6 @@ Create and manipulate a quadrille. Excerpt from the [glyphs example](https://git
 > >                               [0,             color('#770811'), 0   ],
 > >                               ['g',           'o',             'l'  ]
 > >                              ]);
-> >  quadrille.reflect();
 > >  clone = quadrille.clone();
 > >  clone.reflect();
 > > }
