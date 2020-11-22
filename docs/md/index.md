@@ -39,6 +39,7 @@ Create and manipulate a quadrille. Excerpt from the [glyphs example](https://git
 > > const LENGTH = 20;
 > > var quadrille;
 > > var clone;
+> > var x = 2, y = 2;
 > > 
 > > function setup() {
 > >  createCanvas(COLS * LENGTH, ROWS * LENGTH);
