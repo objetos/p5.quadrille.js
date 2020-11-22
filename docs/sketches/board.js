@@ -1,6 +1,6 @@
 var myp5 = new p5((p) => {
   const ROWS = 20;
-  const COLS = 10;
+  const COLS = 20;
   const LENGTH = 20;
   var quadrille;
   var board;
@@ -19,7 +19,7 @@ var myp5 = new p5((p) => {
   p.draw = function () {
     p.background('#859900');
     p.drawBoard(board, LENGTH);
-    p.drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+    p.drawQuadrille(quadrille, x, y, LENGTH, 2, 'magenta');
   };
 
   p.keyPressed = function () {

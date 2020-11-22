@@ -19,7 +19,7 @@ var myp5 = new p5((p) => {
   };
 
   p.draw = function () {
-    p.background('#859900');
+    p.background('#007ACC');
     p.drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
     p.drawQuadrille(clone, 12, 2, LENGTH, 0);
   };
