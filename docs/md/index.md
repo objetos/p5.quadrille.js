@@ -80,10 +80,10 @@ Create a board and fill it with some quadrilles. Excerpt from the [memory exampl
 > >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 > >   board = createBoard(ROWS, COLS);
 > >   quadrille = createQuadrille([[color('cyan'), '👽', 0],
-> >   [0, '🤔', '🙈'],
-> >   [0, color('#770811'), 0],
-> >   ['g', 'o', 'l']
-> >   ]);
+> >                                [0, '🤔', '🙈'],
+> >                                [0, color('#770811'), 0],
+> >                                ['g', 'o', 'l']
+> >                               ]);
 > > }
 > > 
 > > function draw() {
