@@ -127,8 +127,8 @@ class Quadrille {
     return new Quadrille(width, height);
   };
 
-  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04')) {
-    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, this.color('#859900'));
+  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04'), fill = this.color('#859900')) {
+    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, fill);
   }
 
   p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', fill = 'noColor') {
