@@ -7,32 +7,26 @@
 
 # p5.js quadrille functions
 
-A quadrille is created from an array2D which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells), using the `createQuadrille(array2D)` command. 
+* `createQuadrille(array2D)`: Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
+* `createBoard(width, height)`: Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
+* `drawQuadrille(quadrille, row, col)`: Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
+* `drawBoard()`: Draws the board `quadrille` at `(0, 0)`. [See the examples](#examples).
 
-```js
-var quadrille;
+# Quadrille properties
 
-function setup() {
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',            '🙈' ],
-                               [0,             color('#770811'), 0   ],
-                               ['g',           'o',             'l'  ]
-                              ]);
-}
-```
+* `memory2d`: [Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array used to create the `quadrille` instance. [See the examples](#examples)
+* `width` & `height`: Properties that store the quadrille width and height. [See the examples](#examples).
 
-note that the `quadrille.memory2d` [computed property](https://www.w3schools.com/js/js_object_accessors.asp) references the 2D array used to create the `quadrille` instance.
+# Quadrille methods
 
-Use `drawQuadrille(quadrille, row, col)` to draw the quadrille:
+* `reflect()` & `rotate()`: Methods to reflect and rotate the quadrille in place. [See the examples](#examples).
+* `clone()`: Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. [See the examples](#examples).
+* `add(quadrille, x, y)`: Adds passed `quadrille` at `(x, y)`. [See the examples](#examples).
+* `clear()`: Fills quadrille memory with 0's.
 
-> > ```js
-> > function draw() {
-> >   background('#060621');
-> >   // the last three params are optional and they set the quadrille
-> >   // length, strokeWeight and stroke visual properties
-> >   drawQuadrille(quadrille, 2, 4, LENGTH, 2, 'green');
-> > }
-> > ``` 
+# Examples
+
+Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js):
 
 > :Tabs
 > > :Tab title=Code snippet, icon=settings
@@ -50,31 +44,7 @@ Use `drawQuadrille(quadrille, row, col)` to draw the quadrille:
 > >
 > > > :P5 sketch=/docs/sketches/colors.js
 
-# Quadrille methods
-
-## `reflect()` & `rotate()`
-
-Arrow keys snippet:
-
-```js
-function keyPressed() {
-  if (keyCode === UP_ARROW) {
-    quadrille.reflect();
-  } else if (keyCode === DOWN_ARROW) {
-    quadrille.rotate();
-  }
-}
-```
-
-See the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js).
-
-## `clone()`
-
-Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. Once again see the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js).
-
-## `add(quadrille, x, y)`
-
-Adds passed `quadrille` at `(x, y)`. May be used for [tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game). See the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory).
+Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory):
 
 > :Tabs
 > > :Tab title=Code snippet, icon=settings
@@ -92,9 +62,9 @@ Adds passed `quadrille` at `(x, y)`. May be used for [tile-matching videogames](
 > >
 > > > :P5 sketch=/docs/sketches/board.js
 
-## `clear()`
+# TODOs
 
-Fills quadrille memory with 0's.
+May be used for [tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game).
 
 # [vs-code](https://code.visualstudio.com/) & [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
 
