@@ -91,6 +91,32 @@ Create a board and fill it with some quadrilles. Excerpt from the [memory exampl
 > >   drawBoard(board, LENGTH);
 > >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
 > > }
+> >
+> > function keyPressed() {
+> >   // ...
+> >   if (key === 'g') {
+> >     glue(quadrille, y, x, false);
+> >   }
+> >   if (key === 'v') {
+> >     glue(quadrille, y, x);
+> >   }
+> > }
+> >
+> > function glue(quadrille, row, col, validate = true) {
+> >   if (validate) {
+> >     try {
+> >       let update = board.add(quadrille, row, col);
+> >       if (update.memoryHitCounter === 0) {
+> >         board = update.quadrille;
+> >       }
+> >     } catch (out_of_bounds) {
+> >       console.log(out_of_bounds);
+> >     }
+> >   }
+> >   else {
+> >     board = board.add(quadrille, row, col).quadrille;
+> >   }
+> > }
 > > ``` 
 >
 > > :Tab title=Running code, icon=code
