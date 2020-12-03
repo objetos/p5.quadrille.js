@@ -21,8 +21,20 @@ export function P5(
   if (options.sketch) {
     let filename = options.sketch.split('/').pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf('.'));
+    let p5Lib: string = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js';
+    let p5Loaded: boolean = isScriptLoaded(p5Lib);
+    let p5Quadrille: string = '/docs/sketches/p5.quadrille.js';
+    let p5QuadrilleLoaded: boolean = isScriptLoaded(p5Quadrille);
+    let sketchLoaded: boolean = isScriptLoaded(options.sketch);
+    /*
+    if (!`${sketchLoaded}`) {
+      <script src={`${options.sketch}`}></script>
+    }
+    */
     return (
       <div id={`${name}`} class={`${classes.p5} center`}>
+        <script src={`${p5Lib}`}></script>
+        <script src={`${p5Quadrille}`}></script>
         <script src={`${options.sketch}`}></script>
       </div>
     );
@@ -33,4 +45,8 @@ export function P5(
       </div>
     );
   }
+}
+
+function isScriptLoaded(src: string) {
+  return document.querySelector('script[src="' + src + '"]') ? true : false;
 }
