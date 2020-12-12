@@ -18,6 +18,27 @@ export function P5(
 ) {
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
 
+  /*
+  <!DOCTYPE html>
+<head>
+  <title>embedded example</title>
+  <script src="../../js/p5.min.js"></script>
+  <!-- uncomment lines below to include extra p5 libraries -->
+  <!--<script src="../addons/p5.sound.js"></script>-->
+  <script src="sketch.js"></script>
+  <!-- this line removes any default padding and style. you might only need one of these values set. -->
+  <style> body {padding: 0; margin: 0;} </style>
+</head>
+<body>
+</body>
+</html>
+*/
+
+  /*
+  <iframe src="http://p5js.org/assets/learn/tes-tutorial/embed.html" width="600" height="400">
+  </iframe>
+  */
+
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf("."));
@@ -26,6 +47,8 @@ export function P5(
     let p5Quadrille: string = "/docs/sketches/p5.quadrille.js";
     let p5QuadrilleLoaded: boolean = isScriptLoaded(p5Quadrille);
     let sketchLoaded: boolean = isScriptLoaded(options.sketch);
+    //{`${name}`}
+    /*
     return (
       <div id={`${name}`} class={`${classes.p5} center`}>
         {p5Loaded ? 'p5 already loaded' : <script src={`${p5Lib}`}></script>}
@@ -33,6 +56,10 @@ export function P5(
         {sketchLoaded ? 'p5 sketch already loaded' : <script src={`${options.sketch}`}></script>}
       </div>
     );
+    // */
+   return (
+    <iframe srcdoc={`<html><body>Hello, <b>cruelest world</b>.</body></html>`}></iframe>
+  );
   } else {
     return (
       <div class={`${classes.p5} center`}>
