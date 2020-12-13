@@ -8,6 +8,8 @@ import { content } from "../../content";
 export interface P5Options {
   // --> a nice interface for possible props
   sketch: string; // --> sketch location. Note that all props MUST be of type `string`
+  width: string;
+  height: string;
 }
 
 export function P5(
@@ -47,6 +49,8 @@ export function P5(
     let p5Quadrille: string = "/docs/sketches/p5.quadrille.js";
     let p5QuadrilleLoaded: boolean = isScriptLoaded(p5Quadrille);
     let sketchLoaded: boolean = isScriptLoaded(options.sketch);
+    let width: string = options.width ? options.width : '600';
+    let height = options.height ? options.height : '600';
     //{`${name}`}
     /*
     return (
@@ -58,7 +62,17 @@ export function P5(
     );
     // */
    return (
-    <iframe srcdoc={`<html><body>Hello, <b>cruelest world</b>.</body></html>`}></iframe>
+    <iframe
+      id={`${name}`} class={`${classes.p5} center`} width={`${width}`} height={`${height}`}
+      srcdoc={`
+      <head>
+      </head>
+      <html>
+        <body>Hello, <b>babe world</b>.
+        </body>
+      </html>
+    `}>
+    </iframe>
   );
   } else {
     return (
