@@ -1,6 +1,3 @@
-<script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js'></script>
-<script src='/docs/sketches/p5.quadrille.js'></script>
-
 # p5.quadrille.js
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
@@ -30,98 +27,9 @@
 
 Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js) (use the *a*, *s*, *w* and *z* to move the quadrille):
 
-> :Tabs
-> > :Tab title=Code snippet, icon=settings
-> >
-> > ```js
-> > const ROWS = 20;
-> > const COLS = 10;
-> > const LENGTH = 20;
-> > var quadrille;
-> > var clone;
-> > var x = 2, y = 2;
-> > 
-> > function setup() {
-> >  createCanvas(COLS * LENGTH, ROWS * LENGTH);
-> >  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-> >                               [0,             '🤔',            '🙈' ],
-> >                               [0,             color('#770811'), 0   ],
-> >                               ['g',           'o',             'l'  ]
-> >                              ]);
-> >  clone = quadrille.clone();
-> >  clone.reflect();
-> > }
-> >
-> > function draw() {
-> >   background('#060621');
-> >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-> >   drawQuadrille(clone, 2, 8, LENGTH, 0);
-> > }
-> > ``` 
->
-> > :Tab title=Running code, icon=code
-> >
-> > > :P5 sketch=/docs/sketches/colors.js
+> :P5 sketch=/docs/sketches/board.js, width=200, height=400
 
 Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory) (use the *a*, *s*, *w* and *z* to move the quadrille and *g* or *v* to stick it):
-
-> :Tabs
-> > :Tab title=Code snippet, icon=settings
-> >
-> > ```js
-> > const ROWS = 20;
-> > const COLS = 10;
-> > const LENGTH = 20;
-> > var quadrille;
-> > var board;
-> > var x = 2, y = 2;
-> > 
-> > function setup() {
-> >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-> >   board = createBoard(ROWS, COLS);
-> >   quadrille = createQuadrille([[color('cyan'), '👽', 0],
-> >                                [0, '🤔', '🙈'],
-> >                                [0, color('#770811'), 0],
-> >                                ['g', 'o', 'l']
-> >                               ]);
-> > }
-> > 
-> > function draw() {
-> >   background('#060621');
-> >   drawBoard(board, LENGTH);
-> >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-> > }
-> >
-> > function keyPressed() {
-> >   // ...
-> >   if (key === 'g') {
-> >     glue(quadrille, y, x, false);
-> >   }
-> >   if (key === 'v') {
-> >     glue(quadrille, y, x);
-> >   }
-> > }
-> >
-> > function glue(quadrille, row, col, validate = true) {
-> >   if (validate) {
-> >     try {
-> >       let update = board.add(quadrille, row, col);
-> >       if (update.memoryHitCounter === 0) {
-> >         board = update.quadrille;
-> >       }
-> >     } catch (out_of_bounds) {
-> >       console.log(out_of_bounds);
-> >     }
-> >   }
-> >   else {
-> >     board = board.add(quadrille, row, col).quadrille;
-> >   }
-> > }
-> > ``` 
->
-> > :Tab title=Running code, icon=code
-> >
-> > > :P5 sketch=/docs/sketches/board.js
 
 # TODOs
 
