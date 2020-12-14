@@ -74,8 +74,8 @@ export function P5(
       <html>
         <head>
           <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js></script>
-          <script src=${p5Quadrille}></script>
-          <script src=${options.sketch}></script>
+          <script src=${"/p5.quadrille.js".concat(p5Quadrille)}></script>
+          <script src=${"/p5.quadrille.js".concat(options.sketch)}></script>
         </head>
         <body>
         </body>
