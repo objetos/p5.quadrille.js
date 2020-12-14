@@ -20,10 +20,12 @@ export function P5(
 ) {
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
   // custom vars
+  let repo: string = "p5.quadrille.js";
+  let libname: string = "/".concat(repo);
   let filename = options.sketch.split("/").pop();
   let name: string = filename!.substr(0, filename!.lastIndexOf("."));
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
-  let p5Quadrille: string = "/docs/sketches/p5.quadrille.js";
+  let lib1: string = "/docs/sketches/p5.quadrille.js";
   let w: string = options.width ? options.width : '200';
   let h: string = options.height ? options.height : '400';
   if (options.sketch) {
@@ -35,8 +37,8 @@ export function P5(
       <html>
         <head>
           <script src=${p5Lib}></script>
-          <script src=${"/p5.quadrille.js".concat(p5Quadrille)}></script>
-          <script src=${"/p5.quadrille.js".concat(options.sketch)}></script>
+          <script src=${libname.concat(lib1)}></script>
+          <script src=${libname.concat(options.sketch)}></script>
         </head>
         <body>
         </body>
@@ -53,7 +55,7 @@ export function P5(
       <html>
         <head>
           <script src=${p5Lib}></script>
-          <script src=${"/p5.quadrille.js".concat(p5Quadrille)}></script>
+          <script src=${libname.concat(lib1)}></script>
           <script> ${content} </script>
         </head>
         <body>
