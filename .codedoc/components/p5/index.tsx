@@ -55,7 +55,7 @@ export function P5(
     let width: string = options.width ? options.width : '600';
     let height = options.height ? options.height : '600';
     //{`${name}`}
-    // /*
+    /*
     return (
       <div id={`${name}`} class={`${classes.p5} center`}>
         {p5Loaded ? 'p5 already loaded' : <script src={`${p5Lib}`}></script>}
@@ -63,6 +63,7 @@ export function P5(
         {sketchLoaded ? 'p5 sketch already loaded' : <script src={`${options.sketch}`}></script>}
       </div>
     );
+
     // <script src="/p5.quadrille.js/docs/sketches/p5.quadrille.js"></script>
     // */
    return (
@@ -74,7 +75,7 @@ export function P5(
         <head>
           <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js></script>
           <script src=${p5Quadrille}></script>
-          <script src="/p5.quadrille.js/docs/sketches/board.js"></script>
+          <script src=${options.sketch}></script>
         </head>
         <body>
         </body>
