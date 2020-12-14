@@ -26,8 +26,8 @@ export function P5(
   let name: string = filename!.substr(0, filename!.lastIndexOf("."));
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
   let lib1: string = "/docs/sketches/p5.quadrille.js";
-  let w: string = options.width ? options.width : '200';
-  let h: string = options.height ? options.height : '400';
+  let w: string = options.width ? options.width : "800";
+  let h: string = options.height ? options.height : "600";
   if (options.sketch) {
    return (
     <iframe
