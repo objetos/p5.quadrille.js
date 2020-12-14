@@ -41,6 +41,9 @@ export function P5(
   </iframe>
   */
 
+  //<script src="/docs/sketches/board.js"></script>
+  //http://localhost:3000/docs/sketches/board.js
+
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf("."));
@@ -52,7 +55,7 @@ export function P5(
     let width: string = options.width ? options.width : '600';
     let height = options.height ? options.height : '600';
     //{`${name}`}
-    /*
+    // /*
     return (
       <div id={`${name}`} class={`${classes.p5} center`}>
         {p5Loaded ? 'p5 already loaded' : <script src={`${p5Lib}`}></script>}
@@ -60,15 +63,20 @@ export function P5(
         {sketchLoaded ? 'p5 sketch already loaded' : <script src={`${options.sketch}`}></script>}
       </div>
     );
+    // <script src="/p5.quadrille.js/docs/sketches/p5.quadrille.js"></script>
     // */
    return (
     <iframe
       id={`${name}`} class={`${classes.p5} center`} width={`${width}`} height={`${height}`}
       srcdoc={`
-      <head>
-      </head>
+      <!DOCTYPE html>
       <html>
-        <body>Hello, <b>babe world</b>.
+        <head>
+          <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js></script>
+          <script src=${p5Quadrille}></script>
+          <script src="/p5.quadrille.js/docs/sketches/board.js"></script>
+        </head>
+        <body>
         </body>
       </html>
     `}>
