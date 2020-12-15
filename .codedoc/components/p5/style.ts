@@ -5,7 +5,7 @@ export const P5Style = themedStyle<CodedocTheme>(theme => ({
   p5: {
     display: 'inline-block',
     verticalAlign: 'middle',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 8,
     maxWidth: 800,
     margin: 16,
@@ -21,7 +21,7 @@ export const P5Style = themedStyle<CodedocTheme>(theme => ({
     '&.center': {
       margin: 'auto',
       width: '100%',
-      border: '3px solid red',
+      border: '1px solid cyan',
       padding: '10px',
     },
 

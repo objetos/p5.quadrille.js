@@ -8,6 +8,7 @@ import { content } from "../../content";
 export interface P5Options {
   // --> a nice interface for possible props
   sketch: string; // --> sketch location. Note that all props MUST be of type `string`
+  id: string;
   width: string;
   height: string;
 }
@@ -22,34 +23,38 @@ export function P5(
   // custom vars
   let repo: string = "p5.quadrille.js";
   let libname: string = "/".concat(repo);
-  let filename = options.sketch.split("/").pop();
-  let name: string = filename!.substr(0, filename!.lastIndexOf("."));
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
   let lib1: string = "/docs/sketches/p5.quadrille.js";
-  let w: string = options.width ? options.width : "800";
-  let h: string = options.height ? options.height : "600";
+  let width: string = options.width ? options.width : "800";
+  let height: string = options.height ? options.height : "600";
+  let border: number = 10;
+  width = (+width + 2*border).toString();
+  height = (+height + 2*border).toString();
   if (options.sketch) {
-   return (
-    <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px; height: ${h}px`}
-      srcdoc={`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <script src=${p5Lib}></script>
-          <script src=${libname.concat(lib1)}></script>
-          <script src=${libname.concat(options.sketch)}></script>
-        </head>
-        <body>
-        </body>
-      </html>
+    let filename = options.sketch.split("/").pop();
+    let name: string = filename!.substr(0, filename!.lastIndexOf("."));
+    return (
+      <iframe
+        id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
+        srcdoc={`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src=${p5Lib}></script>
+            <script src=${libname.concat(lib1)}></script>
+            <script src=${libname.concat(options.sketch)}></script>
+          </head>
+          <body>
+          </body>
+        </html>
     `}>
     </iframe>
   );
   } else {
+    let name = options.id ? options.id : "inline";
     return (
       <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px; height: ${h}px`}
+      id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
       srcdoc={`
       <!DOCTYPE html>
       <html>

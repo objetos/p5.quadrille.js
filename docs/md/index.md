@@ -27,7 +27,7 @@
 
 Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js) (use the *a*, *s*, *w* and *z* to move the quadrille):
 
-> :P5 sketch=/docs/sketches/board.js, width=200, height=400
+> :P5 sketch=/docs/sketches/board.js, width=400, height=400
 
 Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory) (use the *a*, *s*, *w* and *z* to move the quadrille and *g* or *v* to stick it):
 
