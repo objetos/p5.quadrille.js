@@ -31,7 +31,7 @@ export function P5(
   if (options.sketch) {
    return (
     <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px, height: ${h}px`}
+      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px; height: ${h}px`}
       srcdoc={`
       <!DOCTYPE html>
       <html>
@@ -49,7 +49,7 @@ export function P5(
   } else {
     return (
       <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px, height: ${h}px`}
+      id={`${name}`} class={`${classes.p5} center`} style={`width: ${w}px; height: ${h}px`}
       srcdoc={`
       <!DOCTYPE html>
       <html>
