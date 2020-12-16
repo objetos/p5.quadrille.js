@@ -4,6 +4,7 @@ import { CodedocTheme } from "@codedoc/core"; // --> Type helper for theme objec
 
 import { P5Style } from "./style"; // @see tab:style.ts
 import { content } from "../../content";
+import { config } from "../../config";
 
 export interface P5Options {
   // --> a nice interface for possible props
@@ -22,7 +23,7 @@ export function P5(
 ) {
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
   // custom vars
-  let repo: string = "p5.quadrille.js";
+  let repo: string = config.misc?.github?.repo ? config.misc?.github?.repo : "dummy";
   let libname: string = "/".concat(repo);
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
   let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js";
@@ -55,8 +56,7 @@ export function P5(
   );
   } else {
     let name = options.id ? options.id : "inline";
-    let htmlCode: string = (<div>{content}</div>).innerHTML;
-    htmlCode = htmlCode.replace(/<\/?[^>]+(>|$)/g, "");
+    const code = (<div>{content}</div>)!.textContent;
     return (
       <iframe
       id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
@@ -64,9 +64,9 @@ export function P5(
       <!DOCTYPE html>
       <html>
         <head>
-          <script src=${p5Lib}></script>
+        ${sound ? "<script src=".concat(p5Lib).concat("></script>").concat("<script src=".concat(p5Sound).concat("></script>")) : "<script src=".concat(p5Lib).concat("></script>")}
           <script src=${libname.concat(lib1)}></script>
-          <script> ${htmlCode} </script>
+          <script> ${code} </script>
         </head>
         <body>
         </body>
