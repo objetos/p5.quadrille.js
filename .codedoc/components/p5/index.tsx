@@ -14,6 +14,11 @@ export interface P5Options {
   height: string;
   sound: string;
   version: string;
+  lib1: string;
+  lib2: string;
+  lib3: string;
+  lib4: string;
+  lib5: string;
 }
 
 export function P5(
@@ -30,7 +35,25 @@ export function P5(
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
   let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
   let sound: boolean = options.sound ? (options.sound === 'true') : true;
-  let lib1: string = "/docs/sketches/p5.quadrille.js";
+  let libs: string = "<script src=".concat(p5Lib).concat("></script>");
+  if (sound) {
+    libs = libs.concat("<script src=".concat(p5Sound).concat("></script>"));
+  }
+  if (options.lib1) {
+    libs = libs.concat("<script src=".concat((options.lib1).concat("></script>")));
+  }
+  if (options.lib2) {
+    libs = libs.concat("<script src=".concat((options.lib2).concat("></script>")));
+  }
+  if (options.lib3) {
+    libs = libs.concat("<script src=".concat((options.lib3).concat("></script>")));
+  }
+  if (options.lib4) {
+    libs = libs.concat("<script src=".concat((options.lib4).concat("></script>")));
+  }
+  if (options.lib5) {
+    libs = libs.concat("<script src=".concat((options.lib5).concat("></script>")));
+  }
   let width: string = options.width ? options.width : "800";
   let height: string = options.height ? options.height : "600";
   let padding: number = 10;
@@ -46,8 +69,7 @@ export function P5(
         <!DOCTYPE html>
         <html>
           <head>
-            ${sound ? "<script src=".concat(p5Lib).concat("></script>").concat("<script src=".concat(p5Sound).concat("></script>")) : "<script src=".concat(p5Lib).concat("></script>")}
-            <script src=${libname.concat(lib1)}></script>
+            ${libs}
             <script src=${libname.concat(options.sketch)}></script>
           </head>
           <body>
@@ -66,8 +88,7 @@ export function P5(
       <!DOCTYPE html>
       <html>
         <head>
-        ${sound ? "<script src=".concat(p5Lib).concat("></script>").concat("<script src=".concat(p5Sound).concat("></script>")) : "<script src=".concat(p5Lib).concat("></script>")}
-          <script src=${libname.concat(lib1)}></script>
+          ${libs}
           <script> ${code} </script>
         </head>
         <body>

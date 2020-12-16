@@ -1,6 +1,6 @@
 # P5 iframe use
 
-> :P5 width=200, height=400
+> :P5 lib1=/p5.quadrille.js/docs/sketches/p5.quadrille.js, width=200, height=400
 >
 > const ROWS = 20;
 > const COLS = 10;
