@@ -11,6 +11,7 @@ export interface P5Options {
   id: string;
   width: string;
   height: string;
+  sound: string;
 }
 
 export function P5(
@@ -24,12 +25,15 @@ export function P5(
   let repo: string = "p5.quadrille.js";
   let libname: string = "/".concat(repo);
   let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
+  let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js";
+  let sound: boolean = options.sound ? (options.sound === 'true') : true;
   let lib1: string = "/docs/sketches/p5.quadrille.js";
   let width: string = options.width ? options.width : "800";
   let height: string = options.height ? options.height : "600";
   let border: number = 10;
   width = (+width + 2*border).toString();
   height = (+height + 2*border).toString();
+  //<script src=${p5Lib}></script>
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf("."));
