@@ -13,6 +13,7 @@ export interface P5Options {
   width: string;
   height: string;
   sound: string;
+  version: string;
 }
 
 export function P5(
@@ -23,10 +24,11 @@ export function P5(
 ) {
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
   // custom vars
+  let version: string = options.version ? options.version : "1.1.9";
   let repo: string = config.misc?.github?.repo ? config.misc?.github?.repo : "dummy";
   let libname: string = "/".concat(repo);
-  let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js";
-  let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/addons/p5.sound.min.js";
+  let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
+  let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
   let sound: boolean = options.sound ? (options.sound === 'true') : true;
   let lib1: string = "/docs/sketches/p5.quadrille.js";
   let width: string = options.width ? options.width : "800";
