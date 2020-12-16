@@ -33,7 +33,6 @@ export function P5(
   let border: number = 10;
   width = (+width + 2*border).toString();
   height = (+height + 2*border).toString();
-  //<script src=${p5Lib}></script>
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf("."));
@@ -44,7 +43,7 @@ export function P5(
         <!DOCTYPE html>
         <html>
           <head>
-            <script src=${p5Lib}></script>
+            ${sound ? "<script src=".concat(p5Lib).concat("></script>").concat("<script src=".concat(p5Sound).concat("></script>")) : "<script src=".concat(p5Lib).concat("></script>")}
             <script src=${libname.concat(lib1)}></script>
             <script src=${libname.concat(options.sketch)}></script>
           </head>
