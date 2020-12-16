@@ -21,8 +21,8 @@ export const P5Style = themedStyle<CodedocTheme>(theme => ({
     '&.center': {
       margin: 'auto',
       width: '100%',
-      border: '1px solid cyan',
-      padding: '10px',
+      border: '2px solid cyan',
+      padding: '3px',
     },
 
     '& img': {

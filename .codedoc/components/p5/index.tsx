@@ -30,9 +30,9 @@ export function P5(
   let lib1: string = "/docs/sketches/p5.quadrille.js";
   let width: string = options.width ? options.width : "800";
   let height: string = options.height ? options.height : "600";
-  let border: number = 10;
-  width = (+width + 2*border).toString();
-  height = (+height + 2*border).toString();
+  let padding: number = 10;
+  width = (+width + 2*(padding)).toString();
+  height = (+height + 2*(padding)).toString();
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
     let name: string = filename!.substr(0, filename!.lastIndexOf("."));
@@ -55,6 +55,8 @@ export function P5(
   );
   } else {
     let name = options.id ? options.id : "inline";
+    let htmlCode: string = (<div>{content}</div>).innerHTML;
+    htmlCode = htmlCode.replace(/<\/?[^>]+(>|$)/g, "");
     return (
       <iframe
       id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
@@ -64,7 +66,7 @@ export function P5(
         <head>
           <script src=${p5Lib}></script>
           <script src=${libname.concat(lib1)}></script>
-          <script> ${content} </script>
+          <script> ${htmlCode} </script>
         </head>
         <body>
         </body>
