@@ -34,9 +34,11 @@ export function P5(
   let version: string = options.version ? options.version : "1.1.9";
   let repo: string = config.misc?.github?.repo ? config.misc?.github?.repo : "dummy";
   let repoprefix: string = "/".concat(repo);
-  let p5Lib: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
-  let p5Sound: string = "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
-  let sound: boolean = options.sound ? (options.sound === 'true') : true;
+  let p5Lib: string = options.p5Lib ? repoprefix.concat(options.p5Lib) : 
+  "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
+  let p5Sound: string = options.p5Sound ? repoprefix.concat(options.p5Sound) :
+  "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
+  let sound: boolean = options.sound ? options.sound === 'false' ? false : true : true;
   let libs: string = "<script src=".concat(p5Lib).concat("></script>");
   if (sound) {
     libs = libs.concat("<script src=".concat(p5Sound).concat("></script>"));
