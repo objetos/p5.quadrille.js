@@ -68,43 +68,29 @@ export function P5(
   let padding: number = 10;
   width = (+width + 2*(padding)).toString();
   height = (+height + 2*(padding)).toString();
+  let name: string;
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
-    let name: string = filename!.substr(0, filename!.lastIndexOf("."));
-    return (
-      <iframe
-        id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
-        srcdoc={`
+    name = filename!.substr(0, filename!.lastIndexOf("."));
+  } else {
+    name = options.id ? options.id : "inline";
+  }
+  let code: string = options.sketch ? "src=".concat(repoprefix.concat(options.sketch)).concat(">") :
+  ">".concat((<div>{content}</div>)!.textContent!);
+  return (
+    <iframe
+      id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
+      srcdoc={`
         <!DOCTYPE html>
         <html>
           <head>
             ${libs}
-            <script src=${repoprefix.concat(options.sketch)}></script>
+            <script ${code} </script>
           </head>
           <body>
           </body>
         </html>
-    `}>
+      `}>
     </iframe>
   );
-  } else {
-    let name = options.id ? options.id : "inline";
-    const code = (<div>{content}</div>)!.textContent;
-    return (
-      <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
-      srcdoc={`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          ${libs}
-          <script> ${code} </script>
-        </head>
-        <body>
-        </body>
-      </html>
-    `}>
-    </iframe>
-    );
-  }
 }
