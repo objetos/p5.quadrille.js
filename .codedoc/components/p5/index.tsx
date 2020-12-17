@@ -14,8 +14,8 @@ export interface P5Options {
   height: string;
   sound: string;
   version: string;
-  p5Lib: string;
-  p5Sound: string;
+  p5lib: string;
+  p5sound: string;
   lib1: string;
   lib2: string;
   lib3: string;
@@ -34,14 +34,14 @@ export function P5(
   let version: string = options.version ? options.version : "1.1.9";
   let repo: string = config.misc?.github?.repo ? config.misc?.github?.repo : "dummy";
   let repoprefix: string = "/".concat(repo);
-  let p5Lib: string = options.p5Lib ? repoprefix.concat(options.p5Lib) : 
+  let p5lib: string = options.p5lib ? repoprefix.concat(options.p5lib) : 
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
-  let p5Sound: string = options.p5Sound ? repoprefix.concat(options.p5Sound) :
+  let p5sound: string = options.p5sound ? repoprefix.concat(options.p5sound) :
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
-  let sound: boolean = options.sound ? options.sound === "true" : options.p5Sound ? true : false;
-  let libs: string = "<script src=".concat(p5Lib).concat("></script>");
+  let sound: boolean = options.sound ? options.sound === "true" : options.p5sound ? true : false;
+  let libs: string = "<script src=".concat(p5lib).concat("></script>");
   if (sound) {
-    libs = libs.concat("<script src=".concat(p5Sound).concat("></script>"));
+    libs = libs.concat("<script src=".concat(p5sound).concat("></script>"));
   }
   if (options.lib1) {
     libs = options.lib1.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib1).concat("></script>"))) : 
