@@ -75,8 +75,8 @@ export function P5(
   } else {
     name = options.id ? options.id : "inline";
   }
-  let code: string = options.sketch ? "src=".concat(repoprefix.concat(options.sketch)).concat(">") :
-  ">".concat((<div>{content}</div>)!.textContent!);
+  let code: string = options.sketch ? "<script src=".concat(repoprefix.concat(options.sketch)).concat("></script>") :
+  "<script>".concat((<div>{content}</div>)!.textContent!).concat("</script>");
   return (
     <iframe
       id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
@@ -85,7 +85,7 @@ export function P5(
         <html>
           <head>
             ${libs}
-            <script ${code} </script>
+            ${code}
           </head>
           <body>
           </body>
