@@ -25,11 +25,84 @@
 
 # Examples
 
-Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js) (use the *a*, *s*, *w* and *z* to move the quadrille):
+Create a board and fill it with some quadrilles. Use the *a*, *s*, *w* and *z* keys to move the quadrille and *g* or *v* to stick it.
 
 > :P5 lib1=/docs/sketches/p5.quadrille.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
 
-Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory) (use the *a*, *s*, *w* and *z* to move the quadrille and *g* or *v* to stick it):
+Display and run the above sketch with the following markdown:
+
+```md
+> :P5 lib1=/docs/sketches/p5.quadrille.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
+```
+
+> :Collapse label=the board.js running in p5 global mode
+> 
+> ```md | board.js
+> const ROWS = 20;
+> const COLS = 20;
+> const LENGTH = 20;
+> var quadrille;
+> var board;
+> var x = 2, y = 2;
+> 
+> function setup() {
+>   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+>   board = createBoard(ROWS, COLS);
+>   quadrille = createQuadrille([[color('cyan'), '👽', 0],
+>   [0, '🤔', '🙈'],
+>   [0, color('#770811'), 0],
+>   ['g', 'o', 'l']
+>   ]);
+> }
+> 
+> function draw() {
+>   background('#060621');
+>   drawBoard(board, LENGTH);
+>   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+> }
+> 
+> function keyPressed() {
+>   if (keyCode === LEFT_ARROW) {
+>     quadrille.reflect();
+>   } else if (keyCode === RIGHT_ARROW) {
+>     quadrille.rotate();
+>   }
+>   if (key === 'a') {
+>     x--;
+>   }
+>   if (key === 's') {
+>     x++;
+>   }
+>   if (key === 'w') {
+>     y--;
+>   }
+>   if (key === 'z') {
+>     y++;
+>   }
+>   if (key === 'g') {
+>     glue(quadrille, y, x, false);
+>   }
+>   if (key === 'v') {
+>     glue(quadrille, y, x);
+>   }
+> }
+> 
+> function glue(quadrille, row, col, validate = true) {
+>   if (validate) {
+>     try {
+>       let update = board.add(quadrille, row, col);
+>       if (update.memoryHitCounter === 0) {
+>         board = update.quadrille;
+>       }
+>     } catch (out_of_bounds) {
+>       console.log(out_of_bounds);
+>     }
+>   }
+>   else {
+>     board = board.add(quadrille, row, col).quadrille;
+>   }
+> }
+> ```
 
 # TODOs
 
@@ -41,7 +114,7 @@ Create a board and fill it with some quadrilles. Excerpt from the [memory exampl
    2. Use a [SageCell](https://sagecell.sagemath.org/) to interface to SageMath from the web.
 3. Implement other [2D tilings](https://en.wikipedia.org/wiki/Square_tiling) different then the quadrille. See also [tesselation](https://en.wikipedia.org/wiki/Tessellation).
 4. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature. See also [Wolfram](https://en.wikipedia.org/wiki/Wolfram_Language) [ArrayMesh](https://reference.wolfram.com/language/ref/ArrayMesh.html).
-5. Improve this this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
+5. Improve this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
    1. Improve the [codedoc](https://codedoc.cc/) [p5 component](https://github.com/objetos/p5.quadrille.js/tree/pages/.codedoc/components/p5) used to deploy the page.
    2. Customize the theme.
 
