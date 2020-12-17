@@ -32,11 +32,10 @@ export function P5(
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
   // custom vars
   let version: string = options.version ? options.version : "1.1.9";
-  let repo: string = config.misc?.github?.repo ? config.misc?.github?.repo : "dummy";
-  let repoprefix: string = "/".concat(repo);
-  let p5lib: string = options.p5lib ? repoprefix.concat(options.p5lib) : 
+  let repo: string = config.misc?.github?.repo ? "/".concat(config.misc?.github?.repo) : "fixrepovar";
+  let p5lib: string = options.p5lib ? repo.concat(options.p5lib) : 
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
-  let p5sound: string = options.p5sound ? repoprefix.concat(options.p5sound) :
+  let p5sound: string = options.p5sound ? repo.concat(options.p5sound) :
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
   let sound: boolean = options.sound ? options.sound === "true" : options.p5sound ? true : false;
   let libs: string = "<script src=".concat(p5lib).concat("></script>");
@@ -45,23 +44,23 @@ export function P5(
   }
   if (options.lib1) {
     libs = options.lib1.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib1).concat("></script>"))) : 
-    libs.concat("<script src=".concat(repoprefix.concat(options.lib1).concat("></script>")));
+    libs.concat("<script src=".concat(repo.concat(options.lib1).concat("></script>")));
   }
   if (options.lib2) {
     libs = options.lib2.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib2).concat("></script>"))) : 
-    libs.concat("<script src=".concat(repoprefix.concat(options.lib2).concat("></script>")));
+    libs.concat("<script src=".concat(repo.concat(options.lib2).concat("></script>")));
   }
   if (options.lib3) {
     libs = options.lib3.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib3).concat("></script>"))) : 
-    libs.concat("<script src=".concat(repoprefix.concat(options.lib3).concat("></script>")));
+    libs.concat("<script src=".concat(repo.concat(options.lib3).concat("></script>")));
   }
   if (options.lib4) {
     libs = options.lib4.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib4).concat("></script>"))) : 
-    libs.concat("<script src=".concat(repoprefix.concat(options.lib4).concat("></script>")));
+    libs.concat("<script src=".concat(repo.concat(options.lib4).concat("></script>")));
   }
   if (options.lib5) {
     libs = options.lib5.substring(0, 4) == 'http' ? libs.concat("<script src=".concat((options.lib5).concat("></script>"))) : 
-    libs.concat("<script src=".concat(repoprefix.concat(options.lib5).concat("></script>")));
+    libs.concat("<script src=".concat(repo.concat(options.lib5).concat("></script>")));
   }
   let width: string = options.width ? options.width : "800";
   let height: string = options.height ? options.height : "600";
@@ -75,7 +74,7 @@ export function P5(
   } else {
     id = options.id ? options.id : "inline";
   }
-  let code: string = options.sketch ? "<script src=".concat(repoprefix.concat(options.sketch)).concat("></script>") :
+  const code: string = options.sketch ? "<script src=".concat(repo.concat(options.sketch)).concat("></script>") :
   "<script>".concat((<div>{content}</div>)!.textContent!).concat("</script>");
   return (
     <iframe
