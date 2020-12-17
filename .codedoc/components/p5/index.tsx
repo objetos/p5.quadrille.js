@@ -38,7 +38,7 @@ export function P5(
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");
   let p5Sound: string = options.p5Sound ? repoprefix.concat(options.p5Sound) :
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/addons/p5.sound.min.js");
-  let sound: boolean = options.sound ? options.sound === 'false' ? false : true : true;
+  let sound: boolean = options.sound ? options.sound === "true" : options.p5Sound ? true : false;
   let libs: string = "<script src=".concat(p5Lib).concat("></script>");
   if (sound) {
     libs = libs.concat("<script src=".concat(p5Sound).concat("></script>"));
