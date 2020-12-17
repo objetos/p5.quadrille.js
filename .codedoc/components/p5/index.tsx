@@ -68,18 +68,18 @@ export function P5(
   let padding: number = 10;
   width = (+width + 2*(padding)).toString();
   height = (+height + 2*(padding)).toString();
-  let name: string;
+  let id: string;
   if (options.sketch) {
     let filename = options.sketch.split("/").pop();
-    name = filename!.substr(0, filename!.lastIndexOf("."));
+    id = filename!.substr(0, filename!.lastIndexOf("."));
   } else {
-    name = options.id ? options.id : "inline";
+    id = options.id ? options.id : "inline";
   }
   let code: string = options.sketch ? "<script src=".concat(repoprefix.concat(options.sketch)).concat("></script>") :
   "<script>".concat((<div>{content}</div>)!.textContent!).concat("</script>");
   return (
     <iframe
-      id={`${name}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
+      id={`${id}`} class={`${classes.p5} center`} style={`width: ${width}px; height: ${height}px`}
       srcdoc={`
         <!DOCTYPE html>
         <html>
