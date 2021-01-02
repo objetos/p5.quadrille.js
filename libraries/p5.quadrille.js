@@ -70,6 +70,7 @@ class Quadrille {
    * Fills the quadrille memory2D entries using big-endian and row-major ordering from the integer value.
    * @param {number} value 
    * @param {p5.Color | string} fill 
+   * @throws 'Value is to high to fill quadrille' reading exception
    */
   fromInt(value, fill) {
     let length = this.width * this.height;
@@ -77,7 +78,7 @@ class Quadrille {
       throw new Error(`Value is to high to fill quadrille`);
     }
     for (let i = 0; i <= length - 1; i++) {
-      if ((value & (1 << length - 1 - i)) !== 0) {
+      if ((value & (1 << length - 1 - i))) {
         this.memory2D[((i / this.width) | 0)][(i % this.width)] = fill;
       }
     }
