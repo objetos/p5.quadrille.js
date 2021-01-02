@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var t, T;
+var t, T, L, Lbit;
 var quadrille;
 var clone;
 var x = 2, y = 2;
@@ -19,12 +19,20 @@ function setup() {
                        [c, c, 0],
                        [0, c, 0],
                       ]);
-  console.log('T width: ', T.width);
-  console.log('T height: ', T.height);
-  console.log('T int: ', T.toInt());
+  L = createQuadrille([[c, 0],
+                        [c, 0],
+                        [c, c],
+                       ]);
   t = createBoard(3, 3);
   console.log(t.width, t.height);
   t.fromInt(154, '👽');
+  Lbit = createBoard(2, 3);
+  console.log('Lbit width: ', Lbit.width);
+  console.log('Lbit height: ', Lbit.height);
+  console.log('Lbit length: ', Lbit.length);
+  console.log('Lbit int: ', Lbit.toInt());
+  Lbit.fromInt(43, '👽');
+  console.log('Lbit int: ', Lbit.toInt());
   quadrille.reflect();
   clone = quadrille.clone();
   clone.reflect();
@@ -34,8 +42,8 @@ function draw() {
   background('#060621');
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
   drawQuadrille(clone, 2, 8, LENGTH, 0);
-  drawQuadrille(T, 2, 12, LENGTH);
-  drawQuadrille(t, 2, 16, LENGTH);
+  //drawQuadrille(L, 2, 12, LENGTH);
+  drawQuadrille(Lbit, 2, 12, LENGTH);
 }
 
 function keyPressed() {

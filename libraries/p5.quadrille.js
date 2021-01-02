@@ -23,7 +23,7 @@ class Quadrille {
       this._memory2D = arguments[0];
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(arguments[0]).fill().map(() => Array(arguments[1]).fill(0));
+      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
     }
   }
 
@@ -78,7 +78,7 @@ class Quadrille {
     }
     for (let i = 0; i <= length - 1; i++) {
       if ((value & (1 << length - 1 - i)) !== 0) {
-        this.memory2D[((i / this.height) | 0)][(i % this.width)] = fill;
+        this.memory2D[((i / this.width) | 0)][(i % this.width)] = fill;
       }
     }
   }
