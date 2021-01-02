@@ -8,7 +8,7 @@ var myp5 = new p5((p) => {
 
   p.setup = function () {
     p.createCanvas(COLS * LENGTH, ROWS * LENGTH);
-    board = p.createBoard(ROWS, COLS);
+    board = p.createBoard(COLS, ROWS);
     quadrille = p.createQuadrille([[p.color('cyan'), '👽',                0   ],
                                    [0,               '🤔',               '🙈' ],
                                    [0,                p.color('#770811'), 0  ],

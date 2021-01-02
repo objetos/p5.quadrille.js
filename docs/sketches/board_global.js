@@ -7,7 +7,7 @@ var x = 2, y = 2;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  board = createBoard(ROWS, COLS);
+  board = createBoard(COLS, ROWS);
   quadrille = createQuadrille([[color('cyan'), '👽', 0],
   [0, '🤔', '🙈'],
   [0, color('#770811'), 0],
