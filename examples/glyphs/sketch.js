@@ -21,7 +21,7 @@ function setup() {
                       ]);
   console.log('T width: ', T.width);
   console.log('T width: ', T.height);
-  console.log('T int: ', T.parseInt());
+  console.log('T int: ', T.toInt());
   t = createBoard(3, 3);
   console.log(t.width, t.height);
   t.fromInt(154, '👽');
@@ -34,8 +34,8 @@ function draw() {
   background('#060621');
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
   drawQuadrille(clone, 2, 8, LENGTH, 0);
-  //drawQuadrille(T, 2, 14, LENGTH);
-  drawQuadrille(t, 2, 14, LENGTH);
+  drawQuadrille(T, 2, 12, LENGTH);
+  drawQuadrille(t, 2, 16, LENGTH);
 }
 
 function keyPressed() {
