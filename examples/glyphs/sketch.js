@@ -20,7 +20,7 @@ function setup() {
                        [0, c, 0],
                       ]);
   console.log('T width: ', T.width);
-  console.log('T width: ', T.height);
+  console.log('T height: ', T.height);
   console.log('T int: ', T.toInt());
   t = createBoard(3, 3);
   console.log(t.width, t.height);
