@@ -43,6 +43,23 @@ class Quadrille {
     return this._memory2D.length;
   }
 
+  get length() {
+    return this.width * this.height;
+  }
+
+  parseInt() {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.memory2D[i][j]) {
+          //result += Math.pow(2, this.length - 1 - i * this.width - j);
+          result += Math.pow(2, this.width * (this.height - i) - (j + 1));
+        }
+      }
+    }
+    return result;
+  }
+
   /**
    * Sets all quadrille memory entries to 0.
    */
