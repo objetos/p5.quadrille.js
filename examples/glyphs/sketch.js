@@ -22,11 +22,8 @@ function setup() {
   console.log('T width: ', T.width);
   console.log('T width: ', T.height);
   console.log('T int: ', T.parseInt());
-  //t = createQuadrille(3, 3);
-  t = createQuadrille([[0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0],
-   ]);
+  t = createBoard(3, 3);
+  console.log(t.width, t.height);
   t.fromInt(154, '👽');
   quadrille.reflect();
   clone = quadrille.clone();

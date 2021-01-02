@@ -43,16 +43,22 @@ class Quadrille {
     return this._memory2D.length;
   }
 
+  /**
+   * Same as width * height.
+   */
   get length() {
     return this.width * this.height;
   }
 
-  parseInt() {
+  /**
+   * @returns {number} Quadrille int representation using big-endian and row-major ordering
+   * of the memory2D entries.
+   */
+  toInt() {
     let result = 0;
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if (this.memory2D[i][j]) {
-          //result += Math.pow(2, this.length - 1 - i * this.width - j);
           result += Math.pow(2, this.width * (this.height - i) - (j + 1));
         }
       }
@@ -60,13 +66,18 @@ class Quadrille {
     return result;
   }
 
+  /**
+   * Fills the quadrille memory2D entries using big-endian and row-major ordering from the integer value.
+   * @param {number} value 
+   * @param {p5.Color | string} fill 
+   */
   fromInt(value, fill) {
     let length = this.width * this.height;
     if (value.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);
     }
     for (let i = 0; i <= length - 1; i++) {
-      if ((value & (1 << length - 1 - i)) != 0) {
+      if ((value & (1 << length - 1 - i)) !== 0) {
         this.memory2D[((i / this.height) | 0)][(i % this.width)] = fill;
       }
     }
@@ -150,11 +161,11 @@ class Quadrille {
 (function () {
   p5.prototype.createQuadrille = function(shape) {
     return new Quadrille(shape);
-  };
+  }
 
   p5.prototype.createBoard = function(width, height) {
     return new Quadrille(width, height);
-  };
+  }
 
   p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04'), fill = this.color('#859900')) {
     this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, fill);
