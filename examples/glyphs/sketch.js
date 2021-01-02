@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var T;
+var t, T;
 var quadrille;
 var clone;
 var x = 2, y = 2;
@@ -22,6 +22,12 @@ function setup() {
   console.log('T width: ', T.width);
   console.log('T width: ', T.height);
   console.log('T int: ', T.parseInt());
+  //t = createQuadrille(3, 3);
+  t = createQuadrille([[0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+   ]);
+  t.fromInt(154, '👽');
   quadrille.reflect();
   clone = quadrille.clone();
   clone.reflect();
@@ -31,7 +37,8 @@ function draw() {
   background('#060621');
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
   drawQuadrille(clone, 2, 8, LENGTH, 0);
-  drawQuadrille(T, 2, 14, LENGTH);
+  //drawQuadrille(T, 2, 14, LENGTH);
+  drawQuadrille(t, 2, 14, LENGTH);
 }
 
 function keyPressed() {

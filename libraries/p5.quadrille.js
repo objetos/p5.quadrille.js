@@ -60,6 +60,18 @@ class Quadrille {
     return result;
   }
 
+  fromInt(value, fill) {
+    let length = this.width * this.height;
+    if (value.toString(2).length > length) {
+      throw new Error(`Value is to high to fill quadrille`);
+    }
+    for (let i = 0; i <= length - 1; i++) {
+      if ((value & (1 << length - 1 - i)) != 0) {
+        this.memory2D[((i / this.height) | 0)][(i % this.width)] = fill;
+      }
+    }
+  }
+
   /**
    * Sets all quadrille memory entries to 0.
    */
