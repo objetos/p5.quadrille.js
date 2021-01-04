@@ -19,19 +19,22 @@ function setup() {
                        [c, c, 0],
                        [0, c, 0],
                       ]);
-  L = createQuadrille([[c, 0],
-                        [c, 0],
-                        [c, c],
+  L = createQuadrille([ [c, 0, 0],
+                        [c, 0, 0],
+                        [c, 0, 0],
+                        [c, c, c],
                        ]);
+  console.log(`num:`, L.toInt());
   t = createBoard(3, 3);
   console.log(t.width, t.height);
   t.fromInt(154, '👽');
-  Lbit = createBoard(2, 3);
+  //Lbit = createBoard(3, 4);
+  Lbit = createQuadrille(3, 4, 2343, '👽');
   console.log('Lbit width: ', Lbit.width);
   console.log('Lbit height: ', Lbit.height);
   console.log('Lbit length: ', Lbit.length);
   console.log('Lbit int: ', Lbit.toInt());
-  Lbit.fromInt(43, '👽');
+  //Lbit.fromInt(2343, '👽');
   console.log('Lbit int: ', Lbit.toInt());
   quadrille.reflect();
   clone = quadrille.clone();

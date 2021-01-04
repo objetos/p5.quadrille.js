@@ -73,6 +73,7 @@ class Quadrille {
    * @throws 'Value is to high to fill quadrille' reading exception
    */
   fromInt(value, fill) {
+    console.log(`two`);
     let length = this.width * this.height;
     if (value.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);
@@ -160,8 +161,23 @@ class Quadrille {
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
-  p5.prototype.createQuadrille = function(shape) {
-    return new Quadrille(shape);
+  p5.prototype.createQuadrille = function() {
+    if (arguments.length === 1 && Array.isArray(arguments[0])) {
+      return new Quadrille(arguments[0]);
+    }
+    // TODO these two require instance mode testing
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+                                  typeof arguments[2] === 'number') {
+      let quadrille = new Quadrille(arguments[0], arguments[1]);
+      quadrille.fromInt(arguments[2], /*this.color('#FBBC04')*/ this.color(`blue`));
+      return quadrille;
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+                                  typeof arguments[2] === 'number' /*&& typeof arguments[3] === 'number'*/) {
+      let quadrille = new Quadrille(arguments[0], arguments[1]);
+      quadrille.fromInt(arguments[2], arguments[3]);
+      return quadrille;
+    }
   }
 
   p5.prototype.createBoard = function(width, height) {
