@@ -85,12 +85,12 @@ class Quadrille {
     }
   }
 
-  ij(i) {
-    return {i: (i / this.width) | 0, j: i % this.width};
+  ij(i, width = this.width) {
+    return {i: (i / width) | 0, j: i % width};
   }
 
-  index(row, col) {
-    return row * this.width + col;
+  index(row, col, width = this.width) {
+    return row * width + col;
   }
 
   /**
