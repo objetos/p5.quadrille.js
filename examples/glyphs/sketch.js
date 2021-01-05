@@ -29,7 +29,7 @@ function setup() {
   console.log(t.width, t.height);
   t.fromInt(154, '👽');
   //Lbit = createBoard(3, 4);
-  Lbit = createQuadrille(3, 4, 2343, '👽');
+  Lbit = createQuadrille(3, 4, 2343/*, '👽'*/);
   console.log('Lbit width: ', Lbit.width);
   console.log('Lbit height: ', Lbit.height);
   console.log('Lbit length: ', Lbit.length);

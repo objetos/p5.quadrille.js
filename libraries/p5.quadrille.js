@@ -80,9 +80,17 @@ class Quadrille {
     }
     for (let i = 0; i <= length - 1; i++) {
       if ((value & (1 << length - 1 - i))) {
-        this.memory2D[((i / this.width) | 0)][(i % this.width)] = fill;
+        this.memory2D[this.ij(i).i][this.ij(i).j] = fill;
       }
     }
+  }
+
+  ij(i) {
+    return {i: (i / this.width) | 0, j: i % this.width};
+  }
+
+  index(row, col) {
+    return row * this.width + col;
   }
 
   /**
