@@ -45,6 +45,7 @@ function keyPressed() {
   if (key === 'v') {
     glue(quadrille, y, x);
   }
+  console.log(board.order);
 }
 
 function glue(quadrille, row, col, validate = true) {

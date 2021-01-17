@@ -44,6 +44,21 @@ class Quadrille {
   }
 
   /**
+   * @returns {number} Number of non-empty queadrille cells.
+   */
+  get order() {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.memory2D[i][j]) {
+          result++;
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Same as width * height.
    */
   get length() {
