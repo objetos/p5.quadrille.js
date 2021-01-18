@@ -40,15 +40,27 @@ function keyPressed() {
     y++;
   }
   if (key === 'g') {
-    glue(quadrille, y, x, false);
-  }
-  if (key === 'v') {
     glue(quadrille, y, x);
   }
-  console.log(board.order);
+  if (key === 't') {
+    test(quadrille, y, x);
+  }
+  /*
+  if (key === 'v') {
+    glue(quadrille, y, x, false);
+  }
+  */
+  console.log('order', board.order);
+  console.log('column order', board.columnOrder(2));
+}
+
+function test(quadrille, row, col) {
+  board = Quadrille.AND(board, quadrille, row, col);
 }
 
 function glue(quadrille, row, col, validate = true) {
+  board = Quadrille.OR(board, quadrille, row, col);
+  /*
   if (validate) {
     try {
       let update = board.add(quadrille, row, col);
@@ -62,4 +74,5 @@ function glue(quadrille, row, col, validate = true) {
   else {
     board = board.add(quadrille, row, col).quadrille;
   }
+  */
 }

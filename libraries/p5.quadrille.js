@@ -12,6 +12,55 @@
  * article for details.
  */
 class Quadrille {
+  static AND(quadrille1, quadrille2, x=0, y=0) {
+    // i. create resulted quadrille
+    let w = x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : 
+                    Math.max(quadrille1.width,  quadrille2.width + x);
+    let h = y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : 
+                    Math.max(quadrille1.height, quadrille2.height + y);
+    let quadrille = new Quadrille(w, h);
+    // ii. fill quadrille with passed quadrilles
+    for (let i = 0; i < quadrille.memory2D.length; i++) {
+      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
+        let q1i = x < 0 ? i + x : i;
+        let q1j = y < 0 ? j + y : j;
+        let q2i = x > 0 ? i - x : i;
+        let q2j = y > 0 ? j - y : j;
+        if (quadrille1.read(q1i, q1j) && quadrille2.read(q2i, q2j)) {
+          quadrille.memory2D[i][j] = quadrille1.read(q1i, q1j);
+        }
+      }
+    }
+    // iii. return resulted quadrille
+    return quadrille;
+  }
+
+  static OR(quadrille1, quadrille2, x=0, y=0) {
+    // i. create resulted quadrille
+    let w = x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : 
+                    Math.max(quadrille1.width,  quadrille2.width + x);
+    let h = y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : 
+                    Math.max(quadrille1.height, quadrille2.height + y);
+    let quadrille = new Quadrille(w, h);
+    // ii. fill quadrille with passed quadrilles
+    for (let i = 0; i < quadrille.memory2D.length; i++) {
+      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
+        let q1i = x < 0 ? i + x : i;
+        let q1j = y < 0 ? j + y : j;
+        let q2i = x > 0 ? i - x : i;
+        let q2j = y > 0 ? j - y : j;
+        if (quadrille1.read(q1i, q1j)) {
+          quadrille.memory2D[i][j] = quadrille1.read(q1i, q1j);
+        }
+        if (quadrille2.read(q2i, q2j)) {
+          quadrille.memory2D[i][j] = quadrille2.read(q2i, q2j);
+        }
+      }
+    }
+    // iii. return resulted quadrille
+    return quadrille;
+  }
+
   /**
    * Constructs either an empty or a filled quadrille:
    * 1. Pass width and heigth to construct and empty quadrille (filled with 0's).
@@ -41,6 +90,47 @@ class Quadrille {
 
   get height() {
     return this._memory2D.length;
+  }
+
+  write(i, j, pattern) {
+    if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
+      this.memory2D[i][j] = pattern;
+    }
+  }
+
+  read(i, j) {
+    if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
+      return this.memory2D[i][j];
+    }
+    // return (i >= 0 && i < this.height && j >= 0 && j < this.width) ? this.memory2D[i][j] : undefined;
+  }
+
+  /**
+   * @param {number} j column.
+   * @returns {number} Number of non-empty queadrille cells at the jth column.
+   */
+  columnOrder(j) {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      if (this.memory2D[i][j]) {
+        result++;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @param {number} i row.
+   * @returns {number} Number of non-empty queadrille cells at the ith row.
+   */
+  rowOrder(i) {
+    let result = 0;
+    for (let j = 0; j < this.width; j++) {
+      if (this.memory2D[i][j]) {
+        result++;
+      }
+    }
+    return result;
   }
 
   /**
@@ -137,47 +227,6 @@ class Quadrille {
    */
   clone() {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
-  }
-
-  /**
-   * Adds given quadrille to this quadrille at (x,y) and returns the resulted 
-   * quadrille together with the number of memory collisions encountered.
-   * 
-   * This quadrille is not altered by a call to this method.
-   * 
-   * @param {Quadrille} quadrille buffer[rows][cols]
-   * @param {number} x memory2D row index
-   * @param {number} y memory2D column index
-   * @throws 'To far down' and 'To far right' memory2D reading exceptions
-   * @returns { Quadrille, number } { quadrille, memoryHitCounter } object literal
-   */
-  add(quadrille, x, y) {
-    let memoryHitCounter = 0;
-    // i. clone this quadrille
-    let result = this.clone();
-    // ii. fill cloned quadrille with passed quadrille
-    for (let i = 0; i < quadrille.memory2D.length; i++) {
-      // (e1) Check if current quadrille cell is too far down
-      if (result.memory2D[x + i] === undefined) {
-        throw new Error(`Too far down`);
-      }
-      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // (e2) Check if current passed quadrille cell is too far right
-        if (result.memory2D[x + i][y + j] === undefined) {
-          throw new Error(`Too far right`);
-        }
-        // write only cloned quadrille cells covering (i,j)
-        if (quadrille.memory2D[i][j]) {
-          // update memory collisions counter if needed
-          if (result.memory2D[x + i][y + j] !== 0) {
-            memoryHitCounter++;
-          }
-          result.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
-        }
-      }
-    }
-    // iii. return resulted quadrille and memory hit counter
-    return { quadrille: result, memoryHitCounter };
   }
 }
 
