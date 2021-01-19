@@ -13,47 +13,53 @@
  */
 class Quadrille {
   static AND(quadrille1, quadrille2, x=0, y=0) {
-    // i. create resulted quadrille
-    let w = x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : 
-                    Math.max(quadrille1.width,  quadrille2.width + x);
-    let h = y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : 
-                    Math.max(quadrille1.height, quadrille2.height + y);
-    let quadrille = new Quadrille(w, h);
-    // ii. fill quadrille with passed quadrilles
-    for (let i = 0; i < quadrille.memory2D.length; i++) {
-      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let q1i = x < 0 ? i + x : i;
-        let q1j = y < 0 ? j + y : j;
-        let q2i = x > 0 ? i - x : i;
-        let q2j = y > 0 ? j - y : j;
-        if (quadrille1.read(q1i, q1j) && quadrille2.read(q2i, q2j)) {
-          quadrille.memory2D[i][j] = quadrille1.read(q1i, q1j);
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
         }
-      }
-    }
-    // iii. return resulted quadrille
-    return quadrille;
+      },
+      x, y);
   }
 
   static OR(quadrille1, quadrille2, x=0, y=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1)) {
+          return quadrille1.read(i1, j1);
+        }
+        if (quadrille2.read(i2, j2)) {
+          return quadrille2.read(i2, j2);
+        }
+      },
+      x, y);
+  }
+
+  static XOR(quadrille1, quadrille2, x=0, y=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
+        }
+        if (!quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
+          return quadrille2.read(i2, j2);
+        }
+      },
+      x, y);
+  }
+
+  // TODO implement diff
+
+  static OP(quadrille1, quadrille2, fx, x=0, y=0) {
     // i. create resulted quadrille
-    let w = x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : 
-                    Math.max(quadrille1.width,  quadrille2.width + x);
-    let h = y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : 
-                    Math.max(quadrille1.height, quadrille2.height + y);
-    let quadrille = new Quadrille(w, h);
-    // ii. fill quadrille with passed quadrilles
+    let quadrille = new Quadrille(x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : Math.max(quadrille1.width,  quadrille2.width + x),
+                                  y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : Math.max(quadrille1.height, quadrille2.height + y));
+    // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let q1i = x < 0 ? i + x : i;
-        let q1j = y < 0 ? j + y : j;
-        let q2i = x > 0 ? i - x : i;
-        let q2j = y > 0 ? j - y : j;
-        if (quadrille1.read(q1i, q1j)) {
-          quadrille.memory2D[i][j] = quadrille1.read(q1i, q1j);
-        }
-        if (quadrille2.read(q2i, q2j)) {
-          quadrille.memory2D[i][j] = quadrille2.read(q2i, q2j);
+        let result = fx(x < 0 ? i + x : i, y < 0 ? j + y : j, x > 0 ? i - x : i, y > 0 ? j - y : j);
+        if (result) {
+          quadrille.memory2D[i][j] = result;    
         }
       }
     }
@@ -178,7 +184,6 @@ class Quadrille {
    * @throws 'Value is to high to fill quadrille' reading exception
    */
   fromInt(value, fill) {
-    console.log(`two`);
     let length = this.width * this.height;
     if (value.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);

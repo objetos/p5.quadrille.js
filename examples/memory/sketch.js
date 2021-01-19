@@ -45,6 +45,9 @@ function keyPressed() {
   if (key === 't') {
     test(quadrille, y, x);
   }
+  if (key === 'x') {
+    xor(quadrille, y, x);
+  }
   /*
   if (key === 'v') {
     glue(quadrille, y, x, false);
@@ -56,6 +59,10 @@ function keyPressed() {
 
 function test(quadrille, row, col) {
   board = Quadrille.AND(board, quadrille, row, col);
+}
+
+function xor(quadrille, row, col) {
+  board = Quadrille.XOR(board, quadrille, row, col);
 }
 
 function glue(quadrille, row, col, validate = true) {
