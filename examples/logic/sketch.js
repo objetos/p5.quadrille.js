@@ -42,6 +42,7 @@ function keyPressed() {
   }
   if (key == 'c') {
     q3 = undefined;
+    x3 = y3 = 0;
     if (a3) {
       a3 = false;
     }

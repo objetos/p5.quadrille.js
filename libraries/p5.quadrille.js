@@ -65,7 +65,7 @@ class Quadrille {
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let result = fx(x < 0 ? i + x : i, y < 0 ? j + y : j, x > 0 ? i - x : i, y > 0 ? j - y : j);
+        let result = fx(y < 0 ? i + y : i, x < 0 ? j + x : j, y > 0 ? i - y : i, x > 0 ? j - x : j);
         if (result) {
           quadrille.memory2D[i][j] = result;    
         }
