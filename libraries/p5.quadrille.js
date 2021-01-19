@@ -211,6 +211,22 @@ class Quadrille {
     return row * width + col;
   }
 
+  deleteRow(i) {
+
+  }
+
+  deleteColumn(j) {
+
+  }
+
+  clearRow(i) {
+
+  }
+
+  clearColumn(j) {
+
+  }
+
   /**
    * Sets all quadrille memory entries to 0.
    */
