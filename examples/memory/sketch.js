@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var quadrille;
+var quadrille, other;
 var board;
 var x = 2, y = 2;
 
@@ -9,6 +9,11 @@ function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   board = createBoard(COLS, ROWS);
   quadrille = createQuadrille([[color('cyan'), '👽', 0],
+  [0, '🤔', '🙈'],
+  [0, color('#770811'), 0],
+  ['g', 'o', 'l']
+  ]);
+  other = createQuadrille([[0, 'k', 'g'],
   [0, '🤔', '🙈'],
   [0, color('#770811'), 0],
   ['g', 'o', 'l']
@@ -51,13 +56,13 @@ function keyPressed() {
   if (key === 'd') {
     diff(quadrille, y, x);
   }
-  /*
-  if (key === 'v') {
-    glue(quadrille, y, x, false);
+  if (key === 'p') {
+    console.log('width', board.width);
+    console.log('height', board.height);
+    console.log('order', board.order);
+    console.log('column order', board.columnOrder(2));
+    console.log('equals', quadrille.equals(other));
   }
-  */
-  console.log('order', board.order);
-  console.log('column order', board.columnOrder(2));
 }
 
 function test(quadrille, row, col) {

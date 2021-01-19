@@ -241,6 +241,24 @@ class Quadrille {
   clone() {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
+
+  /**
+   * Tests for topological equality with other quadrille.
+   * @param {Quadrille} other 
+   */
+  equals(other) {
+    if (this.width !== other.width || this.height !== other.height) {
+      return false;
+    }
+    for (let i = 0; i < this.memory2D.length; i++) {
+      for (let j = 0; j < this.memory2D[i].length; j++) {
+        if ((this.memory2D[i][j] && !other.memory2D[i][j]) || (!this.memory2D[i][j] && other.memory2D[i][j])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
 
 // Details here:
