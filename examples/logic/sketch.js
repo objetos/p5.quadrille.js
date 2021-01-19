@@ -91,6 +91,9 @@ function keyPressed() {
     q1.clearColumn(1);
     console.log(q1.width);
   }
+  if (key == '-') {
+    q1 = Quadrille.NEG(q1, color('green'));
+  }
   if (key === 'p' && q3) {
     console.log('x3', x3, 'y3', y3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }

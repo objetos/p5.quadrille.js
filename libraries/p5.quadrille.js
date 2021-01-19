@@ -58,6 +58,18 @@ class Quadrille {
       x, y);
   }
 
+  static NEG(quadrille, pattern) {
+    let result = new Quadrille(quadrille.width, quadrille.height);
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
+        if (!quadrille.memory2D[i][j]) {
+          result.memory2D[i][j] = pattern;
+        }
+      }
+    }
+    return result;
+  }
+
   static OP(quadrille1, quadrille2, fx, x=0, y=0) {
     // i. create resulted quadrille
     let quadrille = new Quadrille(x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : Math.max(quadrille1.width,  quadrille2.width + x),
