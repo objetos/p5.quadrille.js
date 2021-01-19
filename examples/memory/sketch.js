@@ -45,16 +45,16 @@ function keyPressed() {
     y++;
   }
   if (key === 'g') {
-    glue(quadrille, y, x);
+    board = Quadrille.OR(board, quadrille, x, y);
   }
   if (key === 't') {
-    test(quadrille, y, x);
+    board = Quadrille.AND(board, quadrille, x, y);
   }
   if (key === 'x') {
-    xor(quadrille, y, x);
+    board = Quadrille.XOR(board, quadrille, x, y);
   }
   if (key === 'd') {
-    diff(quadrille, y, x);
+    board = Quadrille.DIFF(board, quadrille, x, y);
   }
   if (key === 'p') {
     console.log('width', board.width);
@@ -63,35 +63,4 @@ function keyPressed() {
     console.log('column order', board.columnOrder(2));
     console.log('equals', quadrille.equals(other));
   }
-}
-
-function test(quadrille, row, col) {
-  board = Quadrille.AND(board, quadrille, row, col);
-}
-
-function xor(quadrille, row, col) {
-  board = Quadrille.XOR(board, quadrille, row, col);
-}
-
-function diff(quadrille, row, col) {
-  board = Quadrille.DIFF(board, quadrille, row, col);
-}
-
-function glue(quadrille, row, col, validate = true) {
-  board = Quadrille.OR(board, quadrille, row, col);
-  /*
-  if (validate) {
-    try {
-      let update = board.add(quadrille, row, col);
-      if (update.memoryHitCounter === 0) {
-        board = update.quadrille;
-      }
-    } catch (out_of_bounds) {
-      console.log(out_of_bounds);
-    }
-  }
-  else {
-    board = board.add(quadrille, row, col).quadrille;
-  }
-  */
 }
