@@ -83,6 +83,14 @@ function keyPressed() {
   if (key === 'd') {
     q3 = Quadrille.DIFF(q1, q2, x2-x1, y2-y1);
   }
+  if (key == 'm') {
+    q1.clearRow(1);
+    console.log(q1.height);
+  }
+  if (key == 'n') {
+    q1.clearColumn(1);
+    console.log(q1.width);
+  }
   if (key === 'p' && q3) {
     console.log('x3', x3, 'y3', y3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }

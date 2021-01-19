@@ -212,26 +212,39 @@ class Quadrille {
   }
 
   deleteRow(i) {
-
+    if (this.height > 1 && i >= 0 && i < this.height) {
+      this.memory2D.splice(i, 1);
+    }
   }
 
   deleteColumn(j) {
-
+    if (this.width > 1 && j >= 0 && j < this.width) {
+      this.memory2D.forEach(a => a.splice(j, 1));
+    }
   }
 
   clearRow(i) {
-
+    if (i >= 0 && i < this.height) {
+      //this.memory2D[i] = this.memory2D[i].map(y => y = 0);
+      for (let j = 0; j < this.width; j++) {
+        this.memory2D[i][j] = 0;
+      }
+    }
   }
 
   clearColumn(j) {
-
+    if (j >= 0 && j < this.width) {
+      for (let i = 0; i < this.height; i++) {
+        this.memory2D[i][j] = 0;
+      }
+    }
   }
 
   /**
    * Sets all quadrille memory entries to 0.
    */
   clear() {
-    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
+    this._memory2D = this._memory2D.map(x => x.map(y => y = 0));
   }
 
   /**
