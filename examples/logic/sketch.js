@@ -71,37 +71,19 @@ function keyPressed() {
   if (key === 'z') {
     a2 ? y2++ : a3 ? y3++ : y1++;
   }
-  if (key === 'g') {
+  if (key === 'o') {
     q3 = Quadrille.OR(q1, q2, x2-x1, y2-y1);
+  }
+  if (key === 'n') {
+    q3 = Quadrille.AND(q1, q2, x2-x1, y2-y1);
+  }
+  if (key === 'x') {
+    q3 = Quadrille.XOR(q1, q2, x2-x1, y2-y1);
+  }
+  if (key === 'd') {
+    q3 = Quadrille.DIFF(q1, q2, x2-x1, y2-y1);
   }
   if (key === 'p' && q3) {
     console.log('x3', x3, 'y3', y3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }
-  /*
-  if (key === 't') {
-    and(q1, y1, x1);
-  }
-  if (key === 'x') {
-    xor(q1, y1, x1);
-  }
-  if (key === 'd') {
-    diff(q1, y1, x1);
-  }
-  */
-}
-
-function or(quadrille, row, col) {
-  q3 = Quadrille.OR(quadrille, q2, row, col);
-}
-
-function and(quadrille, row, col) {
-  q3 = Quadrille.AND(quadrille, q2, row, col);
-}
-
-function xor(quadrille, row, col) {
-  q3 = Quadrille.XOR(quadrille, q2, row, col);
-}
-
-function diff(quadrille, row, col) {
-  q3 = Quadrille.DIFF(quadrille, q2, row, col);
 }
