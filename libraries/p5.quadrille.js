@@ -48,7 +48,15 @@ class Quadrille {
       x, y);
   }
 
-  // TODO implement diff
+  static DIFF(quadrille1, quadrille2, x=0, y=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
+        }
+      },
+      x, y);
+  }
 
   static OP(quadrille1, quadrille2, fx, x=0, y=0) {
     // i. create resulted quadrille

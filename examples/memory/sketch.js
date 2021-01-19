@@ -48,6 +48,9 @@ function keyPressed() {
   if (key === 'x') {
     xor(quadrille, y, x);
   }
+  if (key === 'd') {
+    diff(quadrille, y, x);
+  }
   /*
   if (key === 'v') {
     glue(quadrille, y, x, false);
@@ -63,6 +66,10 @@ function test(quadrille, row, col) {
 
 function xor(quadrille, row, col) {
   board = Quadrille.XOR(board, quadrille, row, col);
+}
+
+function diff(quadrille, row, col) {
+  board = Quadrille.DIFF(board, quadrille, row, col);
 }
 
 function glue(quadrille, row, col, validate = true) {
