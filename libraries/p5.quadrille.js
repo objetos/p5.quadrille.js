@@ -246,12 +246,7 @@ class Quadrille {
   }
 
   clearRow(i) {
-    if (i >= 0 && i < this.height) {
-      //this.memory2D[i] = this.memory2D[i].map(y => y = 0);
-      for (let j = 0; j < this.width; j++) {
-        this.memory2D[i][j] = 0;
-      }
-    }
+    this.memory2D[i].fill(0);
   }
 
   clearColumn(j) {
@@ -281,7 +276,7 @@ class Quadrille {
     //transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     // credit goes to Fawad Ghafoor
     // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
-    this._memory2D = this._memory2D[0].map((col, i) => this._memory2D.map(row => row[i]));
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
     //return matrix[0].map((col, c) => matrix.map((row, r) => matrix[r][c]));
   }
 
