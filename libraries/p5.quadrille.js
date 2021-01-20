@@ -118,41 +118,27 @@ class Quadrille {
     return this._memory2D.length;
   }
 
-  write(i, j, pattern) {
-    if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
-      this.memory2D[i][j] = pattern;
+  write(row, col, pattern) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      this.memory2D[row][col] = pattern;
     }
   }
 
-  read(i, j) {
-    if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
-      return this.memory2D[i][j];
+  read(row, col) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      return this.memory2D[row][col];
     }
     // return (i >= 0 && i < this.height && j >= 0 && j < this.width) ? this.memory2D[i][j] : undefined;
   }
 
   /**
-   * @param {number} j column.
-   * @returns {number} Number of non-empty queadrille cells at the jth column.
+   * @param {number} row.
+   * @returns {number} Number of non-empty quadrille cells at row.
    */
-  columnOrder(j) {
-    let result = 0;
-    for (let i = 0; i < this.height; i++) {
-      if (this.memory2D[i][j]) {
-        result++;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * @param {number} i row.
-   * @returns {number} Number of non-empty queadrille cells at the ith row.
-   */
-  rowOrder(i) {
+  magnitude(row) {
     let result = 0;
     for (let j = 0; j < this.width; j++) {
-      if (this.memory2D[i][j]) {
+      if (this.memory2D[row][j]) {
         result++;
       }
     }
