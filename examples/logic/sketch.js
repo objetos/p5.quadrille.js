@@ -91,8 +91,10 @@ function keyPressed() {
     q1.insert(1);
   }
   if (key == 'n') {
+    console.log('before', q1.order);
     q1.clear();
     console.log(q1.height);
+    console.log('after', q1.order);
   }
   if (key == '-') {
     q1 = Quadrille.NEG(q1, color('green'));
