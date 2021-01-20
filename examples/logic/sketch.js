@@ -26,10 +26,10 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(q1, x1, y1, LENGTH, 2, 'green');
+  drawQuadrille(q1, x1, y1, LENGTH, 2, 'green', true);
   drawQuadrille(q2, x2, y2, LENGTH, 2, 'blue');
   if (q3) {
-    drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta'/*, 'cyan'*/);
+    drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta', true);
     //drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta');
   }
 }

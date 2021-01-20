@@ -349,6 +349,9 @@ class Quadrille {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
       return new Quadrille(arguments[0]);
     }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      return new Quadrille(arguments[0], arguments[1]);
+    }
     // TODO these two require instance mode testing
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
                                   typeof arguments[2] === 'number') {
@@ -364,22 +367,13 @@ class Quadrille {
     }
   }
 
-  p5.prototype.createBoard = function(width, height) {
-    return new Quadrille(width, height);
-  }
-
-  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04'), fill = this.color('#859900')) {
-    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, fill);
-  }
-
-  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', fill = 'noColor') {
+  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {
     this.push();
     this.translate(row * LENGTH, col * LENGTH);
     this.stroke(outline);
     this.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // handles both zero and empty (undefined) entries as well
         this.push();
         if (quadrille.memory2D[i][j]) {
           if (quadrille.memory2D[i][j] instanceof p5.Color) {
@@ -393,8 +387,8 @@ class Quadrille {
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
         }
-        else if (fill !== 'noColor') {
-          this.fill(fill);
+        else if (board) {
+          this.noFill();
           this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
         }
         this.pop();

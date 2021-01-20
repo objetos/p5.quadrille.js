@@ -7,7 +7,7 @@ var x = 2, y = 2;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  board = createBoard(COLS, ROWS);
+  board = createQuadrille(COLS, ROWS);
   quadrille = createQuadrille([[color('cyan'), '👽', 0],
   [0, '🤔', '🙈'],
   [0, color('#770811'), 0],
@@ -21,8 +21,8 @@ function setup() {
 }
 
 function draw() {
-  background('#060621');
-  drawBoard(board, LENGTH);
+  background(/*'#060621'*/ '#007ACC');
+  drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
 }
 
