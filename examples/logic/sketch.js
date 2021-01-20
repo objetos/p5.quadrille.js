@@ -84,15 +84,15 @@ function keyPressed() {
     q3 = Quadrille.DIFF(q1, q2, x2-x1, y2-y1);
   }
   if (key == 'm') {
-    q1.clearRow(1);
+    q1.clear(1);
     console.log(q1.height);
   }
   if (key == 'i') {
-    q1.insertCol(1);
+    q1.insert(1);
   }
   if (key == 'n') {
-    q1.clearColumn(1);
-    console.log(q1.width);
+    q1.clear();
+    console.log(q1.height);
   }
   if (key == '-') {
     q1 = Quadrille.NEG(q1, color('green'));

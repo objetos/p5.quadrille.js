@@ -210,74 +210,63 @@ class Quadrille {
     }
     for (let i = 0; i <= length - 1; i++) {
       if ((value & (1 << length - 1 - i))) {
-        this.memory2D[this.ij(i).i][this.ij(i).j] = fill;
+        this.memory2D[this._ij(i).i][this._ij(i).j] = fill;
       }
     }
   }
 
-  ij(i, width = this.width) {
+  _ij(i, width = this.width) {
     return {i: (i / width) | 0, j: i % width};
   }
 
-  index(row, col, width = this.width) {
+  _index(row, col, width = this.width) {
     return row * width + col;
   }
 
-  insertRow(i) {
-    this.memory2D.splice(i, 0, Array(this.width).fill(0));
+  /**
+   * 
+   * @param {number} row 
+   */
+  insert(row) {
+    this.memory2D.splice(row, 0, Array(this.width).fill(0));
   }
 
-  insertCol(j) {
-    this.transpose();
-    this.insertRow(j);
-    this.transpose();
-  }
-
-  deleteRow(i) {
-    if (this.height > 1 && i >= 0 && i < this.height) {
-      this.memory2D.splice(i, 1);
-    }
-  }
-
-  deleteColumn(j) {
-    if (this.width > 1 && j >= 0 && j < this.width) {
-      this.memory2D.forEach(a => a.splice(j, 1));
-    }
-  }
-
-  clearRow(i) {
-    this.memory2D[i].fill(0);
-  }
-
-  clearColumn(j) {
-    if (j >= 0 && j < this.width) {
-      for (let i = 0; i < this.height; i++) {
-        this.memory2D[i][j] = 0;
-      }
+  /**
+   * @param {number} row 
+   */
+  delete(row) {
+    if (this.height > 1 && row >= 0 && row < this.height) {
+      this.memory2D.splice(row, 1);
     }
   }
 
   /**
-   * Sets all quadrille memory entries to 0.
+   * Fill this quadrille memory entries with 0's. Pass number to clear
+   * only the given row. Pass no params to clear all the quadrille.
    */
   clear() {
-    this._memory2D = this._memory2D.map(x => x.map(y => y = 0));
+    if (arguments.length === 0) {
+      this._memory2D = this._memory2D.map(x => x.map(y => y = 0));
+    }
+    if (arguments.length === 1 && typeof arguments[0] === 'number') {
+      this.memory2D[arguments[0]].fill(0);
+    }
   }
 
   /**
-   * Horizontal reflection
+   * Horizontal reflection.
    */
   reflect() {
     this._memory2D.reverse();
   }
 
-
+  /**
+   * Transpose the quadrille.
+   */
   transpose() {
-    //transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     // credit goes to Fawad Ghafoor
     // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
-    //return matrix[0].map((col, c) => matrix.map((row, r) => matrix[r][c]));
   }
 
   /**
