@@ -13,6 +13,122 @@
  */
 class Quadrille {
   /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
+   */
+  static AND(quadrille1, quadrille2, row=0, col=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
+        }
+      },
+      row, col);
+  }
+
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
+   */
+  static OR(quadrille1, quadrille2, row=0, col=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1)) {
+          return quadrille1.read(i1, j1);
+        }
+        if (quadrille2.read(i2, j2)) {
+          return quadrille2.read(i2, j2);
+        }
+      },
+      row, col);
+  }
+
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
+   */
+  static XOR(quadrille1, quadrille2, row=0, col=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
+        }
+        if (!quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
+          return quadrille2.read(i2, j2);
+        }
+      },
+      row, col);
+  }
+
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
+   */
+  static DIFF(quadrille1, quadrille2, row=0, col=0) {
+    return this.OP(quadrille1, quadrille2,
+      (i1, j1, i2, j2) => {
+        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
+          return quadrille1.read(i1, j1);
+        }
+      },
+      row, col);
+  }
+
+  /**
+   * @param {Quadrille} quadrille 
+   * @param {p5.Color | string} pattern used to fille the returned quadrille.
+   * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
+   */
+  static NEG(quadrille, pattern) {
+    let result = new Quadrille(quadrille.width, quadrille.height);
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
+        if (!quadrille.memory2D[i][j]) {
+          result.memory2D[i][j] = pattern;
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {Function} operator function implementing the logic operator.
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
+   */
+  static OP(quadrille1, quadrille2, operator, row=0, col=0) {
+    // i. create resulted quadrille
+    let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width,  quadrille1.width - col) : Math.max(quadrille1.width,  quadrille2.width + col),
+                                  row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
+    // ii. fill result with passed quadrilles
+    for (let i = 0; i < quadrille.memory2D.length; i++) {
+      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
+        let result = operator(row < 0 ? i + row : i, col < 0 ? j + col : j, row > 0 ? i - row : i, col > 0 ? j - col : j);
+        if (result) {
+          quadrille.memory2D[i][j] = result;    
+        }
+      }
+    }
+    // iii. return resulted quadrille
+    return quadrille;
+  }
+
+  /**
    * Constructs either an empty or a filled quadrille:
    * 1. Pass width and heigth to construct and empty quadrille (filled with 0's).
    * 2. Pass a 2D array of p5 colors, chars, emojis and zeros (for empty cells)
@@ -44,6 +160,58 @@ class Quadrille {
   }
 
   /**
+   * @param {number} row 
+   * @param {number} col 
+   * @param {p5.Color | string} pattern 
+   */
+  write(row, col, pattern) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      this.memory2D[row][col] = pattern;
+    }
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @param {p5.Color | string} quadrille entry
+   */
+  read(row, col) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      return this.memory2D[row][col];
+    }
+    // return (i >= 0 && i < this.height && j >= 0 && j < this.width) ? this.memory2D[i][j] : undefined;
+  }
+
+  /**
+   * @param {number} row.
+   * @returns {number} Number of non-empty quadrille cells at row.
+   */
+  magnitude(row) {
+    let result = 0;
+    for (let j = 0; j < this.width; j++) {
+      if (this.memory2D[row][j]) {
+        result++;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @returns {number} Number of non-empty queadrille cells.
+   */
+  get order() {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.memory2D[i][j]) {
+          result++;
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
    * Same as width * height.
    */
   get length() {
@@ -70,6 +238,7 @@ class Quadrille {
    * Fills the quadrille memory2D entries using big-endian and row-major ordering from the integer value.
    * @param {number} value 
    * @param {p5.Color | string} fill 
+   * @throws 'Value is to high to fill quadrille' reading exception
    */
   fromInt(value, fill) {
     let length = this.width * this.height;
@@ -77,28 +246,68 @@ class Quadrille {
       throw new Error(`Value is to high to fill quadrille`);
     }
     for (let i = 0; i <= length - 1; i++) {
-      if ((value & (1 << length - 1 - i)) !== 0) {
-        this.memory2D[((i / this.width) | 0)][(i % this.width)] = fill;
+      if ((value & (1 << length - 1 - i))) {
+        this.memory2D[this._ij(i).i][this._ij(i).j] = fill;
       }
     }
   }
 
-  /**
-   * Sets all quadrille memory entries to 0.
-   */
-  clear() {
-    this._memory2D = this._memory2D.map(x => x.map( y => y = 0));
+  _ij(i, width = this.width) {
+    return {i: (i / width) | 0, j: i % width};
+  }
+
+  _index(row, col, width = this.width) {
+    return row * width + col;
   }
 
   /**
-   * Horizontal reflection
+   * 
+   * @param {number} row 
+   */
+  insert(row) {
+    this.memory2D.splice(row, 0, Array(this.width).fill(0));
+  }
+
+  /**
+   * @param {number} row 
+   */
+  delete(row) {
+    if (this.height > 1 && row >= 0 && row < this.height) {
+      this.memory2D.splice(row, 1);
+    }
+  }
+
+  /**
+   * Fill this quadrille memory entries with 0's. Pass number to clear
+   * only the given row. Pass no params to clear all the quadrille.
+   */
+  clear() {
+    if (arguments.length === 0) {
+      this._memory2D = this._memory2D.map(x => x.map(y => y = 0));
+    }
+    if (arguments.length === 1 && typeof arguments[0] === 'number') {
+      this.memory2D[arguments[0]].fill(0);
+    }
+  }
+
+  /**
+   * Horizontal reflection.
    */
   reflect() {
     this._memory2D.reverse();
   }
 
   /**
-   * π/2 clockwise rotation
+   * Transpose the quadrille.
+   */
+  transpose() {
+    // credit goes to Fawad Ghafoor
+    // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
+  }
+
+  /**
+   * π/2 clockwise rotation.
    */
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
@@ -115,70 +324,56 @@ class Quadrille {
   }
 
   /**
-   * Adds given quadrille to this quadrille at (x,y) and returns the resulted 
-   * quadrille together with the number of memory collisions encountered.
-   * 
-   * This quadrille is not altered by a call to this method.
-   * 
-   * @param {Quadrille} quadrille buffer[rows][cols]
-   * @param {number} x memory2D row index
-   * @param {number} y memory2D column index
-   * @throws 'To far down' and 'To far right' memory2D reading exceptions
-   * @returns { Quadrille, number } { quadrille, memoryHitCounter } object literal
+   * Tests for topological equality with other quadrille.
+   * @param {Quadrille} other 
    */
-  add(quadrille, x, y) {
-    let memoryHitCounter = 0;
-    // i. clone this quadrille
-    let result = this.clone();
-    // ii. fill cloned quadrille with passed quadrille
-    for (let i = 0; i < quadrille.memory2D.length; i++) {
-      // (e1) Check if current quadrille cell is too far down
-      if (result.memory2D[x + i] === undefined) {
-        throw new Error(`Too far down`);
-      }
-      for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // (e2) Check if current passed quadrille cell is too far right
-        if (result.memory2D[x + i][y + j] === undefined) {
-          throw new Error(`Too far right`);
-        }
-        // write only cloned quadrille cells covering (i,j)
-        if (quadrille.memory2D[i][j]) {
-          // update memory collisions counter if needed
-          if (result.memory2D[x + i][y + j] !== 0) {
-            memoryHitCounter++;
-          }
-          result.memory2D[x + i][y + j] = quadrille.memory2D[i][j];
+  equals(other) {
+    if (this.width !== other.width || this.height !== other.height) {
+      return false;
+    }
+    for (let i = 0; i < this.memory2D.length; i++) {
+      for (let j = 0; j < this.memory2D[i].length; j++) {
+        if ((this.memory2D[i][j] && !other.memory2D[i][j]) || (!this.memory2D[i][j] && other.memory2D[i][j])) {
+          return false;
         }
       }
     }
-    // iii. return resulted quadrille and memory hit counter
-    return { quadrille: result, memoryHitCounter };
+    return true;
   }
 }
 
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
-  p5.prototype.createQuadrille = function(shape) {
-    return new Quadrille(shape);
+  p5.prototype.createQuadrille = function() {
+    if (arguments.length === 1 && Array.isArray(arguments[0])) {
+      return new Quadrille(arguments[0]);
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      return new Quadrille(arguments[0], arguments[1]);
+    }
+    // TODO these two require instance mode testing
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+                                  typeof arguments[2] === 'number') {
+      let quadrille = new Quadrille(arguments[0], arguments[1]);
+      quadrille.fromInt(arguments[2], /*this.color('#FBBC04')*/ this.color(`blue`));
+      return quadrille;
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+                                  typeof arguments[2] === 'number' /*&& typeof arguments[3] === 'number'*/) {
+      let quadrille = new Quadrille(arguments[0], arguments[1]);
+      quadrille.fromInt(arguments[2], arguments[3]);
+      return quadrille;
+    }
   }
 
-  p5.prototype.createBoard = function(width, height) {
-    return new Quadrille(width, height);
-  }
-
-  p5.prototype.drawBoard = function(quadrille, LENGTH = 10, outlineWeight = 1, outline = this.color('#FBBC04'), fill = this.color('#859900')) {
-    this.drawQuadrille(quadrille, 0, 0, LENGTH, outlineWeight, outline, fill);
-  }
-
-  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', fill = 'noColor') {
+  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {
     this.push();
     this.translate(row * LENGTH, col * LENGTH);
     this.stroke(outline);
     this.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        // handles both zero and empty (undefined) entries as well
         this.push();
         if (quadrille.memory2D[i][j]) {
           if (quadrille.memory2D[i][j] instanceof p5.Color) {
@@ -192,8 +387,8 @@ class Quadrille {
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
         }
-        else if (fill !== 'noColor') {
-          this.fill(fill);
+        else if (board) {
+          this.noFill();
           this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
         }
         this.pop();
