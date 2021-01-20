@@ -45,16 +45,16 @@ function keyPressed() {
     y++;
   }
   if (key === 'g') {
-    board = Quadrille.OR(board, quadrille, x, y);
+    board = Quadrille.OR(board, quadrille, y, x);
   }
   if (key === 't') {
-    board = Quadrille.AND(board, quadrille, x, y);
+    board = Quadrille.AND(board, quadrille, y, x);
   }
   if (key === 'x') {
-    board = Quadrille.XOR(board, quadrille, x, y);
+    board = Quadrille.XOR(board, quadrille, y, x);
   }
   if (key === 'd') {
-    board = Quadrille.DIFF(board, quadrille, x, y);
+    board = Quadrille.DIFF(board, quadrille, y, x);
   }
   if (key === 'p') {
     console.log('width', board.width);

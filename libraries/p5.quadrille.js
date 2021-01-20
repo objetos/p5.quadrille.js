@@ -12,17 +12,31 @@
  * article for details.
  */
 class Quadrille {
-  static AND(quadrille1, quadrille2, x=0, y=0) {
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
+   */
+  static AND(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
       (i1, j1, i2, j2) => {
         if (quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
           return quadrille1.read(i1, j1);
         }
       },
-      x, y);
+      row, col);
   }
 
-  static OR(quadrille1, quadrille2, x=0, y=0) {
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
+   */
+  static OR(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
       (i1, j1, i2, j2) => {
         if (quadrille1.read(i1, j1)) {
@@ -32,10 +46,17 @@ class Quadrille {
           return quadrille2.read(i2, j2);
         }
       },
-      x, y);
+      row, col);
   }
 
-  static XOR(quadrille1, quadrille2, x=0, y=0) {
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
+   */
+  static XOR(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
       (i1, j1, i2, j2) => {
         if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
@@ -45,19 +66,31 @@ class Quadrille {
           return quadrille2.read(i2, j2);
         }
       },
-      x, y);
+      row, col);
   }
 
-  static DIFF(quadrille1, quadrille2, x=0, y=0) {
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
+   */
+  static DIFF(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
       (i1, j1, i2, j2) => {
         if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
           return quadrille1.read(i1, j1);
         }
       },
-      x, y);
+      row, col);
   }
 
+  /**
+   * @param {Quadrille} quadrille 
+   * @param {p5.Color | string} pattern used to fille the returned quadrille.
+   * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
+   */
   static NEG(quadrille, pattern) {
     let result = new Quadrille(quadrille.width, quadrille.height);
     for (let i = 0; i < quadrille.height; i++) {
@@ -70,14 +103,22 @@ class Quadrille {
     return result;
   }
 
-  static OP(quadrille1, quadrille2, operator, x=0, y=0) {
+  /**
+   * @param {Quadrille} quadrille1 
+   * @param {Quadrille} quadrille2 
+   * @param {Function} operator function implementing the logic operator.
+   * @param {number} row respect to quadrille1 origin
+   * @param {number} col respect to quadrille1 origin
+   * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
+   */
+  static OP(quadrille1, quadrille2, operator, row=0, col=0) {
     // i. create resulted quadrille
-    let quadrille = new Quadrille(x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : Math.max(quadrille1.width,  quadrille2.width + x),
-                                  y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : Math.max(quadrille1.height, quadrille2.height + y));
+    let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width,  quadrille1.width - col) : Math.max(quadrille1.width,  quadrille2.width + col),
+                                  row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let result = operator(y < 0 ? i + y : i, x < 0 ? j + x : j, y > 0 ? i - y : i, x > 0 ? j - x : j);
+        let result = operator(row < 0 ? i + row : i, col < 0 ? j + col : j, row > 0 ? i - row : i, col > 0 ? j - col : j);
         if (result) {
           quadrille.memory2D[i][j] = result;    
         }
@@ -118,12 +159,22 @@ class Quadrille {
     return this._memory2D.length;
   }
 
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @param {p5.Color | string} pattern 
+   */
   write(row, col, pattern) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       this.memory2D[row][col] = pattern;
     }
   }
 
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @param {p5.Color | string} quadrille entry
+   */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this.memory2D[row][col];

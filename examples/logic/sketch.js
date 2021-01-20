@@ -72,16 +72,16 @@ function keyPressed() {
     a2 ? y2++ : a3 ? y3++ : y1++;
   }
   if (key === 'o') {
-    q3 = Quadrille.OR(q1, q2, x2-x1, y2-y1);
+    q3 = Quadrille.OR(q1, q2, y2-y1, x2-x1);
   }
   if (key === 'n') {
-    q3 = Quadrille.AND(q1, q2, x2-x1, y2-y1);
+    q3 = Quadrille.AND(q1, q2, y2-y1, x2-x1);
   }
   if (key === 'x') {
-    q3 = Quadrille.XOR(q1, q2, x2-x1, y2-y1);
+    q3 = Quadrille.XOR(q1, q2, y2-y1, x2-x1);
   }
   if (key === 'd') {
-    q3 = Quadrille.DIFF(q1, q2, x2-x1, y2-y1);
+    q3 = Quadrille.DIFF(q1, q2, y2-y1, x2-x1);
   }
   if (key == 'm') {
     q1.clear(1);
@@ -100,6 +100,6 @@ function keyPressed() {
     q1 = Quadrille.NEG(q1, color('green'));
   }
   if (key === 'p' && q3) {
-    console.log('x3', x3, 'y3', y3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
+    console.log('y3', y3, 'x3', x3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }
 }
