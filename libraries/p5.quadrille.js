@@ -70,14 +70,14 @@ class Quadrille {
     return result;
   }
 
-  static OP(quadrille1, quadrille2, fx, x=0, y=0) {
+  static OP(quadrille1, quadrille2, operator, x=0, y=0) {
     // i. create resulted quadrille
     let quadrille = new Quadrille(x < 0 ? Math.max(quadrille2.width,  quadrille1.width - x) : Math.max(quadrille1.width,  quadrille2.width + x),
                                   y < 0 ? Math.max(quadrille2.height, quadrille1.height - y) : Math.max(quadrille1.height, quadrille2.height + y));
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let result = fx(y < 0 ? i + y : i, x < 0 ? j + x : j, y > 0 ? i - y : i, x > 0 ? j - x : j);
+        let result = operator(y < 0 ? i + y : i, x < 0 ? j + x : j, y > 0 ? i - y : i, x > 0 ? j - x : j);
         if (result) {
           quadrille.memory2D[i][j] = result;    
         }
@@ -223,6 +223,16 @@ class Quadrille {
     return row * width + col;
   }
 
+  insertRow(i) {
+    this.memory2D.splice(i, 0, Array(this.width).fill(0));
+  }
+
+  insertCol(j) {
+    this.transpose();
+    this.insertRow(j);
+    this.transpose();
+  }
+
   deleteRow(i) {
     if (this.height > 1 && i >= 0 && i < this.height) {
       this.memory2D.splice(i, 1);
@@ -264,6 +274,15 @@ class Quadrille {
    */
   reflect() {
     this._memory2D.reverse();
+  }
+
+
+  transpose() {
+    //transpose = m => m[0].map((x,i) => m.map(x => x[i]))
+    // credit goes to Fawad Ghafoor
+    // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
+    this._memory2D = this._memory2D[0].map((col, i) => this._memory2D.map(row => row[i]));
+    //return matrix[0].map((col, c) => matrix.map((row, r) => matrix[r][c]));
   }
 
   /**

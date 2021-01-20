@@ -87,6 +87,9 @@ function keyPressed() {
     q1.clearRow(1);
     console.log(q1.height);
   }
+  if (key == 'i') {
+    q1.insertCol(1);
+  }
   if (key == 'n') {
     q1.clearColumn(1);
     console.log(q1.width);
