@@ -256,7 +256,7 @@ class Quadrille {
   }
 
   /**
-   * π/2 clockwise rotation
+   * π/2 clockwise rotation.
    */
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
