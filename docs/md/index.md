@@ -5,9 +5,8 @@
 # p5.js quadrille functions
 
 * `createQuadrille(array2D)`: Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
-* `createBoard(width, height)`: Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
+* `createQuadrille(width, height)`: Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
 * `drawQuadrille(quadrille, row, col)`: Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
-* `drawBoard(board)`: Draws the board `quadrille` at `(0, 0)`. [See the examples](#examples).
 
 # Quadrille
 
@@ -57,7 +56,7 @@ Display and run the above sketch with the following markdown:
 > 
 > function draw() {
 >   background('#060621');
->   drawBoard(board, LENGTH);
+>   drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
 >   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
 > }
 > 
