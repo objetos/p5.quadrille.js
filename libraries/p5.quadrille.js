@@ -373,7 +373,6 @@ class Quadrille {
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       return new Quadrille(arguments[0], arguments[1]);
     }
-    // TODO these two require instance mode testing
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
                                   typeof arguments[2] === 'number') {
       let quadrille = new Quadrille(arguments[0], arguments[1]);
