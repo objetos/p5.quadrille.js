@@ -8,24 +8,25 @@ var myp5 = new p5((p) => {
 
   p.setup = function () {
     p.createCanvas(COLS * LENGTH, ROWS * LENGTH);
-    board = p.createBoard(COLS, ROWS);
-    quadrille = p.createQuadrille([[p.color('cyan'), '👽',                0   ],
-                                   [0,               '🤔',               '🙈' ],
-                                   [0,                p.color('#770811'), 0  ],
-                                   ['g',              'o',                'l' ]
-                                  ]);
+    board = p.createQuadrille(COLS, ROWS);
+    quadrille = p.createQuadrille([[p.color('cyan'), '👽', 0],
+    [0, '🤔', '🙈'],
+    [0, p.color('#770811'), 0],
+    ['g', 'o', 'l']
+    ]);
   };
 
   p.draw = function () {
     p.background('#859900');
-    p.drawBoard(board, LENGTH);
+    p.drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
     p.drawQuadrille(quadrille, x, y, LENGTH, 2, 'magenta');
   };
 
   p.keyPressed = function () {
     if (p.keyCode === p.LEFT_ARROW) {
       quadrille.reflect();
-    } else if (p.keyCode === p.RIGHT_ARROW) {
+    }
+    if (p.keyCode === p.RIGHT_ARROW) {
       quadrille.rotate();
     }
     if (p.key === 'a') {
@@ -49,18 +50,14 @@ var myp5 = new p5((p) => {
   };
 
   this.glue = function (quadrille, row, col, validate = true) {
+    let update = Quadrille.OR(board, quadrille, row, col);
     if (validate) {
-      try {
-        let update = board.add(quadrille, row, col);
-        if (update.memoryHitCounter === 0) {
-          board = update.quadrille;
-        }
-      } catch (out_of_bounds) {
-        console.log(out_of_bounds);
+      if (update.order === board.order + quadrille.order && update.width === board.width && update.height === board.height) {
+        board = update;
       }
     }
     else {
-      board = board.add(quadrille, row, col).quadrille;
+      board = update;
     }
   };
 }, "board");

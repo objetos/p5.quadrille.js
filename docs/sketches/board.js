@@ -7,7 +7,7 @@ var x = 2, y = 2;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  board = createBoard(COLS, ROWS);
+  board = createQuadrille(COLS, ROWS);
   quadrille = createQuadrille([[color('cyan'), '👽', 0],
   [0, '🤔', '🙈'],
   [0, color('#770811'), 0],
@@ -17,7 +17,7 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawBoard(board, LENGTH);
+  drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
 }
 
@@ -48,17 +48,13 @@ function keyPressed() {
 }
 
 function glue(quadrille, row, col, validate = true) {
+  let update = Quadrille.OR(board, quadrille, row, col);
   if (validate) {
-    try {
-      let update = board.add(quadrille, row, col);
-      if (update.memoryHitCounter === 0) {
-        board = update.quadrille;
-      }
-    } catch (out_of_bounds) {
-      console.log(out_of_bounds);
+    if (update.order === board.order + quadrille.order && update.width === board.width && update.height === board.height) {
+      board = update;
     }
   }
   else {
-    board = board.add(quadrille, row, col).quadrille;
+    board = update;
   }
 }

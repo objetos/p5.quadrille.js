@@ -1,4 +1,9 @@
-/**
+ /***************************************************************************************
+ * p5.quadrille.js
+ * Copyright (c) 2021 Universidad Nacional de Colombia
+ * @author Jean Pierre Charalambos, https://github.com/objetos/p5.quadrille.js/
+ * Released under the terms of the GPLv3, refer to: http://www.gnu.org/licenses/gpl.html
+ * 
  * In geometry, the square-tiling, square-tessellation or square-grid is a
  * regular tiling of the Euclidean plane.
  *
@@ -10,7 +15,8 @@
  *
  * Refer to the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling)
  * article for details.
- */
+ ***************************************************************************************/
+
 class Quadrille {
   /**
    * @param {Quadrille} quadrille1 
@@ -160,13 +166,29 @@ class Quadrille {
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @param {p5.Color | string} pattern 
+   * Fills quadrille cells with given pattern. Either current filled cells (fill(pattern)),
+   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern).
+   * Pattern may be either a p5.Color or a string.
    */
-  write(row, col, pattern) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      this.memory2D[row][col] = pattern;
+  fill() {
+    if (arguments.length === 1) {
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          if (this.memory2D[i][j]) {
+            this.memory2D[i][j] = arguments[0];
+          }
+        }
+      }
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number') {
+      if (arguments[0] >= 0 && arguments[0] < this.height) {
+        this.memory2D[arguments[0]].fill(arguments[1]);
+      }
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this.memory2D[arguments[0]][arguments[1]] = arguments[2];
+      }
     }
   }
 
@@ -179,7 +201,6 @@ class Quadrille {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this.memory2D[row][col];
     }
-    // return (i >= 0 && i < this.height && j >= 0 && j < this.width) ? this.memory2D[i][j] : undefined;
   }
 
   /**
@@ -312,7 +333,7 @@ class Quadrille {
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
     // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
-    this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
   }
 
   /**
@@ -352,7 +373,6 @@ class Quadrille {
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       return new Quadrille(arguments[0], arguments[1]);
     }
-    // TODO these two require instance mode testing
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
                                   typeof arguments[2] === 'number') {
       let quadrille = new Quadrille(arguments[0], arguments[1]);
