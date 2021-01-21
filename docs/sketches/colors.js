@@ -8,14 +8,11 @@ var myp5 = new p5((p) => {
 
   p.setup = function () {
     p.createCanvas(COLS * LENGTH, ROWS * LENGTH);
-    /*
     quadrille = p.createQuadrille([[p.color('cyan'), '👽',               0    ],
                                    [0,               '🤔',              '🙈' ],
                                    [0,               p.color('#770811'), 0   ],
                                    ['g',             'o',                'l' ]
                                   ]);
-    */
-    quadrille = p.createQuadrille(3, 3, 58);
     clone = quadrille.clone();
     clone.reflect();
   };
