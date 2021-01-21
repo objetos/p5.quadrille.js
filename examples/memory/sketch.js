@@ -29,8 +29,12 @@ function draw() {
 function keyPressed() {
   if (keyCode === LEFT_ARROW) {
     quadrille.reflect();
-  } else if (keyCode === RIGHT_ARROW) {
+  }
+  if (keyCode === RIGHT_ARROW) {
     quadrille.rotate();
+  }
+  if (keyCode === UP_ARROW) {
+    quadrille.transpose();
   }
   if (key === 'a') {
     x--;

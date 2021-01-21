@@ -1,4 +1,9 @@
-/**
+ /***************************************************************************************
+ * p5.quadrille.js
+ * Copyright (c) 2021 Universidad Nacional de Colombia
+ * @author Jean Pierre Charalambos, https://github.com/objetos/p5.quadrille.js/
+ * Released under the terms of the GPLv3, refer to: http://www.gnu.org/licenses/gpl.html
+ * 
  * In geometry, the square-tiling, square-tessellation or square-grid is a
  * regular tiling of the Euclidean plane.
  *
@@ -10,7 +15,8 @@
  *
  * Refer to the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling)
  * article for details.
- */
+ ***************************************************************************************/
+
 class Quadrille {
   /**
    * @param {Quadrille} quadrille1 
@@ -195,7 +201,6 @@ class Quadrille {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this.memory2D[row][col];
     }
-    // return (i >= 0 && i < this.height && j >= 0 && j < this.width) ? this.memory2D[i][j] : undefined;
   }
 
   /**
@@ -328,7 +333,7 @@ class Quadrille {
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
     // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
-    this._memory2D = this._memory2D[0].map((v, index) => this._memory2D.map(row => row[index]).reverse());
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
   }
 
   /**
