@@ -97,6 +97,9 @@ function keyPressed() {
   if (key == 'g') {
     q1.fill(2, c2);
   }
+  if (key == 'h') {
+    q1.fill(2, 1, '👽');
+  }
   if (key == 'n') {
     console.log('before', q1.order);
     q1.clear();

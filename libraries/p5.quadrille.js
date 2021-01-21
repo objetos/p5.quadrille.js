@@ -160,19 +160,9 @@ class Quadrille {
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @param {p5.Color | string} pattern 
-   */
-  write(row, col, pattern) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      this.memory2D[row][col] = pattern;
-    }
-  }
-
-  /**
-   * Fills quadrille cells with given pattern. Either current filled cells
-   * (fill(pattern)) or a row (fill(row, pattern)).
+   * Fills quadrille cells with given pattern. Either current filled cells (fill(pattern)),
+   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern).
+   * Pattern may be either a p5.Color or a string.
    */
   fill() {
     if (arguments.length === 1) {
@@ -187,6 +177,11 @@ class Quadrille {
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
       if (arguments[0] >= 0 && arguments[0] < this.height) {
         this.memory2D[arguments[0]].fill(arguments[1]);
+      }
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this.memory2D[arguments[0]][arguments[1]] = arguments[2];
       }
     }
   }
