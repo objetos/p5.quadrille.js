@@ -6,12 +6,13 @@ var a2, a3;
 var x1 = 2, y1 = 2;
 var x2 = 8, y2 = 10;
 var x3 = 0, y3 = 0;
-var c1, c2;
+var c1, c2, c3;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c1 = color('cyan');
   c2 = color('yellow');
+  c3 = color('#FBBC04');
   q1 = createQuadrille([[c1, c1, 0],
                         [0,  c1, c1],
                         [0,  c1, 0],
@@ -89,6 +90,12 @@ function keyPressed() {
   }
   if (key == 'i') {
     q1.insert(1);
+  }
+  if (key == 'f') {
+    q1.fill(c3);
+  }
+  if (key == 'g') {
+    q1.fill(2, c2);
   }
   if (key == 'n') {
     console.log('before', q1.order);

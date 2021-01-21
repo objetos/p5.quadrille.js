@@ -171,6 +171,27 @@ class Quadrille {
   }
 
   /**
+   * Fills quadrille cells with given pattern. Either current filled cells
+   * (fill(pattern)) or a row (fill(row, pattern)).
+   */
+  fill() {
+    if (arguments.length === 1) {
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          if (this.memory2D[i][j]) {
+            this.memory2D[i][j] = arguments[0];
+          }
+        }
+      }
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number') {
+      if (arguments[0] >= 0 && arguments[0] < this.height) {
+        this.memory2D[arguments[0]].fill(arguments[1]);
+      }
+    }
+  }
+
+  /**
    * @param {number} row 
    * @param {number} col 
    * @param {p5.Color | string} quadrille entry
