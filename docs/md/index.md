@@ -47,7 +47,7 @@ Display and run the above sketch with the following markdown:
 > 
 > function setup() {
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
->   board = createBoard(COLS, ROWS);
+>   board = createQuadrille(COLS, ROWS);
 >   quadrille = createQuadrille([[color('cyan'), '👽', 0],
 >   [0, '🤔', '🙈'],
 >   [0, color('#770811'), 0],
@@ -88,33 +88,27 @@ Display and run the above sketch with the following markdown:
 > }
 > 
 > function glue(quadrille, row, col, validate = true) {
+>   let update = Quadrille.OR(board, quadrille, row, col);
 >   if (validate) {
->     try {
->       let update = board.add(quadrille, row, col);
->       if (update.memoryHitCounter === 0) {
->         board = update.quadrille;
->       }
->     } catch (out_of_bounds) {
->       console.log(out_of_bounds);
+>     if (update.order === board.order + quadrille.order &&
+>         update.width === board.width && update.height === board.height) {
+>       board = update;
 >     }
 >   }
 >   else {
->     board = board.add(quadrille, row, col).quadrille;
+>     board = update;
 >   }
 > }
 > ```
 
 # TODOs
 
-1. Implement a quadrille algebra: `union`, `intersection` and `diff`, like it is done in [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry). Observe that:
-   1. Such algebra would provide the proper basis to implement several [tile-matching videogames](https://en.wikipedia.org/wiki/Tile-matching_video_game).
-   2. The current quadrille [add method](#methods) may be adapted to implement the union algebraic operand.
-2. Implement a [static](https://en.wikipedia.org/wiki/Method_(computer_programming)#Static_methods) `polyomino(n)` method in order to retrieve a collection of the _n-degree_ [polyominoes](https://en.wikipedia.org/wiki/Polyomino). See also: [Algorithms for enumeration of fixed polyominoes](https://en.wikipedia.org/wiki/Polyomino#Algorithms_for_enumeration_of_fixed_polyominoes), [Counting polyominos: yet another attack](https://www.sciencedirect.com/science/article/pii/0012365X81902375?via%3Dihub) and [Free polyominoes enumeration @rosettacode](https://rosettacode.org/wiki/Free_polyominoes_enumeration). *Hints:*
+1. Implement a [static](https://en.wikipedia.org/wiki/Method_(computer_programming)#Static_methods) `polyomino(n)` method in order to retrieve a collection of the _n-degree_ [polyominoes](https://en.wikipedia.org/wiki/Polyomino). See also: [Algorithms for enumeration of fixed polyominoes](https://en.wikipedia.org/wiki/Polyomino#Algorithms_for_enumeration_of_fixed_polyominoes), [Counting polyominos: yet another attack](https://www.sciencedirect.com/science/article/pii/0012365X81902375?via%3Dihub) and [Free polyominoes enumeration @rosettacode](https://rosettacode.org/wiki/Free_polyominoes_enumeration). *Hints:*
    1. Study the [SageMath](https://www.sagemath.org/) [tiling solver](https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/tiling.html) which may provide such functionality.
    2. Use a [SageCell](https://sagecell.sagemath.org/) to interface to SageMath from the web.
-3. Implement other [2D tilings](https://en.wikipedia.org/wiki/Square_tiling) different then the quadrille. See also [tesselation](https://en.wikipedia.org/wiki/Tessellation).
-4. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature. See also [Wolfram](https://en.wikipedia.org/wiki/Wolfram_Language) [ArrayMesh](https://reference.wolfram.com/language/ref/ArrayMesh.html).
-5. Improve this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
+2. Implement other [2D tilings](https://en.wikipedia.org/wiki/Square_tiling) different then the quadrille. See also [tesselation](https://en.wikipedia.org/wiki/Tessellation).
+3. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature. See also [Wolfram](https://en.wikipedia.org/wiki/Wolfram_Language) [ArrayMesh](https://reference.wolfram.com/language/ref/ArrayMesh.html).
+4. Improve this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
    1. Improve the [codedoc](https://codedoc.cc/) [p5 component](https://github.com/objetos/p5.quadrille.js/tree/pages/.codedoc/components/p5) used to deploy the page.
    2. Customize the theme.
 
