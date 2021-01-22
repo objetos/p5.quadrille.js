@@ -27,9 +27,9 @@ class Quadrille {
    */
   static AND(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
-      (i1, j1, i2, j2) => {
-        if (quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
-          return quadrille1.read(i1, j1);
+      (q1, q2) => {
+        if (q1 && q2) {
+          return q1;
         }
       },
       row, col);
@@ -44,12 +44,12 @@ class Quadrille {
    */
   static OR(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
-      (i1, j1, i2, j2) => {
-        if (quadrille1.read(i1, j1)) {
-          return quadrille1.read(i1, j1);
+      (q1, q2) => {
+        if (q1) {
+          return q1;
         }
-        if (quadrille2.read(i2, j2)) {
-          return quadrille2.read(i2, j2);
+        if (q2) {
+          return q2;
         }
       },
       row, col);
@@ -64,12 +64,12 @@ class Quadrille {
    */
   static XOR(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
-      (i1, j1, i2, j2) => {
-        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
-          return quadrille1.read(i1, j1);
+      (q1, q2) => {
+        if (q1 && !q2) {
+          return q1;
         }
-        if (!quadrille1.read(i1, j1) && quadrille2.read(i2, j2)) {
-          return quadrille2.read(i2, j2);
+        if (!q1 && q2) {
+          return q2;
         }
       },
       row, col);
@@ -84,9 +84,9 @@ class Quadrille {
    */
   static DIFF(quadrille1, quadrille2, row=0, col=0) {
     return this.OP(quadrille1, quadrille2,
-      (i1, j1, i2, j2) => {
-        if (quadrille1.read(i1, j1) && !quadrille2.read(i2, j2)) {
-          return quadrille1.read(i1, j1);
+      (q1, q2) => {
+        if (q1 && !q2) {
+          return q1;
         }
       },
       row, col);
@@ -124,9 +124,9 @@ class Quadrille {
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.memory2D.length; i++) {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
-        let result = operator(row < 0 ? i + row : i, col < 0 ? j + col : j, row > 0 ? i - row : i, col > 0 ? j - col : j);
+        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
         if (result) {
-          quadrille.memory2D[i][j] = result;    
+          quadrille.memory2D[i][j] = result;
         }
       }
     }

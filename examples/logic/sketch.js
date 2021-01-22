@@ -100,7 +100,7 @@ function keyPressed() {
   if (key == 'h') {
     q1.fill(2, 1, '👽');
   }
-  if (key == 'n') {
+  if (key == 'e') {
     console.log('before', q1.order);
     q1.clear();
     console.log(q1.height);
