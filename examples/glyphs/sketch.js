@@ -25,7 +25,7 @@ function setup() {
                         [c, c, c],
                        ]);
   console.log(`num:`, L.toInt());
-  t = createBoard(3, 3);
+  t = createQuadrille(3, 3);
   console.log(t.width, t.height);
   t.fromInt(154, '👽');
   //Lbit = createBoard(3, 4);
