@@ -2,7 +2,7 @@
 
 Create and manipulate some quadrilles.
 
-> :P5 lib1=/docs/sketches/p5.quadrille.js, width=200, height=400
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, width=200, height=400
 >
 > const ROWS = 20;
 > const COLS = 10;
@@ -32,7 +32,7 @@ Create and manipulate some quadrilles.
 note that the above sketch code is included within the markdown itself like this:
 
 ```md
-> :P5 lib1=/docs/sketches/p5.quadrille.js, width=200, height=400
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, width=200, height=400
 >
 > const ROWS = 20;
 > const COLS = 10;

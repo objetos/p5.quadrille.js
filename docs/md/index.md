@@ -26,12 +26,12 @@
 
 Create a board and fill it with some quadrilles. Use the *a*, *s*, *w* and *z* keys to move the quadrille and *g* or *v* to stick it.
 
-> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/libraries/p5.quadrille.min.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
 
 Display and run the above sketch with the following markdown:
 
 ```md
-> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/libraries/p5.quadrille.min.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, sketch=/docs/sketches/board.js, width=400, height=400, sound=true
 ```
 
 > :Collapse label=the board.js running in p5 global mode

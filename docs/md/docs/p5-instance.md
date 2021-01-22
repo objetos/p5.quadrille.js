@@ -2,12 +2,12 @@
 
 Use the *a*, *s*, *w* and *z* keys to move the quadrille:
 
-> :P5 lib1=/docs/sketches/p5.quadrille.js, sketch=/docs/sketches/colors.js, width=400, height=400, version=1.1.8
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js, sketch=/docs/sketches/colors.js, width=400, height=400, version=1.1.8
 
 The markdown of the above sketch looks like this:
 
 ```markdown
-> :P5 lib1=/docs/sketches/p5.quadrille.js, sketch=/docs/sketches/colors.js, width=400, height=400, version=1.1.8
+> :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js, sketch=/docs/sketches/colors.js, width=400, height=400, version=1.1.8
 ```
 
 and the `colors.js` [p5 instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) like this:
