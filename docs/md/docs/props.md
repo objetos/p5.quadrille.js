@@ -1,3 +1,21 @@
+# Properties
+
+# `memory2d`
+
+[Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array used to create the `quadrille` instance.
+
+# `width`
+
+Property that store the quadrille width.
+
+# `height`
+
+Property that store the quadrille height.
+
+# `length`
+
+# `order`
+
 # P5 instance mode
 
 Use the *a*, *s*, *w* and *z* keys to move the quadrille:
@@ -59,3 +77,5 @@ var myp5 = new p5((p) => {
   };
 }, "colors"); // --> the id should be the same file name
 ```
+
+> :ToCPrevNext

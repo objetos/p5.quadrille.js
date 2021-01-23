@@ -2,26 +2,6 @@
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
 
-# p5.js quadrille functions
-
-* `createQuadrille(array2D)`: Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
-* `createQuadrille(width, height)`: Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
-* `drawQuadrille(quadrille, row, col)`: Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
-
-# Quadrille
-
-## Properties
-
-* `memory2d`: [Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array used to create the `quadrille` instance. [See the examples](#examples)
-* `width` & `height`: Properties that store the quadrille width and height. [See the examples](#examples).
-
-## Methods
-
-* `reflect()` & `rotate()`: Methods to reflect and rotate the quadrille in place. [See the examples](#examples).
-* `clone()`: Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. [See the examples](#examples).
-* `add(quadrille, x, y)`: Adds passed `quadrille` at `(x, y)`. [See the examples](#examples).
-* `clear()`: Fills quadrille memory with 0's.
-
 # Examples
 
 Create a board and fill it with some quadrilles. Use the *a*, *s*, *w* and *z* keys to move the quadrille and *g* or *v* to stick it.
@@ -118,3 +98,5 @@ To run and hack the [glyphs example](https://github.com/objetos/p5.quadrille.js/
 1. Clone the repo (`git clone https://github.com/objetos/p5.quadrille.js`) and open it with your favorite editor.
 2. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
 3. Head over `examples/glyphs/index.html` and press your editor `Go Live` button.
+
+> :ToCPrevNext

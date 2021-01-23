@@ -1,3 +1,17 @@
+# p5.js quadrille functions
+
+# `createQuadrille(array2D)`
+
+Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
+
+# `createQuadrille(width, height)`
+
+Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
+
+# `drawQuadrille(quadrille, row, col)`
+
+Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
+
 # P5 inline code
 
 Create and manipulate some quadrilles.
@@ -59,3 +73,5 @@ note that the above sketch code is included within the markdown itself like this
 >   drawQuadrille(clone, 2, 8, LENGTH, 0);
 > }
 ```
+
+> :ToCPrevNext
