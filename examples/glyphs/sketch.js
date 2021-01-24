@@ -32,7 +32,7 @@ function setup() {
   Lbit = createQuadrille(3, 4, 2343/*, '👽'*/);
   console.log('Lbit width: ', Lbit.width);
   console.log('Lbit height: ', Lbit.height);
-  console.log('Lbit length: ', Lbit.length);
+  console.log('Lbit size: ', Lbit.size);
   console.log('Lbit int: ', Lbit.toInt());
   //Lbit.fromInt(2343, '👽');
   console.log('Lbit int: ', Lbit.toInt());

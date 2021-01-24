@@ -235,7 +235,7 @@ class Quadrille {
   /**
    * Same as width * height.
    */
-  get length() {
+  get size() {
     return this.width * this.height;
   }
 
