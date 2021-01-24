@@ -32,7 +32,7 @@
 > [rotate()](/docs/geom/rotate)
 > [transpose()](/docs/geom/transpose)
 
-> :Collapse label=Bitwise conversion
+> :Collapse label=Bitboard conversion
 >
-> [fromInt()](/docs/bitwise/from_int)
-> [toInt()](/docs/bitwise/to_int)
+> [fromInt()](/docs/bitboard/from_int)
+> [toInt()](/docs/bitboard/to_int)
