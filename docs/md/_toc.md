@@ -8,9 +8,15 @@
 [Properties](/docs/props)
 
 > :Collapse label=I/O
->
+> 
+> [read()](/docs/io/read)
+> [write()](/docs/io/write)
 > [clone()](/docs/io/clone)
-> [drawQuadrille()](/docs/io/draw_quadrille)
+> [fill()](/docs/io/fill)
+> [clear()](/docs/io/clear)
+> [delete()](/docs/io/delete)
+> [insert()](/docs/io/insert)
+> [magnitude()](/docs/io/magnitude)
 
 > :Collapse label=Boolean operators
 >

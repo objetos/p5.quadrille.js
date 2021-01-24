@@ -6,15 +6,15 @@
 
 # `width`
 
-Property that store the quadrille width.
+Read only property that retrieves the quadrille width.
 
 # `height`
 
-Property that store the quadrille height.
-
-# `length`
+Read only property that retrieves the quadrille height.
 
 # `order`
+
+Read only property that retrieves the quadrille non-empty number of cells. See also [magnitude()](/docs/io/magnitude).
 
 # P5 instance mode
 
