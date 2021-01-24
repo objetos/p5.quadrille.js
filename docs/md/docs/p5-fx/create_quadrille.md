@@ -1,10 +1,20 @@
-# p5.js quadrille functions
+# `createQuadrille()`
 
-# `createQuadrille(array2D)`
+Creates a _filled_ quadrille from a 2D array which may contain any combination of zeros (for empty cells), [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/).
 
-Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
+# Syntax
 
-# `createQuadrille(width, height)`
+> `createQuadrille(array2D)`
+
+> `createQuadrille(width, height)`
+
+# Parameters
+
+| <!-- --> | <!-- -->                                                                                                                                                                          |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| array2D  | 2D array which may contain any combination of zeros (for empty cells), [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/). |
+| width    | number of columns                                                                                                                                                                 |
+| height   | number of rows                                                                                                                                                                    |
 
 Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
 
