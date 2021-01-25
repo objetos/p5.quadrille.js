@@ -209,7 +209,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @param {p5.Color | string} quadrille entry
+   * @returns {p5.Color | string} quadrille entry
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
