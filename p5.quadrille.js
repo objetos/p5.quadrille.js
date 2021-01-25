@@ -138,7 +138,7 @@ class Quadrille {
    * Constructs either an empty or a filled quadrille:
    * 1. Pass width and heigth to construct and empty quadrille (filled with 0's).
    * 2. Pass a 2D array of p5 colors, chars, emojis and zeros (for empty cells)
-   * to construct a filled quadrille. 
+   * to construct a filled quadrille.
    */
   constructor() {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
@@ -146,6 +146,14 @@ class Quadrille {
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(0));
+      this.fromInt(arguments[1], arguments[2]);
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
+      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
+      this.rand(arguments[2], arguments[3]);
     }
   }
 
@@ -256,18 +264,18 @@ class Quadrille {
   }
 
   /**
-   * Fills the quadrille memory2D entries using big-endian and row-major ordering from the integer value.
-   * @param {number} value 
+   * Fills the quadrille with pattern from bitboard using big-endian and row-major ordering.
+   * @param {number} bitboard 
    * @param {p5.Color | string} pattern 
    * @throws 'Value is to high to fill quadrille' reading exception
    */
-  fromInt(value, pattern) {
+  fromInt(bitboard, pattern) {
     let length = this.width * this.height;
-    if (value.toString(2).length > length) {
+    if (bitboard.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);
     }
     for (let i = 0; i <= length - 1; i++) {
-      if ((value & (1 << length - 1 - i))) {
+      if ((bitboard & (1 << length - 1 - i))) {
         this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = pattern;
       }
     }
@@ -397,17 +405,17 @@ class Quadrille {
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       return new Quadrille(arguments[0], arguments[1]);
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-                                  typeof arguments[2] === 'number') {
-      let quadrille = new Quadrille(arguments[0], arguments[1]);
-      quadrille.fromInt(arguments[2], /*this.color('#FBBC04')*/ this.color(`blue`));
-      return quadrille;
-    }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-                                  typeof arguments[2] === 'number' /*&& typeof arguments[3] === 'number'*/) {
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      return new Quadrille(arguments[0], arguments[1], arguments[2]);
+                                    /*
       let quadrille = new Quadrille(arguments[0], arguments[1]);
       quadrille.fromInt(arguments[2], arguments[3]);
       return quadrille;
+      */
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+                                  typeof arguments[2] === 'number') {
+      return new Quadrille(arguments[0], arguments[1], arguments[2], arguments[3]);
     }
   }
 

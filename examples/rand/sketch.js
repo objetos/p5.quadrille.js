@@ -1,9 +1,8 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var r, t, T, L, Lbit;
+var r, T, L;
 var quadrille;
-var clone;
 var x = 2, y = 2;
 var c;
 
@@ -15,31 +14,23 @@ function setup() {
                                [0,             color('#770811'), 0   ],
                                ['g',           'o',             'l'  ]
                               ]);
+  // 178                            
   T = createQuadrille([[0, c, 0],
                        [c, c, 0],
                        [0, c, 0],
                       ]);
+  // 2343
   L = createQuadrille([ [c, 0, 0],
                         [c, 0, 0],
                         [c, 0, 0],
                         [c, c, c],
                        ]);
-  r = createQuadrille(5, 8);
-  console.log(`num:`, L.toInt());
-  t = createQuadrille(3, 3);
-  console.log(t.width, t.height);
-  t.fromInt(154, '👽');
-  //Lbit = createBoard(3, 4);
-  Lbit = createQuadrille(3, 4, 2343/*, '👽'*/);
-  console.log('Lbit width: ', Lbit.width);
-  console.log('Lbit height: ', Lbit.height);
-  console.log('Lbit size: ', Lbit.size);
-  console.log('Lbit int: ', Lbit.toInt());
-  //Lbit.fromInt(2343, '👽');
-  console.log('Lbit int: ', Lbit.toInt());
-  quadrille.reflect();
-  clone = quadrille.clone();
-  clone.reflect();
+  console.log(`L bitboard:`, L.toInt());
+  console.log(`T bitboard:`, T.toInt());
+  //r = createQuadrille(5, 8);
+  //r = createQuadrille(5, 8, 11, color('yellow'));
+  //r = createQuadrille(3, 2343, '👽');
+  r = createQuadrille(3, 178, '👽');
 }
 
 function draw() {
@@ -47,9 +38,6 @@ function draw() {
   //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
   drawQuadrille(quadrille, 2, 12, LENGTH, 2, 'green');
   drawQuadrille(r, x, y, LENGTH, 2, 'blue', true);
-  //drawQuadrille(clone, 2, 8, LENGTH, 0);
-  //drawQuadrille(L, 2, 12, LENGTH);
-  //drawQuadrille(Lbit, 2, 12, LENGTH);
 }
 
 function keyPressed() {
