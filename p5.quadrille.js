@@ -407,11 +407,6 @@ class Quadrille {
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       return new Quadrille(arguments[0], arguments[1], arguments[2]);
-                                    /*
-      let quadrille = new Quadrille(arguments[0], arguments[1]);
-      quadrille.fromInt(arguments[2], arguments[3]);
-      return quadrille;
-      */
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
                                   typeof arguments[2] === 'number') {
