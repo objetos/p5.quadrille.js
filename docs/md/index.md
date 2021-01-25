@@ -34,12 +34,4 @@ to include its minified version use:
 
 instead.
 
-# [vs-code](https://code.visualstudio.com/) & [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
-
-To run and hack the library:
-
-1. Clone the repo (`git clone https://github.com/objetos/p5.quadrille.js`) and open it with your favorite editor.
-2. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
-3. To run the [examples](https://github.com/objetos/p5.quadrille.js/blob/master/examples) head over the `examples` folder. Once you select an `index.html` press your editor `Go Live` button.
-
 > :ToCPrevNext
