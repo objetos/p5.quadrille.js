@@ -181,7 +181,7 @@ class Quadrille {
 
   /**
    * Fills quadrille cells with given pattern. Either current filled cells (fill(pattern)),
-   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern).
+   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern)).
    * Pattern may be either a p5.Color or a string.
    */
   fill() {
