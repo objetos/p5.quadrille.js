@@ -65,6 +65,5 @@ function keyPressed() {
     console.log('height', board.height);
     console.log('order', board.order);
     console.log('row magnitude', board.magnitude(2));
-    console.log('equals', quadrille.equals(other));
   }
 }
