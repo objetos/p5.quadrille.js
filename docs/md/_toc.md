@@ -36,3 +36,5 @@
 >
 > [fromInt()](/docs/bitboard/from_int)
 > [toInt()](/docs/bitboard/to_int)
+
+[Demos](/docs/demos)
