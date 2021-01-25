@@ -94,7 +94,7 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Color | string} pattern used to fille the returned quadrille.
+   * @param {p5.Color | string} pattern used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
@@ -258,47 +258,41 @@ class Quadrille {
   /**
    * Fills the quadrille memory2D entries using big-endian and row-major ordering from the integer value.
    * @param {number} value 
-   * @param {p5.Color | string} fill 
+   * @param {p5.Color | string} pattern 
    * @throws 'Value is to high to fill quadrille' reading exception
    */
-  fromInt(value, fill) {
+  fromInt(value, pattern) {
     let length = this.width * this.height;
     if (value.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);
     }
     for (let i = 0; i <= length - 1; i++) {
       if ((value & (1 << length - 1 - i))) {
-        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = fill;
+        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = pattern;
       }
     }
   }
 
   // TODO perlin noise is missed
 
+  /**
+   * Randomly fills quadrille with pattern up to order.
+   * @param {number} order 
+   * @param {p5.Color | string} pattern 
+   * @see order
+   */
   rand(order, pattern) {
     order = Math.abs(order);
     if (order > this.size) {
       order = this.size;
     }
-    let _disorder = this.order;
-    if (order > _disorder) {
-      let counter = 0;
-      while (counter < order - _disorder) {
-        let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-        if (!this.memory2D[_.row][_.col]) {
-          this.memory2D[_.row][_.col] = pattern;
-          counter++;
-        }
-      }
-    }
-    if (order < _disorder) {
-      let counter = 0;
-      while (counter < _disorder - order) {
-        let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-        if (this.memory2D[_.row][_.col]) {
-          this.memory2D[_.row][_.col] = 0;
-          counter++;
-        }
+    let disorder = this.order;
+    let counter = 0;
+    while (counter < Math.abs(order - disorder)) {
+      let _ = this._fromIndex(Math.floor(Math.random() * this.size));
+      if (order > disorder ? !this.memory2D[_.row][_.col] : this.memory2D[_.row][_.col]) {
+        this.memory2D[_.row][_.col] = order > disorder ? pattern : 0;
+        counter++;
       }
     }
   }
