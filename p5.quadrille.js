@@ -399,19 +399,7 @@ class Quadrille {
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
   p5.prototype.createQuadrille = function() {
-    if (arguments.length === 1 && Array.isArray(arguments[0])) {
-      return new Quadrille(arguments[0]);
-    }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      return new Quadrille(arguments[0], arguments[1]);
-    }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      return new Quadrille(arguments[0], arguments[1], arguments[2]);
-    }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-                                  typeof arguments[2] === 'number') {
-      return new Quadrille(arguments[0], arguments[1], arguments[2], arguments[3]);
-    }
+    return new Quadrille(...arguments);
   }
 
   p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {

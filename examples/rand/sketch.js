@@ -28,9 +28,9 @@ function setup() {
   console.log(`L bitboard:`, L.toInt());
   console.log(`T bitboard:`, T.toInt());
   //r = createQuadrille(5, 8);
-  //r = createQuadrille(5, 8, 11, color('yellow'));
+  r = createQuadrille(5, 8, 11, color('yellow'));
   //r = createQuadrille(3, 2343, '👽');
-  r = createQuadrille(3, 178, '👽');
+  //r = createQuadrille(3, 178, '👽');
 }
 
 function draw() {
