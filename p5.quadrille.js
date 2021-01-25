@@ -136,9 +136,15 @@ class Quadrille {
 
   /**
    * Constructs either an empty or a filled quadrille:
-   * 1. Pass width and heigth to construct and empty quadrille (filled with 0's).
-   * 2. Pass a 2D array of p5 colors, chars, emojis and zeros (for empty cells)
-   * to construct a filled quadrille.
+   * 1. Pass a 2D array of patterns (p5 colors, chars, emojis and 0's).
+   * 2. Pass width and heigth to construct and empty quadrille (filled with 0's).
+   * 3. Pass width, bitboard and pattern, to construct a quadrille filled
+   * with pattern from the given bitboard.
+   * 4. Pass width, height, order and pattern, to construct a quadrille filled
+   * with pattern of the given order.
+   * @see fromInt
+   * @see rand
+   * @see order
    */
   constructor() {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
