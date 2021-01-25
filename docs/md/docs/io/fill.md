@@ -19,7 +19,7 @@ Fills quadrille cells with given `pattern`. Either:
 | <!-- --> | <!-- -->                                                                       |
 |----------|--------------------------------------------------------------------------------|
 | pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) | String | 0: filled pattern |
-| row      | Number: row number of the cell to be filled                                    |
-| col      | Number: col number of the cell to be filled                                    |
+| row      | Number: row number of the cell to be filled [0..[width](/docs/props#width)     |
+| col      | Number: col number of the cell to be filled [0..[height](/docs/props#height)   |
 
 > :ToCPrevNext
