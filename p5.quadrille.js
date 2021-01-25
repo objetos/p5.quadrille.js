@@ -268,16 +268,46 @@ class Quadrille {
     }
     for (let i = 0; i <= length - 1; i++) {
       if ((value & (1 << length - 1 - i))) {
-        this.memory2D[this._ij(i).i][this._ij(i).j] = fill;
+        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = fill;
       }
     }
   }
 
-  _ij(i, width = this.width) {
-    return {i: (i / width) | 0, j: i % width};
+  // TODO perlin noise is missed
+
+  rand(order, pattern) {
+    order = Math.abs(order);
+    if (order > this.size) {
+      order = this.size;
+    }
+    let _disorder = this.order;
+    if (order > _disorder) {
+      let counter = 0;
+      while (counter < order - _disorder) {
+        let _ = this._fromIndex(Math.floor(Math.random() * this.size));
+        if (!this.memory2D[_.row][_.col]) {
+          this.memory2D[_.row][_.col] = pattern;
+          counter++;
+        }
+      }
+    }
+    if (order < _disorder) {
+      let counter = 0;
+      while (counter < _disorder - order) {
+        let _ = this._fromIndex(Math.floor(Math.random() * this.size));
+        if (this.memory2D[_.row][_.col]) {
+          this.memory2D[_.row][_.col] = 0;
+          counter++;
+        }
+      }
+    }
   }
 
-  _index(row, col, width = this.width) {
+  _fromIndex(index, width = this.width) {
+    return {row: (index / width) | 0, col: index % width};
+  }
+
+  _toIndex(row, col, width = this.width) {
     return row * width + col;
   }
 
@@ -387,9 +417,9 @@ class Quadrille {
     }
   }
 
-  p5.prototype.drawQuadrille = function(quadrille, row = 0, col = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {
+  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {
     this.push();
-    this.translate(row * LENGTH, col * LENGTH);
+    this.translate(x * LENGTH, y * LENGTH);
     this.stroke(outline);
     this.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille.memory2D.length; i++) {
