@@ -1,12 +1,10 @@
 # `fill()`
 
-Fills quadrille cells with given pattern.
+Fills quadrille cells with given `pattern`. Either:
 
-Either current filled cells (fill(pattern)),
-   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern).
-   * Pattern may be either a p5.Color or a string.
-   * 
-Deletes a row from the quadrille [memory2D](/docs/props#memory2d) internal representation.
+1. Current filled cells: `fill(pattern)`;
+2. A whole row: `fill(row, pattern)`; or,
+3. A given cell: `fill(row, col, pattern`.
 
 # Syntax
 
@@ -18,8 +16,10 @@ Deletes a row from the quadrille [memory2D](/docs/props#memory2d) internal repre
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                |
-|----------|-------------------------------------------------------------------------|
-| row      | Number: number of the row to be deleted [0..[width](/docs/props#width)] |
+| <!-- --> | <!-- -->                                                                       |
+|----------|--------------------------------------------------------------------------------|
+| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) | String | 0: filled pattern |
+| row      | Number: row number of the cell to be filled                                    |
+| col      | Number: col number of the cell to be filled                                    |
 
 > :ToCPrevNext
