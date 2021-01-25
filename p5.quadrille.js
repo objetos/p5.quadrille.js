@@ -320,7 +320,7 @@ class Quadrille {
   }
 
   /**
-   * 
+   * Inserts an empty row.
    * @param {number} row 
    */
   insert(row) {
@@ -328,6 +328,7 @@ class Quadrille {
   }
 
   /**
+   * Deletes the given row.
    * @param {number} row 
    */
   delete(row) {
