@@ -10,9 +10,8 @@
 > :Collapse label=I/O
 > 
 > [read()](/docs/io/read)
-> [write()](/docs/io/write)
-> [clone()](/docs/io/clone)
 > [fill()](/docs/io/fill)
+> [clone()](/docs/io/clone)
 > [clear()](/docs/io/clear)
 > [delete()](/docs/io/delete)
 > [insert()](/docs/io/insert)
