@@ -310,7 +310,7 @@ class Quadrille {
       }
     }
   }
-
+  
   _fromIndex(index, width = this.width) {
     return {row: (index / width) | 0, col: index % width};
   }
@@ -400,7 +400,9 @@ class Quadrille {
       for (let j = 0; j < quadrille.memory2D[i].length; j++) {
         this.push();
         if (quadrille.memory2D[i][j]) {
-          if (quadrille.memory2D[i][j] instanceof p5.Color) {
+          // Note that the Array.isArray(quadrille.memory2D[i][j]) condition should be rethought
+          // once 3D Quadrilles appear.
+          if (quadrille.memory2D[i][j] instanceof p5.Color || Array.isArray(quadrille.memory2D[i][j])) {
             this.fill(quadrille.memory2D[i][j]);
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
