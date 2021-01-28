@@ -310,7 +310,71 @@ class Quadrille {
       }
     }
   }
-  
+
+  fromImage(image) {
+    //console.log(image.width, image.height);
+    image.loadPixels();
+    // image.width * image.height
+    // TODO test:
+    let bag = Array(this.height).fill().map(() => Array(this.width).fill([0, 0, 0, 0, 0]));
+    /*
+    let bag = new Array(this.width * this.height).fill(0).map(row => new Array(4).fill(0));
+    for (let i = 0; i < bag.length; i++) {
+      bag[i][0] += a;
+      bag[i][1] += b;
+      bag[i][2] += c;
+      bag[i][3] += d;
+    }
+    */
+    //let bag = Array(this.width * this.height);
+    // rows: 11 * cols: 13
+    //let img_w = 13;
+    //let img_h = 11;
+    console.log(image.width, image.height, image.pixels.length);
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let _ = this._fromIndex(i, image.width);
+      let _i = Math.floor(_.row * this.height / image.height);
+      let _j = Math.floor(_.col * this.width / image.width);
+      bag[_i][_j][0] = bag[_i][_j][0] + image.pixels[4 * i];
+      bag[_i][_j][1] = bag[_i][_j][1] + image.pixels[4 * i + 1];
+      bag[_i][_j][2] = bag[_i][_j][2] + image.pixels[4 * i + 2];
+      bag[_i][_j][3] = bag[_i][_j][3] + image.pixels[4 * i + 3];
+      bag[_i][_j][4] = bag[_i][_j][4] + 1;
+      //console.log(4 * i, 4 * i + 1, 4 * i + 2, 4 * i + 3);
+      //let r, g, b, a;
+      //[r, g, b, a] = [4 * i, 4 * i + 1, 4 * i + 2, 4 * i + 3];
+      //console.log(this.width, this.height);
+      //console.log('row', _.row, 'col', _.col);
+      //console.log('row', Math.floor(_.row * this.height / image,height), 'col', Math.floor(_.col * this.width / image.width));
+    }
+    image.updatePixels();
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        this.memory2D[i][j] = [ (bag[i][j][0] / bag[i][j][4]), (bag[i][j][1] / bag[i][j][4]),
+                                (bag[i][j][2] / bag[i][j][4]), (bag[i][j][3] / bag[i][j][4]) ];
+       //this.memory2D[i][j]
+      }
+    }
+    //console.log(counter);
+    /*
+    for (let i = 0; i < bag.length; i++) {
+      bag[i] = [i * 1, i * 2, i * 3];
+    }
+    for (let i = 0; i < bag.length; i++) {
+      console.log(bag[i]);
+    }
+    */
+
+    /*
+    image.loadPixels();   
+    halfImage = 4 * image.width * image.height / 2;
+    for (let i = 0; i < pixels.length; i++) {
+      image.pixels[i + halfImage] = image.pixels[i];
+    }
+    image.updatePixels();
+    */
+  }
+
   _fromIndex(index, width = this.width) {
     return {row: (index / width) | 0, col: index % width};
   }
