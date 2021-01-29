@@ -8,6 +8,8 @@ Creates a `quadrille` which may be filled with any combination of zeros (for emp
 
 > `createQuadrille(width, height)`
 
+> `createQuadrille(width, image)`
+
 > `createQuadrille(width, bitboard, pattern)`
 
 > `createQuadrille(width, height, order, pattern)`

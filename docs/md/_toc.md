@@ -24,6 +24,7 @@
 > [AND()](/docs/logic/and)
 > [DIFF()](/docs/logic/diff)
 > [NEG()](/docs/logic/neg)
+> [OP()](/docs/logic/op)
 
 > :Collapse label=Geometry transformations
 >
