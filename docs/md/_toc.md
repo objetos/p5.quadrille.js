@@ -32,9 +32,16 @@
 > [rotate()](/docs/geom/rotate)
 > [transpose()](/docs/geom/transpose)
 
-> :Collapse label=Bitboard conversion
+> :Collapse label=Conversion from other representations
 >
-> [fromInt()](/docs/bitboard/from_int)
-> [toInt()](/docs/bitboard/to_int)
+> [fromImage()](/docs/conversion/from_image)
+> [fromInt()](/docs/conversion/from_int)
+> [toInt()](/docs/conversion/to_int)
 
-[Demos](/docs/demos)
+> :Collapse label=Demos
+>
+> [Create and display](/docs/demos/p5-fx)
+> [Geometry transformations](/docs/demos/geom)
+> [Logical operators](/docs/demos/logic)
+> [Images](/docs/demos/image)
+> [Bitboards](/docs/demos/bitboard)
