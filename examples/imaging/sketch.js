@@ -1,7 +1,7 @@
 const ROWS = 40;
 const COLS = 40;
 const LENGTH = 20;
-var quadrille, I;
+var quadrille, i, I;
 var x = 2, y = 2;
 var c;
 var img;
@@ -20,13 +20,15 @@ function setup() {
                                ['g',           'o',             'l'  ]
                               ]);
   I.fromImage(img);
+  i = createQuadrille(7, img);
+  console.log(Quadrille.version);
 }
 
 function draw() {
   //background('#060621');
   background(color([0, 255, 0]));
   //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-  drawQuadrille(I, x, y, LENGTH, 2, 'green');
+  drawQuadrille(i, x, y, LENGTH, 2, 'green');
 }
 
 function keyPressed() {

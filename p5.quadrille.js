@@ -19,6 +19,11 @@
 
 class Quadrille {
   /**
+   * Current library version.
+   */
+  static version = '0.1.0';
+
+  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -138,10 +143,12 @@ class Quadrille {
    * Constructs either an empty or a filled quadrille:
    * 1. Pass a 2D array of patterns (p5 colors, chars, emojis and 0's).
    * 2. Pass width and heigth to construct and empty quadrille (filled with 0's).
-   * 3. Pass width, bitboard and pattern, to construct a quadrille filled
+   * 3. Pass width and image, to construct a quadrille filled image.
+   * 4. Pass width, bitboard and pattern, to construct a quadrille filled
    * with pattern from the given bitboard.
-   * 4. Pass width, height, order and pattern, to construct a quadrille filled
+   * 5. Pass width, height, order and pattern, to construct a quadrille filled
    * with pattern of the given order.
+   * @see fromImage
    * @see fromInt
    * @see rand
    * @see order
@@ -152,6 +159,10 @@ class Quadrille {
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number') {
+      this._memory2D = Array(arguments[0] * arguments[1].height / arguments[1].width).fill().map(() => Array(arguments[0]).fill(0));
+      this.fromImage(arguments[1]);
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(0));
@@ -311,6 +322,10 @@ class Quadrille {
     }
   }
 
+  /**
+   * Fills the quadrille with image.
+   * @param {p5.Image} image 
+   */
   fromImage(image) {
     image.loadPixels();
     let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
