@@ -161,7 +161,7 @@ class Quadrille {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number') {
-      this._memory2D = Array(arguments[0] * arguments[1].height / arguments[1].width).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(0));
       this.fromImage(arguments[1]);
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
