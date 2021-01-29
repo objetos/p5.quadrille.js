@@ -1,6 +1,5 @@
-const ROWS = 40;
-const COLS = 40;
-const LENGTH = 20;
+//var scl = 20;
+var scl = 0;
 var quadrille;
 var image;
 
@@ -10,22 +9,29 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  console.log(image.width, image.height);
-  quadrille = createQuadrille(160, image);
-  console.log(Quadrille.version);
+  createCanvas(800, 342);
+  //console.log(image.width, image.height);
+  quadrille = createQuadrille(40 * (2 ** scl), image);
+  //console.log(Quadrille.version);
 }
 
 function draw() {
   background('#060621');
-  //background(color([0, 255, 0]));
-  drawQuadrille(quadrille, 0, 0, LENGTH / 4, 0, 'green');
+  drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl));
 }
 
 function keyPressed() {
+  scl = scl < 3 ? scl + 1 : 0;
+  quadrille = createQuadrille(40 * (2 ** scl), image);
+  /*
+  if (frameCount % 300 === 0) {
+    scl = scl < 3 ? scl + 1 : 0;
+    quadrille = createQuadrille(40 * (2 ** scl), image);
+  }
   if (keyCode === UP_ARROW) {
     quadrille.reflect();
   } else if (keyCode === DOWN_ARROW) {
     quadrille.rotate();
   }
+  */
 }
