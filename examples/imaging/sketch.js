@@ -13,7 +13,7 @@ function preload() {
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c = color('#007ACC');
-  I = createQuadrille(6, 4);
+  I = createQuadrille(20, 20);
   quadrille = createQuadrille([[color('cyan'), '👽',             [0, 0, 255]    ],
                                [0,             '🤔',            '🙈' ],
                                [0,             color('#770811'), 0   ],
