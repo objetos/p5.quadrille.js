@@ -322,11 +322,11 @@ class Quadrille {
       let _ = this._fromIndex(i, image.width);
       let _i = Math.floor(_.row * this.height / image.height);
       let _j = Math.floor(_.col * this.width / image.width);
-      r[_i][_j] = r[_i][_j] + image.pixels[4 * i];
-      g[_i][_j] = g[_i][_j] + image.pixels[4 * i + 1];
-      b[_i][_j] = b[_i][_j] + image.pixels[4 * i + 2];
-      a[_i][_j] = a[_i][_j] + image.pixels[4 * i + 3];
-      t[_i][_j] = t[_i][_j] + 1;
+      r[_i][_j] += image.pixels[4 * i];
+      g[_i][_j] += image.pixels[4 * i + 1];
+      b[_i][_j] += image.pixels[4 * i + 2];
+      a[_i][_j] += image.pixels[4 * i + 3];
+      t[_i][_j] += 1;
     }
     image.updatePixels();
     for (let i = 0; i < this.height; i++) {
