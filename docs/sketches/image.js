@@ -4,7 +4,7 @@ var quadrille;
 var image;
 
 function preload() {
-  image = loadImage('https://en.wikipedia.org/wiki/File:Mahakala_and_Companions_LACMA_M.77.19.11.jpg');
+  image = loadImage('/sketches/mahakala.jpg');
   //image = loadImage('abraham_lincoln.jpg');
 }
 
