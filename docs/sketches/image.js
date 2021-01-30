@@ -1,9 +1,11 @@
 var scl = 0;
+var inc = true;
 var quadrille;
 var image;
 
 function preload() {
   image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');
+  color = color(random(255), random(255), random(255));
 }
 
 function setup() {
@@ -13,22 +15,14 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), 'blue');
+  drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), '#FBBC04');
   //if (frameCount)
 }
 
 function keyPressed() {
-  scl = scl < 3 ? scl + 1 : 0;
+  if (inc && scl === 4 || !inc && scl === 0) {
+    inc = !inc;
+  }
+  scl = inc ? scl + 1 : scl - 1;
   quadrille = createQuadrille(20 * (2 ** scl), image);
-  /*
-  if (frameCount % 300 === 0) {
-    scl = scl < 3 ? scl + 1 : 0;
-    quadrille = createQuadrille(40 * (2 ** scl), image);
-  }
-  if (keyCode === UP_ARROW) {
-    quadrille.reflect();
-  } else if (keyCode === DOWN_ARROW) {
-    quadrille.rotate();
-  }
-  */
 }
