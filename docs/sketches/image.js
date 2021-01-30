@@ -7,19 +7,19 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(800, 342);
-  quadrille = createQuadrille(40 * (2 ** scl), image);
+  createCanvas(800, 360);
+  quadrille = createQuadrille(20 * (2 ** scl), image);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl));
+  drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), 'blue');
   //if (frameCount)
 }
 
 function keyPressed() {
   scl = scl < 3 ? scl + 1 : 0;
-  quadrille = createQuadrille(40 * (2 ** scl), image);
+  quadrille = createQuadrille(20 * (2 ** scl), image);
   /*
   if (frameCount % 300 === 0) {
     scl = scl < 3 ? scl + 1 : 0;
