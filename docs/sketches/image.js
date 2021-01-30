@@ -4,7 +4,7 @@ var quadrille;
 var image;
 
 function preload() {
-  image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');
+  image = loadImage('https://objetos.github.io/p5.quadrille.js/docs/sketches/mahakala.jpg');
   //image = loadImage('abraham_lincoln.jpg');
 }
 
