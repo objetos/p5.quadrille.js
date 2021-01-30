@@ -1,10 +1,10 @@
-const ROWS = 20;
+const ROWS = 10;
 const COLS = 20;
-const LENGTH = 20;
+const LENGTH = 40;
 var q1, q2, q3;
 var a2, a3;
-var x1 = 2, y1 = 2;
-var x2 = 8, y2 = 10;
+var x1 = 4, y1 = 2;
+var x2 = 14, y2 = 5;
 var x3 = 0, y3 = 0;
 var c1, c2, c3;
 
@@ -31,7 +31,6 @@ function draw() {
   drawQuadrille(q2, x2, y2, LENGTH, 2, 'blue', true);
   if (q3) {
     drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta', true);
-    //drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta');
   }
 }
 
@@ -100,16 +99,7 @@ function keyPressed() {
   if (key == 'h') {
     q1.fill(2, 1, '👽');
   }
-  if (key == 'e') {
-    console.log('before', q1.order);
-    q1.clear();
-    console.log(q1.height);
-    console.log('after', q1.order);
-  }
   if (key == '-') {
     q1 = Quadrille.NEG(q1, color('green'));
-  }
-  if (key === 'p' && q3) {
-    console.log('y3', y3, 'x3', x3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }
 }

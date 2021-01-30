@@ -16,7 +16,6 @@ function setup() {
 function draw() {
   background('#060621');
   drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), '#FBBC04');
-  //if (frameCount)
 }
 
 function keyPressed() {
