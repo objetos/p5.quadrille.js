@@ -1,6 +1,6 @@
 # Images
 
-image = loadImage('https://objetos.github.io/p5.quadrille.js/docs/sketches/mahakala.jpg')
+image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg')
 
 > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, sketch=/docs/sketches/image.js, width=800, height=342
 
