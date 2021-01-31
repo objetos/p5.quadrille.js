@@ -288,6 +288,7 @@ class Quadrille {
    */
   fromInt(bitboard, pattern) {
     let length = this.width * this.height;
+    bitboard = Math.abs(Math.round(bitboard));
     if (bitboard.toString(2).length > length) {
       throw new Error(`Value is to high to fill quadrille`);
     }
