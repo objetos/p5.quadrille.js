@@ -1,15 +1,27 @@
-const ROWS = 10;
-const COLS = 20;
-const LENGTH = 40;
-var q1, q2, q3;
+const ROWS = 20;
+const COLS = 40;
+const LENGTH = 20;
+var image;
+var board, bitboard, image, array2D, filled, active;
+/*
 var a1 = true;
 var x1 = 4, y1 = 2;
 var x2 = 14, y2 = 5;
 var x3, y3;
 var c1, c2, c3;
+*/
+
+function preload() {
+  image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');
+}
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+  board = createQuadrille(COLS, ROWS);
+  image = createQuadrille(7, image);
+  image.x = 5;
+  image.y = 8;
+  /*
   c1 = color('cyan');
   c2 = color('yellow');
   c3 = color('#FBBC04');
@@ -23,19 +35,16 @@ function setup() {
                         [0,  c2],
                         [c2, c2]
                        ]);
+  */
 }
 
 function draw() {
   background('#060621');
-  if (q3) {
-    drawQuadrille(q3, x3, y3, LENGTH, 2, 'magenta', true);
-  }
-  else {
-    drawQuadrille(q1, x1, y1, LENGTH, 2, 'green', true);
-    drawQuadrille(q2, x2, y2, LENGTH, 2, 'blue', true);
-  }
+  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
+  drawQuadrille(image, image.x, image.y, LENGTH, 2, 'green', true);
 }
 
+/*
 function keyPressed() {
   if (keyCode === LEFT_ARROW) {
     q1.reflect();
@@ -102,3 +111,4 @@ function keyPressed() {
     q1 = Quadrille.NEG(q1, color('green'));
   }
 }
+*/
