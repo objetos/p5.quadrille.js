@@ -19,7 +19,7 @@ function draw() {
 }
 
 function keyPressed() {
-  if (scl === 4 || scl === 0) {
+  if (scl === 3 || scl === 0) {
     inc = !inc;
   }
   scl = inc ? scl + 1 : scl - 1;
