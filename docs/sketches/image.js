@@ -1,5 +1,5 @@
 var scl = 0;
-var inc = true;
+var inc = false;
 var quadrille;
 var image;
 
@@ -19,7 +19,7 @@ function draw() {
 }
 
 function keyPressed() {
-  if (inc && scl === 4 || !inc && scl === 0) {
+  if (scl === 4 || scl === 0) {
     inc = !inc;
   }
   scl = inc ? scl + 1 : scl - 1;
