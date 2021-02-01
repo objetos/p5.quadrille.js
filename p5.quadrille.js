@@ -148,8 +148,7 @@ class Quadrille {
    * with pattern from the given bitboard.
    * 5. Pass width, height, order and pattern, to construct a quadrille filled
    * with pattern of the given order.
-   * @see fromImage
-   * @see fromInt
+   * @see from
    * @see rand
    * @see order
    */
@@ -162,11 +161,11 @@ class Quadrille {
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number') {
       this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(0));
-      this.fromImage(arguments[1]);
+      this.from(arguments[1]);
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(0));
-      this.fromInt(arguments[1], arguments[2]);
+      this.from(arguments[1], arguments[2]);
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
@@ -376,52 +375,50 @@ class Quadrille {
   }
 
   /**
-   * Fills the quadrille with pattern from bitboard using big-endian and row-major ordering.
-   * @param {number} bitboard 
-   * @param {p5.Color | string} pattern 
-   * @throws 'Value is to high to fill quadrille' reading exception
+   * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
+   * 1. from(image); or,
+   * 2. from(bitboard, pattern) where pattern may be either a p5.Color,
+   * a string (emoji) or a 4-length color array.
    */
-  fromInt(bitboard, pattern) {
-    let length = this.width * this.height;
-    bitboard = Math.abs(Math.round(bitboard));
-    if (bitboard.toString(2).length > length) {
-      throw new Error(`Value is to high to fill quadrille`);
-    }
-    for (let i = 0; i <= length - 1; i++) {
-      if ((bitboard & (1 << length - 1 - i))) {
-        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = pattern;
+  from() {
+    if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
+      let image = arguments[0];
+      image.loadPixels();
+      let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+      let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+      let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+      let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+      let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+      for (let i = 0; i < image.pixels.length / 4; i++) {
+        let _ = this._fromIndex(i, image.width);
+        let _i = Math.floor(_.row * this.height / image.height);
+        let _j = Math.floor(_.col * this.width / image.width);
+        r[_i][_j] += image.pixels[4 * i];
+        g[_i][_j] += image.pixels[4 * i + 1];
+        b[_i][_j] += image.pixels[4 * i + 2];
+        a[_i][_j] += image.pixels[4 * i + 3];
+        t[_i][_j] += 1;
+      }
+      image.updatePixels();
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          this.memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
+        }
       }
     }
-  }
-
-  /**
-   * Fills the quadrille with image.
-   * @param {p5.Image} image 
-   */
-  fromImage(image) {
-    image.loadPixels();
-    let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    for (let i = 0; i < image.pixels.length / 4; i++) {
-      let _ = this._fromIndex(i, image.width);
-      let _i = Math.floor(_.row * this.height / image.height);
-      let _j = Math.floor(_.col * this.width / image.width);
-      r[_i][_j] += image.pixels[4 * i];
-      g[_i][_j] += image.pixels[4 * i + 1];
-      b[_i][_j] += image.pixels[4 * i + 2];
-      a[_i][_j] += image.pixels[4 * i + 3];
-      t[_i][_j] += 1;
-    }
-    image.updatePixels();
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
-        this.memory2D[i][j] = [ r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j] ];
+    if (arguments.length === 2 && typeof arguments[0] === 'number') {
+      let length = this.width * this.height;
+      let bitboard = Math.abs(Math.round(arguments[0]));
+      if (bitboard.toString(2).length > length) {
+        throw new Error(`Value is to high to fill quadrille`);
+      }
+      for (let i = 0; i <= length - 1; i++) {
+        if ((bitboard & (1 << length - 1 - i))) {
+          this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = arguments[1];
+        }
       }
     }
-  }
+  } 
 
   _fromIndex(index, width = this.width) {
     return {row: (index / width) | 0, col: index % width};

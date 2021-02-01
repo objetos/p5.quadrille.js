@@ -26,9 +26,9 @@ function setup() {
                        ]);
   t = createQuadrille(3, 3);
   console.log(t.width, t.height);
-  t.fromInt(154, '👽');
+  t.from(154, '👽');
   //Lbit = createQuadrille(3, 4);
-  //Lbit.fromInt(2343, '👽');
+  //Lbit.from(2343, '👽');
   Lbit = createQuadrille(3, 2343, '👽');
   console.log('Lbit width: ', Lbit.width);
   console.log('Lbit height: ', Lbit.height);

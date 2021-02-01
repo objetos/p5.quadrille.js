@@ -19,15 +19,15 @@ function setup() {
                       ]);
   //other = createQuadrille(2, 3);
   //other = createQuadrille(4, 6);
-  //other = createQuadrille(6, 7);
-  //other.fromInt(1258, color('blue'));
-  //other.replace(H);
-  other =  H.clone();
-  other.replace('👽', [255, 255, 0, 255]);
+  other = createQuadrille(8, 12);
+  //other.from(1258, color('blue'));
+  other.replace(H);
+  //other =  H.clone();
+  //other.replace('👽', [255, 255, 0, 255]);
 }
 
 function draw() {
   background('#060621');
   drawQuadrille(H,     2, 2, LENGTH, 2);
-  drawQuadrille(other, 2, 10, LENGTH, 2);
+  drawQuadrille(other, 2, 10, LENGTH, 2, 'magenta', true);
 }
