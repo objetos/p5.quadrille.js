@@ -71,6 +71,12 @@ function keyPressed() {
   if (key === 't') {
     test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   }
+  if (key === 'd') {
+    test.delete(test.height - 1);
+  }
+  if (key === 'p') {
+    console.log(test.toInt());
+  }
 }
 
 function debugQuadrille(quadrille) {
