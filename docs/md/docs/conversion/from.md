@@ -1,10 +1,12 @@
-# `fromInt()`
+# `from()`
 
 Fills quadrille with pattern from bitboard using [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
 
 # Syntax
 
-> `fromInt(bitboard, pattern)`
+> `from(image)`
+
+> `from(bitboard, pattern)`
 
 # Parameters
 

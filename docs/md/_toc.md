@@ -11,6 +11,7 @@
 > 
 > [read()](/docs/io/read)
 > [fill()](/docs/io/fill)
+> [replace()](/docs/io/replace)
 > [clone()](/docs/io/clone)
 > [clear()](/docs/io/clear)
 > [delete()](/docs/io/delete)
@@ -34,8 +35,7 @@
 
 > :Collapse label=Conversion from other representations
 >
-> [fromImage()](/docs/conversion/from_image)
-> [fromInt()](/docs/conversion/from_int)
+> [from()](/docs/conversion/from)
 > [toInt()](/docs/conversion/to_int)
 
 > :Collapse label=Demos
