@@ -6,9 +6,9 @@ var c, d, e;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  c = color('#00FF00');
+  //c = color('#00FF00');
+  c = '👽';
   d = color('#00FEFF');
-  //c = '👽';
   e = [255, 0, 0, 255];
   H = createQuadrille([ [c, 0, 0, e],
                         [c, 0, 0, e],
@@ -17,11 +17,13 @@ function setup() {
                         [c, c, 0, e],
                         [c, c, d, e],
                       ]);
-  other = createQuadrille(2, 3);
+  //other = createQuadrille(2, 3);
   //other = createQuadrille(4, 6);
   //other = createQuadrille(6, 7);
   //other.fromInt(1258, color('blue'));
-  other.fromOther(H);
+  //other.replace(H);
+  other =  H.clone();
+  other.replace('👽', [255, 255, 0, 255]);
 }
 
 function draw() {

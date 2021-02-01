@@ -191,9 +191,80 @@ class Quadrille {
   }
 
   /**
-   * Fills quadrille cells with given pattern. Either current filled cells (fill(pattern)),
-   * a whole given row (fill(row, pattern)) or a given cell (fill(row, col, pattern)).
-   * Pattern may be either a p5.Color or a string.
+   * Fills quadrille cells with given pattern. Either:
+   * 1. replace(pattern1, pattern2), search pattern1 and replaces with pattern2,
+   * pattern1 and pattern2 may be either a p5.Color, a string (emoji) or a 4-length
+   * color array; or,
+   * 2. replace(quadrille) replace current cell contents with that of quadrille.
+   */
+  replace() {
+    if (arguments.length === 1 && arguments[0] instanceof Quadrille) {
+      if (arguments[0].width > this.width && arguments[0].height > this.height) {
+        let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        for (let i = 0; i < arguments[0].height; i++) {
+          for (let j = 0; j < arguments[0].width; j++) {
+            let _r = 0, _g = 0, _b = 0, _a = 0;
+            let _i = Math.floor(i * this.height / arguments[0].height);
+            let _j = Math.floor(j * this.width / arguments[0].width);
+            if (Array.isArray(arguments[0].memory2D[i][j])) {
+              _r = arguments[0].memory2D[i][j][0];
+              _g = arguments[0].memory2D[i][j][1];
+              _b = arguments[0].memory2D[i][j][2];
+              _a = arguments[0].memory2D[i][j][3];
+            } else if (arguments[0].memory2D[i][j] instanceof p5.Color) {
+              _r = red(arguments[0].memory2D[i][j]);
+              _g = green(arguments[0].memory2D[i][j]);
+              _b = blue(arguments[0].memory2D[i][j]);
+              _a = alpha(arguments[0].memory2D[i][j]);
+            }
+            r[_i][_j] += _r;
+            g[_i][_j] += _g;
+            b[_i][_j] += _b;
+            a[_i][_j] += _a;
+            t[_i][_j] += 1;
+          }
+        }
+        for (let i = 0; i < this.height; i++) {
+          for (let j = 0; j < this.width; j++) {
+            if ((r[i][j] !== 0 || g[i][j] !== 0 || b[i][j] !== 0) && t[i][j] > 0) {
+              this.memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
+            }
+            else {
+              this.memory2D[i][j] = 0;
+            }
+          }
+        }
+      }
+      else if (this.width >= arguments[0].width && this.height >= arguments[0].height) {
+        for (let i = 0; i < this.height; i++) {
+          for (let j = 0; j < this.width; j++) {
+            let _i = Math.floor(i * arguments[0].height / this.height);
+            let _j = Math.floor(j * arguments[0].width / this.width);
+            this.memory2D[i][j] = arguments[0].memory2D[_i][_j];
+          }
+        }
+      }
+    } else if (arguments.length === 2) {
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          if (this.memory2D[i][j] === arguments[0]) {
+            this.memory2D[i][j] = arguments[1];
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Fills quadrille cells with given pattern. Either:
+   * 1. fill(pattern), fills current filled cells;
+   * 2. fill(row, pattern), fills row; or,
+   * 3. fill(row, col, pattern), fills cell.
+   * pattern may be either a p5.Color, a string (emoji) or a 4-length color array.
    */
   fill() {
     if (arguments.length === 1) {
@@ -348,68 +419,6 @@ class Quadrille {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         this.memory2D[i][j] = [ r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j] ];
-      }
-    }
-  }
-
-  fromOther(quadrille, pattern = [255, 255, 0, 255]) {
-    if (quadrille.width > this.width && quadrille.height > this.height) {
-      let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      for (let i = 0; i < quadrille.height; i++) {
-        for (let j = 0; j < quadrille.width; j++) {
-          let _r = 0, _g = 0, _b = 0, _a = 0;
-          let _i = Math.floor(i * this.height / quadrille.height);
-          let _j = Math.floor(j * this.width / quadrille.width);
-          if (Array.isArray(quadrille.memory2D[i][j])) {
-            _r = quadrille.memory2D[i][j][0];
-            _g = quadrille.memory2D[i][j][1];
-            _b = quadrille.memory2D[i][j][2];
-            _a = quadrille.memory2D[i][j][3];
-          } else if (quadrille.memory2D[i][j] instanceof p5.Color) {
-            _r = red(quadrille.memory2D[i][j]);
-            _g = green(quadrille.memory2D[i][j]);
-            _b = blue(quadrille.memory2D[i][j]);
-            _a = alpha(quadrille.memory2D[i][j]);
-          } else if (quadrille.memory2D[i][j] && Array.isArray(pattern)) {
-            _r = pattern[0];
-            _g = pattern[1];
-            _b = pattern[2];
-            _a = pattern[3];
-          } else if (quadrille.memory2D[i][j] && pattern instanceof p5.Color) {
-            _r = red(pattern);
-            _g = green(pattern);
-            _b = blue(pattern);
-            _a = alpha(pattern);
-          }
-          r[_i][_j] += _r;
-          g[_i][_j] += _g;
-          b[_i][_j] += _b;
-          a[_i][_j] += _a;
-          t[_i][_j] += 1;
-        }
-      }
-      for (let i = 0; i < this.height; i++) {
-        for (let j = 0; j < this.width; j++) {
-          if ((r[i][j] !== 0 || g[i][j] !== 0 || b[i][j] !== 0) && t[i][j] > 0) {
-            this.memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
-          }
-          else {
-            this.memory2D[i][j] = 0;
-          }
-        }
-      }
-    }
-    else if (this.width >= quadrille.width  && this.height >= quadrille.height) {
-      for (let i = 0; i < this.height; i++) {
-        for (let j = 0; j < this.width; j++) {
-          let _i = Math.floor(i * quadrille.height / this.height);
-          let _j = Math.floor(j * quadrille.width / this.width);
-          this.memory2D[i][j] = quadrille.memory2D[_i][_j];
-        }
       }
     }
   }
