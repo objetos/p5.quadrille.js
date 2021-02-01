@@ -38,4 +38,4 @@
 > [from()](/docs/conversion/from)
 > [toInt()](/docs/conversion/to_int)
 
-[Demos](/docs/demo)
+[Demo](/docs/demo)
