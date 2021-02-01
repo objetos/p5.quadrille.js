@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var t, T, L, Lbit;
+var t, T, L, Lbit, test;
 var quadrille;
 var clone;
 var x = 2, y = 2;
@@ -38,14 +38,16 @@ function setup() {
   quadrille.reflect();
   clone = quadrille.clone();
   clone.reflect();
+  test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-  drawQuadrille(clone, 2, 8, LENGTH, 0);
+  //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+  drawQuadrille(test, x, y, LENGTH, 2, 'green', true);
+  //drawQuadrille(clone, 2, 8, LENGTH, 0);
   //drawQuadrille(L, 2, 12, LENGTH);
-  drawQuadrille(Lbit, 2, 12, LENGTH);
+  //drawQuadrille(Lbit, 2, 12, LENGTH);
 }
 
 function keyPressed() {
@@ -65,6 +67,9 @@ function keyPressed() {
   }
   if (key === 'z') {
     y = y < ROWS - quadrille.height ? y + 1 : y;
+  }
+  if (key === 't') {
+    test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   }
 }
 
