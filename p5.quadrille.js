@@ -191,7 +191,7 @@ class Quadrille {
   }
 
   /**
-   * Fills quadrille cells with given pattern. Either:
+   * Replaces quadrille cells with given pattern. Either:
    * 1. replace(pattern1, pattern2), search pattern1 and replaces with pattern2,
    * pattern1 and pattern2 may be either a p5.Color, a string (emoji) or a 4-length
    * color array; or,
