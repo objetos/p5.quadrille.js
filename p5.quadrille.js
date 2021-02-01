@@ -280,25 +280,6 @@ class Quadrille {
     return result;
   }
 
-  /**
-   * Fills the quadrille with pattern from bitboard using big-endian and row-major ordering.
-   * @param {number} bitboard 
-   * @param {p5.Color | string} pattern 
-   * @throws 'Value is to high to fill quadrille' reading exception
-   */
-  fromInt(bitboard, pattern) {
-    let length = this.width * this.height;
-    bitboard = Math.abs(Math.round(bitboard));
-    if (bitboard.toString(2).length > length) {
-      throw new Error(`Value is to high to fill quadrille`);
-    }
-    for (let i = 0; i <= length - 1; i++) {
-      if ((bitboard & (1 << length - 1 - i))) {
-        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = pattern;
-      }
-    }
-  }
-
   // TODO perlin noise is missed
 
   /**
@@ -319,6 +300,25 @@ class Quadrille {
       if (order > disorder ? !this.memory2D[_.row][_.col] : this.memory2D[_.row][_.col]) {
         this.memory2D[_.row][_.col] = order > disorder ? pattern : 0;
         counter++;
+      }
+    }
+  }
+
+  /**
+   * Fills the quadrille with pattern from bitboard using big-endian and row-major ordering.
+   * @param {number} bitboard 
+   * @param {p5.Color | string} pattern 
+   * @throws 'Value is to high to fill quadrille' reading exception
+   */
+  fromInt(bitboard, pattern) {
+    let length = this.width * this.height;
+    bitboard = Math.abs(Math.round(bitboard));
+    if (bitboard.toString(2).length > length) {
+      throw new Error(`Value is to high to fill quadrille`);
+    }
+    for (let i = 0; i <= length - 1; i++) {
+      if ((bitboard & (1 << length - 1 - i))) {
+        this.memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = pattern;
       }
     }
   }
@@ -351,6 +351,8 @@ class Quadrille {
       }
     }
   }
+
+  // TODO from image (check working draft in 'other' branch)
 
   _fromIndex(index, width = this.width) {
     return {row: (index / width) | 0, col: index % width};
