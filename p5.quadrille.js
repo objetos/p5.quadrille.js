@@ -404,20 +404,12 @@ class Quadrille {
   }
 
   // this is bigger than quadrille
-  fromOther2(quadrille, pattern = [255, 255, 0, 255]) {
+  fromOther2(quadrille) {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         let _i = Math.floor(i * quadrille.height / this.height);
         let _j = Math.floor(j * quadrille.width / this.width);
-        if (Array.isArray(quadrille.memory2D[_i][_j])) {
-          this.memory2D[i][j] = quadrille.memory2D[_i][_j];
-        } else if (quadrille.memory2D[_i][_j] instanceof p5.Color) {
-          this.memory2D[i][j] = [ red(quadrille.memory2D[_i][_j]), green(quadrille.memory2D[_i][_j]), blue(quadrille.memory2D[_i][_j]), alpha(quadrille.memory2D[_i][_j]) ];
-        } else if (quadrille.memory2D[_i][_j] && Array.isArray(pattern)) {
-          this.memory2D[i][j] = pattern;
-        } else if (quadrille.memory2D[_i][_j] && pattern instanceof p5.Color) {
-          this.memory2D[i][j] = [ red(pattern), green(pattern), blue(pattern), alpha(pattern) ];
-        }
+        this.memory2D[i][j] = quadrille.memory2D[_i][_j];
       }
     }
   }

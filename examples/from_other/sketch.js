@@ -20,7 +20,7 @@ function setup() {
   //other = createQuadrille(2, 3);
   other = createQuadrille(8, 12);
   //other.fromInt(1258, color('blue'));
-  other.fromOther2(H);
+  other.fromOther2(H, '👽');
 }
 
 function draw() {
