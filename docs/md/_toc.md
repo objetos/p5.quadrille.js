@@ -38,10 +38,4 @@
 > [from()](/docs/conversion/from)
 > [toInt()](/docs/conversion/to_int)
 
-> :Collapse label=Demos
->
-> [Create and display](/docs/demos/p5-fx)
-> [Geometry transformations](/docs/demos/geom)
-> [Logical operators](/docs/demos/logic)
-> [Images](/docs/demos/image)
-> [Bitboards](/docs/demos/bitboard)
+[Demos](/docs/demo)

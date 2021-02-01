@@ -1,47 +1,71 @@
 const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
-var image;
-var board, bitboard, image, array2D, filled, active;
-/*
-var a1 = true;
-var x1 = 4, y1 = 2;
-var x2 = 14, y2 = 5;
-var x3, y3;
-var c1, c2, c3;
-*/
-
-function preload() {
-  image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');
-}
+var board, quadrille;
+var x, y;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   board = createQuadrille(COLS, ROWS);
-  image = createQuadrille(7, image);
-  image.x = 5;
-  image.y = 8;
-  /*
-  c1 = color('cyan');
-  c2 = color('yellow');
-  c3 = color('#FBBC04');
-  q1 = createQuadrille([[c1, c1, 0],
-                        [0,  c1, c1],
-                        [0,  c1, 0],
-                        [c1, c1, c1]
-                       ]);
-  q2 = createQuadrille([[0,  c2],
-                        [c2, c2],
-                        [0,  c2],
-                        [c2, c2]
-                       ]);
-  */
+  quadrille = active(int(random(3)));
+  x = int(random(0, COLS - 6));
+  y = int(random(0, ROWS - 6));
 }
 
 function draw() {
-  background('#060621');
+  background('#2E0E36');
   drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
-  drawQuadrille(image, image.x, image.y, LENGTH, 2, 'green', true);
+  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
+}
+
+function keyPressed() {
+  if (key === 'e') {
+    quadrille.reflect();
+  }
+  if (key === 'r') {
+    quadrille.rotate();
+  }
+  if (key === 't') {
+    quadrille.transpose();
+  }
+  if (key === 'w') {
+    y--;
+  }
+  if (key === 'z') {
+    y++;
+  }
+  if (key === 'a') {
+    x--;
+  }
+  if (key === 's') {
+    x++;
+  }
+  if (key === '0') {
+    quadrille = active(0);
+  }
+  if (key === '1') {
+    quadrille = active(1);
+  }
+  if (key === '2') {
+    quadrille = active(2);
+  }
+}
+
+function active(value) {
+  switch (value) {
+    case 0:
+      return createQuadrille([['🙈', '🙉',    0],
+                              [0,    '🙊', '🐵'],
+                              [0,    '🙉',    0],
+                              ['🙈', '🐒', '🙉']
+                             ]);
+    case 1:
+      return createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
+    default:
+      let w = int(random(2, 6));
+      let h = int(random(2, 6));
+      return createQuadrille(w, h, int(random(1, w * h)), color('#007ACC'));
+  }
 }
 
 /*

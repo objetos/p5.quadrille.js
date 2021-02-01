@@ -13,7 +13,6 @@ function draw() {
   if (frameCount % 200 === 0) {
     let scl = int(random(4));
     quadrille = createQuadrille(20 * (2 ** scl), image);
-    // color(random(255)) '#FBBC04'
     drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), color(random(255)));
   }
 }
