@@ -352,7 +352,75 @@ class Quadrille {
     }
   }
 
-  // TODO from image (check working draft in 'other' branch)
+  fromOther(quadrille, pattern = [255, 255, 0, 255]) {
+    let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
+        let _r = 0, _g = 0, _b = 0, _a = 0;
+        let _i = Math.floor(i * this.height / quadrille.height);
+        let _j = Math.floor(j * this.width / quadrille.width);
+        if (Array.isArray(quadrille.memory2D[i][j])) {
+          _r = quadrille.memory2D[i][j][0];
+          _g = quadrille.memory2D[i][j][1];
+          _b = quadrille.memory2D[i][j][2];
+          _a = quadrille.memory2D[i][j][3];
+        } else if (quadrille.memory2D[i][j] instanceof p5.Color) {
+          _r = red(quadrille.memory2D[i][j]);
+          _g = green(quadrille.memory2D[i][j]);
+          _b = blue(quadrille.memory2D[i][j]);
+          _a = alpha(quadrille.memory2D[i][j]);
+        } else if (quadrille.memory2D[i][j] && Array.isArray(pattern)) {
+          _r = pattern[0];
+          _g = pattern[1];
+          _b = pattern[2];
+          _a = pattern[3];
+        } else if (quadrille.memory2D[i][j] && pattern instanceof p5.Color) {
+          _r = red(pattern);
+          _g = green(pattern);
+          _b = blue(pattern);
+          _a = alpha(pattern);
+        }
+        r[_i][_j] += _r;
+        g[_i][_j] += _g;
+        b[_i][_j] += _b;
+        a[_i][_j] += _a;
+        t[_i][_j] += 1;
+      }
+    }
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if ( (r[i][j] !== 0 || g[i][j] !== 0 || b[i][j] !== 0) &&  t[i][j] > 0) {
+          this.memory2D[i][j] = [ r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], /*a[i][j] / t[i][j]*/ 255 ];
+        }
+        else {
+          this.memory2D[i][j] = 0;
+        }
+      }
+    }
+  }
+
+  // this is bigger than quadrille
+  fromOther2(quadrille, pattern = [255, 255, 0, 255]) {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        let _i = Math.floor(i * quadrille.height / this.height);
+        let _j = Math.floor(j * quadrille.width / this.width);
+        if (Array.isArray(quadrille.memory2D[_i][_j])) {
+          this.memory2D[i][j] = quadrille.memory2D[_i][_j];
+        } else if (quadrille.memory2D[_i][_j] instanceof p5.Color) {
+          this.memory2D[i][j] = [ red(quadrille.memory2D[_i][_j]), green(quadrille.memory2D[_i][_j]), blue(quadrille.memory2D[_i][_j]), alpha(quadrille.memory2D[_i][_j]) ];
+        } else if (quadrille.memory2D[_i][_j] && Array.isArray(pattern)) {
+          this.memory2D[i][j] = pattern;
+        } else if (quadrille.memory2D[_i][_j] && pattern instanceof p5.Color) {
+          this.memory2D[i][j] = [ red(pattern), green(pattern), blue(pattern), alpha(pattern) ];
+        }
+      }
+    }
+  }
 
   _fromIndex(index, width = this.width) {
     return {row: (index / width) | 0, col: index % width};
