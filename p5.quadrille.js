@@ -394,7 +394,7 @@ class Quadrille {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if ( (r[i][j] !== 0 || g[i][j] !== 0 || b[i][j] !== 0) &&  t[i][j] > 0) {
-          this.memory2D[i][j] = [ r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], /*a[i][j] / t[i][j]*/ 255 ];
+          this.memory2D[i][j] = [ r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j] ];
         }
         else {
           this.memory2D[i][j] = 0;
