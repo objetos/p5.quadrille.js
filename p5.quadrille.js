@@ -375,7 +375,7 @@ class Quadrille {
   }
 
   /**
-   * Randmoly re-arranges cell entries.
+   * Randomly re-arranges cell entries.
    */
   randomize() {
     let clone = this.clone();
