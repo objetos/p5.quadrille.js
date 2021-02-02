@@ -374,15 +374,6 @@ class Quadrille {
     }
   }
 
-  /*
-  do {
-            _i = int(random(this.height - 1));
-            _j = int(random(this.width - 1));
-            console.log('do', _i, _j);
-          }
-          while (this.memory2D[_i][_j]);
-*/
-
   /**
    * Randmoly re-arranges cell entries.
    */
