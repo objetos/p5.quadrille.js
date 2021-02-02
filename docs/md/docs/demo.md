@@ -36,8 +36,8 @@
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 >   board = createQuadrille(COLS, ROWS);
 >   quadrille = active(int(random(3)));
->   x = int(random(0, COLS - 6));
->   y = int(random(0, ROWS - 6));
+>   x = int(random(0, COLS - 4));
+>   y = int(random(0, ROWS - 4));
 > }
 > 
 > function draw() {
@@ -126,9 +126,14 @@
 ## Creation
 
 ```js | excerpt from demo.js
+const ROWS = 20;
+const COLS = 40;
+const LENGTH = 20;
+/*!*/var board, quadrille; // --> Quadrille instances
+var x, y;
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  board = createQuadrille(COLS, ROWS);
+/*!*/  board = createQuadrille(COLS, ROWS); // --> Creates empty quadrille
 /*!*/  quadrille = active(int(random(3)));
   x = int(random(0, COLS - 6));
   y = int(random(0, ROWS - 6));
@@ -138,13 +143,13 @@ function setup() {
 ```js | excerpt from demo.js
 function active(value) {
   switch (value) {
-    case 1:
+    case 1: // --> Creates quadrille from Array2D
 /*!*/      return createQuadrille([['🙈', '🙉',    0],
 /*!*/                              [0,    '🙊', '🐵'],
 /*!*/                              [0,    '🙉',    0],
 /*!*/                              ['🙈', '🐒', '🙉']
 /*!*/                             ]);
-    case 2:
+    case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
 /*!*/      return createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
     default:
       let w = int(random(2, 6));
