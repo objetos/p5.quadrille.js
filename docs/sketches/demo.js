@@ -68,11 +68,11 @@ function keyPressed() {
 
 function operator(fx) {
   let clone = quadrille.clone();
-    clone.fill(color('#965695'));
-    board = fx(board, clone, y, x);
-    quadrille = active(int(random(3)));
-    x = int(random(0, COLS - 6));
-    y = int(random(0, ROWS - 6));
+  clone.fill(color('#965695'));
+  board = fx(board, clone, y, x);
+  quadrille = active(int(random(3)));
+  x = int(random(0, COLS - 6));
+  y = int(random(0, ROWS - 6));
 }
 
 function active(value) {
