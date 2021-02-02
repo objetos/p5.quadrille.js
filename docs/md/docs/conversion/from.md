@@ -1,6 +1,7 @@
 # `from()`
 
-Fills quadrille with pattern from bitboard using [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
+Converts other objects to a `quadrille`. Either an [image](https://p5js.org/reference/#/p5.Image), or 
+or a [bitboard](https://en.wikipedia.org/wiki/Bitboard) represented as a [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order) integer value.
 
 # Syntax
 
@@ -10,9 +11,10 @@ Fills quadrille with pattern from bitboard using [big-endian](https://en.wikiped
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                                                     |
-|----------|--------------------------------------------------------------------------------------------------------------|
-| bitboard | Quadrille: `quadrille` to be drawn                                                                           |
-| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) | String | 0: pattern used to fill all the non-empty cells |
+| <!-- --> | <!-- -->                                                                                                       |
+|----------|----------------------------------------------------------------------------------------------------------------|
+| image    | [p5.Image](https://p5js.org/reference/#/p5.Image)                                                              |
+| bitboard | number: integer bitboard value                                                                                 |
+| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
 
 > :ToCPrevNext

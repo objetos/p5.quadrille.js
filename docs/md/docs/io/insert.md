@@ -8,8 +8,8 @@ Inserts an empty row into the quadrille [memory2D](/docs/props#memory2d) interna
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                 |
-|----------|--------------------------------------------------------------------------|
-| row      | Number: number of the row to be inserted [0..[width](/docs/props#width)] |
+| <!-- --> | <!-- -->                                                                  |
+|----------|---------------------------------------------------------------------------|
+| row      | Number: number of the row to be inserted [\[0..width\]](/docs/props#width)] |
 
 > :ToCPrevNext

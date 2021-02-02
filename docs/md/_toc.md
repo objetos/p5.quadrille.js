@@ -11,6 +11,8 @@
 > 
 > [read()](/docs/io/read)
 > [fill()](/docs/io/fill)
+> [rand()](/docs/io/rand)
+> [randomize()](/docs/io/randomize)
 > [replace()](/docs/io/replace)
 > [clone()](/docs/io/clone)
 > [clear()](/docs/io/clear)
@@ -25,7 +27,6 @@
 > [AND()](/docs/logic/and)
 > [DIFF()](/docs/logic/diff)
 > [NEG()](/docs/logic/neg)
-> [OP()](/docs/logic/op)
 
 > :Collapse label=Geometry transformations
 >

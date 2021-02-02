@@ -16,10 +16,10 @@ Fills quadrille cells with given `pattern`. Either:
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                       |
-|----------|--------------------------------------------------------------------------------|
-| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) | String | 0: filled pattern |
-| row      | Number: row number of the cell to be filled [0..[width](/docs/props#width)     |
-| col      | Number: col number of the cell to be filled [0..[height](/docs/props#height)   |
+| <!-- --> | <!-- -->                                                                                                       |
+|----------|----------------------------------------------------------------------------------------------------------------|
+| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
+| row      | Number: row number of the cell to be filled [\[0..width\]](/docs/props#width)                                  |
+| col      | Number: col number of the cell to be filled [\[0..height\]](/docs/props#height)                                |
 
 > :ToCPrevNext

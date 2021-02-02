@@ -78,8 +78,8 @@ function operator(fx) {
   clone.fill(color('#965695'));
   board = fx(board, clone, y, x);
   quadrille = active(int(random(3)));
-  x = int(random(0, COLS - 6));
-  y = int(random(0, ROWS - 6));
+  x = int(random(0, COLS - 4));
+  y = int(random(0, ROWS - 4));
 }
 
 function active(value) {

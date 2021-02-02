@@ -24,7 +24,7 @@ Creates a `quadrille` which may be filled with any combination of zeros (for emp
 | image    | [p5.Image](https://p5js.org/reference/#/p5.Image) instance                                                                                                        |
 | bitboard | Number: [bitboard](https://en.wikipedia.org/wiki/Bitboard) [big-endian](https://en.wikipedia.org/wiki/Endianness) integer representation                          |
 | order    | Number: total number of non-empty cells                                                                                                                           |
-| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) | String | 0: pattern used to fill all the non-empty cells                                                      |
+| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells                                                    |
 
 ## Examples
 
