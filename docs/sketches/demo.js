@@ -53,37 +53,26 @@ function keyPressed() {
     x++;
   }
   if (key === 'u') {
-    let clone = quadrille.clone();
-    clone.fill(color('#965695'));
-    board = Quadrille.OR(board, clone, y, x);
-    quadrille = active(int(random(3)));
-    x = int(random(0, COLS - 6));
-    y = int(random(0, ROWS - 6));
+    operator(Quadrille.OR);
   }
   if (key === 'x') {
-    let clone = quadrille.clone();
-    clone.fill(color('#965695'));
-    board = Quadrille.XOR(board, clone, y, x);
-    quadrille = active(int(random(3)));
-    x = int(random(0, COLS - 6));
-    y = int(random(0, ROWS - 6));
+    operator(Quadrille.XOR);
   }
   if (key === 'i') {
-    let clone = quadrille.clone();
-    clone.fill(color('#965695'));
-    board = Quadrille.AND(board, clone, y, x);
-    quadrille = active(int(random(3)));
-    x = int(random(0, COLS - 6));
-    y = int(random(0, ROWS - 6));
+    operator(Quadrille.AND);
   }
   if (key === 'd') {
-    let clone = quadrille.clone();
+    operator(Quadrille.DIFF);
+  }
+}
+
+function operator(fx) {
+  let clone = quadrille.clone();
     clone.fill(color('#965695'));
-    board = Quadrille.DIFF(board, clone, y, x);
+    board = fx(board, clone, y, x);
     quadrille = active(int(random(3)));
     x = int(random(0, COLS - 6));
     y = int(random(0, ROWS - 6));
-  }
 }
 
 function active(value) {
