@@ -5,23 +5,23 @@
 >
 > > :Tab title=keys (click on canvas before using them)
 > >
-> > | <!-- --> | <!-- -->                                                                      |
-> > |----------|-------------------------------------------------------------------------------|
-> > | 1        | calls `createQuadrille(array2D)` to replace `quadrille`                       |
-> > | 2        | calls `createQuadrille(width, bitboard, pattern)` to replace `quadrille`      |
-> > | 3        | calls `createQuadrille(width, height, order, pattern)` to replace `quadrille` |
-> > | f        | reflects `quadrille`                                                          |
-> > | r        | rotates `quadrille`                                                           |
-> > | t        | transposes `quadrille`                                                        |
-> > | a        | moves `quadrille` to the left                                                 |
-> > | s        | moves `quadrille` to the right                                                |
-> > | w        | moves `quadrille` up                                                          |
-> > | z        | moves `quadrille` down                                                        |
-> > | u        | merges `quadrille` into `board` using the `Quadrille.OR` logical operator     |
-> > | x        | merges `quadrille` into `board` using the `Quadrille.XOR` logical operator    |
-> > | i        | merges `quadrille` into `board` using the `Quadrille.AND` logical operator    |
-> > | d        | merges `quadrille` into `board` using the `Quadrille.DIFF` logical operator   |
-> > | c        | clears board                                                                  |
+> > | key | Action                                                                        |
+> > |-----|-------------------------------------------------------------------------------|
+> > | 1   | calls `createQuadrille(array2D)` to replace `quadrille`                       |
+> > | 2   | calls `createQuadrille(width, bitboard, pattern)` to replace `quadrille`      |
+> > | 3   | calls `createQuadrille(width, height, order, pattern)` to replace `quadrille` |
+> > | f   | reflects `quadrille`                                                          |
+> > | r   | rotates `quadrille`                                                           |
+> > | t   | transposes `quadrille`                                                        |
+> > | a   | moves `quadrille` to the left                                                 |
+> > | s   | moves `quadrille` to the right                                                |
+> > | w   | moves `quadrille` up                                                          |
+> > | z   | moves `quadrille` down                                                        |
+> > | u   | merges `quadrille` into `board` using the `Quadrille.OR` logical operator     |
+> > | x   | merges `quadrille` into `board` using the `Quadrille.XOR` logical operator    |
+> > | i   | merges `quadrille` into `board` using the `Quadrille.AND` logical operator    |
+> > | d   | merges `quadrille` into `board` using the `Quadrille.DIFF` logical operator   |
+> > | c   | clears board                                                                  |
 
 > :Collapse label=check the code here
 >
