@@ -374,6 +374,36 @@ class Quadrille {
     }
   }
 
+  /*
+  do {
+            _i = int(random(this.height - 1));
+            _j = int(random(this.width - 1));
+            console.log('do', _i, _j);
+          }
+          while (this.memory2D[_i][_j]);
+*/
+
+  /**
+   * Randmoly re-arranges cell entries.
+   */
+  randomize() {
+    let clone = this.clone();
+    this.clear();
+    for (let i = 0; i < clone.height; i++) {
+      for (let j = 0; j < clone.width; j++) {
+        if (clone.memory2D[i][j]) {
+          let _i, _j;
+          do {
+            _i = int(random(this.height));
+            _j = int(random(this.width));
+          }
+          while(this.memory2D[_i][_j]); 
+          this.memory2D[_i][_j] = clone.memory2D[i][j];
+        }
+      }
+    }
+  }
+
   /**
    * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,

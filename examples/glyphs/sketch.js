@@ -43,8 +43,8 @@ function setup() {
 
 function draw() {
   background('#060621');
-  //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-  drawQuadrille(test, x, y, LENGTH, 2, 'green', true);
+  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+  //drawQuadrille(test, x, y, LENGTH, 2, 'green', true);
   //drawQuadrille(clone, 2, 8, LENGTH, 0);
   //drawQuadrille(L, 2, 12, LENGTH);
   //drawQuadrille(Lbit, 2, 12, LENGTH);
@@ -76,6 +76,9 @@ function keyPressed() {
   }
   if (key === 'p') {
     console.log(test.toInt());
+  }
+  if (key === 'r') {
+    quadrille.randomize();
   }
 }
 
