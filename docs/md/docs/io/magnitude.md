@@ -8,8 +8,8 @@ Returns the number of non-empty cells in the given row of the quadrille [memory2
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                     |
-|----------|--------------------------------------------------------------|
-| row      | Number: number of the row [\[0..width\]](/docs/props#width)] |
+| <!-- --> | <!-- -->                                                       |
+|----------|----------------------------------------------------------------|
+| row      | Number: number of the row [\[0..height\]](/docs/props#height)] |
 
 > :ToCPrevNext

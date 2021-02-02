@@ -1,6 +1,6 @@
 # `createQuadrille()`
 
-Creates a `quadrille` which may be filled with any combination of zeros (for empty cells), a 4-length color array, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/).
+[p5.js](https://p5js.org/) function that creates a `quadrille` which may be filled with any combination of zeros (for empty cells), a 4-length color array, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/).
 
 ## Syntax
 
@@ -25,7 +25,5 @@ Creates a `quadrille` which may be filled with any combination of zeros (for emp
 | bitboard | Number: [bitboard](https://en.wikipedia.org/wiki/Bitboard) [big-endian](https://en.wikipedia.org/wiki/Endianness) integer representation                          |
 | order    | Number: total number of non-empty cells                                                                                                                           |
 | pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells                                                    |
-
-## Examples
 
 > :ToCPrevNext

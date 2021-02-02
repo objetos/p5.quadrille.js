@@ -10,7 +10,7 @@ Returns the contents of the quadrille cell at `(row, col)`. Returns `undefined` 
 
 | <!-- --> | <!-- -->                                                                      |
 |----------|-------------------------------------------------------------------------------|
-| row      | Number: row number of the cell to be read [\[0..width\]](/docs/props#width)   |
-| col      | Number: col number of the cell to be read [\[0..height\]](/docs/props#height) |
+| row      | Number: col number of the cell to be read [\[0..height\]](/docs/props#height) |
+| col      | Number: row number of the cell to be read [\[0..width\]](/docs/props#width)   |
 
 > :ToCPrevNext

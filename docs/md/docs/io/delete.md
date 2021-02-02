@@ -8,8 +8,8 @@ Deletes a row from the quadrille [memory2D](/docs/props#memory2d) internal repre
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                  |
-|----------|---------------------------------------------------------------------------|
-| row      | Number: number of the row to be deleted [\[0..width\]](/docs/props#width) |
+| <!-- --> | <!-- -->                                                                    |
+|----------|-----------------------------------------------------------------------------|
+| row      | Number: number of the row to be deleted [\[0..height\]](/docs/props#height) |
 
 > :ToCPrevNext
