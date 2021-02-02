@@ -33,7 +33,7 @@
 > [rotate()](/docs/geom/rotate)
 > [transpose()](/docs/geom/transpose)
 
-> :Collapse label=Conversion from other representations
+> :Collapse label=Other representations
 >
 > [from()](/docs/conversion/from)
 > [toInt()](/docs/conversion/to_int)
