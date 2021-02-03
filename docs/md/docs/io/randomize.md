@@ -1,6 +1,6 @@
 # `randomize()`
 
-Randomly re-arranges the quadrille cell entries.
+Randomly re-arranges the quadrille cells.
 
 # Syntax
 

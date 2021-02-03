@@ -2,8 +2,8 @@
 
 Replaces quadrille cells. Either:
 
-1. Replacing `pattern1` with `pattern2`: `replace(pattern1, pattern2)`; or,
-2. Using other `quadrille`: `replace(quadrille)`.
+1. Replacing `pattern1` with `pattern2`; or,
+2. Using other `quadrille`.
 
 # Syntax
 

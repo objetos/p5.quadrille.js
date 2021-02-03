@@ -1,6 +1,6 @@
 # `reflect()`
 
-Horizontal reflection of the quadrille [memory2D](/docs/props#memory2d) entries.
+Horizontal reflection of the quadrille [memory2D](/docs/props#memory2d) cells.
 
 # Syntax
 

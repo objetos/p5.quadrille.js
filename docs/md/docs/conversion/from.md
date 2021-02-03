@@ -1,7 +1,7 @@
 # `from()`
 
 Converts other objects to a `quadrille`. Either an [image](https://p5js.org/reference/#/p5.Image), or 
-or a [bitboard](https://en.wikipedia.org/wiki/Bitboard) represented as a [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order) integer value.
+a [bitboard](https://en.wikipedia.org/wiki/Bitboard) represented as a [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order) integer value.
 
 # Syntax
 

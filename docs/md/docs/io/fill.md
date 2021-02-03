@@ -12,7 +12,7 @@ Fills quadrille cells with given `pattern`. Either:
 
 > `fill(row, pattern)`
 
-> `fill(row, col, pattern`
+> `fill(row, col, pattern)`
 
 # Parameters
 
