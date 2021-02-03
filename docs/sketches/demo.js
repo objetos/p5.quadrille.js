@@ -57,26 +57,26 @@ function keyPressed() {
     x++;
   }
   if (key === 'u') {
-    operator(Quadrille.OR);
+    operator();
   }
   if (key === 'x') {
-    operator(Quadrille.XOR);
+    operator();
   }
   if (key === 'i') {
-    operator(Quadrille.AND);
+    operator();
   }
   if (key === 'd') {
-    operator(Quadrille.DIFF);
+    operator();
   }
   if (key === 'q') {
     animate = !animate;
   }
 }
 
-function operator(fx) {
+function operator() {
   let clone = quadrille.clone();
   clone.fill(color('#965695'));
-  board = fx(board, clone, y, x);
+  board = Quadrille.OR(board, clone, y, x);
   quadrille = active(int(random(3)));
   x = int(random(0, COLS - 4));
   y = int(random(0, ROWS - 4));
