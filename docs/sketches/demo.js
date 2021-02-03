@@ -69,7 +69,8 @@ function operator(key) {
     clone.fill(color('#965695'));
     board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
             key === 'x' ? Quadrille.XOR(board, clone, y, x) :
-            key === 'i' ? Quadrille.AND(board, clone, y, x) : Quadrille.DIFF(board, clone, y, x);
+            key === 'i' ? Quadrille.AND(board, clone, y, x) :
+                          Quadrille.DIFF(board, clone, y, x);
     quadrille = active(int(random(3)));
     x = int(random(0, COLS - 4));
     y = int(random(0, ROWS - 4));
