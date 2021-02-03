@@ -84,12 +84,14 @@ function operator(fx) {
 
 function active(value) {
   switch (value) {
+    /*
     case 1:
       return createQuadrille([['🙈', '🙉',    0],
                               [0,    '🙊', '🐵'],
                               [0,    '🙉',    0],
                               ['🙈', '🐒', '🙉']
                              ]);
+                             */
     case 2:
       return createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
     default:
