@@ -190,6 +190,44 @@ class Quadrille {
   }
 
   /**
+   * Same as width * height.
+   */
+  get size() {
+    return this.width * this.height;
+  }
+
+  /**
+   * @returns {number} Number of non-empty queadrille cells.
+   */
+  get order() {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.memory2D[i][j]) {
+          result++;
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @param {number} row.
+   * @returns {number} Number of non-empty quadrille cells at row.
+   */
+  magnitude(row) {
+    let result = 0;
+    for (let j = 0; j < this.width; j++) {
+      if (this.memory2D[row][j]) {
+        result++;
+      }
+    }
+    return result;
+  }
+
+  // TODO isPolyomino
+
+  /**
    * Replaces quadrille cells with given pattern. Either:
    * 1. replace(pattern1, pattern2), search pattern1 and replaces with pattern2,
    * pattern1 and pattern2 may be either a p5.Color, a string (emoji) or a 4-length
@@ -299,42 +337,6 @@ class Quadrille {
   }
 
   /**
-   * @param {number} row.
-   * @returns {number} Number of non-empty quadrille cells at row.
-   */
-  magnitude(row) {
-    let result = 0;
-    for (let j = 0; j < this.width; j++) {
-      if (this.memory2D[row][j]) {
-        result++;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * @returns {number} Number of non-empty queadrille cells.
-   */
-  get order() {
-    let result = 0;
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
-        if (this.memory2D[i][j]) {
-          result++;
-        }
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Same as width * height.
-   */
-  get size() {
-    return this.width * this.height;
-  }
-
-  /**
    * @returns {number} Quadrille int representation using big-endian and row-major ordering
    * of the memory2D entries.
    */
@@ -350,7 +352,7 @@ class Quadrille {
     return result;
   }
 
-  // TODO perlin noise is missed
+  // TODO perlin noise
 
   /**
    * Randomly fills quadrille with pattern up to order.
