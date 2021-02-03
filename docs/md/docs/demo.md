@@ -191,7 +191,7 @@ function draw() {
 
 # Geometry transformations
 
-The interactive `quadrille` may be translated by setting the `x`, `y` coordinates used to display it, and also[rotated](/docs/geom/rotate), [reflected](/docs/geom/reflect) and [transposed](/docs/geom/transpose):
+The interactive `quadrille` may be translated by setting the `x`, `y` coordinates used to display it, and also [rotated](/docs/geom/rotate), [reflected](/docs/geom/reflect) and [transposed](/docs/geom/transpose):
 
 ```js | excerpt from demo.js
 function keyPressed() {
