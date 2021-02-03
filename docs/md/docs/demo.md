@@ -166,7 +166,7 @@ function active(value) {
 /*!*/                             ]);
     case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
 /*!*/      return createQuadrille(4, int(random(1, 1048576)), c2);
-    default:
+    default: // --> Creates a quadrille of random width, height and order
       let w = int(random(2, 6));
       let h = int(random(2, 6));
 /*!*/      return createQuadrille(w, h, int(random(1, w * h)), c3);
