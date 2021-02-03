@@ -16,7 +16,7 @@ function setup() {
 function draw() {
   background('#2E0E36');
   if ((frameCount % 30 === 0) && animate) {
-    operator(Quadrille.OR);
+    operator('u');
   }
   drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
   drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
@@ -56,47 +56,41 @@ function keyPressed() {
   if (key === 's') {
     x++;
   }
-  if (key === 'u') {
-    operator(Quadrille.OR);
-  }
-  if (key === 'x') {
-    operator(Quadrille.XOR);
-  }
-  if (key === 'i') {
-    operator(Quadrille.AND);
-  }
-  if (key === 'd') {
-    operator(Quadrille.DIFF);
-  }
   if (key === 'q') {
     animate = !animate;
   }
+  if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
+    operator(key);
+  }
 }
 
-function operator(fx) {
+function operator(key) {
   let clone = quadrille.clone();
-  clone.fill(color('#965695'));
-  board = fx(board, clone, y, x);
-  quadrille = active(int(random(3)));
-  x = int(random(0, COLS - 4));
-  y = int(random(0, ROWS - 4));
+    clone.fill(color('#965695'));
+    board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
+            key === 'x' ? Quadrille.XOR(board, clone, y, x) :
+            key === 'i' ? Quadrille.AND(board, clone, y, x) : Quadrille.DIFF(board, clone, y, x);
+    quadrille = active(int(random(3)));
+    x = int(random(0, COLS - 4));
+    y = int(random(0, ROWS - 4));
 }
 
 function active(value) {
+  let c1 = color(random(255), random(255), random(255), 255);
+  let c2 = color(random(255), random(255), random(255), 255);
+  let c3 = color(random(255), random(255), random(255), 255);
   switch (value) {
-    /*
     case 1:
-      return createQuadrille([['🙈', '🙉',    0],
-                              [0,    '🙊', '🐵'],
-                              [0,    '🙉',    0],
-                              ['🙈', '🐒', '🙉']
+      return createQuadrille([[c1, c2,  0],
+                              [0,  c3,  c1],
+                              [0,  c1,  0],
+                              [c1, c2, c3]
                              ]);
-                             */
     case 2:
-      return createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
+      return createQuadrille(4, int(random(1, 1048576)), c2);
     default:
       let w = int(random(2, 6));
       let h = int(random(2, 6));
-      return createQuadrille(w, h, int(random(1, w * h)), color('#007ACC'));
+      return createQuadrille(w, h, int(random(1, w * h)), c3);
   }
 }
