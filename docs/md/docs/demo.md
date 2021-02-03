@@ -21,9 +21,10 @@
 > > | x   | merges `quadrille` into `board` using the `Quadrille.XOR` logical operator    |
 > > | i   | merges `quadrille` into `board` using the `Quadrille.AND` logical operator    |
 > > | d   | merges `quadrille` into `board` using the `Quadrille.DIFF` logical operator   |
+> > | q   | toggle animation                                                              |
 > > | c   | clears board                                                                  |
 
-> :Collapse label=check the code here
+> :Collapse label=click to display the complete code
 >
 > ```js | demo.js
 > const ROWS = 20;
@@ -31,6 +32,7 @@
 > const LENGTH = 20;
 > var board, quadrille;
 > var x, y;
+> var animate = true;
 > 
 > function setup() {
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
@@ -42,6 +44,9 @@
 > 
 > function draw() {
 >   background('#2E0E36');
+>   if ((frameCount % 30 === 0) && animate) {
+>     operator(Quadrille.OR);
+>   }
 >   drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
 >   drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
 > }
@@ -92,6 +97,9 @@
 >   if (key === 'd') {
 >     operator(Quadrille.DIFF);
 >   }
+>   if (key === 'q') {
+>     animate = !animate;
+>   }
 > }
 > 
 > function operator(fx) {
@@ -99,8 +107,8 @@
 >   clone.fill(color('#965695'));
 >   board = fx(board, clone, y, x);
 >   quadrille = active(int(random(3)));
->   x = int(random(0, COLS - 6));
->   y = int(random(0, ROWS - 6));
+>   x = int(random(0, COLS - 4));
+>   y = int(random(0, ROWS - 4));
 > }
 > 
 > function active(value) {
@@ -121,9 +129,13 @@
 > }
 > ```
 
+This demo displays two quadrilles: a static `board` and an interactive `quadrille` that can be geometrically transform and stick into the `board`.
+
 # Create & display
 
 ## Creation
+
+Different forms of the introduced [p5.js](https://p5js.org/) [createQuadrille](/docs/p5-fx/create_quadrille) command are used to instantiate some quadrilles. Both the `board` and the `quadrille` (using the implemented `active` function) are created in the [setup](https://p5js.org/reference/#/p5/setup):
 
 ```js | excerpt from demo.js
 const ROWS = 20;
@@ -131,6 +143,8 @@ const COLS = 40;
 const LENGTH = 20;
 /*!*/var board, quadrille; // --> Quadrille instances
 var x, y;
+var animate = true;
+
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 /*!*/  board = createQuadrille(COLS, ROWS); // --> Creates empty quadrille
@@ -139,6 +153,8 @@ function setup() {
   y = int(random(0, ROWS - 6));
 }
 ```
+
+The `active` function switches among different quadrille constructors to return the quadrille instance that is to be displayed at a particular moment in time:
 
 ```js | excerpt from demo.js
 function active(value) {
@@ -161,18 +177,37 @@ function active(value) {
 
 ## Display
 
+The introduced [p5.js](https://p5js.org/) [createQuadrille](/docs/p5-fx/create_quadrille) command is used to display both quadrilles:
+
 ```js | excerpt from demo.js
 function draw() {
   background('#2E0E36');
-/*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
+  if ((frameCount % 30 === 0) && animate) {
+    operator(Quadrille.OR); // --> the operator command is described below
+  }
+/*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true); //
 /*!*/  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
 }
 ```
 
 # Geometry transformations
 
+The interactive `quadrille` may be translated by setting the `x`, `y` coordinates used to display it, and also[rotated](/docs/geom/rotate), [reflected](/docs/geom/reflect) and [transposed](/docs/geom/transpose):
+
 ```js | excerpt from demo.js
 function keyPressed() {
+  if (key === 'w') {  // --> Quadrille translation
+    y--;
+  }
+  if (key === 'z') { // --> Quadrille translation
+    y++;
+  }
+  if (key === 'a') { // --> Quadrille translation
+    x--;
+  }
+  if (key === 's') { // --> Quadrille translation
+    x++;
+  }
   if (key === 'f') {
 /*!*/    quadrille.reflect();
   }
@@ -188,29 +223,34 @@ function keyPressed() {
 
 # Logical operators
 
+The `operator` function is used to stick the `quadrille` into the `board` by means of the static [Quadrille.OR](/docs/logic/or), [Quadrille.XOR](/docs/logic/xor), [Quadrille.AND](/docs/logic/and) and [Quadrille.DIFF](/docs/logic/diff) logical operators:
+
 ```js | excerpt from demo.js
 function keyPressed() {
   if (key === 'u') {
-/*!*/    operator(Quadrille.OR);
+/*!*/    operator(Quadrille.OR); // --> logic OR
   }
   if (key === 'x') {
-/*!*/    operator(Quadrille.XOR);
+/*!*/    operator(Quadrille.XOR); // --> logic XOR
   }
   if (key === 'i') {
-/*!*/    operator(Quadrille.AND);
+/*!*/    operator(Quadrille.AND); // --> logic AND
   }
   if (key === 'd') {
-/*!*/    operator(Quadrille.DIFF);
+/*!*/    operator(Quadrille.DIFF); // --> logic DIFF
   }
   //...
 }
 ```
 
+ The `quadrille` is first [cloned](/docs/io/clone) and [filled](/docs/io/fill) to dim its color when stick it, and the `active` function is then called to start all over again:
+
+
 ```js | excerpt from demo.js
 function operator(fx) {
-  let clone = quadrille.clone();
-  clone.fill(color('#965695'));
-/*!*/  board = fx(board, clone, y, x);
+  let clone = quadrille.clone(); // --> performs a deep copy of the quadrulle
+  clone.fill(color('#965695')); // --> dim the cloned quadrille color
+/*!*/  board = fx(board, clone, y, x); // --> fx stands for some quadrille static logic operators
   quadrille = active(int(random(3)));
   x = int(random(0, COLS - 6));
   y = int(random(0, ROWS - 6));
