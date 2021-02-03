@@ -2,111 +2,44 @@
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
 
-# p5.js quadrille functions
+In geometry, the square-tiling, square-tessellation or square-grid is a regular tiling of the Euclidean plane. [John Horton Conway](https://en.wikipedia.org/wiki/John_Horton_Conway) called it a quadrille.
 
-* `createQuadrille(array2D)`: Creates a _filled_ quadrille from a 2D array which may contain any combination of [p5 colors](https://p5js.org/reference/#/p5.Color), chars, [emojis](https://emojipedia.org/) and zeros (for empty cells). [See the examples](#examples).
-* `createQuadrille(width, height)`: Creates an initiallly empty quadrille, a _board_, having `width * height` cells. [See the examples](#examples).
-* `drawQuadrille(quadrille, row, col)`: Draws the `quadrille` at `(row, col)`. [See the examples](#examples).
+The internal angle of the square is 90 degrees so four squares at a point make a full 360 degrees. It is one of three regular tilings of the plane. The other two are the triangular-tiling and the hexagonal-tiling.
 
-# Quadrille
+The library comprises a `Quadrille` class and provides the `createQuadrille` and `drawQuadrille` p5 functions. `Quadrille` implements geometry transformation and [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry)-like logical operators. It also implements several memory management methods, such as `clear`, `clone`, `fill`, `insert` and `replace`. It can be used as an interface to convert to / from other representations such as [arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), [images](https://p5js.org/reference/#/p5.Image) and [bitboards](https://en.wikipedia.org/wiki/Bitboard).
 
-## Properties
+The library reference and some examples are found at the [library site](https://objetos.github.io/p5.quadrille.js/).
 
-* `memory2d`: [Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array used to create the `quadrille` instance. [See the examples](#examples)
-* `width` & `height`: Properties that store the quadrille width and height. [See the examples](#examples).
+# Installation
 
-## Methods
+Link the `p5.quadrille.js` library into your HTML file, after you have linked in [p5.js](https://p5js.org/libraries/). For example:
 
-* `reflect()` & `rotate()`: Methods to reflect and rotate the quadrille in place. [See the examples](#examples).
-* `clone()`: Performs a deep copy of the quadrille. May be used in conjunction with `reflect` & `rotate` to create different quadrille instances. [See the examples](#examples).
-* `add(quadrille, x, y)`: Adds passed `quadrille` at `(x, y)`. [See the examples](#examples).
-* `clear()`: Fills quadrille memory with 0's.
+```html | index.html
+<!doctype html>
+<html>
+<head>
+  <script src="p5.js"></script>
+  <script src="p5.sound.js"></script>
+  <script src=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js></script>
+  <script src="sketch.js"></script>
+</head>
+<body>
+</body>
+</html>
+```
 
-# Examples
+to include its minified version use:
 
-Create and manipulate a quadrille. Excerpt from the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js):
+```html
+<script src=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js></script>
+```
 
-```js
-const ROWS = 20;
-const COLS = 10;
-const LENGTH = 20;
-var quadrille;
-var clone;
-var x = 2, y = 2;
-
-function setup() {
-  createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',            '🙈' ],
-                               [0,             color('#770811'), 0   ],
-                               ['g',           'o',             'l'  ]
-                              ]);
-  clone = quadrille.clone();
-  clone.reflect();
-}
-
-function draw() {
-  background('#060621');
-  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-  drawQuadrille(clone, 2, 8, LENGTH, 0);
-}
-``` 
-
-Create a board and fill it with some quadrilles. Excerpt from the [memory example](https://github.com/objetos/p5.quadrille.js/tree/master/examples/memory):
-
-```js
-const ROWS = 20;
-const COLS = 10;
-const LENGTH = 20;
-var quadrille;
-var board;
-var x = 2, y = 2;
- 
-function setup() {
-  createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  board = createQuadrille(ROWS, COLS);
-  quadrille = createQuadrille([[color('cyan'), '👽', 0],
-                               [0, '🤔', '🙈'],
-                               [0, color('#770811'), 0],
-                               ['g', 'o', 'l']
-                              ]);
-}
-
-function draw() {
-  background('#060621');
-  drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
-  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-}
-
-function glue(quadrille, row, col, validate = true) {
-  let update = Quadrille.OR(board, quadrille, row, col);
-  if (validate) {
-    if (update.order === board.order + quadrille.order &&
-        update.width === board.width && update.height === board.height) {
-      board = update;
-    }
-  }
-  else {
-    board = update;
-  }
-}
-``` 
-
-# TODOs
-
-1. Implement a [static](https://en.wikipedia.org/wiki/Method_(computer_programming)#Static_methods) `polyomino(n)` method in order to retrieve a collection of the _n-degree_ [polyominoes](https://en.wikipedia.org/wiki/Polyomino). See also: [Algorithms for enumeration of fixed polyominoes](https://en.wikipedia.org/wiki/Polyomino#Algorithms_for_enumeration_of_fixed_polyominoes), [Counting polyominos: yet another attack](https://www.sciencedirect.com/science/article/pii/0012365X81902375?via%3Dihub) and [Free polyominoes enumeration @rosettacode](https://rosettacode.org/wiki/Free_polyominoes_enumeration). *Hints:*
-   1. Study the [SageMath](https://www.sagemath.org/) [tiling solver](https://doc.sagemath.org/html/en/reference/combinat/sage/combinat/tiling.html) which may provide such functionality.
-   2. Use a [SageCell](https://sagecell.sagemath.org/) to interface to SageMath from the web.
-2. Implement other [2D tilings](https://en.wikipedia.org/wiki/Square_tiling) different then the quadrille. See also [tesselation](https://en.wikipedia.org/wiki/Tessellation).
-3. Implement higher dimensional tilings which are referred to as [Honeycomb](https://en.wikipedia.org/wiki/Honeycomb_(geometry)) in the literature. See also [Wolfram](https://en.wikipedia.org/wiki/Wolfram_Language) [ArrayMesh](https://reference.wolfram.com/language/ref/ArrayMesh.html).
-4. Improve this [web page](https://github.com/objetos/p5.quadrille.js/tree/pages):
-   1. Improve the [codedoc](https://codedoc.cc/) [p5 component](https://github.com/objetos/p5.quadrille.js/tree/pages/.codedoc/components/p5) used to deploy the page.
-   2. Customize the theme.
+instead.
 
 # [vs-code](https://code.visualstudio.com/) & [vs-codium](https://vscodium.com/) & [gitpod](https://www.gitpod.io/) hacking instructions
 
-To run and hack the [glyphs example](https://github.com/objetos/p5.quadrille.js/blob/master/examples/glyphs/sketch.js):
+To run and hack the testing [examples](https://github.com/objetos/p5.quadrille.js/blob/master/examples/):
 
 1. Clone the repo (`git clone https://github.com/objetos/p5.quadrille.js`) and open it with your favorite editor.
 2. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
-3. Head over `examples/glyphs/index.html` and press your editor `Go Live` button.
+3. Head over `examples/*/index.html` and press your editor `Go Live` button.
