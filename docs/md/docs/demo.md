@@ -238,7 +238,7 @@ function keyPressed() {
 
 ```js | excerpt from demo.js
 function operator(key) {
-  let clone = quadrille.clone(); // --> performs a deep copy of the quadrulle
+  let clone = quadrille.clone(); // --> performs a deep copy of the quadrille
   clone.fill(color('#965695')); // --> dim the cloned quadrille color
 /*!*/  board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
                key === 'x' ? Quadrille.XOR(board, clone, y, x) :
