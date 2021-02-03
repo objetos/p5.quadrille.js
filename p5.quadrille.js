@@ -31,7 +31,7 @@ class Quadrille {
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
    */
   static AND(quadrille1, quadrille2, row=0, col=0) {
-    return Quadrille.OP(quadrille1, quadrille2,
+    return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && q2) {
           return q1;
@@ -48,7 +48,7 @@ class Quadrille {
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
    */
   static OR(quadrille1, quadrille2, row=0, col=0) {
-    return Quadrille.OP(quadrille1, quadrille2,
+    return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1) {
           return q1;
@@ -68,7 +68,7 @@ class Quadrille {
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
    */
   static XOR(quadrille1, quadrille2, row=0, col=0) {
-    return Quadrille.OP(quadrille1, quadrille2,
+    return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
           return q1;
@@ -88,7 +88,7 @@ class Quadrille {
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
    */
   static DIFF(quadrille1, quadrille2, row=0, col=0) {
-    return Quadrille.OP(quadrille1, quadrille2,
+    return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
           return q1;
