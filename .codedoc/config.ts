@@ -1,4 +1,5 @@
 import { configuration, DefaultMarkdownCustomComponents } from '@codedoc/core'; // --> make sure to import the default components
+import { formulaPlugin } from '@codedoc/core/components';
 import { theme } from './theme';
 import { P5 } from './components/p5';      // --> import the card component itself
 
@@ -37,4 +38,8 @@ export const config = configuration({
       P5,                                      // --> add our own p5 component
     }
   },
+  plugins: [
+    // ...
+    formulaPlugin
+  ],
 });
