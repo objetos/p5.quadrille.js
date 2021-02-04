@@ -241,9 +241,9 @@ function operator(key) {
   let clone = quadrille.clone(); // --> performs a deep copy of the quadrille
   clone.fill(color('#965695')); // --> dim the cloned quadrille color
 /*!*/  board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
-               key === 'x' ? Quadrille.XOR(board, clone, y, x) :
-               key === 'i' ? Quadrille.AND(board, clone, y, x) :
-                             Quadrille.DIFF(board, clone, y, x); // --> Quadrille static logic operators
+          key === 'x' ? Quadrille.XOR(board, clone, y, x) :
+          key === 'i' ? Quadrille.AND(board, clone, y, x) :
+                        Quadrille.DIFF(board, clone, y, x); // --> Quadrille static logic operators
   quadrille = active(int(random(3)));
   x = int(random(0, COLS - 6));
   y = int(random(0, ROWS - 6));
