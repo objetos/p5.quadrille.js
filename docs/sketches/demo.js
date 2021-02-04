@@ -82,9 +82,9 @@ function active(value) {
   let c3 = color(random(255), random(255), random(255), 255);
   switch (value) {
     case 1:
-      return createQuadrille([[c1, c2,  0],
-                              [0,  c3,  c1],
-                              [0,  c1,  0],
+      return createQuadrille([[c1, 'g',  0],
+                              [0,  'o',  c1],
+                              [0,  'l',  0],
                               [c1, c2, c3]
                              ]);
     case 2:
