@@ -39,7 +39,6 @@ export const config = configuration({
     }
   },
   plugins: [
-    // ...
     formulaPlugin
   ],
 });
