@@ -176,7 +176,7 @@ function active(value) {
 
 ## Display
 
-The introduced [p5.js](https://p5js.org/) [createQuadrille](/docs/p5-fx/create_quadrille) command is used to display both quadrilles:
+The introduced [p5.js](https://p5js.org/) [drawQuadrille](/docs/p5-fx/draw_quadrille) command is used to display both quadrilles:
 
 ```js | excerpt from demo.js
 function draw() {
