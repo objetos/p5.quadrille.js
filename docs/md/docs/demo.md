@@ -95,13 +95,14 @@
 > 
 > function operator(key) {
 >   let clone = quadrille.clone();
->     clone.fill(color('#965695'));
->     board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
->             key === 'x' ? Quadrille.XOR(board, clone, y, x) :
->             key === 'i' ? Quadrille.AND(board, clone, y, x) : Quadrille.DIFF(board, clone, y, x);
->     quadrille = active(int(random(3)));
->     x = int(random(0, COLS - 4));
->     y = int(random(0, ROWS - 4));
+>   clone.fill(color('#965695'));
+>   board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
+>           key === 'x' ? Quadrille.XOR(board, clone, y, x) :
+>           key === 'i' ? Quadrille.AND(board, clone, y, x) :
+>                         Quadrille.DIFF(board, clone, y, x);
+>   quadrille = active(int(random(3)));
+>   x = int(random(0, COLS - 4));
+>   y = int(random(0, ROWS - 4));
 > }
 > 
 > function active(value) {
@@ -110,9 +111,9 @@
 >   let c3 = color(random(255), random(255), random(255), 255);
 >   switch (value) {
 >     case 1:
->       return createQuadrille([[c1, c2,  0],
->                               [0,  c3,  c1],
->                               [0,  c1,  0],
+>       return createQuadrille([[c1, 'g',  0],
+>                               [0,  'o',  c1],
+>                               [0,  'l',  0],
 >                               [c1, c2, c3]
 >                              ]);
 >     case 2:
@@ -159,9 +160,9 @@ function active(value) {
     let c2 = color(random(255), random(255), random(255), 255);
     let c3 = color(random(255), random(255), random(255), 255);
     case 1: // --> Creates quadrille from Array2D
-/*!*/      return createQuadrille([[c1, c2,  0],
-/*!*/                              [0,  c3,  c1],
-/*!*/                              [0,  c1,  0],
+/*!*/      return createQuadrille([[c1, 'g',  0],
+/*!*/                              [0,  'o',  c1],
+/*!*/                              [0,  'l',  0],
 /*!*/                              [c1, c2, c3]
 /*!*/                             ]);
     case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
