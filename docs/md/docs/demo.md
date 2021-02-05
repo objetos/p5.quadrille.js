@@ -45,7 +45,7 @@
 > function draw() {
 >   background('#2E0E36');
 >   if ((frameCount % 30 === 0) && animate) {
->     operator('u');
+>     stick('u');
 >   }
 >   drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
 >   drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
@@ -89,11 +89,11 @@
 >     animate = !animate;
 >   }
 >   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
->     operator(key);
+>     stick(key);
 >   }
 > }
 > 
-> function operator(key) {
+> function stick(key) {
 >   let clone = quadrille.clone();
 >   clone.fill(color('#965695'));
 >   board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
@@ -112,9 +112,9 @@
 >   switch (value) {
 >     case 1:
 >       return createQuadrille([[c1, 'g',  0],
->                               [0,  'o',  c1],
+>                               [0,  'o', c1],
 >                               [0,  'l',  0],
->                               [c1, c2, c3]
+>                               [c1, c2,  c3]
 >                              ]);
 >     case 2:
 >       return createQuadrille(4, int(random(1, 1048576)), c2);
@@ -161,9 +161,9 @@ function active(value) {
     let c3 = color(random(255), random(255), random(255), 255);
     case 1: // --> Creates quadrille from Array2D
 /*!*/      return createQuadrille([[c1, 'g',  0],
-/*!*/                              [0,  'o',  c1],
+/*!*/                              [0,  'o', c1],
 /*!*/                              [0,  'l',  0],
-/*!*/                              [c1, c2, c3]
+/*!*/                              [c1, c2,  c3]
 /*!*/                             ]);
     case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
 /*!*/      return createQuadrille(4, int(random(1, 1048576)), c2);
@@ -183,7 +183,7 @@ The introduced [p5.js](https://p5js.org/) [drawQuadrille](/docs/p5-fx/draw_quadr
 function draw() {
   background('#2E0E36');
   if ((frameCount % 30 === 0) && animate) {
-    operator('u'); // --> the operator command is described below
+    stick('u'); // --> the stick command is described below
   }
 /*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true); //
 /*!*/  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
@@ -223,12 +223,12 @@ function keyPressed() {
 
 # Logical operators
 
-The `operator` function is used to stick the `quadrille` into the `board` by means of the static [Quadrille.OR](/docs/logic/or), [Quadrille.XOR](/docs/logic/xor), [Quadrille.AND](/docs/logic/and) and [Quadrille.DIFF](/docs/logic/diff) logical operators:
+The `stick` function adds the `quadrille` into the `board` by means of the static [Quadrille.OR](/docs/logic/or), [Quadrille.XOR](/docs/logic/xor), [Quadrille.AND](/docs/logic/and) and [Quadrille.DIFF](/docs/logic/diff) logical operators:
 
 ```js | excerpt from demo.js
 function keyPressed() {
   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
-/*!*/    operator(key); // --> operator(key);
+/*!*/    stick(key); // --> stick(key);
   }
   //...
 }
@@ -238,7 +238,7 @@ function keyPressed() {
 
 
 ```js | excerpt from demo.js
-function operator(key) {
+function stick(key) {
   let clone = quadrille.clone(); // --> performs a deep copy of the quadrille
   clone.fill(color('#965695')); // --> dim the cloned quadrille color
 /*!*/  board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
