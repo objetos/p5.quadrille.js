@@ -185,8 +185,8 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u'); // --> the stick command is described below
   }
-/*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true); // --> draw board at (0, 0) with borders
-/*!*/  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true); // --> draw quadrille at (x, y) with borders
+/*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true); // --> draw board with edges at (0, 0)
+/*!*/  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true); // --> draw quadrille with edges at (x, y)
 }
 ```
 
