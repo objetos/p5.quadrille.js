@@ -19,9 +19,9 @@
 > > 
 > > function draw() {
 > >   if (frameCount % 200 === 0) {
-> >     let scl = int(random(4));
-> >     quadrille = createQuadrille(20 * (2 ** scl), image);
-> >     drawQuadrille(quadrille, 0, 0, 40 / (2 ** scl), 1.6 / (2 ** scl), color(random(255)));
+> >     let scl = 2 ** int(random(4));
+> >     quadrille = createQuadrille(20 * scl, image);
+> >     drawQuadrille(quadrille, 0, 0, 40 / scl, 1.6 / scl, color(random(255)));
 > >   }
 > > }
 
@@ -37,30 +37,10 @@ The library comprises a `Quadrille` class and provides the [createQuadrille](/do
 
 The library reference together with a [demo](/docs/demo) which illustrates most of its functionality, are found along this site.
 
-# Installation
+# Releases
 
-Link the `p5.quadrille.js` library into your HTML file, after you have linked in [p5.js](https://p5js.org/libraries/). For example:
+- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/master/p5.quadrille.js)
+- [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.min.js)
+- [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
 
-```html | index.html
-<!doctype html>
-<html>
-<head>
-  <script src="p5.js"></script>
-  <script src="p5.sound.js"></script>
-  <script src=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js></script>
-  <script src="sketch.js"></script>
-</head>
-<body>
-</body>
-</html>
-```
-
-to include its minified version use:
-
-```html
-<script src=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js></script>
-```
-
-instead.
-
-> :ToCPrevNext
+ :ToCPrevNext
