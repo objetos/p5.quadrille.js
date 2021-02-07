@@ -43,4 +43,4 @@ The library reference together with a [demo](/docs/demo) which illustrates most 
 - [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.min.js)
 - [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
 
- :ToCPrevNext
+> :ToCPrevNext
