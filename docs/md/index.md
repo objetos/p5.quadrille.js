@@ -39,7 +39,7 @@ The library reference together with a [demo](/docs/demo) which illustrates most 
 
 # Releases
 
-- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/master/p5.quadrille.js)
+- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
 - [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.0/p5.quadrille.min.js)
 - [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
 
