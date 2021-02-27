@@ -1,6 +1,6 @@
 # `OP()`
 
-Static method that returns the quadrille obtained after applying the given logical operator between the two given quadrilles. This method is useful to implement the other _high-level_ logical operators. For instance the [AND](/logical/and) operator is implemented as follows:
+Static method that returns the quadrille obtained after applying the given logical operator between the two given quadrilles. This method is useful to implement the other _high-level_ logical operators. For instance the [AND](/docs/logic/and) operator is implemented as follows:
 
 ```js | p5.quadrille.js
 static AND(quadrille1, quadrille2, row=0, col=0) {
