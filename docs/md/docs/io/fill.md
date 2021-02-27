@@ -1,10 +1,6 @@
 # `fill()`
 
-Fills quadrille cells with given `pattern`. Either:
-
-1. Current filled cells: `fill(pattern)`;
-2. A whole row: `fill(row, pattern)`; or,
-3. A given cell: `fill(row, col, pattern`.
+Fills quadrille cells with given `pattern`. Either current filled cells, a whole row, or a given cell.
 
 # Syntax
 

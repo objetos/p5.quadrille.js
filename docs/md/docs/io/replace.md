@@ -1,9 +1,6 @@
 # `replace()`
 
-Replaces quadrille cells. Either:
-
-1. Replacing `pattern1` with `pattern2`; or,
-2. Using other `quadrille`.
+Replaces quadrille cells. Either `pattern1` with `pattern2`, or using the other `quadrille`.
 
 # Syntax
 
