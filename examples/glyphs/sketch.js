@@ -81,7 +81,3 @@ function keyPressed() {
     quadrille.randomize();
   }
 }
-
-function debugQuadrille(quadrille) {
-  console.log(quadrille.shape);
-}

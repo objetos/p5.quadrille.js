@@ -228,70 +228,14 @@ class Quadrille {
   // TODO isPolyomino
 
   /**
-   * Replaces quadrille cells with given pattern. Either:
-   * 1. replace(pattern1, pattern2), search pattern1 and replaces with pattern2,
-   * pattern1 and pattern2 may be either a p5.Image, p5.Color, a string (emoji) or
-   * a 4-length color array; or,
-   * 2. replace(quadrille) replace current cell contents with that of quadrille.
+   * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be
+   * either a p5.Image, p5.Color, a string (emoji) or a 4-length color array.
    */
-  // TODO 2nd case: resize; or from; or take into account p5.Image
-  replace() {
-    if (arguments.length === 1 && arguments[0] instanceof Quadrille) {
-      if (arguments[0].width > this.width && arguments[0].height > this.height) {
-        let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        for (let i = 0; i < arguments[0].height; i++) {
-          for (let j = 0; j < arguments[0].width; j++) {
-            let _r = 0, _g = 0, _b = 0, _a = 0;
-            let _i = Math.floor(i * this.height / arguments[0].height);
-            let _j = Math.floor(j * this.width / arguments[0].width);
-            if (Array.isArray(arguments[0].memory2D[i][j])) {
-              _r = arguments[0].memory2D[i][j][0];
-              _g = arguments[0].memory2D[i][j][1];
-              _b = arguments[0].memory2D[i][j][2];
-              _a = arguments[0].memory2D[i][j][3];
-            } else if (arguments[0].memory2D[i][j] instanceof p5.Color) {
-              _r = red(arguments[0].memory2D[i][j]);
-              _g = green(arguments[0].memory2D[i][j]);
-              _b = blue(arguments[0].memory2D[i][j]);
-              _a = alpha(arguments[0].memory2D[i][j]);
-            }
-            r[_i][_j] += _r;
-            g[_i][_j] += _g;
-            b[_i][_j] += _b;
-            a[_i][_j] += _a;
-            t[_i][_j] += 1;
-          }
-        }
-        for (let i = 0; i < this.height; i++) {
-          for (let j = 0; j < this.width; j++) {
-            if ((r[i][j] !== 0 || g[i][j] !== 0 || b[i][j] !== 0) && t[i][j] > 0) {
-              this.memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
-            }
-            else {
-              this.memory2D[i][j] = 0;
-            }
-          }
-        }
-      }
-      else if (this.width >= arguments[0].width && this.height >= arguments[0].height) {
-        for (let i = 0; i < this.height; i++) {
-          for (let j = 0; j < this.width; j++) {
-            let _i = Math.floor(i * arguments[0].height / this.height);
-            let _j = Math.floor(j * arguments[0].width / this.width);
-            this.memory2D[i][j] = arguments[0].memory2D[_i][_j];
-          }
-        }
-      }
-    } else if (arguments.length === 2) {
-      for (let i = 0; i < this.height; i++) {
-        for (let j = 0; j < this.width; j++) {
-          if (this.memory2D[i][j] === arguments[0]) {
-            this.memory2D[i][j] = arguments[1];
-          }
+  replace(pattern1, pattern2) {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.memory2D[i][j] === pattern1) {
+          this.memory2D[i][j] = pattern2;
         }
       }
     }
