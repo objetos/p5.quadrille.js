@@ -4,6 +4,11 @@ const LENGTH = 20;
 var board, quadrille;
 var x, y;
 var animate = true;
+var al;
+
+function preload() {
+  al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
+}
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
@@ -83,8 +88,8 @@ function active(value) {
   switch (value) {
     case 1:
       return createQuadrille([[c1, 'g',  0],
-                              [0,  'o', c1],
-                              [0,  'l',  0],
+                              [0,  'o', al],
+                              [al, 'l',  0],
                               [c1, c2,  c3]
                              ]);
     case 2:

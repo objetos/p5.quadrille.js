@@ -33,6 +33,11 @@
 > var board, quadrille;
 > var x, y;
 > var animate = true;
+> var al;
+> 
+> function preload() {
+>   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
+> }
 > 
 > function setup() {
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
@@ -112,8 +117,8 @@
 >   switch (value) {
 >     case 1:
 >       return createQuadrille([[c1, 'g',  0],
->                               [0,  'o', c1],
->                               [0,  'l',  0],
+>                               [0,  'o', al],
+>                               [al, 'l',  0],
 >                               [c1, c2,  c3]
 >                              ]);
 >     case 2:
@@ -161,8 +166,8 @@ function active(value) {
     let c3 = color(random(255), random(255), random(255), 255);
     case 1: // --> Creates quadrille from Array2D
 /*!*/      return createQuadrille([[c1, 'g',  0],
-/*!*/                              [0,  'o', c1],
-/*!*/                              [0,  'l',  0],
+/*!*/                              [0,  'o', al],
+/*!*/                              [al, 'l',  0],
 /*!*/                              [c1, c2,  c3]
 /*!*/                             ]);
     case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
