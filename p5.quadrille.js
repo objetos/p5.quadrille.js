@@ -99,7 +99,7 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Color | string} pattern used to fill the returned quadrille.
+   * @param {p5.Image | p5.Color | string | Array} pattern used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
@@ -230,10 +230,11 @@ class Quadrille {
   /**
    * Replaces quadrille cells with given pattern. Either:
    * 1. replace(pattern1, pattern2), search pattern1 and replaces with pattern2,
-   * pattern1 and pattern2 may be either a p5.Color, a string (emoji) or a 4-length
-   * color array; or,
+   * pattern1 and pattern2 may be either a p5.Image, p5.Color, a string (emoji) or
+   * a 4-length color array; or,
    * 2. replace(quadrille) replace current cell contents with that of quadrille.
    */
+  // TODO 2nd case: resize; or from; or take into account p5.Image
   replace() {
     if (arguments.length === 1 && arguments[0] instanceof Quadrille) {
       if (arguments[0].width > this.width && arguments[0].height > this.height) {
@@ -301,7 +302,7 @@ class Quadrille {
    * 1. fill(pattern), fills current filled cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * pattern may be either a p5.Color, a string (emoji) or a 4-length color array.
+   * pattern may be either a p5.Image, a p5.Color, a string (emoji) or a 4-length color array.
    */
   fill() {
     if (arguments.length === 1) {
@@ -328,7 +329,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Color | string} quadrille entry
+   * @returns {p5.Image | p5.Color | string | Array} quadrille entry
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
@@ -357,7 +358,7 @@ class Quadrille {
   /**
    * Randomly fills quadrille with pattern up to order.
    * @param {number} order 
-   * @param {p5.Color | string} pattern 
+   * @param {p5.Image | p5.Color | string | Array} pattern 
    * @see order
    */
   rand(order, pattern) {
@@ -400,7 +401,7 @@ class Quadrille {
   /**
    * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,
-   * 2. from(bitboard, pattern) where pattern may be either a p5.Color,
+   * 2. from(bitboard, pattern) where pattern may be either a p5.Imae, p5.Color,
    * a string (emoji) or a 4-length color array.
    */
   from() {
