@@ -31,7 +31,7 @@ export function P5(
 ) {
   const classes = this.theme.classes(P5Style); // --> fetch the theme-based classes
   // custom vars
-  let version: string = options.version ? options.version : "1.2.0";
+  let version: string = options.version ? options.version : "1.3.1";
   let repo: string = config.misc?.github?.repo ? "/".concat(config.misc?.github?.repo) : "fixrepovar";
   let p5lib: string = options.p5lib ? repo.concat(options.p5lib) : 
   "https://cdnjs.cloudflare.com/ajax/libs/p5.js/".concat(version).concat("/p5.min.js");

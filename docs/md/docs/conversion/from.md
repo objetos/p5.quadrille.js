@@ -11,10 +11,10 @@ a [bitboard](https://en.wikipedia.org/wiki/Bitboard) represented as a [big-endia
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                                                       |
-|----------|----------------------------------------------------------------------------------------------------------------|
-| image    | [p5.Image](https://p5js.org/reference/#/p5.Image)                                                              |
-| bitboard | number: integer bitboard value                                                                                 |
-| pattern  | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
+| <!-- --> | <!-- -->                                                                                                                                                            |
+|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| image    | [p5.Image](https://p5js.org/reference/#/p5.Image)                                                                                                                   |
+| bitboard | number: integer bitboard value                                                                                                                                      |
+| pattern  | [p5.Image](https://p5js.org/reference/#/p5.Image) \| [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
 
 > :ToCPrevNext
