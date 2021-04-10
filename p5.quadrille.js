@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.1.0';
+  static version = '0.1.1';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -537,6 +537,9 @@ class Quadrille {
           if (quadrille.memory2D[i][j] instanceof p5.Color || Array.isArray(quadrille.memory2D[i][j])) {
             this.fill(quadrille.memory2D[i][j]);
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+          }
+          else if (quadrille.memory2D[i][j] instanceof p5.Image) {
+            this.image(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           else if (typeof quadrille.memory2D[i][j] === 'string') {
             this.textSize(LENGTH);
