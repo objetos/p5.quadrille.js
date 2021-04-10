@@ -347,7 +347,7 @@ class Quadrille {
   /**
    * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,
-   * 2. from(bitboard, pattern) where pattern may be either a p5.Imae, p5.Color,
+   * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Color,
    * a string (emoji) or a 4-length color array.
    */
   from() {
@@ -370,7 +370,7 @@ class Quadrille {
       image.updatePixels();
       // */
       // /*
-      // 2nd method seems to give better results
+      // 2nd method seems to give better visual results
       let image = arguments[0];
       image.loadPixels();
       let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
