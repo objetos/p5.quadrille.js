@@ -297,6 +297,8 @@ class Quadrille {
     return result;
   }
 
+  // TODO toAscii()
+
   // TODO perlin noise
 
   /**
