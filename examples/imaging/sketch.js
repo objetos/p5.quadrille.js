@@ -4,12 +4,14 @@ var quadrille;
 var image;
 
 function preload() {
+  // 1024x438
   image = loadImage('mahakala.jpg');
+  // 300x300
   //image = loadImage('abraham_lincoln.jpg');
 }
 
 function setup() {
-  createCanvas(800, 342);
+  createCanvas(800, 800);
   //console.log(image.width, image.height);
   quadrille = createQuadrille(40 * (2 ** scl), image);
   //console.log(Quadrille.version);

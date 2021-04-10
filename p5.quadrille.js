@@ -352,6 +352,25 @@ class Quadrille {
    */
   from() {
     if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
+      /*
+      // 1st method uses image.resize
+      let image = new p5.Image(arguments[0].width, arguments[0].height);
+      image.copy(arguments[0], 0, 0, arguments[0].width, arguments[0].height,
+                               0, 0, arguments[0].width, arguments[0].height);
+      image.resize(this.width, this.height);
+      image.loadPixels();
+      for (let i = 0; i < image.pixels.length / 4; i++) {
+        let r = image.pixels[4 * i];
+        let g = image.pixels[4 * i + 1];
+        let b = image.pixels[4 * i + 2];
+        let a = image.pixels[4 * i + 3];
+        let _ = this._fromIndex(i);
+        this.memory2D[_.row][_.col] = [r, g, b, a];
+      }
+      image.updatePixels();
+      // */
+      // /*
+      // 2nd method seems to give better results
       let image = arguments[0];
       image.loadPixels();
       let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
@@ -375,6 +394,7 @@ class Quadrille {
           this.memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
         }
       }
+      // */
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
       let length = this.width * this.height;
