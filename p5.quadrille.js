@@ -509,8 +509,12 @@ class Quadrille {
             this.image(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           else if (typeof quadrille.memory2D[i][j] === 'string') {
+            this.push();
+            this.noStroke();
+            this.fill(outline);
             this.textSize(LENGTH);
             this.text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.pop();
             this.noFill();
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
