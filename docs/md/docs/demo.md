@@ -1,7 +1,7 @@
 > :Tabs
 > > :Tab title=demo
 > > 
-> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.1/p5.quadrille.min.js, sketch=/docs/sketches/demo.js, width=800, height=400
+> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.2/p5.quadrille.min.js, sketch=/docs/sketches/demo.js, width=800, height=400
 >
 > > :Tab title=keys (click on canvas before using them)
 > >
