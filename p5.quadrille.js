@@ -316,12 +316,16 @@ class Quadrille {
             for (let jmask = 0; jmask < mask.width; jmask++) {
               let _i = i + imask - delta;
               let _j = j + jmask - delta;
-              if ((this.memory2D[_i][_j] instanceof p5.Color || Array.isArray(this.memory2D[_i][_j])) &&
-                  typeof mask.memory2D[imask][jmask] === 'number') {
-                r += red(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
-                g += green(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
-                b += blue(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
-                a += alpha(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
+              let neighbour = this.memory2D[_i][_j];
+              let mask_value = mask.memory2D[imask][jmask];
+              if ((neighbour instanceof p5.Color || Array.isArray(neighbour)) &&
+                  typeof mask_value !== 'string' && !(mask_value instanceof p5.Image)) {
+                // luma coefficients are: 0.299, 0.587, 0.114, 0
+                let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+                r += red(neighbour) * weight;
+                g += green(neighbour) * weight;
+                b += blue(neighbour) * weight;
+                a += alpha(neighbour) * weight;
               }
             }
           }
