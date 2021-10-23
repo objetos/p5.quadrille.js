@@ -304,18 +304,17 @@ class Quadrille {
    */
   conv(mask) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
-      let delta = Math.ceil(mask.width / 2);
-      for (let i = delta - 1; i <= this.height - delta; i++) {
-        for (let j = delta - 1; j <= this.width - delta; j++) {
+      let delta = Math.ceil(mask.width / 2) - 1;
+      for (let i = delta; i < this.height - delta; i++) {
+        for (let j = delta; j < this.width - delta; j++) {
           let r = 0
           let g = 0
           let b = 0;
           let a = 0;
           for (let imask = 0; imask < mask.height; imask++) {
             for (let jmask = 0; jmask < mask.width; jmask++) {
-              let _i = i + (imask - (delta - 1));
-              let _j = j + (jmask - (delta - 1));
-              //console.log(imask, jmask, delta, i, j, _i, _j);
+              let _i = i + imask - delta;
+              let _j = j + jmask - delta;
               if ((this.memory2D[_i][_j] instanceof p5.Color || Array.isArray(this.memory2D[_i][_j])) &&
                   typeof mask.memory2D[imask][jmask] === 'number') {
                 r += red(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
