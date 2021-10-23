@@ -300,9 +300,10 @@ class Quadrille {
   // TODO toAscii()
 
   /**
+   * Convolutes this quadrille agaisnt the quadrille kernel mask.
    * @params {Quadrille} nxn quadrille (n is odd) representing the convolution mask.
    */
-  conv(mask) {
+  filter(mask) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let delta = Math.ceil(mask.width / 2) - 1;
       for (let i = delta; i < this.height - delta; i++) {

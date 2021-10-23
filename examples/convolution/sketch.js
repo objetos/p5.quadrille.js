@@ -7,7 +7,7 @@ function update() {
   //let c = false;
   orig = createQuadrille(40 * (2 ** scl), image);
   conv = orig.clone();
-  conv.conv(mask);
+  conv.filter(mask);
   quadrille = orig;
   quadrille = c ? conv : orig;
 }
