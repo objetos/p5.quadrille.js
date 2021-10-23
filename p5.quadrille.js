@@ -99,7 +99,7 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Image | p5.Color | string | Array} pattern used to fill the returned quadrille.
+   * @param {p5.Image | p5.Color  Array | string | number} pattern used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
@@ -141,7 +141,7 @@ class Quadrille {
 
   /**
    * Constructs either an empty or a filled quadrille:
-   * 1. Pass a 2D array of patterns (p5 colors, chars, emojis and 0's).
+   * 1. Pass a 2D array of patterns (p5 colors, chars, emojis and numbers.
    * 2. Pass width and heigth to construct and empty quadrille (filled with 0's).
    * 3. Pass width and image, to construct a quadrille filled image.
    * 4. Pass width, bitboard and pattern, to construct a quadrille filled
@@ -229,7 +229,7 @@ class Quadrille {
 
   /**
    * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be
-   * either a p5.Image, p5.Color, a string (emoji) or a 4-length color array.
+   * either a p5.Image, p5.Color, a 4-length color array, a string (emoji) or a number.
    */
   replace(pattern1, pattern2) {
     for (let i = 0; i < this.height; i++) {
@@ -246,7 +246,7 @@ class Quadrille {
    * 1. fill(pattern), fills current filled cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * pattern may be either a p5.Image, a p5.Color, a string (emoji) or a 4-length color array.
+   * pattern may be either a p5.Image, a p5.Color, a 4-length color array, a string (emoji) or a number.
    */
   fill() {
     if (arguments.length === 1) {
@@ -273,7 +273,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Color | string | Array} quadrille entry
+   * @returns {p5.Image | p5.Color | Array | string | number} quadrille entry
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
@@ -299,12 +299,44 @@ class Quadrille {
 
   // TODO toAscii()
 
+  /**
+   * @params {Quadrille} nxn quadrille (n is odd) representing the convolution mask.
+   */
+  conv(mask) {
+    if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
+      let delta = Math.ceil(mask.width / 2);
+      for (let i = delta - 1; i <= this.height - delta; i++) {
+        for (let j = delta - 1; j <= this.width - delta; j++) {
+          let r = 0
+          let g = 0
+          let b = 0;
+          let a = 0;
+          for (let imask = 0; imask < mask.height; imask++) {
+            for (let jmask = 0; jmask < mask.width; jmask++) {
+              let _i = i + (imask - (delta - 1));
+              let _j = j + (jmask - (delta - 1));
+              //console.log(imask, jmask, delta, i, j, _i, _j);
+              if ((this.memory2D[_i][_j] instanceof p5.Color || Array.isArray(this.memory2D[_i][_j])) &&
+                  typeof mask.memory2D[imask][jmask] === 'number') {
+                r += red(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
+                g += green(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
+                b += blue(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
+                a += alpha(this.memory2D[_i][_j]) * mask.memory2D[imask][jmask];
+              }
+            }
+          }
+          this.memory2D[i][j] = [r, g, b, a];
+        }
+      }
+    }
+  }
+
   // TODO perlin noise
 
   /**
    * Randomly fills quadrille with pattern up to order.
    * @param {number} order 
-   * @param {p5.Image | p5.Color | string | Array} pattern 
+   * @param {p5.Image | p5.Color | Array | string | number} pattern 
    * @see order
    */
   rand(order, pattern) {
@@ -348,7 +380,7 @@ class Quadrille {
    * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,
    * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Color,
-   * a string (emoji) or a 4-length color array.
+   * a 4-length color array, a string (emoji) or a number.
    */
   from() {
     if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
@@ -517,6 +549,12 @@ class Quadrille {
             this.pop();
             this.noFill();
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+          }
+          else if (typeof quadrille.memory2D[i][j] === 'number') {
+            if (quadrille.memory2D[i][j] !== 0) {
+              this.fill(this.map(quadrille.memory2D[i][j], -1, 1, 0, 255));
+              this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            }
           }
         }
         else if (board) {
