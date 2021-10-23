@@ -300,8 +300,8 @@ class Quadrille {
   // TODO toAscii()
 
   /**
-   * Convolutes this quadrille agaisnt the quadrille kernel mask.
-   * @params {Quadrille} nxn quadrille (n is odd) representing the convolution mask.
+   * Convolutes this quadrille against the quadrille kernel mask.
+   * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
    */
   filter(mask) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
@@ -522,7 +522,7 @@ class Quadrille {
     return new Quadrille(...arguments);
   }
 
-  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false) {
+  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false, min = 0, max = 0) {
     this.push();
     this.translate(x * LENGTH, y * LENGTH);
     this.stroke(outline);
@@ -550,11 +550,9 @@ class Quadrille {
             this.noFill();
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
-          else if (typeof quadrille.memory2D[i][j] === 'number') {
-            if (quadrille.memory2D[i][j] !== 0) {
-              this.fill(this.map(quadrille.memory2D[i][j], -1, 1, 0, 255));
-              this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
-            }
+          else if (typeof quadrille.memory2D[i][j] === 'number' && min < max) {
+            this.fill(this.map(quadrille.memory2D[i][j], min, max, 0, 255));
+            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
         }
         else if (board) {

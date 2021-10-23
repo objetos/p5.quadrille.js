@@ -1,6 +1,7 @@
 let scl = 0;
 let mask, quadrille, orig, conv;
 let image;
+let image_mode = true;
 
 function update() {
   let c = quadrille == null ? false : quadrille === conv;
@@ -29,7 +30,11 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl), quadrille === orig ? 'magenta' : 'cyan');
+  if (image_mode) {
+    drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl), quadrille === orig ? 'magenta' : 'cyan');
+  } else {
+    drawQuadrille(mask, 0, 0, 50, 2, 'magenta', false, 0.0625, 0.25);
+  }
 }
 
 function keyPressed() {
@@ -39,6 +44,9 @@ function keyPressed() {
   }
   if (key === 'c') {
     quadrille = quadrille === orig ? conv : orig;
+  }
+  if (key === 'i') {
+    image_mode = !image_mode;
   }
   /*
   if (frameCount % 300 === 0) {
