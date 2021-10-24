@@ -308,8 +308,8 @@ class Quadrille {
       let delta = Math.ceil(mask.width / 2) - 1;
       for (let i = delta; i < this.height - delta; i++) {
         for (let j = delta; j < this.width - delta; j++) {
-          let r = 0
-          let g = 0
+          let r = 0;
+          let g = 0;
           let b = 0;
           let a = 0;
           for (let imask = 0; imask < mask.height; imask++) {
