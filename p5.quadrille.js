@@ -300,10 +300,13 @@ class Quadrille {
   // TODO toAscii()
 
   /**
-   * Convolutes this quadrille at (row,col) against the quadrille kernel mask.
-   * Convolutes the whole quadrille if either row or col is 0.
-   * Both i and j should be greater or equal than the mask half_size
-   * (computed as (mask.width - 1) / 2), in any other case.
+   * Convolutes this quadrille against the quadrille kernel mask. kernel weights
+   * may be encoded within the quadrille mask, both numerically or using colors.
+   * Luma is used in the latter case to convert colors to weights. Forms:
+   * 1. filter(mask) convolutes the whole quadrille or,
+   * 2. filter(mask, i, j) convolutes the whole quadrille at i, j. Both i and j
+   * should be greater or equal than the mask half_size which is computed as:
+   * (mask.width - 1) / 2).
    * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
    * @param {number} row if 0 convolutes the whole quadrille
    * @param {number} col if 0 convolutes the whole quadrille
