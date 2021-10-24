@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.1.3';
+  static version = '0.2.0';
 
   /**
    * @param {Quadrille} quadrille1 
