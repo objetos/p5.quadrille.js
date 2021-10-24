@@ -305,17 +305,17 @@ class Quadrille {
    */
   filter(mask) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
-      let delta = Math.ceil(mask.width / 2) - 1;
-      for (let i = delta; i < this.height - delta; i++) {
-        for (let j = delta; j < this.width - delta; j++) {
+      let half_size = (mask.width - 1) / 2;
+      for (let i = half_size; i < this.height - half_size; i++) {
+        for (let j = half_size; j < this.width - half_size; j++) {
           let r = 0;
           let g = 0;
           let b = 0;
           let a = 0;
           for (let imask = 0; imask < mask.height; imask++) {
             for (let jmask = 0; jmask < mask.width; jmask++) {
-              let _i = i + imask - delta;
-              let _j = j + jmask - delta;
+              let _i = i + imask - half_size;
+              let _j = j + jmask - half_size;
               let neighbour = this.memory2D[_i][_j];
               let mask_value = mask.memory2D[imask][jmask];
               if ((neighbour instanceof p5.Color || Array.isArray(neighbour)) &&
@@ -333,6 +333,31 @@ class Quadrille {
         }
       }
     }
+  }
+
+  conv(mask, i, j, cache_half_size=(mask.width - 1) / 2) {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let a = 0;
+    for (let imask = 0; imask < mask.height; imask++) {
+      for (let jmask = 0; jmask < mask.width; jmask++) {
+        let _i = i + imask - cache_half_size;
+        let _j = j + jmask - cache_half_size;
+        let neighbour = this.memory2D[_i][_j];
+        let mask_value = mask.memory2D[imask][jmask];
+        if ((neighbour instanceof p5.Color || Array.isArray(neighbour)) &&
+          typeof mask_value !== 'string' && !(mask_value instanceof p5.Image)) {
+          // luma coefficients are: 0.299, 0.587, 0.114, 0
+          let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+          r += red(neighbour) * weight;
+          g += green(neighbour) * weight;
+          b += blue(neighbour) * weight;
+          a += alpha(neighbour) * weight;
+        }
+      }
+    }
+    this.memory2D[i][j] = [r, g, b, a];
   }
 
   // TODO perlin noise
