@@ -300,13 +300,18 @@ class Quadrille {
   // TODO toAscii()
 
   /**
-   * Convolutes this quadrille against the quadrille kernel mask.
+   * Convolutes this quadrille at (row,col) against the quadrille kernel mask.
+   * Convolutes the whole quadrille if either row or col is 0.
+   * Both i and j should be greater or equal than the mask half_size
+   * (computed as (mask.width - 1) / 2), in any other case.
    * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
+   * @param {number} row if 0 convolutes the whole quadrille
+   * @param {number} col if 0 convolutes the whole quadrille
    */
   filter(mask, row=0, col=0) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let half_size = (mask.width - 1) / 2;
-      if (row==0 && col==0) {
+      if (row==0 || col==0) {
         for (let i = half_size; i < this.height - half_size; i++) {
           for (let j = half_size; j < this.width - half_size; j++) {
             this._conv(mask, i, j, half_size);
