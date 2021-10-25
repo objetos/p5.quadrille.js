@@ -328,7 +328,8 @@ class Quadrille {
   }
 
   _conv(mask, row, col, cache_half_size=(mask.width - 1) / 2) {
-    if (row >= cache_half_size && col >= cache_half_size) {
+    if (row >= cache_half_size && col >= cache_half_size &&
+      row < this.height - cache_half_size && col < this.width - cache_half_size) {
       let r = 0;
       let g = 0;
       let b = 0;
