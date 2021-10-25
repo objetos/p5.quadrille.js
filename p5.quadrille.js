@@ -546,7 +546,7 @@ class Quadrille {
     return new Quadrille(...arguments);
   }
 
-  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false, min = 0, max = 0) {
+  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false, min = 0, max = 0, alpha = 255) {
     this.push();
     this.translate(x * LENGTH, y * LENGTH);
     this.stroke(outline);
@@ -575,7 +575,7 @@ class Quadrille {
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           else if (typeof quadrille.memory2D[i][j] === 'number' && min < max) {
-            this.fill(this.map(quadrille.memory2D[i][j], min, max, 0, 255));
+            this.fill(this.color(this.map(quadrille.memory2D[i][j], min, max, 0, 255), alpha));
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
         }
