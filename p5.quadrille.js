@@ -333,7 +333,7 @@ class Quadrille {
       let r = 0;
       let g = 0;
       let b = 0;
-      let a = 0;
+      //let a = 0;
       for (let imask = 0; imask < mask.height; imask++) {
         for (let jmask = 0; jmask < mask.width; jmask++) {
           let i = row + imask - cache_half_size;
@@ -347,11 +347,16 @@ class Quadrille {
             r += red(neighbour) * weight;
             g += green(neighbour) * weight;
             b += blue(neighbour) * weight;
-            a += alpha(neighbour) * weight;
+            //a += alpha(neighbour) * weight;
           }
         }
       }
-      this.memory2D[row][col] = [r, g, b, a];
+      r = constrain(r, 0, 255);
+      g = constrain(g, 0, 255);
+      b = constrain(b, 0, 255);
+      //a = constrain(a, 0, 255);
+      //this.memory2D[row][col] = [r, g, b, a];
+      this.memory2D[row][col] = [r, g, b];
     }
   }
 
