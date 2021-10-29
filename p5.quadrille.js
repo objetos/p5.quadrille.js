@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.2.2';
+  static version = '0.3.0';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -360,18 +360,22 @@ class Quadrille {
     }
   }
 
-  rasterize(col0, row0, col1, row1, col2, row2, pattern, pattern1 = pattern, pattern2 = pattern) {
-    if ((pattern instanceof p5.Color || Array.isArray(pattern)) &&
+  /**
+   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle, using pattern0,
+   * pattern1 and pattern2 vertex patterns, respectively.
+   */
+  rasterize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
+    if ((pattern0 instanceof p5.Color || Array.isArray(pattern0)) &&
         (pattern1 instanceof p5.Color || Array.isArray(pattern1)) &&
         (pattern2 instanceof p5.Color || Array.isArray(pattern2))) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
-          let coords = this.barycentric_coords(j, i, col0, row0, col1, row1, col2, row2);
+          let coords = this.barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-            let r = red(pattern) * coords.w0 + red(pattern1) * coords.w1 + red(pattern2) * coords.w2;
-            let g = green(pattern) * coords.w0 + green(pattern1) * coords.w1 + green(pattern2) * coords.w2;
-            let b = blue(pattern) * coords.w0 + blue(pattern1) * coords.w1 + blue(pattern2) * coords.w2;
-            let a = alpha(pattern) * coords.w0 + alpha(pattern1) * coords.w1 + alpha(pattern2) * coords.w2;
+            let r = red(pattern0) * coords.w0 + red(pattern1) * coords.w1 + red(pattern2) * coords.w2;
+            let g = green(pattern0) * coords.w0 + green(pattern1) * coords.w1 + green(pattern2) * coords.w2;
+            let b = blue(pattern0) * coords.w0 + blue(pattern1) * coords.w1 + blue(pattern2) * coords.w2;
+            let a = alpha(pattern0) * coords.w0 + alpha(pattern1) * coords.w1 + alpha(pattern2) * coords.w2;
             this.memory2D[i][j] = color(r, g, b, a);
           }
         }
@@ -379,17 +383,28 @@ class Quadrille {
     }
   }
 
-  parallelogram_area(col0, row0, col1, row1, col2, row2) {
-    return (col1-col0)*(row2-row0)-(col2-col0)*(row1-row0);
-  }
-
-  barycentric_coords(col, row, col0, row0, col1, row1, col2, row2) {
-    let edges = this.edge_functions(col, row, col0, row0, col1, row1, col2, row2);
-    let area = this.parallelogram_area(col0, row0, col1, row1, col2, row2);
+  /**
+   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle barycentric coordinates at (row, col)
+   * as {w0, w1, w2} object literal.
+   */
+  barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
+    let edges = this.edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    let area = this.parallelogram_area(row0, col0, row1, col1, row2, col2);
     return {w0 : edges.e12 / area, w1 : edges.e20 / area, w2 : edges.e01 / area};
   }
 
-  edge_functions(col, row, col0, row0, col1, row1, col2, row2) {
+  /**
+   * Returns the parallelogram area spawn by the (row0, col0), (row1, col1), (row2, col2) triangle.
+   */
+  parallelogram_area(row0, col0, row1, col1, row2, col2) {
+    return (col1-col0)*(row2-row0)-(col2-col0)*(row1-row0);
+  }
+
+  /**
+   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle edge_functions at (row, col)
+   * as {e01, e12, e20} object literal.
+   */
+  edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
     let e01=(row0-row1)*col+(col1-col0)*row+(col0*row1-row0*col1);
     let e12=(row1-row2)*col+(col2-col1)*row+(col1*row2-row1*col2);
     let e20=(row2-row0)*col+(col0-col2)*row+(col2*row0-row2*col0);
