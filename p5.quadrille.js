@@ -367,7 +367,7 @@ class Quadrille {
         (pattern2 instanceof p5.Color || Array.isArray(pattern2))) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
-          let coords = this.barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
+          let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
             let r = red(pattern0) * coords.w0 + red(pattern1) * coords.w1 + red(pattern2) * coords.w2;
             let g = green(pattern0) * coords.w0 + green(pattern1) * coords.w1 + green(pattern2) * coords.w2;
@@ -385,16 +385,16 @@ class Quadrille {
    * Returns the (row0, col0), (row1, col1), (row2, col2) triangle barycentric coordinates at (row, col)
    * as {w0, w1, w2} object literal.
    */
-  barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
-    let edges = this.edge_functions(row, col, row0, col0, row1, col1, row2, col2);
-    let area = this.parallelogram_area(row0, col0, row1, col1, row2, col2);
+  _barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
+    let edges = this._edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    let area = this._parallelogram_area(row0, col0, row1, col1, row2, col2);
     return {w0 : edges.e12 / area, w1 : edges.e20 / area, w2 : edges.e01 / area};
   }
 
   /**
    * Returns the parallelogram area spawn by the (row0, col0), (row1, col1), (row2, col2) triangle.
    */
-  parallelogram_area(row0, col0, row1, col1, row2, col2) {
+  _parallelogram_area(row0, col0, row1, col1, row2, col2) {
     return (col1-col0)*(row2-row0)-(col2-col0)*(row1-row0);
   }
 
@@ -402,7 +402,7 @@ class Quadrille {
    * Returns the (row0, col0), (row1, col1), (row2, col2) triangle edge_functions at (row, col)
    * as {e01, e12, e20} object literal.
    */
-  edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
+  _edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
     let e01=(row0-row1)*col+(col1-col0)*row+(col0*row1-row0*col1);
     let e12=(row1-row2)*col+(col2-col1)*row+(col1*row2-row1*col2);
     let e20=(row2-row0)*col+(col0-col2)*row+(col2*row0-row2*col0);
