@@ -358,8 +358,8 @@ class Quadrille {
   }
 
   /**
-   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle, using pattern0,
-   * pattern1 and pattern2 vertex patterns, respectively.
+   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle,
+   * using pattern0, pattern1 and pattern2 vertex patterns, respectively.
    */
   rasterize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     if ((pattern0 instanceof p5.Color || Array.isArray(pattern0)) &&
@@ -382,8 +382,8 @@ class Quadrille {
   }
 
   /**
-   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle barycentric coordinates at (row, col)
-   * as {w0, w1, w2} object literal.
+   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle
+   * barycentric coordinates at (row, col) as the {w0, w1, w2} object literal.
    */
   _barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
     let edges = this._edge_functions(row, col, row0, col0, row1, col1, row2, col2);
@@ -392,15 +392,16 @@ class Quadrille {
   }
 
   /**
-   * Returns the parallelogram area spawn by the (row0, col0), (row1, col1), (row2, col2) triangle.
+   * Returns the parallelogram signed area spawn by the
+   * (row0, col0), (row1, col1), (row2, col2) triangle.
    */
   _parallelogram_area(row0, col0, row1, col1, row2, col2) {
     return (col1-col0)*(row2-row0)-(col2-col0)*(row1-row0);
   }
 
   /**
-   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle edge_functions at (row, col)
-   * as {e01, e12, e20} object literal.
+   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle edge_functions
+   * at (row, col) as the {e01, e12, e20} object literal.
    */
   _edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
     let e01=(row0-row1)*col+(col1-col0)*row+(col0*row1-row0*col1);
