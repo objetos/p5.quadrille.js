@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.3.0';
+  static version = '0.3.1';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -352,8 +352,8 @@ class Quadrille {
       r = constrain(r, 0, 255);
       g = constrain(g, 0, 255);
       b = constrain(b, 0, 255);
-      this.memory2D[row][col] = [r, g, b];
-      //this.memory2D[row][col] = color(r, g, b);
+      //this.memory2D[row][col] = [r, g, b];
+      this.memory2D[row][col] = color(r, g, b);
     }
   }
 
@@ -373,8 +373,8 @@ class Quadrille {
             let g = green(pattern0) * coords.w0 + green(pattern1) * coords.w1 + green(pattern2) * coords.w2;
             let b = blue(pattern0) * coords.w0 + blue(pattern1) * coords.w1 + blue(pattern2) * coords.w2;
             let a = alpha(pattern0) * coords.w0 + alpha(pattern1) * coords.w1 + alpha(pattern2) * coords.w2;
-            this.memory2D[i][j] = [r, g, b, a];
-            //this.memory2D[i][j] = color(r, g, b, a);
+            //this.memory2D[i][j] = [r, g, b, a];
+            this.memory2D[i][j] = color(r, g, b, a);
           }
         }
       }
@@ -630,8 +630,11 @@ class Quadrille {
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
           }
           else if (typeof quadrille.memory2D[i][j] === 'number' && min < max) {
+            this.push();
+            this.colorMode(this.RGB, 255);
             this.fill(this.color(this.map(quadrille.memory2D[i][j], min, max, 0, 255), alpha));
             this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.pop();
           }
         }
         else if (board) {

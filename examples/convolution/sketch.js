@@ -22,9 +22,16 @@ function preload() {
 
 function setup() {
   createCanvas(800, 800);
+  // /*
   mask = createQuadrille([[0.0625, 0.125, 0.0625],
                           [0.125,  0.25,  0.125],
                           [0.0625, 0.125, 0.0625]]);
+  // */
+  /*
+  mask = createQuadrille([ [ -1, -1, -1 ],
+                           [ -1,  9, -1 ],
+                           [ -1, -1, -1 ] ]); 
+  // */
   update();
 }
 
