@@ -197,7 +197,7 @@ class Quadrille {
   }
 
   /**
-   * @returns {number} Number of non-empty queadrille cells.
+   * @returns {number} Number of non-empty quadrille cells.
    */
   get order() {
     let result = 0;

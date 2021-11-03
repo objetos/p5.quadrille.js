@@ -39,6 +39,19 @@ function setup() {
   clone = quadrille.clone();
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
+
+  let letter = 'b';
+
+switch(letter) {
+  case 'a':
+  case 'A': 
+    console.log("Alpha");  // Does not execute
+    break;
+  case 'b':
+  case 'B': 
+    console.log("Bravo");  // Prints "Bravo"
+    break;
+}
 }
 
 function draw() {
