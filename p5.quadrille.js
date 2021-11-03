@@ -586,7 +586,7 @@ class Quadrille {
   }
 
   /**
-   * Returns a deep copy of this quadrille. May be used in conjunction with
+   * Returns a shallow copy of this quadrille. May be used in conjunction with
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone() {
