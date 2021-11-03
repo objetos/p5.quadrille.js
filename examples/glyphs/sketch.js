@@ -9,9 +9,9 @@ var c;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  c = color('#007ACC');
+  c = color('red');
   quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',            '🙈' ],
+                               [0,             '🤔',             c ],
                                [0,             color('#770811'), 0   ],
                                ['g',           'o',             'l'  ]
                               ]);
@@ -39,26 +39,14 @@ function setup() {
   clone = quadrille.clone();
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
-
-  let letter = 'b';
-
-switch(letter) {
-  case 'a':
-  case 'A': 
-    console.log("Alpha");  // Does not execute
-    break;
-  case 'b':
-  case 'B': 
-    console.log("Bravo");  // Prints "Bravo"
-    break;
-}
+  c.setBlue(255);
 }
 
 function draw() {
   background('#060621');
   drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
   //drawQuadrille(test, x, y, LENGTH, 2, 'green', true);
-  //drawQuadrille(clone, 2, 8, LENGTH, 0);
+  drawQuadrille(clone, 2, 8, LENGTH, 0);
   //drawQuadrille(L, 2, 12, LENGTH);
   //drawQuadrille(Lbit, 2, 12, LENGTH);
 }
