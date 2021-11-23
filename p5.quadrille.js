@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.3.1';
+  static version = '0.4.0';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -601,7 +601,17 @@ class Quadrille {
     return new Quadrille(...arguments);
   }
 
-  p5.prototype.drawQuadrille = function(quadrille, x = 0, y = 0, LENGTH = 10, outlineWeight = 2, outline = 'magenta', board = false, min = 0, max = 0, alpha = 255) {
+  p5.prototype.drawQuadrille = function(quadrille, 
+    { x = 0,
+      y = 0,
+      LENGTH = 10,
+      outlineWeight = 2,
+      outline = 'magenta',
+      board = false,
+      min = 0,
+      max = 0,
+      alpha = 255
+    } = {} ) {
     this.push();
     this.translate(x * LENGTH, y * LENGTH);
     this.stroke(outline);

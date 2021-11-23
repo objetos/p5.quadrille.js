@@ -22,8 +22,8 @@ function setup() {
 
 function draw() {
   background(/*'#060621'*/ '#007ACC');
-  drawQuadrille(board, 0, 0, LENGTH, 2, 'blue', true);
-  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+  drawQuadrille(board, {LENGTH: LENGTH, outline: 'blue', board: true});
+  drawQuadrille(quadrille, {x: x, y: y, LENGTH: LENGTH, outline: 'green'});
 }
 
 function keyPressed() {

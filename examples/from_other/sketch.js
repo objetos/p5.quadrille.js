@@ -28,6 +28,6 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(H,     2, 2, LENGTH, 2);
-  drawQuadrille(other, 2, 10, LENGTH, 2, 'magenta', true);
+  drawQuadrille(H, {x: 2, y: 2, LENGTH: LENGTH});
+  drawQuadrille(other, {x: 2, y: 10, LENGTH: LENGTH, board: true});
 }

@@ -19,7 +19,11 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl));
+  drawQuadrille(quadrille,
+    {
+      LENGTH: 20 / (2 ** scl),
+      outlineWeight: 1.6 / (2 ** scl),
+    });
 }
 
 function keyPressed() {

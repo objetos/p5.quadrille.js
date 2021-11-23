@@ -12,7 +12,7 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, 0, 0, LENGTH, 2, 'green', true);
+  drawQuadrille(quadrille, {LENGTH: LENGTH, outline: 'green', board: true});
   tri();
 }
 

@@ -38,9 +38,20 @@ function setup() {
 function draw() {
   background('#060621');
   if (image_mode) {
-    drawQuadrille(quadrille, 0, 0, 20 / (2 ** scl), 1.6 / (2 ** scl), quadrille === orig ? 'magenta' : 'cyan');
+    drawQuadrille(quadrille,
+      {
+        LENGTH: 20 / (2 ** scl),
+        outlineWeight: 1.6 / (2 ** scl),
+        outline: quadrille === orig ? 'magenta' : 'cyan'
+      });
   } else {
-    drawQuadrille(mask, 0, 0, 50, 2, 'magenta', false, 0.0625, 0.25);
+    drawQuadrille(mask,
+      {
+        LENGTH: 50,
+        min: 0.0625,
+        max: 0.25,
+        alpha: 255
+      });
   }
 }
 

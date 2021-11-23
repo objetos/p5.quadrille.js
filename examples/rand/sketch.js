@@ -36,8 +36,8 @@ function setup() {
 function draw() {
   background('#060621');
   //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
-  drawQuadrille(quadrille, 2, 12, LENGTH, 2, 'green');
-  drawQuadrille(r, x, y, LENGTH, 2, 'blue', true);
+  drawQuadrille(quadrille, {x: 2, y: 12, LENGTH: LENGTH, outline: 'green'});
+  drawQuadrille(r, {x: x, y: y, LENGTH: LENGTH, outline: 'blue', board: true});
 }
 
 function keyPressed() {

@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var t, T, L, Lbit, test;
+var t, I, T, L, Lbit, test;
 var quadrille;
 var clone;
 var x = 2, y = 2;
@@ -40,22 +40,41 @@ function setup() {
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   c.setBlue(255);
+  /*
+  I = createQuadrille([
+    [0, c, 0, 0],
+    [0, c, 0, 0],
+    [0, c, 0, 0],
+    [0, c, 0, 0],
+   ]);
+   */
+   I = createQuadrille([
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, c, 0, 0, 0],
+    [0, 0, c, 0, 0, 0],
+    [0, 0, c, 0, 0, 0],
+    [0, 0, c, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+   ]);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+  //drawQuadrille(quadrille, x, y, LENGTH, 2, 'green');
+  drawQuadrille(quadrille, {x: x, y: y, LENGTH: LENGTH, outlineWeight: 2, outline: 'green'});
+  drawQuadrille(I, {x:2, y:12, LENGTH: LENGTH, outline:'blue'});
   //drawQuadrille(test, x, y, LENGTH, 2, 'green', true);
-  drawQuadrille(clone, 2, 8, LENGTH, 0);
+  //drawQuadrille(clone, 2, 8, LENGTH, 0);
   //drawQuadrille(L, 2, 12, LENGTH);
   //drawQuadrille(Lbit, 2, 12, LENGTH);
+  //drawQuadrille(I, 2, 12, LENGTH, 2, 'blue');
 }
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
     quadrille.reflect();
   } else if (keyCode === DOWN_ARROW) {
-    quadrille.rotate();
+    I.rotate();
   }
   if (key === 'a') {
     x = x > 0 ? x - 1 : x;
@@ -76,7 +95,7 @@ function keyPressed() {
     test.delete(test.height - 1);
   }
   if (key === 'p') {
-    console.log(test.toInt());
+    console.log(I.toInt());
   }
   if (key === 'r') {
     quadrille.randomize();
