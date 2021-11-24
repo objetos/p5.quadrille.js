@@ -21,7 +21,7 @@ function draw() {
   background('#060621');
   drawQuadrille(quadrille,
     {
-      LENGTH: 20 / (2 ** scl),
+      cellLength: 20 / (2 ** scl),
       outlineWeight: 1.6 / (2 ** scl),
     });
 }

@@ -21,7 +21,7 @@ function setup() {
 
 function draw() {
   background('#FDF6E3');
-  drawQuadrille(quadrille, {x: x, y: y, LENGTH: LENGTH, outline: 'green'});
+  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: 'green'});
 }
 
 function keyPressed() {

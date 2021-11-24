@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.4.0';
+  static version = '0.4.1';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -604,7 +604,7 @@ class Quadrille {
   p5.prototype.drawQuadrille = function(quadrille, 
     { x = 0,
       y = 0,
-      LENGTH = 10,
+      cellLength = 10,
       outlineWeight = 2,
       outline = 'magenta',
       board = false,
@@ -613,7 +613,7 @@ class Quadrille {
       alpha = 255
     } = {} ) {
     this.push();
-    this.translate(x * LENGTH, y * LENGTH);
+    this.translate(x * cellLength, y * cellLength);
     this.stroke(outline);
     this.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille.memory2D.length; i++) {
@@ -624,32 +624,32 @@ class Quadrille {
           // once 3D Quadrilles appear.
           if (quadrille.memory2D[i][j] instanceof p5.Color || Array.isArray(quadrille.memory2D[i][j])) {
             this.fill(quadrille.memory2D[i][j]);
-            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.rect(j * cellLength, i * cellLength, cellLength, cellLength);
           }
           else if (quadrille.memory2D[i][j] instanceof p5.Image) {
-            this.image(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.image(quadrille.memory2D[i][j], j * cellLength, i * cellLength, cellLength, cellLength);
           }
           else if (typeof quadrille.memory2D[i][j] === 'string') {
             this.push();
             this.noStroke();
             this.fill(outline);
-            this.textSize(LENGTH);
-            this.text(quadrille.memory2D[i][j], j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.textSize(cellLength);
+            this.text(quadrille.memory2D[i][j], j * cellLength, i * cellLength, cellLength, cellLength);
             this.pop();
             this.noFill();
-            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.rect(j * cellLength, i * cellLength, cellLength, cellLength);
           }
           else if (typeof quadrille.memory2D[i][j] === 'number' && min < max) {
             this.push();
             this.colorMode(this.RGB, 255);
             this.fill(this.color(this.map(quadrille.memory2D[i][j], min, max, 0, 255), alpha));
-            this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+            this.rect(j * cellLength, i * cellLength, cellLength, cellLength);
             this.pop();
           }
         }
         else if (board) {
           this.noFill();
-          this.rect(j * LENGTH, i * LENGTH, LENGTH, LENGTH);
+          this.rect(j * cellLength, i * cellLength, cellLength, cellLength);
         }
         this.pop();
       }

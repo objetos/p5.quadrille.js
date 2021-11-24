@@ -40,14 +40,14 @@ function draw() {
   if (image_mode) {
     drawQuadrille(quadrille,
       {
-        LENGTH: 20 / (2 ** scl),
+        cellLength: 20 / (2 ** scl),
         outlineWeight: 1.6 / (2 ** scl),
         outline: quadrille === orig ? 'magenta' : 'cyan'
       });
   } else {
     drawQuadrille(mask,
       {
-        LENGTH: 50,
+        cellLength: 50,
         min: 0.0625,
         max: 0.25,
         alpha: 255
