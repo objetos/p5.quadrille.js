@@ -35,6 +35,11 @@
 > [rotate()](/docs/geom/rotate)
 > [transpose()](/docs/geom/transpose)
 
+> :Collapse label=Visual computing
+>
+> [filter()](/docs/vc/filter)
+> [rasterize()](/docs/vc/rasterize)
+
 > :Collapse label=Other representations
 >
 > [from()](/docs/conversion/from)
