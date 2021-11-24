@@ -4,7 +4,7 @@
 
 # Syntax
 
-> `drawQuadrille(quadrille, { [x], [y], [cellLength], [outlineWeight], [outline], [board], [min], [max], [alpha] })`
+> `drawQuadrille(quadrille, [{[x], [y], [cellLength], [outlineWeight], [outline], [board], [min], [max], [alpha]}])`
 
 # Parameters
 
