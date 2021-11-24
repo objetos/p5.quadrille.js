@@ -1,6 +1,6 @@
 # `clone()`
 
-Returns a deep copy of the quadrille.
+Returns a shallow copy of the quadrille.
 
 # Syntax
 

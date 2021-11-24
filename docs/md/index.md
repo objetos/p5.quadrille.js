@@ -1,7 +1,7 @@
 > :Tabs
 > > :Tab title=mahakala
 > > 
-> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.2/p5.quadrille.min.js, sketch=/docs/sketches/image.js, width=800, height=360
+> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.4.1/p5.quadrille.min.js, sketch=/docs/sketches/image.js, width=800, height=360
 >
 > > :Tab title=code
 > >
@@ -40,7 +40,7 @@ The library reference together with a [demo](/docs/demo) which illustrates most 
 # Releases
 
 - [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
-- [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.2/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.2/p5.quadrille.min.js)
+- [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)
 - [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
 
 > :ToCPrevNext

@@ -23,8 +23,8 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
-  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
+  drawQuadrille(board, {cellLength: LENGTH, outline: 'magenta', board: true});
+  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true});
 }
 
 function keyPressed() {

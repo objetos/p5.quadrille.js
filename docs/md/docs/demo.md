@@ -1,7 +1,7 @@
 > :Tabs
 > > :Tab title=demo
 > > 
-> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js@0.1.2/p5.quadrille.min.js, sketch=/docs/sketches/demo.js, width=800, height=400
+> > > :P5 lib1=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js, sketch=/docs/sketches/demo.js, width=800, height=400
 >
 > > :Tab title=keys (click on canvas before using them)
 > >
@@ -52,8 +52,8 @@
 >   if ((frameCount % 30 === 0) && animate) {
 >     stick('u');
 >   }
->   drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true);
->   drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true);
+>   drawQuadrille(board, {cellLength: LENGTH, outline: 'magenta', board: true});
+>   drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true});
 > }
 > 
 > function keyPressed() {
@@ -190,8 +190,8 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u'); // --> the stick command is described below
   }
-/*!*/  drawQuadrille(board, 0, 0, LENGTH, 2, 'magenta', true); // --> draw board with edges at (0, 0)
-/*!*/  drawQuadrille(quadrille, x, y, LENGTH, 2, '#1EB2A6', true); // --> draw quadrille with edges at (x, y)
+/*!*/  drawQuadrille(board, {cellLength: LENGTH, outline: 'magenta', board: true}); // --> draw board with edges at (0, 0)
+/*!*/  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true}); // --> draw quadrille with edges at (x, y)
 }
 ```
 
@@ -244,7 +244,7 @@ function keyPressed() {
 
 ```js | excerpt from demo.js
 function stick(key) {
-  let clone = quadrille.clone(); // --> performs a deep copy of the quadrille
+  let clone = quadrille.clone(); // --> performs a shallow copy of the quadrille
   clone.fill(color('#965695')); // --> dim the cloned quadrille color
 /*!*/  board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
           key === 'x' ? Quadrille.XOR(board, clone, y, x) :
