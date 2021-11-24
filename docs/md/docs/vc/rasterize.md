@@ -1,6 +1,6 @@
 # `rasterize()`
 
-Rasterize a triangle (`(row0, col0, row1, col1, row2, col2)`) using [barycentric coordinates]().
+Rasterize a triangle, defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/).
 
 # Syntax
 
