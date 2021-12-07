@@ -296,8 +296,8 @@ class Quadrille {
   }
 
   /**
-   * @returns {number} Quadrille int representation using big-endian and row-major ordering
-   * of the memory2D entries.
+   * @returns {number} integer representation using big-endian and row-major ordering
+   * of the quadrille entries.
    */
   toInt() {
     let result = 0;
@@ -311,51 +311,26 @@ class Quadrille {
     return result;
   }
 
-  // TODO needs testing
+  /**
+   * @returns {Array} Quadrille representation.
+   */
   toArray() {
     let memory2D = this.clone()._memory2D;
-    let result;
+    let result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
     }
     return result;
   }
 
-  toArray2D() {
+  /**
+   * @returns {Array} Quadrille matrix (Array2D) representation.
+   */
+  toMatrix() {
     return this.clone()._memory2D;
   }
 
   // TODO toAscii()
-
-  /*
-  set memory2D(memory) {
-    if (Array.isArray(memory[0])) {
-      let memory2D = memory.map(array => { return array.slice(); });
-      let width;
-      for (const entry of memory2D) {
-        if (!Array.isArray(entry)) {
-          throw 'Not2DArray in createQuadrille';
-        }
-        if (!width) {
-          width = entry.length;
-        }
-        else if (width < entry.length) {
-          width = entry.length;
-        }
-      }
-      for (let i = 0; i < memory2D.length; i++) {
-        memory2D[i] = this._format(memory2D[i], width);
-      }
-      this._memory2D = memory2D;
-    }
-  }
-
-  // TODO remove? or use toArray2D
-  get memory2D() {
-    return this.clone()._memory2D;
-    //return this._memory2D;
-  }
-  */
 
   get width() {
     return this._memory2D[0].length;
@@ -658,9 +633,8 @@ class Quadrille {
     // credit goes to Fawad Ghafoor
     // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
-
     /*
-    // using destructuring assignment which works well for 2d arrays having varying row widths
+    // Side note: using destructuring assignment which works well for 2d arrays having varying row widths
     for (let i = 0; i < this._memory2D.length; i++) {
       for (let j = 0; j < i; j++) {
         [this._memory2D[i][j], this._memory2D[j][i]] = [this._memory2D[j][i], this._memory2D[i][j]];
