@@ -1,6 +1,6 @@
 # `insert()`
 
-Inserts an empty row into the quadrille [memory2D](/docs/props#memory2d) internal representation.
+Inserts an empty row into the quadrille.
 
 # Syntax
 

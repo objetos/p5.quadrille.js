@@ -44,5 +44,7 @@
 >
 > [from()](/docs/conversion/from)
 > [toInt()](/docs/conversion/to_int)
+> [toMatrix()](/docs/conversion/to_matrix)
+> [toArray()](/docs/conversion/to_array)
 
 [Demo](/docs/demo)

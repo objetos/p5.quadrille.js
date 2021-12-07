@@ -1,6 +1,6 @@
 # `clear()`
 
-Sets quadrille [memory2D](/docs/props#memory2d) cells to `0`. Either all quadrille cells or a given `row`.
+Sets quadrille cells to `0`. Either all quadrille cells or a given `row`.
 
 # Syntax
 

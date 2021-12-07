@@ -1,6 +1,6 @@
 # `delete()`
 
-Deletes a row from the quadrille [memory2D](/docs/props#memory2d) internal representation.
+Deletes a row from the quadrille.
 
 # Syntax
 

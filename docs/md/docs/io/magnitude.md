@@ -1,6 +1,6 @@
 # `magnitude()`
 
-Returns the number of non-empty cells in the given row of the quadrille [memory2D](/docs/props#memory2d) internal representation.
+Returns the number of non-empty cells of a given quadrille row.
 
 # Syntax
 

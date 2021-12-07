@@ -1,9 +1,5 @@
 # Quadrille properties
 
-## `memory2d`
-
-2D array: Read / Write [Computed property](https://www.w3schools.com/js/js_object_accessors.asp) which references the 2D array `quadrille` internal representation.
-
 ## `width`
 
 Number: Read-only property that retrieves the quadrille width.

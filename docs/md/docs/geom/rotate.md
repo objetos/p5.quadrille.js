@@ -1,6 +1,6 @@
 # `rotate()`
 
-π/2 clockwise rotation of the quadrille [memory2D](/docs/props#memory2d) cells.
+π/2 clockwise rotation of the quadrille cells.
 
 # Syntax
 

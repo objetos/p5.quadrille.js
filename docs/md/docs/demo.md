@@ -7,7 +7,7 @@
 > >
 > > | key | Action                                                                        |
 > > |-----|-------------------------------------------------------------------------------|
-> > | 1   | calls `createQuadrille(array2D)` to replace `quadrille`                       |
+> > | 1   | calls `createQuadrille(matrix)` to replace `quadrille`                        |
 > > | 2   | calls `createQuadrille(width, bitboard, pattern)` to replace `quadrille`      |
 > > | 3   | calls `createQuadrille(width, height, order, pattern)` to replace `quadrille` |
 > > | f   | reflects `quadrille`                                                          |
