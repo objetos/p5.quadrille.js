@@ -1,10 +1,10 @@
 const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
-var board, quadrille;
-var x, y;
-var animate = true;
-var al;
+let board, quadrille;
+let x, y;
+let animate = true;
+let al;
 
 function preload() {
   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');

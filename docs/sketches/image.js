@@ -1,5 +1,5 @@
-var quadrille;
-var image;
+let quadrille;
+let image;
 
 function preload() {
   image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');

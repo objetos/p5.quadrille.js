@@ -30,10 +30,10 @@
 > const ROWS = 20;
 > const COLS = 40;
 > const LENGTH = 20;
-> var board, quadrille;
-> var x, y;
-> var animate = true;
-> var al;
+> let board, quadrille;
+> let x, y;
+> let animate = true;
+> let al;
 > 
 > function preload() {
 >   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
@@ -143,9 +143,9 @@ Different forms of the introduced [p5.js](https://p5js.org/) [createQuadrille](/
 const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
-/*!*/var board, quadrille; // --> Quadrille instances
-var x, y;
-var animate = true;
+/*!*/let board, quadrille; // --> Quadrille instances
+let x, y;
+let animate = true;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
