@@ -332,16 +332,22 @@ class Quadrille {
 
   // TODO toAscii()
 
+  /**
+   * @returns {number} quadrille width, i.e., number of columns.
+   */
   get width() {
     return this._memory2D[0].length;
   }
 
+  /**
+   * @returns {number} quadrille height, i.e., number of rows.
+   */
   get height() {
     return this._memory2D.length;
   }
 
   /**
-   * Same as width * height.
+   * @returns {number} width * height.
    */
   get size() {
     return this.width * this.height;
@@ -633,14 +639,6 @@ class Quadrille {
     // credit goes to Fawad Ghafoor
     // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
-    /*
-    // Side note: using destructuring assignment which works well for 2d arrays having varying row widths
-    for (let i = 0; i < this._memory2D.length; i++) {
-      for (let j = 0; j < i; j++) {
-        [this._memory2D[i][j], this._memory2D[j][i]] = [this._memory2D[j][i], this._memory2D[i][j]];
-      }
-    }
-    // */
   }
 
   /**
