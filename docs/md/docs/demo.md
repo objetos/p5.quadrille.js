@@ -199,7 +199,7 @@ function keyPressed() {
 /*!*/    quadrille = active(parseInt(key)); // --> quadrille creation on key
   }
   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
-/*!*/    stick(key); // --> the stick function is described bellow
+/*!*/    stick(key); // --> the stick function is described below
   }
   if (key === 'f') {
 /*!*/    quadrille.reflect(); // --> reflects quadrille
