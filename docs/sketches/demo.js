@@ -73,7 +73,7 @@ function active(value) {
   switch (value) {
     case 1:
       return createQuadrille([[c1, 'g'],
-                              [0, 'o', al],
+                              [0,  'o', al],
                               [al, 'l'],
                               [e1, c2, c3]
                               ]);
