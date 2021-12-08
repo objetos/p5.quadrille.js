@@ -8,10 +8,10 @@ Apply [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processin
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                              |
-|----------|---------------------------------------------------------------------------------------|
-| mask     | Quadrille: quadrille of numbers representing the convolution mask                     |
-| row      | Number: cell row coordinate, default is 0 which applies filter to the whole quadrille |
-| col      | Number: cell col coordinate, default is 0 which applies filter to the whole quadrille |
+| <!-- --> | <!-- -->                                                                                                                         |
+|----------|----------------------------------------------------------------------------------------------------------------------------------|
+| mask     | Quadrille: quadrille of numbers representing the [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) |
+| row      | Number: cell row coordinate, default is 0 which applies filter to the whole quadrille                                            |
+| col      | Number: cell col coordinate, default is 0 which applies filter to the whole quadrille                                            |
 
 > :ToCPrevNext

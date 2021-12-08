@@ -1,6 +1,6 @@
 # `createQuadrille()`
 
-[p5.js](https://p5js.org/) function that creates a `quadrille` which may be filled with any combination of numbers (representing a [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) and/or zeros for empty cells), a 4-length color array, [p5 images](https://p5js.org/reference/#/p5.Image), [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/).
+[p5.js](https://p5js.org/) function that creates a `quadrille` whose individual cells may be defined as numbers (**note** that a zero define an empty cell, see also [filter](/docs/cv/filter)), 4-length color arrays, [p5 images](https://p5js.org/reference/#/p5.Image), [p5 colors](https://p5js.org/reference/#/p5.Color) and chars, including [emojis](https://emojipedia.org/).
 
 ## Syntax
 
