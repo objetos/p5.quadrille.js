@@ -49,8 +49,8 @@ function keyPressed() {
   if (key === 'q') {
     animate = !animate;
   }
-  y = key === 'w' ? y-1 : key === 'z' ? y+1 : y;
-  x = key === 'a' ? x-1 : key === 's' ? x+1 : x;
+  y = key === 'w' ? y - 1 : key === 'z' ? y + 1 : y;
+  x = key === 'a' ? x - 1 : key === 's' ? x + 1 : x;
 }
 
 function stick(key) {

@@ -79,8 +79,8 @@
 >   if (key === 'q') {
 >     animate = !animate;
 >   }
->   y = key === 'w' ? y-1 : key === 'z' ? y+1 : y;
->   x = key === 'a' ? x-1 : key === 's' ? x+1 : x;
+>   y = key === 'w' ? y - 1 : key === 'z' ? y + 1 : y;
+>   x = key === 'a' ? x - 1 : key === 's' ? x + 1 : x;
 > }
 > 
 > function stick(key) {
@@ -213,8 +213,8 @@ function keyPressed() {
   if (key === 'q') {
 /*!*/    animate = !animate; // --> toggles animation
   }
-/*!*/  y = key === 'w' ? y-1 : key === 'z' ? y+1 : y; // --> quadrille vertical displacement
-/*!*/  x = key === 'a' ? x-1 : key === 's' ? x+1 : x; // --> quadrille horizontal displacement
+/*!*/  y = key === 'w' ? y - 1 : key === 'z' ? y + 1 : y; // --> quadrille vertical displacement
+/*!*/  x = key === 'a' ? x - 1 : key === 's' ? x + 1 : x; // --> quadrille horizontal displacement
 }
 ```
 
