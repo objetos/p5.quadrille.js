@@ -8,8 +8,9 @@
 > > | key | Action                                                                        |
 > > |-----|-------------------------------------------------------------------------------|
 > > | 1   | calls `createQuadrille(matrix)` to replace `quadrille`                        |
-> > | 2   | calls `createQuadrille(width, bitboard, pattern)` to replace `quadrille`      |
-> > | 3   | calls `createQuadrille(width, height, order, pattern)` to replace `quadrille` |
+> > | 2   | calls `createQuadrille(width, array)` to replace `quadrille`                  |
+> > | 3   | calls `createQuadrille(width, bitboard, pattern)` to replace `quadrille`      |
+> > | 4   | calls `createQuadrille(width, height, order, pattern)` to replace `quadrille` |
 > > | f   | reflects `quadrille`                                                          |
 > > | r   | rotates `quadrille`                                                           |
 > > | t   | transposes `quadrille`                                                        |
@@ -34,15 +35,15 @@
 > let x, y;
 > let animate = true;
 > let al;
-> 
+>
 > function preload() {
 >   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
 > }
-> 
+>
 > function setup() {
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 >   board = createQuadrille(COLS, ROWS);
->   quadrille = active(int(random(3)));
+>   quadrille = active(int(random(4)));
 >   x = int(random(0, COLS - 4));
 >   y = int(random(0, ROWS - 4));
 > }
@@ -52,22 +53,19 @@
 >   if ((frameCount % 30 === 0) && animate) {
 >     stick('u');
 >   }
->   drawQuadrille(board, {cellLength: LENGTH, outline: 'magenta', board: true});
->   drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true});
+>   drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true });
+>   drawQuadrille(quadrille, { x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true });
 > }
 > 
 > function keyPressed() {
 >   if (key === 'c') {
 >     board.clear();
 >   }
->   if (key === '1') {
->     quadrille = active(1);
+>   if (key === '1' || key === '2' || key === '3' || key === '4') {
+>     quadrille = active(parseInt(key));
 >   }
->   if (key === '2') {
->     quadrille = active(2);
->   }
->   if (key === '3') {
->     quadrille = active(3);
+>   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
+>     stick(key);
 >   }
 >   if (key === 'f') {
 >     quadrille.reflect();
@@ -78,24 +76,11 @@
 >   if (key === 't') {
 >     quadrille.transpose();
 >   }
->   if (key === 'w') {
->     y--;
->   }
->   if (key === 'z') {
->     y++;
->   }
->   if (key === 'a') {
->     x--;
->   }
->   if (key === 's') {
->     x++;
->   }
 >   if (key === 'q') {
 >     animate = !animate;
 >   }
->   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
->     stick(key);
->   }
+>   y = key === 'w' ? y-1 : key === 'z' ? y+1 : y;
+>   x = key === 'a' ? x-1 : key === 's' ? x+1 : x;
 > }
 > 
 > function stick(key) {
@@ -114,14 +99,17 @@
 >   let c1 = color(random(255), random(255), random(255), 255);
 >   let c2 = color(random(255), random(255), random(255), 255);
 >   let c3 = color(random(255), random(255), random(255), 255);
+>   let e1 = '👽';
 >   switch (value) {
 >     case 1:
->       return createQuadrille([[c1, 'g',  0],
->                               [0,  'o', al],
->                               [al, 'l',  0],
->                               [c1, c2,  c3]
->                              ]);
+>       return createQuadrille([[c1, 'g'],
+>                               [0, 'o', al],
+>                               [al, 'l'],
+>                               [e1, c2, c3]
+>                               ]);
 >     case 2:
+>       return createQuadrille(2, [c1, al, c3, e1, c2]);
+>     case 3:
 >       return createQuadrille(4, int(random(1, 1048576)), c2);
 >     default:
 >       let w = int(random(2, 6));
@@ -150,7 +138,7 @@ let animate = true;
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 /*!*/  board = createQuadrille(COLS, ROWS); // --> Creates empty quadrille
-/*!*/  quadrille = active(int(random(3)));
+/*!*/  quadrille = active(int(random(4)));
   x = int(random(0, COLS - 6));
   y = int(random(0, ROWS - 6));
 }
@@ -164,13 +152,16 @@ function active(value) {
     let c1 = color(random(255), random(255), random(255), 255);
     let c2 = color(random(255), random(255), random(255), 255);
     let c3 = color(random(255), random(255), random(255), 255);
-    case 1: // --> Creates quadrille from Array2D
-/*!*/      return createQuadrille([[c1, 'g',  0],
+    let e1 = '👽';
+    case 1: // --> Creates a 3-width quadrille from (sparse) matrix
+/*!*/      return createQuadrille([[c1, 'g'],
 /*!*/                              [0,  'o', al],
-/*!*/                              [al, 'l',  0],
+/*!*/                              [al, 'l'],
 /*!*/                              [c1, c2,  c3]
 /*!*/                             ]);
-    case 2: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
+    case 2: // --> Creates a 2-width quadrille from (5-length) array
+/*!*/      return return createQuadrille(2, [c1, al, c3, e1, c2]);
+    case 3: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
 /*!*/      return createQuadrille(4, int(random(1, 1048576)), c2);
     default: // --> Creates a quadrille of random width, height and order
       let w = int(random(2, 6));
@@ -201,28 +192,29 @@ The interactive `quadrille` may be translated by setting the `x`, `y` coordinate
 
 ```js | excerpt from demo.js
 function keyPressed() {
-  if (key === 'w') {  // --> Quadrille translation
-    y--;
+  if (key === 'c') {
+/*!*/    board.clear(); // --> clears all cells of the board quadrille
   }
-  if (key === 'z') { // --> Quadrille translation
-    y++;
+  if (key === '1' || key === '2' || key === '3' || key === '4') {
+/*!*/    quadrille = active(parseInt(key)); // --> quadrille creation on key
   }
-  if (key === 'a') { // --> Quadrille translation
-    x--;
-  }
-  if (key === 's') { // --> Quadrille translation
-    x++;
+  if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
+/*!*/    stick(key); // --> the stick function is described bellow
   }
   if (key === 'f') {
-/*!*/    quadrille.reflect();
+/*!*/    quadrille.reflect(); // --> reflects quadrille
   }
   if (key === 'r') {
-/*!*/    quadrille.rotate();
+/*!*/    quadrille.rotate(); // --> rotates quadrille
   }
   if (key === 't') {
-/*!*/    quadrille.transpose();
+/*!*/    quadrille.transpose(); // --> transposes quadrille
   }
-  //...
+  if (key === 'q') {
+/*!*/    animate = !animate; // --> toggles animation
+  }
+/*!*/  y = key === 'w' ? y-1 : key === 'z' ? y+1 : y; // --> quadrille vertical displacement
+/*!*/  x = key === 'a' ? x-1 : key === 's' ? x+1 : x; // --> quadrille horizontal displacement
 }
 ```
 
