@@ -157,7 +157,7 @@ function active(value) {
 /*!*/      return createQuadrille([[c1, 'g'],
 /*!*/                              [0,  'o', al],
 /*!*/                              [al, 'l'],
-/*!*/                              [c1, c2,  c3]
+/*!*/                              [e1, c2,  c3]
 /*!*/                             ]);
     case 2: // --> Creates a 2-width quadrille from (5-length) array
 /*!*/      return return createQuadrille(2, [c1, al, c3, e1, c2]);
