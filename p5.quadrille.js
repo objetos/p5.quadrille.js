@@ -675,7 +675,7 @@ class Quadrille {
 
   p5.prototype.drawQuadrille = function (quadrille,
     {
-      graphics = null,
+      graphics = this,
       x = 0,
       y = 0,
       cellLength = 10,
@@ -686,7 +686,6 @@ class Quadrille {
       max = 0,
       alpha = 255
     } = {}) {
-    graphics = graphics === null ? this : graphics;
     graphics.push();
     graphics.translate(x * cellLength, y * cellLength);
     graphics.stroke(outline);
