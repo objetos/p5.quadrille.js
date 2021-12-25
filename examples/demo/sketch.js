@@ -78,7 +78,10 @@ function active(value) {
                               [e1, c2, c3]
                               ]);
     case 2:
-      return createQuadrille(2, [c1, al, c3, e1, c2]);
+      //return createQuadrille(2, [c1, al, c3, e1, c2]);
+      //return createQuadrille([c1, al, c3, e1, c2]);
+      //return createQuadrille(`holamundo`);
+      return createQuadrille(5, `holamundo`);
     case 3:
       return createQuadrille(4, int(random(1, 1048576)), c2);
     default:

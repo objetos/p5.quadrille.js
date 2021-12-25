@@ -154,33 +154,45 @@ class Quadrille {
    * @see order
    */
   constructor() {
-    if (arguments.length === 1 && Array.isArray(arguments[0])) {
-      if (!Array.isArray(arguments[0][0])) {
-        this._init1D(arguments[0]);
+    if (arguments.length === 1) {
+      if (typeof arguments[0] === 'string') {
+        this._init1D([...arguments[0]]);
         return;
       }
-      let memory2D = arguments[0].map(array => { return array.slice(); });
-      let width;
-      for (const entry of memory2D) {
-        if (!Array.isArray(entry)) {
-          throw new Error(`Not 2D Array`);
+      if (Array.isArray(arguments[0])) {
+        if (!Array.isArray(arguments[0][0])) {
+          this._init1D(arguments[0]);
+          return;
         }
-        if (!width) {
-          width = entry.length;
+        let memory2D = arguments[0].map(array => { return array.slice(); });
+        let width;
+        for (const entry of memory2D) {
+          if (!Array.isArray(entry)) {
+            throw new Error(`Not 2D Array`);
+          }
+          if (!width) {
+            width = entry.length;
+          }
+          else if (width < entry.length) {
+            width = entry.length;
+          }
         }
-        else if (width < entry.length) {
-          width = entry.length;
+        for (let i = 0; i < memory2D.length; i++) {
+          memory2D[i] = this._format(memory2D[i], width);
         }
+        this._memory2D = memory2D;
+        return;
       }
-      for (let i = 0; i < memory2D.length; i++) {
-        memory2D[i] = this._format(memory2D[i], width);
-      }
-      this._memory2D = memory2D;
-      return;
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && Array.isArray(arguments[1])) {
-      this._init1D(arguments[1], arguments[0]);
-      return;
+    if (arguments.length === 2 && typeof arguments[0] === 'number') {
+      if (typeof arguments[1] === 'string') {
+        this._init1D([...arguments[1]], arguments[0]);
+        return;
+      }
+      if (Array.isArray(arguments[1])) {
+        this._init1D(arguments[1], arguments[0]);
+        return;
+      }
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
