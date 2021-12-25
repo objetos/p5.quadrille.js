@@ -155,11 +155,15 @@ class Quadrille {
    */
   constructor() {
     if (arguments.length === 1 && Array.isArray(arguments[0])) {
+      if (!Array.isArray(arguments[0][0])) {
+        this._init1D(arguments[0]);
+        return;
+      }
       let memory2D = arguments[0].map(array => { return array.slice(); });
       let width;
       for (const entry of memory2D) {
         if (!Array.isArray(entry)) {
-          throw 'Not2DArray in createQuadrille';
+          throw new Error(`Not 2D Array`);
         }
         if (!width) {
           width = entry.length;
@@ -175,14 +179,7 @@ class Quadrille {
       return;
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && Array.isArray(arguments[1])) {
-      let width = arguments[0];
-      let height = Math.ceil(arguments[1].length / width);
-      this._memory2D = new Array(height);
-      for (let i = 0; i < height; i++) {
-        let start = width * i;
-        let end = start + width;
-        this._memory2D[i] = this._format(arguments[1].slice(start, end), width);
-      }
+      this._init1D(arguments[1], arguments[0]);
       return;
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
@@ -203,6 +200,16 @@ class Quadrille {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
       this.rand(arguments[2], arguments[3]);
       return;
+    }
+  }
+
+  _init1D(memory1D, width = memory1D.length) {
+    let height = Math.ceil(memory1D.length / width);
+    this._memory2D = new Array(height);
+    for (let i = 0; i < height; i++) {
+      let start = width * i;
+      let end = start + width;
+      this._memory2D[i] = this._format(memory1D.slice(start, end), width);
     }
   }
 
