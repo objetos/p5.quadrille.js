@@ -23,6 +23,8 @@ class Quadrille {
    */
   static version = '0.5.0';
 
+  static CELL_LENGTH = 100;
+
   /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
@@ -675,6 +677,73 @@ class Quadrille {
    */
   clone() {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+  }
+
+  sort(mode = 'LUMA', ascending = true) {
+    let memory1D = this.toArray();
+    switch (mode) {
+      case 'RED':
+        break;
+      case 'GREEN':
+        break;
+      case 'BLUE':
+        break;
+      case 'ALPHA':
+        break;
+      case 'HUE':
+        break;
+      case 'SATURATION':
+        break;
+      case 'BRIGHTNESS':
+        break;
+      case 'LIGHTNESS':
+        break;
+      case 'AVG':
+        break;
+      case 'LUMA':
+      default:
+        memory1D.sort(this._sort);
+        break;
+    }
+    this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
+  }
+
+  _sort(a, b) {
+    //let pg = createGraphics(this.CELL_LENGTH, this.CELL_LENGTH);
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  }
+
+  _color(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+    graphics.push();
+    graphics.fill(cell);
+    graphics.rect(col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.pop();
+  }
+
+  _image(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+    graphics.push();
+    graphics.image(cell, col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.pop();
+  }
+
+  _string(graphics, cell, cellLength = this.CELL_LENGTH, outline = color('black'), row = 0, col = 0) {
+    graphics.push();
+    graphics.noStroke();
+    //graphics.stroke(outline);
+    graphics.fill(outline);
+    graphics.textSize(cellLength);
+    graphics.text(cell, col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.pop();
+    graphics.noFill();
+    graphics.pop();
+  }
+
+  _number(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+    graphics.push();
+
+    graphics.pop();
   }
 }
 

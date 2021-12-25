@@ -80,8 +80,13 @@ function active(value) {
     case 2:
       //return createQuadrille(2, [c1, al, c3, e1, c2]);
       //return createQuadrille([c1, al, c3, e1, c2]);
-      //return createQuadrille(`holamundo`);
-      return createQuadrille(5, `holamundo`);
+      // return createQuadrille(`holamundo`);
+      // /*
+      let q = createQuadrille(`holamundo`);
+      //q.sort('LUMA', false);
+      q.sort();
+      return q;
+      // */
     case 3:
       return createQuadrille(4, int(random(1, 1048576)), c2);
     default:
