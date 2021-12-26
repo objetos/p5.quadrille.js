@@ -24,6 +24,7 @@ class Quadrille {
   static version = '0.5.0';
 
   static CELL_LENGTH = 100;
+  static OUTLINE_WEIGHT = 2;
 
   /**
    * @param {Quadrille} quadrille1 
@@ -812,7 +813,7 @@ class Quadrille {
     cell = color('red'),
     cellLength = this.CELL_LENGTH,
     outline = 'magenta',
-    outlineWeight = 0
+    outlineWeight = Quadrille.OUTLINE_WEIGHT
   } = {}) {
     graphics.push();
     graphics.stroke(outline);
@@ -826,11 +827,19 @@ class Quadrille {
   static IMAGE({
     graphics = this,
     cell = null,
+    outline = 'magenta',
+    outlineWeight = Quadrille.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     if (cell) {
       graphics.push();
+      graphics.push();
       graphics.image(cell, 0, 0, cellLength, cellLength);
+      graphics.pop();
+      graphics.noFill();
+      graphics.stroke(outline);
+      graphics.strokeWeight(outlineWeight);
+      graphics.rect(0, 0, cellLength, cellLength);
       graphics.pop();
     }
   }
@@ -838,18 +847,20 @@ class Quadrille {
   static CHAR({
     graphics = this,
     cell = '?',
-    outline = color('black'),
+    outline = 'magenta',
+    outlineWeight = Quadrille.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.push();
     graphics.push();
     graphics.noStroke();
-    //graphics.stroke(outline);
     graphics.fill(outline);
     graphics.textSize(cellLength);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
     graphics.noFill();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
     graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
@@ -857,6 +868,8 @@ class Quadrille {
   static NUMBER({
     graphics = this,
     cell = 0,
+    outline = 'magenta',
+    outlineWeight = Quadrille.OUTLINE_WEIGHT,
     min = 0,
     max = 0,
     alpha = 255,
@@ -864,11 +877,29 @@ class Quadrille {
   } = {}) {
     if (min < max) {
       graphics.push();
+      graphics.push();
       graphics.colorMode(graphics.RGB, 255);
       graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
       graphics.rect(0, 0, cellLength, cellLength);
       graphics.pop();
+      graphics.noFill();
+      graphics.stroke(outline);
+      graphics.strokeWeight(outlineWeight);
+      graphics.rect(0, 0, cellLength, cellLength);
+      graphics.pop();
     }
+  }
+
+  static FRAME({
+    graphics = this,
+    outline = 'magenta',
+    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    cellLength = this.CELL_LENGTH
+  } = {}) {
+    graphics.noFill();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
+    graphics.rect(0, 0, cellLength, cellLength);
   }
 }
 
@@ -887,7 +918,7 @@ class Quadrille {
       row = 0,
       col = 0,
       cellLength = Quadrille.CELL_LENGTH,
-      outlineWeight = 2,
+      outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = 'magenta',
       board = false,
       min = 0,
@@ -896,8 +927,6 @@ class Quadrille {
     } = {}) {
     graphics.push();
     graphics.translate(pixelX > 0 ? pixelX : col * cellLength, pixelY > 0 ? pixelY : row * cellLength);
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille._memory2D.length; i++) {
       for (let j = 0; j < quadrille._memory2D[i].length; j++) {
         graphics.push();
@@ -910,18 +939,17 @@ class Quadrille {
             Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (cell instanceof p5.Image) {
-            Quadrille.IMAGE({ graphics: graphics, cell: cell, cellLength: cellLength });
+            Quadrille.IMAGE({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'string') {
-            Quadrille.CHAR({ graphics: graphics, cell: cell, outline: outline, cellLength: cellLength });
+            Quadrille.CHAR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'number') {
-            Quadrille.NUMBER({ graphics: graphics, cell: cell, min: min, max: max, alpha: alpha, cellLength: cellLength });
+            Quadrille.NUMBER({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, min: min, max: max, alpha: alpha, cellLength: cellLength });
           }
         }
         else if (board) {
-          graphics.noFill();
-          graphics.rect(0, 0, cellLength, cellLength);
+          Quadrille.FRAME({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
         }
         graphics.pop();
       }

@@ -36,7 +36,9 @@ function draw() {
     drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true });
   }
   else {
-    Quadrille.COLOR({ graphics: graphics, outline: 'black', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
+    //Quadrille.COLOR({ graphics: graphics, outline: 'black', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
+    //Quadrille.IMAGE({ graphics: graphics, cell: al });
+    Quadrille.CHAR({ graphics: graphics, cell: '🗣' });
     image(graphics, 50, 50);
   }
 }
