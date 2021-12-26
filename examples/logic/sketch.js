@@ -27,10 +27,10 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(q1, {x: x1, y: y1, cellLength: LENGTH, outline: 'green', board: true});
-  drawQuadrille(q2, {x: x2, y: y2, cellLength: LENGTH, outline: 'blue', board: true});
+  drawQuadrille(q1, {col: x1, row: y1, cellLength: LENGTH, outline: 'green', board: true});
+  drawQuadrille(q2, {col: x2, row: y2, cellLength: LENGTH, outline: 'blue', board: true});
   if (q3) {
-    drawQuadrille(q3, {x: x3, y: y3, cellLength: LENGTH, board: true});
+    drawQuadrille(q3, {col: x3, row: y3, cellLength: LENGTH, board: true});
   }
 }
 

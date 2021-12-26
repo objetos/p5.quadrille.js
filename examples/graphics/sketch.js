@@ -79,8 +79,8 @@ function setup() {
 function draw() {
   background('#060621');
   pg.background('magenta');
-  drawQuadrille(quadrille, {graphics: pg, x: x, y: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
-  //drawQuadrille(I, {graphics: pg, x:2, y:12, cellLength: LENGTH, outline:'blue'});
+  drawQuadrille(quadrille, {graphics: pg, col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
+  //drawQuadrille(I, {graphics: pg, col:2, row:12, cellLength: LENGTH, outline:'blue'});
   image(pg, 0, 0);
 }
 

@@ -47,8 +47,8 @@ function draw() {
   } else {
     drawQuadrille(mask,
       {
-        x: 3,
-        y: 5,
+        col: 3,
+        row: 5,
         cellLength: 50,
         min: 0.0625,
         max: 0.25,

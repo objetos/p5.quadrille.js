@@ -763,8 +763,10 @@ class Quadrille {
   p5.prototype.drawQuadrille = function (quadrille,
     {
       graphics = this,
-      x = 0,
-      y = 0,
+      pixelX = 0,
+      pixelY = 0,
+      row = 0,
+      col = 0,
       cellLength = 10,
       outlineWeight = 2,
       outline = 'magenta',
@@ -774,7 +776,7 @@ class Quadrille {
       alpha = 255
     } = {}) {
     graphics.push();
-    graphics.translate(x * cellLength, y * cellLength);
+    graphics.translate(pixelX > 0 ? pixelX : col * cellLength, pixelY > 0 ? pixelY : row * cellLength);
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
     for (let i = 0; i < quadrille._memory2D.length; i++) {

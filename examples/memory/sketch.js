@@ -23,7 +23,7 @@ function setup() {
 function draw() {
   background(/*'#060621'*/ '#007ACC');
   drawQuadrille(board, {cellLength: LENGTH, outline: 'blue', board: true});
-  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: 'green'});
+  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outline: 'green'});
 }
 
 function keyPressed() {

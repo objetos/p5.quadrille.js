@@ -60,8 +60,8 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
-  drawQuadrille(I, {x:2, y:12, cellLength: LENGTH, outline:'blue'});
+  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
+  drawQuadrille(I, {col:2, row:12, cellLength: LENGTH, outline:'blue'});
 }
 
 function keyPressed() {
