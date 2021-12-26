@@ -807,7 +807,13 @@ class Quadrille {
   }
   */
 
-  static COLOR(graphics, cell, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
+  static COLOR({
+    graphics = this,
+    cell = color('red'),
+    cellLength = this.CELL_LENGTH,
+    outline = 'magenta',
+    outlineWeight = 0
+  } = {}) {
     graphics.push();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
@@ -816,13 +822,25 @@ class Quadrille {
     graphics.pop();
   }
 
-  static IMAGE(graphics, cell, cellLength = this.CELL_LENGTH) {
-    graphics.push();
-    graphics.image(cell, 0, 0, cellLength, cellLength);
-    graphics.pop();
+  // cell may be logo
+  static IMAGE({
+    graphics = this,
+    cell = null,
+    cellLength = this.CELL_LENGTH
+  } = {}) {
+    if (cell) {
+      graphics.push();
+      graphics.image(cell, 0, 0, cellLength, cellLength);
+      graphics.pop();
+    }
   }
 
-  static CHAR(graphics, cell, outline = color('black'), cellLength = this.CELL_LENGTH) {
+  static CHAR({
+    graphics = this,
+    cell = '?',
+    outline = color('black'),
+    cellLength = this.CELL_LENGTH
+  } = {}) {
     graphics.push();
     graphics.push();
     graphics.noStroke();
@@ -836,12 +854,21 @@ class Quadrille {
     graphics.pop();
   }
 
-  static NUMBER(graphics, cell, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
-    graphics.push();
-    graphics.colorMode(graphics.RGB, 255);
-    graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
-    graphics.rect(0, 0, cellLength, cellLength);
-    graphics.pop();
+  static NUMBER({
+    graphics = this,
+    cell = 0,
+    min = 0,
+    max = 0,
+    alpha = 255,
+    cellLength = this.CELL_LENGTH
+  } = {}) {
+    if (min < max) {
+      graphics.push();
+      graphics.colorMode(graphics.RGB, 255);
+      graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
+      graphics.rect(0, 0, cellLength, cellLength);
+      graphics.pop();
+    }
   }
 }
 
@@ -880,16 +907,16 @@ class Quadrille {
           // Note that the Array.isArray(cell) condition should be rethought
           // once 3D Quadrilles appear.
           if (cell instanceof p5.Color || Array.isArray(cell)) {
-            Quadrille.COLOR(graphics, cell, outline, outlineWeight, cellLength);
+            Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (cell instanceof p5.Image) {
-            Quadrille.IMAGE(graphics, cell, cellLength);
+            Quadrille.IMAGE({ graphics: graphics, cell: cell, cellLength: cellLength });
           }
           else if (typeof cell === 'string') {
-            Quadrille.CHAR(graphics, cell, outline, cellLength);
+            Quadrille.CHAR({ graphics: graphics, cell: cell, outline: outline, cellLength: cellLength });
           }
-          else if (typeof cell === 'number' && min < max) {
-            Quadrille.NUMBER(graphics, cell, min, max, alpha, cellLength);
+          else if (typeof cell === 'number') {
+            Quadrille.NUMBER({ graphics: graphics, cell: cell, min: min, max: max, alpha: alpha, cellLength: cellLength });
           }
         }
         else if (board) {
