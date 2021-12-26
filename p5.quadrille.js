@@ -715,34 +715,40 @@ class Quadrille {
     return 0;
   }
 
-  _color(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+  _color(graphics, row, col, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
     graphics.push();
-    graphics.fill(cell);
-    graphics.rect(col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
+    graphics.fill(this._memory2D[row][col]);
+    graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _image(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+  _image(graphics, row, col, cellLength = this.CELL_LENGTH) {
     graphics.push();
-    graphics.image(cell, col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.image(this._memory2D[row][col], 0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _string(graphics, cell, cellLength = this.CELL_LENGTH, outline = color('black'), row = 0, col = 0) {
+  _char(graphics, row, col, outline = color('black'), cellLength = this.CELL_LENGTH) {
+    graphics.push();
     graphics.push();
     graphics.noStroke();
     //graphics.stroke(outline);
     graphics.fill(outline);
     graphics.textSize(cellLength);
-    graphics.text(cell, col * cellLength, row * cellLength, cellLength, cellLength);
+    graphics.text(this._memory2D[row][col], 0, 0, cellLength, cellLength);
     graphics.pop();
     graphics.noFill();
+    graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _number(graphics, cell, cellLength = this.CELL_LENGTH, row = 0, col = 0) {
+  _number(graphics, row, col, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
     graphics.push();
-
+    graphics.colorMode(graphics.RGB, 255);
+    graphics.fill(graphics.color(graphics.map(this._memory2D[row][col], min, max, 0, 255), alpha));
+    graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
 }
@@ -774,37 +780,33 @@ class Quadrille {
     for (let i = 0; i < quadrille._memory2D.length; i++) {
       for (let j = 0; j < quadrille._memory2D[i].length; j++) {
         graphics.push();
+        graphics.translate(j * cellLength, i * cellLength);
         if (quadrille._memory2D[i][j]) {
           // Note that the Array.isArray(quadrille._memory2D[i][j]) condition should be rethought
           // once 3D Quadrilles appear.
           if (quadrille._memory2D[i][j] instanceof p5.Color || Array.isArray(quadrille._memory2D[i][j])) {
-            graphics.fill(quadrille._memory2D[i][j]);
-            graphics.rect(j * cellLength, i * cellLength, cellLength, cellLength);
+            quadrille._color(graphics, i, j, outline, outlineWeight, cellLength);
           }
           else if (quadrille._memory2D[i][j] instanceof p5.Image) {
-            graphics.image(quadrille._memory2D[i][j], j * cellLength, i * cellLength, cellLength, cellLength);
+            quadrille._image(graphics, i, j, cellLength);
           }
           else if (typeof quadrille._memory2D[i][j] === 'string') {
-            graphics.push();
-            graphics.noStroke();
-            graphics.fill(outline);
-            graphics.textSize(cellLength);
-            graphics.text(quadrille._memory2D[i][j], j * cellLength, i * cellLength, cellLength, cellLength);
-            graphics.pop();
-            graphics.noFill();
-            graphics.rect(j * cellLength, i * cellLength, cellLength, cellLength);
+            quadrille._char(graphics, i, j, outline, cellLength);
           }
           else if (typeof quadrille._memory2D[i][j] === 'number' && min < max) {
+            /*
             graphics.push();
             graphics.colorMode(graphics.RGB, 255);
             graphics.fill(graphics.color(graphics.map(quadrille._memory2D[i][j], min, max, 0, 255), alpha));
             graphics.rect(j * cellLength, i * cellLength, cellLength, cellLength);
             graphics.pop();
+            */
+            quadrille._number(graphics, i, j, min, max, alpha, cellLength);
           }
         }
         else if (board) {
           graphics.noFill();
-          graphics.rect(j * cellLength, i * cellLength, cellLength, cellLength);
+          graphics.rect(0, 0, cellLength, cellLength);
         }
         graphics.pop();
       }

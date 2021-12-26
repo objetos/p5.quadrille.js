@@ -7,7 +7,8 @@ let animate = true;
 let al;
 
 function preload() {
-  al = color('blue');
+  al = loadImage('abraham_lincoln.jpg');
+  //al = color('blue');
 }
 
 function setup() {
@@ -80,7 +81,7 @@ function active(value) {
     case 2:
       //return createQuadrille(2, [c1, al, c3, e1, c2]);
       //return createQuadrille([c1, al, c3, e1, c2]);
-      // return createQuadrille(`holamundo`);
+      //return createQuadrille(`holamundo`);
       // /*
       let q = createQuadrille(`holamundo`);
       //q.sort('LUMA', false);
