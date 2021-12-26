@@ -67,6 +67,13 @@ function stick(key) {
 }
 
 function active(value) {
+  /*
+  let q = createQuadrille(`holamundo.;:*`);
+  //q.sort('LUMA', false);
+  q.sort();
+  return q;
+  // */
+  // /*
   let c1 = color(random(255), random(255), random(255), 255);
   let c2 = color(random(255), random(255), random(255), 255);
   let c3 = color(random(255), random(255), random(255), 255);
@@ -81,13 +88,7 @@ function active(value) {
     case 2:
       //return createQuadrille(2, [c1, al, c3, e1, c2]);
       //return createQuadrille([c1, al, c3, e1, c2]);
-      //return createQuadrille(`holamundo`);
-      // /*
-      let q = createQuadrille(`holamundo`);
-      //q.sort('LUMA', false);
-      q.sort();
-      return q;
-      // */
+      return createQuadrille(`holamundo`);
     case 3:
       return createQuadrille(4, int(random(1, 1048576)), c2);
     default:
@@ -95,4 +96,5 @@ function active(value) {
       let h = int(random(2, 6));
       return createQuadrille(w, h, int(random(1, w * h)), c3);
   }
+  //*/
 }

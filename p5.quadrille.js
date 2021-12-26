@@ -702,20 +702,112 @@ class Quadrille {
         break;
       case 'LUMA':
       default:
-        memory1D.sort(this._sort);
+        memory1D.sort(this._sort.bind(this));
         break;
     }
     this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
   }
 
-  _sort(a, b) {
-    //let pg = createGraphics(this.CELL_LENGTH, this.CELL_LENGTH);
-    if (a > b) return 1;
-    if (a < b) return -1;
+  _sort(cellA, cellB) {
+    if (typeof cellA === 'number' || typeof cellB === 'number') {
+      return 0;
+    }
+    let r, g, b, a;
+    let ag = createGraphics(100, 100);
+    if (cellA instanceof p5.Color || Array.isArray(cellA)) {
+      this._color(ag, cellA);
+    }
+    else if (cellA instanceof p5.Image) {
+      this._image(ag, cellA);
+    }
+    else if (typeof cellA === 'string') {
+      ag.push();
+      //ag.stroke(outline);
+      //ag.strokeWeight(outlineWeight);
+      ag.fill('red');
+      ag.rect(0, 0, 100, 100);
+      ag.pop();
+      /*
+      //this._char(ag, cellA);
+      console.log('entered 1');
+      ag.push();
+      ag.push();
+      ag.noStroke();
+      //ag.stroke(outline);
+      //ag.fill(outline);
+      ag.textSize(100);
+      ag.text(cellA, 0, 0, 100, 100);
+      ag.pop();
+      ag.noFill();
+      ag.rect(0, 0, 100, 100);
+      ag.pop();
+      */
+    }
+    ag.loadPixels();
+    console.log('pixels length', ag.pixels.length);
+    r = g = b = a = 0;
+    for (let i = 0; i < ag.pixels.length / 4; i++) {
+      r += ag.pixels[4 * i];
+      g += ag.pixels[4 * i + 1];
+      b += ag.pixels[4 * i + 2];
+      a += ag.pixels[4 * i + 3];
+    }
+    let wa = 0.299 * r + 0.587 * g + 0.114 * b;
+    ag.updatePixels();
+
+    let bg = createGraphics(100, 100);
+    if (cellB instanceof p5.Color || Array.isArray(cellB)) {
+      this._color(bg, cellB);
+    }
+    else if (cellB instanceof p5.Image) {
+      this._image(bg, cellB);
+    }
+    else if (typeof cellB === 'string') {
+      this._char(bg, cellB);
+    }
+    bg.loadPixels();
+    r = g = b = a = 0;
+    for (let i = 0; i < bg.pixels.length / 4; i++) {
+      r += bg.pixels[4 * i];
+      g += bg.pixels[4 * i + 1];
+      b += bg.pixels[4 * i + 2];
+      a += bg.pixels[4 * i + 3];
+    }
+    let wb = 0.299 * r + 0.587 * g + 0.114 * b;
+    bg.updatePixels();
+    console.log(wa, wb);
+    if (wa > wb) return 1;
+    if (wa < wb) return -1;
     return 0;
   }
 
-  _color(graphics, cell, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
+  /*
+  _weight(cell) {
+    let pg = createGraphics(this.CELL_LENGTH, this.CELL_LENGTH);
+    if (cell instanceof p5.Color || Array.isArray(cell)) {
+      quadrille._color(pg, cell);
+    }
+    else if (cell instanceof p5.Image) {
+      quadrille._image(pg, cell);
+    }
+    else if (typeof cell === 'string') {
+      quadrille._char(pg, cell);
+    }
+    pg.loadPixels();
+    let r = 0, g = 0, b = 0, a = 0;
+    for (let i = 0; i < pg.pixels.length / 4; i++) {
+      r += pg.pixels[4 * i];
+      g += pg.pixels[4 * i + 1];
+      b += pg.pixels[4 * i + 2];
+      a += pg.pixels[4 * i + 3];
+    }
+    let weight = 0.299 * r + 0.587 * g + 0.114 * b;
+    pg.updatePixels();
+    return weight;
+  }
+  */
+
+  static COLOR(graphics, cell, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
@@ -724,13 +816,13 @@ class Quadrille {
     graphics.pop();
   }
 
-  _image(graphics, cell, cellLength = this.CELL_LENGTH) {
+  static IMAGE(graphics, cell, cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.image(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _char(graphics, cell, outline = color('black'), cellLength = this.CELL_LENGTH) {
+  static CHAR(graphics, cell, outline = color('black'), cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.push();
     graphics.noStroke();
@@ -744,7 +836,7 @@ class Quadrille {
     graphics.pop();
   }
 
-  _number(graphics, cell, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
+  static NUMBER(graphics, cell, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.colorMode(graphics.RGB, 255);
     graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
@@ -788,16 +880,16 @@ class Quadrille {
           // Note that the Array.isArray(cell) condition should be rethought
           // once 3D Quadrilles appear.
           if (cell instanceof p5.Color || Array.isArray(cell)) {
-            quadrille._color(graphics, cell, outline, outlineWeight, cellLength);
+            Quadrille.COLOR(graphics, cell, outline, outlineWeight, cellLength);
           }
           else if (cell instanceof p5.Image) {
-            quadrille._image(graphics, cell, cellLength);
+            Quadrille.IMAGE(graphics, cell, cellLength);
           }
           else if (typeof cell === 'string') {
-            quadrille._char(graphics, cell, outline, cellLength);
+            Quadrille.CHAR(graphics, cell, outline, cellLength);
           }
           else if (typeof cell === 'number' && min < max) {
-            quadrille._number(graphics, cell, min, max, alpha, cellLength);
+            Quadrille.NUMBER(graphics, cell, min, max, alpha, cellLength);
           }
         }
         else if (board) {
