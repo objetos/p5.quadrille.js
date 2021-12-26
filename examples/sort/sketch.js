@@ -36,10 +36,10 @@ function draw() {
     drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true });
   }
   else {
-    //Quadrille.COLOR({ graphics: graphics, outline: 'black', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
+    //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
-    Quadrille.CHAR({ graphics: graphics, cell: '🗣', outlineWeight: 0 });
-    //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
+    //Quadrille.CHAR({ graphics: graphics, cell: '🗣', outlineWeight: 0 });
+    Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
     image(graphics, 50, 50);
   }
 }

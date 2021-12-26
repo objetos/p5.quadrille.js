@@ -703,7 +703,7 @@ class Quadrille {
         break;
       case 'LUMA':
       default:
-        memory1D.sort(this._sort.bind(this));
+        memory1D.sort(this._sort/*.bind(this)*/);
         break;
     }
     this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
@@ -714,9 +714,9 @@ class Quadrille {
       return 0;
     }
     let r, g, b, a;
-    let ag = createGraphics(100, 100);
+    let ag = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
     if (cellA instanceof p5.Color || Array.isArray(cellA)) {
-      this._color(ag, cellA);
+      Quadrille.COLOR({ graphics: ag, outlineWeight: 0, cell: cellA });
     }
     else if (cellA instanceof p5.Image) {
       this._image(ag, cellA);
@@ -833,14 +833,16 @@ class Quadrille {
   } = {}) {
     if (cell) {
       graphics.push();
-      graphics.push();
       graphics.image(cell, 0, 0, cellLength, cellLength);
       graphics.pop();
-      graphics.noFill();
-      graphics.stroke(outline);
-      graphics.strokeWeight(outlineWeight);
-      graphics.rect(0, 0, cellLength, cellLength);
-      graphics.pop();
+      if (outlineWeight !== 0) {
+        graphics.push();
+        graphics.noFill();
+        graphics.stroke(outline);
+        graphics.strokeWeight(outlineWeight);
+        graphics.rect(0, 0, cellLength, cellLength);
+        graphics.pop();
+      }
     }
   }
 
@@ -852,17 +854,19 @@ class Quadrille {
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.push();
-    graphics.push();
     graphics.noStroke();
     graphics.fill(outline);
     graphics.textSize(cellLength);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
-    graphics.noFill();
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
-    graphics.rect(0, 0, cellLength, cellLength);
-    graphics.pop();
+    if (outlineWeight !== 0) {
+      graphics.push();
+      graphics.noFill();
+      graphics.stroke(outline);
+      graphics.strokeWeight(outlineWeight);
+      graphics.rect(0, 0, cellLength, cellLength);
+      graphics.pop();
+    }
   }
 
   static NUMBER({
@@ -877,16 +881,18 @@ class Quadrille {
   } = {}) {
     if (min < max) {
       graphics.push();
-      graphics.push();
       graphics.colorMode(graphics.RGB, 255);
       graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
       graphics.rect(0, 0, cellLength, cellLength);
       graphics.pop();
-      graphics.noFill();
-      graphics.stroke(outline);
-      graphics.strokeWeight(outlineWeight);
-      graphics.rect(0, 0, cellLength, cellLength);
-      graphics.pop();
+      if (outlineWeight !== 0) {
+        graphics.push();
+        graphics.noFill();
+        graphics.stroke(outline);
+        graphics.strokeWeight(outlineWeight);
+        graphics.rect(0, 0, cellLength, cellLength);
+        graphics.pop();
+      }
     }
   }
 
@@ -896,10 +902,14 @@ class Quadrille {
     outlineWeight = Quadrille.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    graphics.noFill();
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
-    graphics.rect(0, 0, cellLength, cellLength);
+    if (outlineWeight !== 0) {
+      graphics.push();
+      graphics.noFill();
+      graphics.stroke(outline);
+      graphics.strokeWeight(outlineWeight);
+      graphics.rect(0, 0, cellLength, cellLength);
+      graphics.pop();
+    }
   }
 }
 
