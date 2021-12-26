@@ -715,37 +715,20 @@ class Quadrille {
     }
     let r, g, b, a;
     let ag = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+    ag.background('white');
     if (cellA instanceof p5.Color || Array.isArray(cellA)) {
       Quadrille.COLOR({ graphics: ag, outlineWeight: 0, cell: cellA });
     }
     else if (cellA instanceof p5.Image) {
-      this._image(ag, cellA);
+      Quadrille.IMAGE({ graphics: ag, outlineWeight: 0, cell: cellA });
     }
     else if (typeof cellA === 'string') {
-      ag.push();
-      //ag.stroke(outline);
-      //ag.strokeWeight(outlineWeight);
-      ag.fill('red');
-      ag.rect(0, 0, 100, 100);
-      ag.pop();
-      /*
-      //this._char(ag, cellA);
-      console.log('entered 1');
-      ag.push();
-      ag.push();
-      ag.noStroke();
-      //ag.stroke(outline);
-      //ag.fill(outline);
-      ag.textSize(100);
-      ag.text(cellA, 0, 0, 100, 100);
-      ag.pop();
-      ag.noFill();
-      ag.rect(0, 0, 100, 100);
-      ag.pop();
-      */
+      Quadrille.CHAR({ graphics: ag, outline: 'black', outlineWeight: 0, cell: cellA });
+    }
+    else if (typeof cellA === 'string') {
+      Quadrille.NUMBER({ graphics: ag, outlineWeight: 0, cell: cellA });
     }
     ag.loadPixels();
-    console.log('pixels length', ag.pixels.length);
     r = g = b = a = 0;
     for (let i = 0; i < ag.pixels.length / 4; i++) {
       r += ag.pixels[4 * i];
@@ -756,15 +739,19 @@ class Quadrille {
     let wa = 0.299 * r + 0.587 * g + 0.114 * b;
     ag.updatePixels();
 
-    let bg = createGraphics(100, 100);
+    let bg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+    bg.background('white');
     if (cellB instanceof p5.Color || Array.isArray(cellB)) {
-      this._color(bg, cellB);
+      Quadrille.COLOR({ graphics: bg, outlineWeight: 0, cell: cellB });
     }
     else if (cellB instanceof p5.Image) {
-      this._image(bg, cellB);
+      Quadrille.IMAGE({ graphics: bg, outlineWeight: 0, cell: cellB });
     }
     else if (typeof cellB === 'string') {
-      this._char(bg, cellB);
+      Quadrille.CHAR({ graphics: bg, outline: 'black', outlineWeight: 0, cell: cellB });
+    }
+    else if (typeof cellB === 'string') {
+      Quadrille.NUMBER({ graphics: bg, outlineWeight: 0, cell: cellB });
     }
     bg.loadPixels();
     r = g = b = a = 0;
@@ -776,7 +763,7 @@ class Quadrille {
     }
     let wb = 0.299 * r + 0.587 * g + 0.114 * b;
     bg.updatePixels();
-    console.log(wa, wb);
+    
     if (wa > wb) return 1;
     if (wa < wb) return -1;
     return 0;

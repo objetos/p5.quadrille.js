@@ -22,7 +22,7 @@ function setup() {
   [al, 'l'],
   [e1, c2, c3]
   ]);
-  stringCells = createQuadrille(`holamundo`);
+  stringCells = createQuadrille('!@#,$%^>.,i*');
   arrayCells = createQuadrille(5, [0, 'o', al, al, 'l', e1, c2, c3]);
   bitboardCells = createQuadrille(4, int(random(1, 1048576)), e1);
   let w = int(random(2, 6));
@@ -33,14 +33,33 @@ function setup() {
 function draw() {
   background('#2E0E36');
   if (current) {
-    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true });
+    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true, cellLength: 20 });
   }
   else {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
-    //Quadrille.CHAR({ graphics: graphics, cell: '🗣', outlineWeight: 0 });
-    Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
-    image(graphics, 50, 50);
+    graphics.background('white');
+    Quadrille.CHAR({ graphics: graphics, cell: 'g', outline: 'black', outlineWeight: 0 });
+    //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
+    //image(graphics, 0, 0);
+    graphics.loadPixels();
+    let r, g, b, a;
+    r = g = b = a = 0;
+    let total = graphics.pixels.length / 4;
+    for (let i = 0; i < total; i++) {
+      r += graphics.pixels[4 * i];
+      g += graphics.pixels[4 * i + 1];
+      b += graphics.pixels[4 * i + 2];
+      a += graphics.pixels[4 * i + 3];
+    }
+    r /= total;
+    g /= total;
+    b /= total;
+    a /= total;
+    graphics.updatePixels();
+    let wa = 0.299 * r + 0.587 * g + 0.114 * b;
+    console.log('hey', wa);
+    image(graphics, 0, 0);
   }
 }
 
@@ -62,5 +81,8 @@ function keyPressed() {
   }
   if (key === 'q') {
     current = null;
+  }
+  if (key === 'x') {
+    current.sort();
   }
 }
