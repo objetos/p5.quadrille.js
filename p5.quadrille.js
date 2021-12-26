@@ -794,13 +794,6 @@ class Quadrille {
             quadrille._char(graphics, i, j, outline, cellLength);
           }
           else if (typeof quadrille._memory2D[i][j] === 'number' && min < max) {
-            /*
-            graphics.push();
-            graphics.colorMode(graphics.RGB, 255);
-            graphics.fill(graphics.color(graphics.map(quadrille._memory2D[i][j], min, max, 0, 255), alpha));
-            graphics.rect(j * cellLength, i * cellLength, cellLength, cellLength);
-            graphics.pop();
-            */
             quadrille._number(graphics, i, j, min, max, alpha, cellLength);
           }
         }
