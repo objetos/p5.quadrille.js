@@ -886,7 +886,7 @@ class Quadrille {
       pixelY = 0,
       row = 0,
       col = 0,
-      cellLength = 10,
+      cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = 2,
       outline = 'magenta',
       board = false,
