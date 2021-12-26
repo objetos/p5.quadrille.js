@@ -715,39 +715,39 @@ class Quadrille {
     return 0;
   }
 
-  _color(graphics, row, col, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
+  _color(graphics, cell, outline = black, outlineWeight = 0, cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
-    graphics.fill(this._memory2D[row][col]);
+    graphics.fill(cell);
     graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _image(graphics, row, col, cellLength = this.CELL_LENGTH) {
+  _image(graphics, cell, cellLength = this.CELL_LENGTH) {
     graphics.push();
-    graphics.image(this._memory2D[row][col], 0, 0, cellLength, cellLength);
+    graphics.image(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _char(graphics, row, col, outline = color('black'), cellLength = this.CELL_LENGTH) {
+  _char(graphics, cell, outline = color('black'), cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.push();
     graphics.noStroke();
     //graphics.stroke(outline);
     graphics.fill(outline);
     graphics.textSize(cellLength);
-    graphics.text(this._memory2D[row][col], 0, 0, cellLength, cellLength);
+    graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
     graphics.noFill();
     graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
 
-  _number(graphics, row, col, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
+  _number(graphics, cell, min = 0, max = 0, alpha = 255, cellLength = this.CELL_LENGTH) {
     graphics.push();
     graphics.colorMode(graphics.RGB, 255);
-    graphics.fill(graphics.color(graphics.map(this._memory2D[row][col], min, max, 0, 255), alpha));
+    graphics.fill(graphics.color(graphics.map(cell, min, max, 0, 255), alpha));
     graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
   }
@@ -783,20 +783,21 @@ class Quadrille {
       for (let j = 0; j < quadrille._memory2D[i].length; j++) {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
-        if (quadrille._memory2D[i][j]) {
-          // Note that the Array.isArray(quadrille._memory2D[i][j]) condition should be rethought
+        let cell = quadrille._memory2D[i][j];
+        if (cell) {
+          // Note that the Array.isArray(cell) condition should be rethought
           // once 3D Quadrilles appear.
-          if (quadrille._memory2D[i][j] instanceof p5.Color || Array.isArray(quadrille._memory2D[i][j])) {
-            quadrille._color(graphics, i, j, outline, outlineWeight, cellLength);
+          if (cell instanceof p5.Color || Array.isArray(cell)) {
+            quadrille._color(graphics, cell, outline, outlineWeight, cellLength);
           }
-          else if (quadrille._memory2D[i][j] instanceof p5.Image) {
-            quadrille._image(graphics, i, j, cellLength);
+          else if (cell instanceof p5.Image) {
+            quadrille._image(graphics, cell, cellLength);
           }
-          else if (typeof quadrille._memory2D[i][j] === 'string') {
-            quadrille._char(graphics, i, j, outline, cellLength);
+          else if (typeof cell === 'string') {
+            quadrille._char(graphics, cell, outline, cellLength);
           }
-          else if (typeof quadrille._memory2D[i][j] === 'number' && min < max) {
-            quadrille._number(graphics, i, j, min, max, alpha, cellLength);
+          else if (typeof cell === 'number' && min < max) {
+            quadrille._number(graphics, cell, min, max, alpha, cellLength);
           }
         }
         else if (board) {
