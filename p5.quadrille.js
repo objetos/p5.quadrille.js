@@ -697,19 +697,34 @@ class Quadrille {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
-  sort({ mode = 'LUMA', ascending = true, background = this.BACKGROUND } = {}) {
+  sort({ mode = 'LUMA', target = 'magenta', ascending = true, background = this.BACKGROUND } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
       case 'DISTANCE':
+        memory1D.sort((cellA, cellB) => {
+          let sa = Quadrille.sample(cellA, background);
+          let sb = Quadrille.sample(cellB, background);
+          let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
+          let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
+          if (wa > wb) return 1;
+          if (wa < wb) return -1;
+          return 0;
+        });
         break;
       case 'AVG':
+        memory1D.sort((cellA, cellB) => {
+          let sa = Quadrille.sample(cellA, background);
+          let sb = Quadrille.sample(cellB, background);
+          let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
+          let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
+          if (wa > wb) return 1;
+          if (wa < wb) return -1;
+          return 0;
+        });
         break;
       case 'LUMA':
       default:
         memory1D.sort((cellA, cellB) => {
-          if (typeof cellA === 'number' || typeof cellB === 'number') {
-            return 0;
-          }
           let sa = Quadrille.sample(cellA, background);
           let sb = Quadrille.sample(cellB, background);
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
@@ -723,6 +738,9 @@ class Quadrille {
     this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
   }
 
+  /**
+   * Sample cell using background as the {r, g, b, a, total} object literal.
+   */
   static sample(cell, background = this.BACKGROUND) {
     let r, g, b, a;
     let pg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
@@ -736,7 +754,7 @@ class Quadrille {
     else if (typeof cell === 'string') {
       Quadrille.CHAR({ graphics: pg, outline: 'black', outlineWeight: 0, cell: cell });
     }
-    else if (typeof cell === 'string') {
+    else if (typeof cell === 'number') {
       Quadrille.NUMBER({ graphics: pg, outlineWeight: 0, cell: cell });
     }
     pg.loadPixels();
