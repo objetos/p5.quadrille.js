@@ -17,7 +17,7 @@ function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   //Quadrille.CELL_LENGTH = 500;
   graphics = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
-  colorCells = createQuadrille([color('red'), color('green'), color('blue'), color('cyan'), color('magenta'), color('yellow'), color(int(random(255)), int(random(255)), int(random(255)))]);
+  colorCells = createQuadrille([color('red'), color('green'), color('blue'), color('cyan'), color('magenta'), color('yellow')/*, color(int(random(255)), int(random(255)), int(random(255)))*/]);
   matrixCells = createQuadrille([[c1, 'g'],
   [0, 'o', al],
   [al, 'l'],
@@ -89,7 +89,7 @@ function keyPressed() {
     current = null;
   }
   if (key === 'x') {
-    //current.sort({ mode: DISTANCE, target: 'magenta' });
-    current.sort();
+    current.sort({ mode: 'DISTANCE', target: 'magenta'/*, ascending: false*/ });
+    //current.sort({ ascending: true });
   }
 }

@@ -697,6 +697,9 @@ class Quadrille {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
+  /**
+   * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
+   */
   sort({ mode = 'LUMA', target = 'magenta', ascending = true, background = this.BACKGROUND } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
@@ -708,9 +711,7 @@ class Quadrille {
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
             Math.pow((sb.b / sb.total) - blue(target), 2) + Math.pow((sb.a / sb.total) - alpha(target), 2));
-          if (wa > wb) return 1;
-          if (wa < wb) return -1;
-          return 0;
+          return wa - wb;
         });
         break;
       case 'AVG':
@@ -719,9 +720,7 @@ class Quadrille {
           let sb = Quadrille.sample(cellB, background);
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
-          if (wa > wb) return 1;
-          if (wa < wb) return -1;
-          return 0;
+          return wa - wb;
         });
         break;
       case 'LUMA':
@@ -731,9 +730,7 @@ class Quadrille {
           let sb = Quadrille.sample(cellB, background);
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
-          if (wa > wb) return 1;
-          if (wa < wb) return -1;
-          return 0;
+          return wa - wb;
         });
         break;
     }
