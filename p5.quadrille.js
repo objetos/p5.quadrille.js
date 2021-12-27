@@ -704,8 +704,10 @@ class Quadrille {
         memory1D.sort((cellA, cellB) => {
           let sa = Quadrille.sample(cellA, background);
           let sb = Quadrille.sample(cellB, background);
-          let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
-          let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
+          let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
+            Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
+          let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
+            Math.pow((sb.b / sb.total) - blue(target), 2) + Math.pow((sb.a / sb.total) - alpha(target), 2));
           if (wa > wb) return 1;
           if (wa < wb) return -1;
           return 0;
@@ -774,7 +776,7 @@ class Quadrille {
    * Color cell drawing.
    */
   static COLOR({
-    graphics = this,
+    graphics,
     cell = color('red'),
     cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
@@ -792,7 +794,7 @@ class Quadrille {
    * Image cell drawing.
    */
   static IMAGE({
-    graphics = this,
+    graphics,
     cell = null,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -817,7 +819,7 @@ class Quadrille {
    * Char cell drawing.
    */
   static CHAR({
-    graphics = this,
+    graphics,
     cell = '?',
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -843,7 +845,7 @@ class Quadrille {
    * Number cell drawing.
    */
   static NUMBER({
-    graphics = this,
+    graphics,
     cell = 0,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -873,7 +875,7 @@ class Quadrille {
    * Frame cell drawing. Used by the drawQuadrille board property.
    */
   static FRAME({
-    graphics = this,
+    graphics,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH

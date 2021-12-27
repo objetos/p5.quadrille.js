@@ -2,7 +2,7 @@ const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
 let graphics;
-let current, matrixCells, stringCells, arrayCells, bitboardCells, uniformCells;
+let current, matrixCells, stringCells, arrayCells, bitboardCells, uniformCells, colorCells;
 let al;
 
 function preload() {
@@ -17,6 +17,7 @@ function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   //Quadrille.CELL_LENGTH = 500;
   graphics = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+  colorCells = createQuadrille([color('red'), color('green'), color('blue'), color('cyan'), color('magenta'), color('yellow'), color(int(random(255)), int(random(255)), int(random(255)))]);
   matrixCells = createQuadrille([[c1, 'g'],
   [0, 'o', al],
   [al, 'l'],
@@ -38,10 +39,11 @@ function draw() {
   else {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
-    graphics.background('white');
-    Quadrille.CHAR({ graphics: graphics, cell: 'g', outline: 'black', outlineWeight: 0 });
+    //graphics.background('white');
+    Quadrille.CHAR({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 0 });
     //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
     //image(graphics, 0, 0);
+    /*
     graphics.loadPixels();
     let r, g, b, a;
     r = g = b = a = 0;
@@ -60,6 +62,7 @@ function draw() {
     let wa = 0.299 * r + 0.587 * g + 0.114 * b;
     console.log('hey', wa);
     image(graphics, 0, 0);
+    */
   }
 }
 
@@ -69,6 +72,9 @@ function keyPressed() {
   }
   if (key === 'b') {
     current = bitboardCells;
+  }
+  if (key === 'c') {
+    current = colorCells;
   }
   if (key === 'm') {
     current = matrixCells;
@@ -83,6 +89,7 @@ function keyPressed() {
     current = null;
   }
   if (key === 'x') {
+    //current.sort({ mode: DISTANCE, target: 'magenta' });
     current.sort();
   }
 }
