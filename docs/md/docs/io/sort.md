@@ -4,8 +4,6 @@ Sort quadrille cells according to their coloring.
 
 # Syntax
 
-mode = 'LUMA', target = 'magenta', ascending = true, charColor = 'black',  background = this.BACKGROUND, cellLength = this.width
-
 > `sort([{[mode], [target], [ascending], [charColor], [outline], [background]}])`
 
 # Parameters
