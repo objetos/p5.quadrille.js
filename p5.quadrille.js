@@ -705,7 +705,7 @@ class Quadrille {
   /**
    * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
    */
-  sort({ mode = 'LUMA', target = 'magenta', ascending = true, charColor = 'black', outline = this.OUTLINE, background = this.BACKGROUND, cellLength = this.width } = {}) {
+  sort({ mode = 'LUMA', target = 'magenta', ascending = true, charColor = 'black', background = this.BACKGROUND, cellLength = this.width } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
       case 'DISTANCE':
@@ -721,8 +721,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, charColor: charColor, outline: outline});
-          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, charColor: charColor, outline: outline});
+          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, charColor: charColor});
+          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, charColor: charColor});
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -731,8 +731,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, charColor: charColor, outline: outline});
-          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, charColor: charColor, outline: outline});
+          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, charColor: charColor});
+          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, charColor: charColor});
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -745,7 +745,7 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
-  static sample({ cell, outline = this.OUTLINE, charColor = 'black', background = this.BACKGROUND, cellLength = this.CELL_LENGTH } = {}) {
+  static sample({ cell, charColor = 'black', background = this.BACKGROUND, cellLength = this.CELL_LENGTH } = {}) {
     let r, g, b, a;
     let pg = createGraphics(cellLength, cellLength);
     pg.background(background);
@@ -756,7 +756,7 @@ class Quadrille {
       Quadrille.IMAGE({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'string') {
-      Quadrille.CHAR({ graphics: pg, charColor: charColor, outline: outline, outlineWeight: 0, cell: cell, cellLength: cellLength });
+      Quadrille.CHAR({ graphics: pg, charColor: charColor, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'number') {
       Quadrille.NUMBER({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
