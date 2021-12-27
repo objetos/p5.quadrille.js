@@ -23,8 +23,25 @@ class Quadrille {
    */
   static version = '0.5.0';
 
-  static CELL_LENGTH = 100;
+  /**
+   * Default background used in sort.
+   */
+  static BACKGROUND = 'white';
+
+  /**
+   * Default drawing outline.
+   */
+  static OUTLINE = 'magenta';
+
+  /**
+   * Default drawing outline weight.
+   */
   static OUTLINE_WEIGHT = 2;
+
+  /**
+   * Default drawing cell length.
+   */
+  static CELL_LENGTH = 100;
 
   /**
    * @param {Quadrille} quadrille1 
@@ -723,7 +740,7 @@ class Quadrille {
   static _weight(cell) {
     let r, g, b, a;
     let pg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
-    pg.background('white');
+    pg.background(Quadrille.BACKGROUND);
     if (cell instanceof p5.Color || Array.isArray(cell)) {
       Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell });
     }
@@ -749,12 +766,15 @@ class Quadrille {
     return weight;
   }
 
+  /**
+   * Color cell drawing.
+   */
   static COLOR({
     graphics = this,
     cell = color('red'),
     cellLength = this.CELL_LENGTH,
-    outline = 'magenta',
-    outlineWeight = Quadrille.OUTLINE_WEIGHT
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     graphics.push();
     graphics.stroke(outline);
@@ -764,12 +784,14 @@ class Quadrille {
     graphics.pop();
   }
 
-  // cell may be logo
+  /**
+   * Image cell drawing.
+   */
   static IMAGE({
     graphics = this,
     cell = null,
-    outline = 'magenta',
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     if (cell) {
@@ -787,11 +809,14 @@ class Quadrille {
     }
   }
 
+  /**
+   * Char cell drawing.
+   */
   static CHAR({
     graphics = this,
     cell = '?',
-    outline = 'magenta',
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.push();
@@ -810,11 +835,14 @@ class Quadrille {
     }
   }
 
+  /**
+   * Number cell drawing.
+   */
   static NUMBER({
     graphics = this,
     cell = 0,
-    outline = 'magenta',
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT,
     min = 0,
     max = 0,
     alpha = 255,
@@ -837,10 +865,13 @@ class Quadrille {
     }
   }
 
+  /**
+   * Frame cell drawing. Used by the drawQuadrille board property.
+   */
   static FRAME({
     graphics = this,
-    outline = 'magenta',
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     if (outlineWeight !== 0) {
@@ -870,7 +901,7 @@ class Quadrille {
       col = 0,
       cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
-      outline = 'magenta',
+      outline = Quadrille.OUTLINE,
       board = false,
       min = 0,
       max = 0,
