@@ -19,12 +19,12 @@ function setup() {
 }
 
 function draw() {
-  background('#2E0E36');
+  background('yellow');
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
   drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true });
-  drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true });
+  drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, charColor: 'green', outline: 'blue', board: true });
   //drawQuadrille(quadrille, { pixelX: col * LENGTH, pixelY: row * LENGTH, cellLength: LENGTH, outline: '#1EB2A6', board: true });
 }
 
