@@ -18,6 +18,7 @@
 > [clear()](/docs/io/clear)
 > [delete()](/docs/io/delete)
 > [insert()](/docs/io/insert)
+> [sort()](/docs/io/sort)
 > [magnitude()](/docs/io/magnitude)
 
 > :Collapse label=Boolean operators

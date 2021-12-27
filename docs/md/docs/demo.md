@@ -32,20 +32,20 @@
 > const COLS = 40;
 > const LENGTH = 20;
 > let board, quadrille;
-> let x, y;
+> let col, row;
 > let animate = true;
 > let al;
->
+> 
 > function preload() {
 >   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
 > }
->
+> 
 > function setup() {
 >   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 >   board = createQuadrille(COLS, ROWS);
->   quadrille = active(int(random(4)));
->   x = int(random(0, COLS - 4));
->   y = int(random(0, ROWS - 4));
+>   quadrille = active(int(random(5)));
+>   col = int(random(0, COLS - 4));
+>   row = int(random(0, ROWS - 4));
 > }
 > 
 > function draw() {
@@ -54,14 +54,14 @@
 >     stick('u');
 >   }
 >   drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true });
->   drawQuadrille(quadrille, { x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true });
+>   drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true });
 > }
 > 
 > function keyPressed() {
 >   if (key === 'c') {
 >     board.clear();
 >   }
->   if (key === '1' || key === '2' || key === '3' || key === '4') {
+>   if (key === '1' || key === '2' || key === '3' || key === '4' || key === '5') {
 >     quadrille = active(parseInt(key));
 >   }
 >   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
@@ -79,20 +79,20 @@
 >   if (key === 'q') {
 >     animate = !animate;
 >   }
->   y = key === 'w' ? y - 1 : key === 'z' ? y + 1 : y;
->   x = key === 'a' ? x - 1 : key === 's' ? x + 1 : x;
+>   row = key === 'w' ? row - 1 : key === 'z' ? row + 1 : row;
+>   col = key === 'a' ? col - 1 : key === 's' ? col + 1 : col;
 > }
 > 
 > function stick(key) {
 >   let clone = quadrille.clone();
 >   clone.fill(color('#965695'));
->   board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
->           key === 'x' ? Quadrille.XOR(board, clone, y, x) :
->           key === 'i' ? Quadrille.AND(board, clone, y, x) :
->                         Quadrille.DIFF(board, clone, y, x);
->   quadrille = active(int(random(3)));
->   x = int(random(0, COLS - 4));
->   y = int(random(0, ROWS - 4));
+>   board = key === 'u' ? Quadrille.OR(board, clone, row, col) :
+>           key === 'x' ? Quadrille.XOR(board, clone, row, col) :
+>           key === 'i' ? Quadrille.AND(board, clone, row, col) :
+>                         Quadrille.DIFF(board, clone, row, col);
+>   quadrille = active(int(random(5)));
+>   col = int(random(0, COLS - 4));
+>   row = int(random(0, ROWS - 4));
 > }
 > 
 > function active(value) {
@@ -111,6 +111,8 @@
 >       return createQuadrille(2, [c1, al, c3, e1, c2]);
 >     case 3:
 >       return createQuadrille(4, int(random(1, 1048576)), c2);
+>     case 4:
+>       return createQuadrille(5, 'hola mundo');
 >     default:
 >       let w = int(random(2, 6));
 >       let h = int(random(2, 6));
@@ -132,15 +134,15 @@ const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
 /*!*/let board, quadrille; // --> Quadrille instances
-let x, y;
+let row, col;
 let animate = true;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 /*!*/  board = createQuadrille(COLS, ROWS); // --> Creates empty quadrille
 /*!*/  quadrille = active(int(random(4)));
-  x = int(random(0, COLS - 6));
-  y = int(random(0, ROWS - 6));
+  row = int(random(0, COLS - 6));
+  col = int(random(0, ROWS - 6));
 }
 ```
 
@@ -182,13 +184,13 @@ function draw() {
     stick('u'); // --> the stick command is described below
   }
 /*!*/  drawQuadrille(board, {cellLength: LENGTH, outline: 'magenta', board: true}); // --> draw board with edges at (0, 0)
-/*!*/  drawQuadrille(quadrille, {x: x, y: y, cellLength: LENGTH, outline: '#1EB2A6', board: true}); // --> draw quadrille with edges at (x, y)
+/*!*/  drawQuadrille(quadrille, {row: row, col: col, cellLength: LENGTH, outline: '#1EB2A6', board: true}); // --> draw quadrille with edges at (row, col)
 }
 ```
 
 # Geometry transformations
 
-The interactive `quadrille` may be translated by setting the `x`, `y` coordinates used to display it, and also [rotated](/docs/geom/rotate), [reflected](/docs/geom/reflect) and [transposed](/docs/geom/transpose):
+The interactive `quadrille` may be translated by setting the `row`, `col` coordinates used to display it, and also [rotated](/docs/geom/rotate), [reflected](/docs/geom/reflect) and [transposed](/docs/geom/transpose):
 
 ```js | excerpt from demo.js
 function keyPressed() {
@@ -213,8 +215,8 @@ function keyPressed() {
   if (key === 'q') {
 /*!*/    animate = !animate; // --> toggles animation
   }
-/*!*/  y = key === 'w' ? y - 1 : key === 'z' ? y + 1 : y; // --> quadrille vertical displacement
-/*!*/  x = key === 'a' ? x - 1 : key === 's' ? x + 1 : x; // --> quadrille horizontal displacement
+/*!*/  col = key === 'w' ? col - 1 : key === 'z' ? col + 1 : col; // --> quadrille vertical displacement
+/*!*/  row = key === 'a' ? row - 1 : key === 's' ? row + 1 : row; // --> quadrille horizontal displacement
 }
 ```
 
@@ -238,13 +240,13 @@ function keyPressed() {
 function stick(key) {
   let clone = quadrille.clone(); // --> performs a shallow copy of the quadrille
   clone.fill(color('#965695')); // --> dim the cloned quadrille color
-/*!*/  board = key === 'u' ? Quadrille.OR(board, clone, y, x) :
-          key === 'x' ? Quadrille.XOR(board, clone, y, x) :
-          key === 'i' ? Quadrille.AND(board, clone, y, x) :
-                        Quadrille.DIFF(board, clone, y, x); // --> Quadrille static logic operators
+/*!*/  board = key === 'u' ? Quadrille.OR(board, clone, col, row) :
+          key === 'x' ? Quadrille.XOR(board, clone, col, row) :
+          key === 'i' ? Quadrille.AND(board, clone, col, row) :
+                        Quadrille.DIFF(board, clone, col, row); // --> Quadrille static logic operators
   quadrille = active(int(random(3)));
-  x = int(random(0, COLS - 6));
-  y = int(random(0, ROWS - 6));
+  row = int(random(0, COLS - 6));
+  col = int(random(0, ROWS - 6));
 }
 ```
 

@@ -6,7 +6,13 @@
 
 > `createQuadrille(matrix)`
 
+> `createQuadrille(array)`
+
 > `createQuadrille(width, array)`
+
+> `createQuadrille(string)`
+
+> `createQuadrille(width, string)`
 
 > `createQuadrille(width, height)`
 
@@ -22,6 +28,7 @@
 |----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | matrix   | 2D array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars (1-length strings) |
 | array    | array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars (1-length strings)    |
+| string   | String: containing any combination of chars                                                                                                                                   |
 | width    | Number: total number of columns                                                                                                                                               |
 | height   | Number: total number of rows                                                                                                                                                  |
 | image    | [p5.Image](https://p5js.org/reference/#/p5.Image) instance                                                                                                                    |
