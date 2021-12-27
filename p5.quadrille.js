@@ -161,14 +161,14 @@ class Quadrille {
 
   /**
    * Constructs either an empty or a filled quadrille:
-   * 1. Pass a 2D array of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
-   * 2. Pass width and an array of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
-   * 3. Pass width and heigth to construct and empty quadrille (filled with 0's).
-   * 4. Pass width and image, to construct a quadrille filled image.
-   * 5. Pass width, bitboard and pattern, to construct a quadrille filled
-   * with pattern from the given bitboard.
-   * 6. Pass width, height, order and pattern, to construct a quadrille filled
-   * with pattern of the given order.
+   * 1. Pass string.
+   * 2. Pass array or matrix of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
+   * 3. Pass width and string.
+   * 4. Pass width and an array of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
+   * 5. Pass width and heigth to construct and empty quadrille (filled with 0's).
+   * 6. Pass width and image, to construct a quadrille filled image.
+   * 7. Pass width, bitboard and pattern, to construct a quadrille filled with pattern from the given bitboard.
+   * 8. Pass width, height, order and pattern, to construct a quadrille filled with pattern of the given order.
    * @see from
    * @see rand
    * @see order
@@ -188,7 +188,7 @@ class Quadrille {
         let width;
         for (const entry of memory2D) {
           if (!Array.isArray(entry)) {
-            throw new Error(`Not 2D Array`);
+            throw new Error('Not 2D Array');
           }
           if (!width) {
             width = entry.length;
@@ -316,7 +316,7 @@ class Quadrille {
       let length = this.width * this.height;
       let bitboard = Math.abs(Math.round(arguments[0]));
       if (bitboard.toString(2).length > length) {
-        throw new Error(`Value is to high to fill quadrille`);
+        throw new Error('Value is to high to fill quadrille');
       }
       for (let i = 0; i <= length - 1; i++) {
         if ((bitboard & (1 << length - 1 - i))) {
