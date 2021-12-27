@@ -31,7 +31,7 @@ class Quadrille {
   /**
    * Default drawing outline.
    */
-  static OUTLINE = 'magenta';
+  static OUTLINE = 'black';
 
   /**
    * Default drawing outline weight.
@@ -700,13 +700,13 @@ class Quadrille {
   /**
    * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
    */
-  sort({ mode = 'LUMA', target = 'magenta', ascending = true, background = this.BACKGROUND } = {}) {
+  sort({ mode = 'LUMA', target = 'magenta', ascending = true, outline = this.OUTLINE, background = this.BACKGROUND, cellLength = this.width } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
       case 'DISTANCE':
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample(cellA, background);
-          let sb = Quadrille.sample(cellB, background);
+          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength});
+          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength});
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -716,8 +716,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample(cellA, background);
-          let sb = Quadrille.sample(cellB, background);
+          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, outline: outline});
+          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, outline: outline});
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -726,8 +726,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample(cellA, background);
-          let sb = Quadrille.sample(cellB, background);
+          let sa = Quadrille.sample({cell: cellA, background: background, cellLength: cellLength, outline: outline});
+          let sb = Quadrille.sample({cell: cellB, background: background, cellLength: cellLength, outline: outline});
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -740,21 +740,21 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
-  static sample(cell, background = this.BACKGROUND) {
+  static sample({ cell, outline = this.OUTLINE, background = this.BACKGROUND, cellLength = this.CELL_LENGTH } = {}) {
     let r, g, b, a;
-    let pg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+    let pg = createGraphics(cellLength, cellLength);
     pg.background(background);
     if (cell instanceof p5.Color || Array.isArray(cell)) {
-      Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell });
+      Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (cell instanceof p5.Image) {
-      Quadrille.IMAGE({ graphics: pg, outlineWeight: 0, cell: cell });
+      Quadrille.IMAGE({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'string') {
-      Quadrille.CHAR({ graphics: pg, outline: 'black', outlineWeight: 0, cell: cell });
+      Quadrille.CHAR({ graphics: pg, outline: outline, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'number') {
-      Quadrille.NUMBER({ graphics: pg, outlineWeight: 0, cell: cell });
+      Quadrille.NUMBER({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     pg.loadPixels();
     r = g = b = a = 0;
