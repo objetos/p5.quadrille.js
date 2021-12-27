@@ -697,50 +697,36 @@ class Quadrille {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
-  sort(mode = 'LUMA', ascending = true) {
+  sort({ mode = 'LUMA', ascending = true, background = this.BACKGROUND } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
-      case 'RED':
-        break;
-      case 'GREEN':
-        break;
-      case 'BLUE':
-        break;
-      case 'ALPHA':
-        break;
-      case 'HUE':
-        break;
-      case 'SATURATION':
-        break;
-      case 'BRIGHTNESS':
-        break;
-      case 'LIGHTNESS':
+      case 'DISTANCE':
         break;
       case 'AVG':
         break;
       case 'LUMA':
       default:
-        memory1D.sort(this._sort/*.bind(this)*/);
+        memory1D.sort((cellA, cellB) => {
+          if (typeof cellA === 'number' || typeof cellB === 'number') {
+            return 0;
+          }
+          let sa = Quadrille.sample(cellA, background);
+          let sb = Quadrille.sample(cellB, background);
+          let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
+          let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
+          if (wa > wb) return 1;
+          if (wa < wb) return -1;
+          return 0;
+        });
         break;
     }
     this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
   }
 
-  _sort(cellA, cellB) {
-    if (typeof cellA === 'number' || typeof cellB === 'number') {
-      return 0;
-    }
-    let wa = Quadrille._weight(cellA);
-    let wb = Quadrille._weight(cellB);
-    if (wa > wb) return 1;
-    if (wa < wb) return -1;
-    return 0;
-  }
-
-  static _weight(cell) {
+  static sample(cell, background = this.BACKGROUND) {
     let r, g, b, a;
     let pg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
-    pg.background(Quadrille.BACKGROUND);
+    pg.background(background);
     if (cell instanceof p5.Color || Array.isArray(cell)) {
       Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell });
     }
@@ -755,15 +741,15 @@ class Quadrille {
     }
     pg.loadPixels();
     r = g = b = a = 0;
-    for (let i = 0; i < pg.pixels.length / 4; i++) {
+    let total = pg.pixels.length / 4;
+    for (let i = 0; i < total; i++) {
       r += pg.pixels[4 * i];
       g += pg.pixels[4 * i + 1];
       b += pg.pixels[4 * i + 2];
       a += pg.pixels[4 * i + 3];
     }
-    let weight = 0.299 * r + 0.587 * g + 0.114 * b;
     pg.updatePixels();
-    return weight;
+    return { r, g, b, a, total };
   }
 
   /**
