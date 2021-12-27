@@ -140,7 +140,7 @@ let animate = true;
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
 /*!*/  board = createQuadrille(COLS, ROWS); // --> Creates empty quadrille
-/*!*/  quadrille = active(int(random(4)));
+/*!*/  quadrille = active(int(random(5)));
   row = int(random(0, COLS - 6));
   col = int(random(0, ROWS - 6));
 }
@@ -165,6 +165,8 @@ function active(value) {
 /*!*/      return return createQuadrille(2, [c1, al, c3, e1, c2]);
     case 3: // --> Creates a 4-width quadrille from bitboard (random int) filled it with color
 /*!*/      return createQuadrille(4, int(random(1, 1048576)), c2);
+    case 4: // --> Creates a 5-width quadrille from string
+/*!*/      return createQuadrille(5, 'hola mundo');
     default: // --> Creates a quadrille of random width, height and order
       let w = int(random(2, 6));
       let h = int(random(2, 6));
@@ -197,7 +199,7 @@ function keyPressed() {
   if (key === 'c') {
 /*!*/    board.clear(); // --> clears all cells of the board quadrille
   }
-  if (key === '1' || key === '2' || key === '3' || key === '4') {
+  if (key === '1' || key === '2' || key === '3' || key === '4' || key === '5') {
 /*!*/    quadrille = active(parseInt(key)); // --> quadrille creation on key
   }
   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
@@ -244,7 +246,7 @@ function stick(key) {
           key === 'x' ? Quadrille.XOR(board, clone, col, row) :
           key === 'i' ? Quadrille.AND(board, clone, col, row) :
                         Quadrille.DIFF(board, clone, col, row); // --> Quadrille static logic operators
-  quadrille = active(int(random(3)));
+  quadrille = active(int(random(5)));
   row = int(random(0, COLS - 6));
   col = int(random(0, ROWS - 6));
 }
