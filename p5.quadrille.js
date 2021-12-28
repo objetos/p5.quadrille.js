@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.9.2';
+  static version = '1.0.0';
 
   /**
    * Default background used in sort.
@@ -854,6 +854,7 @@ class Quadrille {
    */
   static NUMBER({
     graphics,
+    // TODO better handling the cell 0 case
     cell = 0,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
