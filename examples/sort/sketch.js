@@ -89,7 +89,7 @@ function keyPressed() {
     current = null;
   }
   if (key === 'x') {
-    current.sort({ mode: 'DISTANCE', target: 'magenta'/*, ascending: false*/ });
-    //current.sort({ ascending: true });
+    //current.sort({ mode: 'DISTANCE', target: 'magenta'/*, ascending: false*/ });
+    current.sort({ ascending: true });
   }
 }

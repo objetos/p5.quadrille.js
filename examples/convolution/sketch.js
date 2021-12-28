@@ -52,7 +52,7 @@ function draw() {
         cellLength: 50,
         min: 0.0625,
         max: 0.25,
-        alpha: 255
+        numberColor: 'blue'
       });
   }
 }
