@@ -8,8 +8,6 @@ function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   quadrille = createQuadrille(20,20);
   randomize();
-  let obj = {r: 255};
-  console.log(obj.g);
 }
 
 function draw() {
@@ -32,8 +30,16 @@ function keyPressed() {
   quadrille.clear();
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, color('red'), color('green'), color('blue'));
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255}, {g: 255}, {b: 255});
-  //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255});
-  quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255});
+  //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255});
+  //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255});
+  quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y,
+    (coords, pattern0, pattern1, pattern2) => color(
+      (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2,
+      (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2,
+      (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2,
+      (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2
+    ),
+    {r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255});
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0});
 }
 
