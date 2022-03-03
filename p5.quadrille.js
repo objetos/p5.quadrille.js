@@ -545,50 +545,14 @@ class Quadrille {
     }
   }
 
-  /*
-  static OR(quadrille1, quadrille2, row = 0, col = 0) {
-    return this.OP(quadrille1, quadrille2,
-      (q1, q2) => {
-        if (q1) {
-          return q1;
-        }
-        if (q2) {
-          return q2;
-        }
-      },
-      row, col);
-  }
-  */
-
-  /*
-  static OP(quadrille1, quadrille2, operator, row = 0, col = 0) {
-    // i. create resulted quadrille
-    let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
-      row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
-    // ii. fill result with passed quadrilles
-    for (let i = 0; i < quadrille._memory2D.length; i++) {
-      for (let j = 0; j < quadrille._memory2D[i].length; j++) {
-        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
-        if (result) {
-          quadrille._memory2D[i][j] = result;
-        }
-      }
-    }
-    // iii. return resulted quadrille
-    return quadrille;
-  }
-  */
-
   colorize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
-    this.rasterize(row0, col0, row1, col1, row2, col2, this._colorize, pattern0, pattern1, pattern2);
-  }
-
-  _colorize(coords, pattern0, pattern1, pattern2) {
-    let r = (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2;
-    let g = (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2;
-    let b = (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2;
-    let a = (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2;
-    return color(r, g, b, a);
+    this.rasterize(row0, col0, row1, col1, row2, col2,
+      (coords, pattern0, pattern1, pattern2) => color(
+        (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2,
+        (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2,
+        (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2,
+        (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2
+      ), pattern0, pattern1, pattern2);
   }
 
   /**
