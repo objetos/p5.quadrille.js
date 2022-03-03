@@ -563,13 +563,15 @@ class Quadrille {
 
   /**
    * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle,
-   * using pattern0, pattern1 and pattern2 object vertex patterns, respectively.
+   * from pattern0, pattern1 and pattern2 object vertex patterns(resp),
+   * using (fragment)shader.
    */
   rasterize(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     if ((typeof pattern0 === 'object') && (typeof pattern1 === 'object') && (typeof pattern2 === 'object')) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
+          // interpolate all pattern attributes for the current fragment
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
             let _pattern0 = {};
             for (const [key, value] of Object.entries(pattern0)) {
@@ -583,6 +585,7 @@ class Quadrille {
             for (const [key, value] of Object.entries(pattern2)) {
               _pattern2[key] = (value ?? 0) * coords.w2;
             }
+            // call shader to compute current cell color
             this._memory2D[i][j] = shader(_pattern0, _pattern1, _pattern2);
           }
         }
