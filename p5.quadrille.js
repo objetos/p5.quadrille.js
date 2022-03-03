@@ -1,6 +1,6 @@
 /***************************************************************************************
 * p5.quadrille.js
-* Copyright (c) 2021 Universidad Nacional de Colombia
+* Copyright (c) 2021-2022 Universidad Nacional de Colombia
 * @author Jean Pierre Charalambos, https://github.com/objetos/p5.quadrille.js/
 * Released under the terms of the GPLv3, refer to: http://www.gnu.org/licenses/gpl.html
 * 
@@ -545,19 +545,23 @@ class Quadrille {
     }
   }
 
+  /**
+   * Colorize the (row0, col0), (row1, col1), (row2, col2) triangle, using
+   * pattern0.rgba, pattern1.rgba and pattern2.rgba object vertex patterns, respectively.
+   */
   colorize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     this.rasterize(row0, col0, row1, col1, row2, col2,
-      (coords, pattern0, pattern1, pattern2) => color(
-        (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2,
-        (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2,
-        (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2,
-        (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2
+      (pattern0, pattern1, pattern2) => color(
+        (pattern0.r ?? 0) + (pattern1.r ?? 0) + (pattern2.r ?? 0),
+        (pattern0.g ?? 0) + (pattern1.g ?? 0) + (pattern2.g ?? 0),
+        (pattern0.b ?? 0) + (pattern1.b ?? 0) + (pattern2.b ?? 0),
+        (pattern0.a ?? 255) + (pattern1.a ?? 255) + (pattern2.a ?? 255),
       ), pattern0, pattern1, pattern2);
   }
 
   /**
    * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle,
-   * using pattern0, pattern1 and pattern2 vertex patterns, respectively.
+   * using pattern0, pattern1 and pattern2 object vertex patterns, respectively.
    */
   rasterize(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     if ((typeof pattern0 === 'object') && (typeof pattern1 === 'object') && (typeof pattern2 === 'object')) {
@@ -565,10 +569,19 @@ class Quadrille {
         for (let j = 0; j < this.width; j++) {
           let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-            let result = shader(coords, pattern0, pattern1, pattern2);
-            if (result) {
-              this._memory2D[i][j] = result;
+            let _pattern0 = {};
+            for (const [key, value] of Object.entries(pattern0)) {
+              _pattern0[key] = (value ?? 0) * coords.w0;
             }
+            let _pattern1 = {};
+            for (const [key, value] of Object.entries(pattern1)) {
+              _pattern1[key] = (value ?? 0) * coords.w1;
+            }
+            let _pattern2 = {};
+            for (const [key, value] of Object.entries(pattern2)) {
+              _pattern2[key] = (value ?? 0) * coords.w2;
+            }
+            this._memory2D[i][j] = shader(_pattern0, _pattern1, _pattern2);
           }
         }
       }

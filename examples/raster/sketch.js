@@ -31,16 +31,18 @@ function keyPressed() {
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, color('red'), color('green'), color('blue'));
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255}, {g: 255}, {b: 255});
   //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255});
-  quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255});
-  //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, colorize_shader, {r: 255, g: 0, b: 0}, {r: 0, g: 255, b: 0}, {r: 0, g: 0, b: 255});
+  //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0, a: 255}, {r: 0, g: 255, b: 0, a: 255}, {r: 0, g: 0, b: 255, a: 255});
+  //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, a: 255}, {g: 255, a: 255}, {b: 255, a: 255});
+  //quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255}, {g: 255}, {b: 255});
+  quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, colorize_shader, {r: 255}, {g: 255}, {b: 255});
   //quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, {r: 255, g: 0, b: 0});
 }
 
-function colorize_shader(coords, pattern0, pattern1, pattern2) {
-  let r = (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2;
-  let g = (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2;
-  let b = (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2;
-  let a = (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2;
+function colorize_shader(pattern0, pattern1, pattern2) {
+  let r = (pattern0.r ?? 0) + (pattern1.r ?? 0) + (pattern2.r ?? 0);
+  let g = (pattern0.g ?? 0) + (pattern1.g ?? 0) + (pattern2.g ?? 0);
+  let b = (pattern0.b ?? 0) + (pattern1.b ?? 0) + (pattern2.b ?? 0);
+  let a = (pattern0.a ?? 255) + (pattern1.a ?? 255) + (pattern2.a ?? 255);
   return color(r, g, b, a);
 }
 
