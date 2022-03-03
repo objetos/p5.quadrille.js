@@ -51,7 +51,7 @@ function normalize_shader(pattern0, pattern1, pattern2) {
   // debug
   console.log(x, y, z);
   // TODO lightning stuff here
-  // it just prints result
+  // it just outputs red for the time being
   return color(255, 0, 0);
 }
 
