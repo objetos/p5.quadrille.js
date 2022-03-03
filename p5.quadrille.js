@@ -550,17 +550,16 @@ class Quadrille {
    * using pattern0, pattern1 and pattern2 vertex patterns, respectively.
    */
   rasterize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
-    if ((pattern0 instanceof p5.Color || Array.isArray(pattern0)) &&
-      (pattern1 instanceof p5.Color || Array.isArray(pattern1)) &&
-      (pattern2 instanceof p5.Color || Array.isArray(pattern2))) {
+    if ((typeof pattern0 === 'object') && (typeof pattern1 === 'object') && (typeof pattern2 === 'object')) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-            let r = red(pattern0) * coords.w0 + red(pattern1) * coords.w1 + red(pattern2) * coords.w2;
-            let g = green(pattern0) * coords.w0 + green(pattern1) * coords.w1 + green(pattern2) * coords.w2;
-            let b = blue(pattern0) * coords.w0 + blue(pattern1) * coords.w1 + blue(pattern2) * coords.w2;
-            let a = alpha(pattern0) * coords.w0 + alpha(pattern1) * coords.w1 + alpha(pattern2) * coords.w2;
+            //console.log('reach');
+            let r = (pattern0.r ?? 0) * coords.w0 + (pattern1.r ?? 0) * coords.w1 + (pattern2.r ?? 0) * coords.w2;
+            let g = (pattern0.g ?? 0) * coords.w0 + (pattern1.g ?? 0) * coords.w1 + (pattern2.g ?? 0) * coords.w2;
+            let b = (pattern0.b ?? 0) * coords.w0 + (pattern1.b ?? 0) * coords.w1 + (pattern2.b ?? 0) * coords.w2;
+            let a = (pattern0.a ?? 255) * coords.w0 + (pattern1.a ?? 255) * coords.w1 + (pattern2.a ?? 255) * coords.w2;
             //this._memory2D[i][j] = [r, g, b, a];
             this._memory2D[i][j] = color(r, g, b, a);
           }
