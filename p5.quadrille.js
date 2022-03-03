@@ -546,15 +546,17 @@ class Quadrille {
   }
 
   /**
-   * Colorize the (row0, col0), (row1, col1), (row2, col2) triangle, using
-   * pattern0.rgba, pattern1.rgba and pattern2.rgba object vertex patterns, respectively.
+   * Rasterizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to
+   * pattern0.xyza, pattern1.xyza and pattern2.xyza color vertex patterns, respectively.
    */
   colorize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     this.rasterize(row0, col0, row1, col1, row2, col2,
+      // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to
+      // pattern0.xyza, pattern1.xyza and pattern2.xyza color vertex patterns, respectively.
       (pattern0, pattern1, pattern2) => color(
-        (pattern0.r ?? 0) + (pattern1.r ?? 0) + (pattern2.r ?? 0),
-        (pattern0.g ?? 0) + (pattern1.g ?? 0) + (pattern2.g ?? 0),
-        (pattern0.b ?? 0) + (pattern1.b ?? 0) + (pattern2.b ?? 0),
+        (pattern0.x ?? 0) + (pattern1.x ?? 0) + (pattern2.x ?? 0),
+        (pattern0.y ?? 0) + (pattern1.y ?? 0) + (pattern2.y ?? 0),
+        (pattern0.z ?? 0) + (pattern1.z ?? 0) + (pattern2.z ?? 0),
         (pattern0.a ?? 255) + (pattern1.a ?? 255) + (pattern2.a ?? 255),
       ), pattern0, pattern1, pattern2);
   }
