@@ -4,9 +4,27 @@ const LENGTH = 20;
 let graphics;
 let current, matrixCells, stringCells, arrayCells, bitboardCells, uniformCells, colorCells;
 let al;
+let a1, a2, a4, a5, a6;
+let f;
+//let w;
+let l;
+let i;
+let m;
 
 function preload() {
-  al = loadImage('abraham_lincoln.jpg');
+  al = loadImage('al.jpg');
+  a1 = loadImage('a1.jpg');
+  a2 = loadImage('a2.png');
+  a3 = loadImage('a3.jpg');
+  a4 = loadImage('a4.jpg');
+  a5 = loadImage('a5.jpg');
+  a6 = loadImage('a6.png');
+  a7 = loadImage('a7.jpg');
+  f = loadImage('f.jpg');
+  //w = loadImage('w.png');
+  l = loadImage('l.jpg');
+  i = loadImage('i.png');
+  m = loadImage('m.png');
 }
 
 function setup() {
@@ -28,19 +46,20 @@ function setup() {
   bitboardCells = createQuadrille(4, int(random(1, 1048576)), e1);
   let w = int(random(2, 6));
   let h = int(random(2, 6));
-  uniformCells = createQuadrille(w, h, int(random(1, w * h)), al);
+  //uniformCells = createQuadrille(w, h, int(random(1, w * h)), al);
+  uniformCells = createQuadrille(/*3, */[al, a1, a2, a3, a4, a5, a6, a7, f, l, i, m]);
 }
 
 function draw() {
   background('#2E0E36');
   if (current) {
-    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true, cellLength: 20 });
+    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true, cellLength: 40 });
   }
   else {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
     //graphics.background('white');
-    Quadrille.CHAR({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 0 });
+    Quadrille.CHAR({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 3 });
     //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
     //image(graphics, 0, 0);
     /*
@@ -90,6 +109,6 @@ function keyPressed() {
   }
   if (key === 'x') {
     //current.sort({ mode: 'DISTANCE', target: 'magenta'/*, ascending: false*/ });
-    current.sort({ ascending: true });
+    current.sort({ mode: 'LUMA', ascending: true });
   }
 }
