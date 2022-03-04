@@ -553,12 +553,7 @@ class Quadrille {
     this.rasterize(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
-      (_pattern0, _pattern1, _pattern2) => color(
-        (_pattern0.x ?? 0) + (_pattern1.x ?? 0) + (_pattern2.x ?? 0),
-        (_pattern0.y ?? 0) + (_pattern1.y ?? 0) + (_pattern2.y ?? 0),
-        (_pattern0.z ?? 0) + (_pattern1.z ?? 0) + (_pattern2.z ?? 0),
-        (_pattern0.a ?? 255) + (_pattern1.a ?? 255) + (_pattern2.a ?? 255),
-      ), pattern0, pattern1, pattern2);
+      (pattern) => color(pattern), pattern0, pattern1, pattern2);
   }
 
   /**
@@ -567,26 +562,19 @@ class Quadrille {
    * using (fragment)shader.
    */
   rasterize(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
-    if ((typeof pattern0 === 'object') && (typeof pattern1 === 'object') && (typeof pattern2 === 'object')) {
+    if (Array.isArray(pattern0) && Array.isArray(pattern1) && Array.isArray(pattern2)) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
           // interpolate all pattern attributes for the current cell only if it is inside the triangle
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-            let _pattern0 = {};
-            for (const [key, value] of Object.entries(pattern0)) {
-              _pattern0[key] = (value ?? 0) * coords.w0;
-            }
-            let _pattern1 = {};
-            for (const [key, value] of Object.entries(pattern1)) {
-              _pattern1[key] = (value ?? 0) * coords.w1;
-            }
-            let _pattern2 = {};
-            for (const [key, value] of Object.entries(pattern2)) {
-              _pattern2[key] = (value ?? 0) * coords.w2;
+            let length = Math.max(pattern0.length, pattern1.length, pattern2.length);
+            let _pattern = new Array(length);
+            for (let k = 0; k < _pattern.length; k++) {
+              _pattern[k] = (pattern0[k] ?? 0) * coords.w0 + (pattern1[k] ?? 0) * coords.w1 + (pattern2[k] ?? 0) * coords.w2;
             }
             // call shader using the interpolated patterns to compute the current cell color
-            this._memory2D[i][j] = shader(_pattern0, _pattern1, _pattern2);
+            this._memory2D[i][j] = shader(_pattern);
           }
         }
       }
