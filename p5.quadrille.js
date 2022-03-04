@@ -551,13 +551,13 @@ class Quadrille {
    */
   colorize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     this.rasterize(row0, col0, row1, col1, row2, col2,
-      // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to
-      // pattern0.xyza, pattern1.xyza and pattern2.xyza color vertex patterns, respectively.
-      (pattern0, pattern1, pattern2) => color(
-        (pattern0.x ?? 0) + (pattern1.x ?? 0) + (pattern2.x ?? 0),
-        (pattern0.y ?? 0) + (pattern1.y ?? 0) + (pattern2.y ?? 0),
-        (pattern0.z ?? 0) + (pattern1.z ?? 0) + (pattern2.z ?? 0),
-        (pattern0.a ?? 255) + (pattern1.a ?? 255) + (pattern2.a ?? 255),
+      // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
+      // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
+      (_pattern0, _pattern1, _pattern2) => color(
+        (_pattern0.x ?? 0) + (_pattern1.x ?? 0) + (_pattern2.x ?? 0),
+        (_pattern0.y ?? 0) + (_pattern1.y ?? 0) + (_pattern2.y ?? 0),
+        (_pattern0.z ?? 0) + (_pattern1.z ?? 0) + (_pattern2.z ?? 0),
+        (_pattern0.a ?? 255) + (_pattern1.a ?? 255) + (_pattern2.a ?? 255),
       ), pattern0, pattern1, pattern2);
   }
 
