@@ -40,7 +40,7 @@
 >
 > [filter()](/docs/vc/filter)
 > [rasterize()](/docs/vc/rasterize)
-> [rasterize()](/docs/vc/colorize)
+> [colorize()](/docs/vc/colorize)
 
 > :Collapse label=Other representations
 >
