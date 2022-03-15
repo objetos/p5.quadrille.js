@@ -36,12 +36,12 @@ function keyPressed() {
 }
 
 // pretty similar to what p5.Quadrille.colorize does
-function colorize_shader(pattern) {
-  let normal = pattern.slice(0, 3);
+function colorize_shader({ pattern: mixin }) {
+  let rgb = mixin.slice(0, 3);
   // debug 2d normal
-  console.log(pattern.slice(3));
+  console.log(mixin.slice(3));
   // use interpolated color as is
-  return color(pattern.slice(0, 3));
+  return color(rgb);
 }
 
 function randomize() {

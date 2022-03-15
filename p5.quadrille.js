@@ -553,7 +553,7 @@ class Quadrille {
     this.rasterize(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
-      (pattern) => color(pattern), pattern0, pattern1, pattern2);
+      ({ pattern: xyza }) => color(xyza), pattern0, pattern1, pattern2);
   }
 
   /**
@@ -574,7 +574,7 @@ class Quadrille {
               _pattern[k] = (pattern0[k] ?? 0) * coords.w0 + (pattern1[k] ?? 0) * coords.w1 + (pattern2[k] ?? 0) * coords.w2;
             }
             // call shader using the interpolated patterns to compute the current cell color
-            this._memory2D[i][j] = shader(_pattern);
+            this._memory2D[i][j] = shader({ pattern: _pattern, row: i, col: j });
           }
         }
       }
