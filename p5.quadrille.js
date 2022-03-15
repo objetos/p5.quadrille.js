@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '1.0.0';
+  static version = '0.9.3';
 
   /**
    * Default background used in sort.
