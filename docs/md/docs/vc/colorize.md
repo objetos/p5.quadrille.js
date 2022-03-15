@@ -1,6 +1,6 @@
 # `colorize()`
 
-Colorize a triangle, defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). Same as `this.rasterize(row0, col0, row1, col1, row2, col2, (pattern) => color(pattern), pattern0, pattern1, pattern2)`, see [rasterize()](/docs/vc/rasterize).
+Colorize a triangle, defined by vertices `(vertex0=) (row0, col0)`, `(vertex1=)(row1, col1)`, and `(vertex2=)(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). Same as `this.rasterize(row0, col0, row1, col1, row2, col2, ({ pattern: xyza }) => color(xyza), pattern0, pattern1, pattern2)`. Note that `({ pattern: xyza }) => color(xyza)` represents the fragment shader function in  [rasterize()](/docs/vc/rasterize).
 
 # Syntax
 
