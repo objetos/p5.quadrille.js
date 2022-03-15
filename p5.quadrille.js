@@ -565,7 +565,7 @@ class Quadrille {
     if (Array.isArray(pattern0) && Array.isArray(pattern1) && Array.isArray(pattern2)) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
-          let coords = this._barycentric_coords(j, i, row0, col0, row1, col1, row2, col2);
+          let coords = this._barycentric_coords(i, j, row0, col0, row1, col1, row2, col2);
           // interpolate all pattern attributes for the current cell only if it is inside the triangle
           if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
             let length = Math.max(pattern0.length, pattern1.length, pattern2.length);

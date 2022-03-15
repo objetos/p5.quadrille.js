@@ -2,14 +2,14 @@ const ROWS = 20;
 const COLS = 20;
 const LENGTH = 20;
 let quadrille;
-let v0x, v0y, v1x, v1y, v2x, v2y;
+let row0, col0, row1, col1, row2, col2;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   quadrille = createQuadrille(20, 20);
   randomize();
   // highlevel call:
-  quadrille.colorize(v0x, v0y, v1x, v1y, v2x, v2y, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+  quadrille.colorize(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
 }
 
 function draw() {
@@ -23,7 +23,7 @@ function tri() {
   stroke('cyan');
   strokeWeight(3);
   noFill();
-  triangle(v0x * LENGTH + LENGTH / 2, v0y * LENGTH + LENGTH / 2, v1x * LENGTH + LENGTH / 2, v1y * LENGTH + LENGTH / 2, v2x * LENGTH + LENGTH / 2, v2y * LENGTH + LENGTH / 2);
+  triangle(col0 * LENGTH + LENGTH / 2, row0 * LENGTH + LENGTH / 2, col1 * LENGTH + LENGTH / 2, row1 * LENGTH + LENGTH / 2, col2 * LENGTH + LENGTH / 2, row2 * LENGTH + LENGTH / 2);
   pop();
 }
 
@@ -32,7 +32,7 @@ function keyPressed() {
   quadrille.clear();
   // low level call:
   // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
-  quadrille.rasterize(v0x, v0y, v1x, v1y, v2x, v2y, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
+  quadrille.rasterize(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
 }
 
 // pretty similar to what p5.Quadrille.colorize does
@@ -45,10 +45,10 @@ function colorize_shader(pattern) {
 }
 
 function randomize() {
-  v0x = int(random(0, COLS));
-  v0y = int(random(0, ROWS));
-  v1x = int(random(0, COLS));
-  v1y = int(random(0, ROWS));
-  v2x = int(random(0, COLS));
-  v2y = int(random(0, ROWS));
+  col0 = int(random(0, COLS));
+  row0 = int(random(0, ROWS));
+  col1 = int(random(0, COLS));
+  row1 = int(random(0, ROWS));
+  col2 = int(random(0, COLS));
+  row2 = int(random(0, ROWS));
 }
