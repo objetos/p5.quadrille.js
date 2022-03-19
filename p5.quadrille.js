@@ -21,7 +21,7 @@ class Quadrille {
   /**
    * Current library version.
    */
-  static version = '0.9.3';
+  static version = '0.9.4';
 
   /**
    * Default background used in sort.
@@ -545,15 +545,18 @@ class Quadrille {
     }
   }
 
+
   /**
    * Rasterizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to
-   * pattern0.xyza, pattern1.xyza and pattern2.xyza color vertex patterns, respectively.
+   * color0, color1 and color2 colors (either p5.Color, arrays or strings), respectively.
    */
-  colorize(row0, col0, row1, col1, row2, col2, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
+  colorize(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
     this.rasterize(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
-      ({ pattern: xyza }) => color(xyza), pattern0, pattern1, pattern2);
+      ({ pattern: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
+                                          [red(color1), green(color1), blue(color1), alpha(color1)],
+                                          [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
 
   /**

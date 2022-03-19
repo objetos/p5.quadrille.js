@@ -9,7 +9,8 @@ function setup() {
   quadrille = createQuadrille(20, 20);
   randomize();
   // highlevel call:
-  quadrille.colorize(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+  //quadrille.colorize(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+  quadrille.colorize(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
 }
 
 function draw() {
