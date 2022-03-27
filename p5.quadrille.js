@@ -19,11 +19,6 @@
 
 class Quadrille {
   /**
-   * Current library version.
-   */
-  static version = '0.9.4';
-
-  /**
    * Default background used in sort.
    */
   static BACKGROUND = 'white';
@@ -918,6 +913,15 @@ class Quadrille {
 // Details here:
 // https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
 (function () {
+  const INFO =
+  {
+    LIBRARY: 'p5.quadrille.js',
+    VERSION: '0.9.5',
+    HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
+  };
+
+  console.log(INFO);
+
   p5.prototype.createQuadrille = function () {
     return new Quadrille(...arguments);
   }

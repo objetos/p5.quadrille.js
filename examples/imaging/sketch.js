@@ -14,7 +14,6 @@ function setup() {
   createCanvas(800, 800);
   //console.log(image.width, image.height);
   quadrille = createQuadrille(40 * (2 ** scl), image);
-  //console.log(Quadrille.version);
 }
 
 function draw() {
