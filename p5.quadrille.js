@@ -152,8 +152,8 @@ class Quadrille {
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
-    for (let i = 0; i < quadrille._memory2D.length; i++) {
-      for (let j = 0; j < quadrille._memory2D[i].length; j++) {
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
         let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
         if (result) {
           quadrille._memory2D[i][j] = result;
@@ -933,6 +933,7 @@ class Quadrille {
       pixelY = 0,
       row = 0,
       col = 0,
+      tile,
       cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = Quadrille.OUTLINE,
@@ -944,15 +945,18 @@ class Quadrille {
     } = {}) {
     graphics.push();
     graphics.translate(pixelX > 0 ? pixelX : col * cellLength, pixelY > 0 ? pixelY : row * cellLength);
-    for (let i = 0; i < quadrille._memory2D.length; i++) {
-      for (let j = 0; j < quadrille._memory2D[i].length; j++) {
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
         if (cell) {
+          if (tile) {
+            tile({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, numberColor: numberColor, min: min, max: max });
+          }
           // Note that the Array.isArray(cell) condition should be rethought
           // once 3D Quadrilles appear.
-          if (cell instanceof p5.Color || Array.isArray(cell)) {
+          else if (cell instanceof p5.Color || Array.isArray(cell)) {
             Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (cell instanceof p5.Image) {
