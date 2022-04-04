@@ -180,34 +180,7 @@ class Quadrille {
    */
   constructor() {
     if (arguments.length === 1) {
-      if (typeof arguments[0] === 'string') {
-        this._init1D([...arguments[0]]);
-        return;
-      }
-      if (Array.isArray(arguments[0])) {
-        if (!Array.isArray(arguments[0][0])) {
-          this._init1D(arguments[0]);
-          return;
-        }
-        let memory2D = arguments[0].map(array => { return array.slice(); });
-        let width;
-        for (const entry of memory2D) {
-          if (!Array.isArray(entry)) {
-            throw new Error('Not 2D Array');
-          }
-          if (!width) {
-            width = entry.length;
-          }
-          else if (width < entry.length) {
-            width = entry.length;
-          }
-        }
-        for (let i = 0; i < memory2D.length; i++) {
-          memory2D[i] = this._format(memory2D[i], width);
-        }
-        this._memory2D = memory2D;
-        return;
-      }
+      this.memory2D = arguments[0];
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
       if (typeof arguments[1] === 'string') {
@@ -261,6 +234,82 @@ class Quadrille {
       return memory1D.concat(new Array(size - memory1D.length).fill(0));
     }
     return memory1D;
+  }
+
+  /**
+   * Sets quadrille from memory array.
+   */
+  set memory2D(memory) {
+    if (typeof memory === 'string') {
+      this._init1D([...memory]);
+      return;
+    }
+    if (Array.isArray(memory)) {
+      if (!Array.isArray(memory[0])) {
+        this._init1D(memory);
+        return;
+      }
+      let memory2D = memory.map(array => { return array.slice(); });
+      let width;
+      for (const entry of memory2D) {
+        if (!Array.isArray(entry)) {
+          throw new Error('Not 2D Array');
+        }
+        if (!width) {
+          width = entry.length;
+        }
+        else if (width < entry.length) {
+          width = entry.length;
+        }
+      }
+      for (let i = 0; i < memory2D.length; i++) {
+        memory2D[i] = this._format(memory2D[i], width);
+      }
+      this._memory2D = memory2D;
+    }
+  }
+
+  /**
+   * @returns {Array} Quadrille matrix (Array2D) representation.
+   */
+  get memory2D() {
+    return this.clone()._memory2D;
+  }
+
+  /**
+   * @returns {number} quadrille width, i.e., number of columns.
+   */
+   get width() {
+    return this._memory2D[0].length;
+  }
+
+  /**
+   * @returns {number} quadrille height, i.e., number of rows.
+   */
+  get height() {
+    return this._memory2D.length;
+  }
+
+  /**
+   * @returns {number} width * height.
+   */
+  get size() {
+    return this.width * this.height;
+  }
+
+  /**
+   * @returns {number} Number of non-empty quadrille cells.
+   */
+  get order() {
+    let result = 0;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this._memory2D[i][j]) {
+          result++;
+        }
+      }
+    }
+    return result;
   }
 
   /**
@@ -363,51 +412,6 @@ class Quadrille {
     let result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
-    }
-    return result;
-  }
-
-  /**
-   * @returns {Array} Quadrille matrix (Array2D) representation.
-   */
-  toMatrix() {
-    return this.clone()._memory2D;
-  }
-
-  // TODO toAscii()
-
-  /**
-   * @returns {number} quadrille width, i.e., number of columns.
-   */
-  get width() {
-    return this._memory2D[0].length;
-  }
-
-  /**
-   * @returns {number} quadrille height, i.e., number of rows.
-   */
-  get height() {
-    return this._memory2D.length;
-  }
-
-  /**
-   * @returns {number} width * height.
-   */
-  get size() {
-    return this.width * this.height;
-  }
-
-  /**
-   * @returns {number} Number of non-empty quadrille cells.
-   */
-  get order() {
-    let result = 0;
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
-        if (this._memory2D[i][j]) {
-          result++;
-        }
-      }
     }
     return result;
   }
