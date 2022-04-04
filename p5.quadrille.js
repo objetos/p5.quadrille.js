@@ -934,6 +934,7 @@ class Quadrille {
       row = 0,
       col = 0,
       tile,
+      contour,
       cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = Quadrille.OUTLINE,
@@ -970,7 +971,12 @@ class Quadrille {
           }
         }
         else if (board) {
-          Quadrille.FRAME({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+          if (contour) {
+            contour({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, numberColor: numberColor, min: min, max: max });
+          }
+          else {
+            Quadrille.FRAME({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+          }
         }
         graphics.pop();
       }

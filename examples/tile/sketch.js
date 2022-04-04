@@ -62,19 +62,37 @@ function draw() {
   background('#060621');
   drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
   drawQuadrille(I, {
-    col: 2, row: 12, cellLength: LENGTH, outline: 'blue',
+    col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true,
     // /*
     tile: ({ outline: contour, cellLength: diameter }) => {
       push();
       fill(contour);
       circle(0, 0, diameter);
       pop();
-    }
+    },
     // */
     /*
     tile: () => {
       push();
       fill('blue');
+      circle(0, 0, LENGTH);
+      pop();
+    },
+    // */
+    // /*
+    contour: ({ outline: outline, cellLength: diameter }) => {
+      push();
+      noFill();
+      stroke(outline);
+      circle(0, 0, diameter);
+      pop();
+    }
+    // */
+    /*
+    contour: () => {
+      push();
+      noFill();
+      stroke('blue');
       circle(0, 0, LENGTH);
       pop();
     }
