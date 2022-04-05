@@ -138,4 +138,12 @@ function keyPressed() {
     I.width--;
     console.log(I.width, I.height);
   }
+  if (key === '8') {
+    I.width = 8;
+    console.log(I.width, I.height);
+  }
+  if (key === '4') {
+    I.width = 4;
+    console.log(I.width, I.height);
+  }
 }
