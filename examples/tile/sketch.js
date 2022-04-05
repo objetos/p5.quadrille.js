@@ -130,4 +130,12 @@ function keyPressed() {
   if (key === 'r') {
     quadrille.randomize();
   }
+  if (key === '+') {
+    I.width++;
+    console.log(I.width, I.height);
+  }
+  if (key === '-') {
+    I.width--;
+    console.log(I.width, I.height);
+  }
 }

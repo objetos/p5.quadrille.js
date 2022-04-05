@@ -17,6 +17,8 @@
 * article for details.
 ***************************************************************************************/
 
+'use strict';
+
 class Quadrille {
   /**
    * Default background used in sort.
@@ -237,7 +239,7 @@ class Quadrille {
   }
 
   /**
-   * Sets quadrille from memory array.
+   * Sets quadrille from 2D memory internal array representation.
    */
   set memory2D(memory) {
     if (typeof memory === 'string') {
@@ -277,10 +279,29 @@ class Quadrille {
   }
 
   /**
+   * Sets quadrille width (number of columns).
+   */
+  set width(width) {
+    this.transpose();
+    this.height = width;
+    this.transpose();
+  }
+
+  /**
    * @returns {number} quadrille width, i.e., number of columns.
    */
-   get width() {
+  get width() {
     return this._memory2D[0].length;
+  }
+
+  /**
+   * Sets quadrille height (number of rows).
+   */
+  set height(height) {
+    let rows = height - this.height;
+    while (this.height !== height) {
+      rows > 0 ? this.insert(this.height) : this.delete(this.height - 1);
+    }
   }
 
   /**
@@ -554,8 +575,8 @@ class Quadrille {
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
       ({ pattern: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
-                                          [red(color1), green(color1), blue(color1), alpha(color1)],
-                                          [red(color2), green(color2), blue(color2), alpha(color2)]);
+      [red(color1), green(color1), blue(color1), alpha(color1)],
+      [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
 
   /**
