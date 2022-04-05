@@ -31,9 +31,14 @@ function tri() {
 function keyPressed() {
   randomize();
   quadrille.clear();
-  // low level call:
-  // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
-  quadrille.rasterize(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
+  if (key === 'r') {
+    // low level call:
+    // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
+    quadrille.rasterize(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
+  }
+  if (key === 's') {
+    quadrille.screenSpace(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
+  }
 }
 
 // pretty similar to what p5.Quadrille.colorize does

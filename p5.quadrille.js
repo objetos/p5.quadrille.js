@@ -583,6 +583,11 @@ class Quadrille {
     }
   }
 
+  screenSpace(shader, pattern0, pattern1 = pattern0, pattern2 = pattern0, pattern3 = pattern0) {
+    this.rasterize(0, 0, this.height - 1, 0, 0, this.width - 1, shader, pattern0, pattern1, pattern2);
+    this.rasterize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, pattern1, pattern2, pattern3);
+  }
+
   /**
    * Returns the (row0, col0), (row1, col1), (row2, col2) triangle
    * barycentric coordinates at (row, col) as the {w0, w1, w2} object literal.
