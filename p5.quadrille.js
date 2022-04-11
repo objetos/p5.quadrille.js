@@ -460,19 +460,19 @@ class Quadrille {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           if (this._memory2D[i][j]) {
-            this._memory2D[i][j] = arguments[0];
+            this._memory2D[i][j] = arguments[0] ?? 0;
           }
         }
       }
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
       if (arguments[0] >= 0 && arguments[0] < this.height) {
-        this._memory2D[arguments[0]].fill(arguments[1]);
+        this._memory2D[arguments[0]].fill(arguments[1] ?? 0);
       }
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._memory2D[arguments[0]][arguments[1]] = arguments[2];
+        this._memory2D[arguments[0]][arguments[1]] = arguments[2] ?? 0;
       }
     }
   }
@@ -696,8 +696,10 @@ class Quadrille {
   }
 
   /**
-   * Fill this quadrille memory entries with 0's. Pass number to clear
-   * only the given row. Pass no params to clear all the quadrille.
+   * Clear quadrille cells (cells are filled with 0s). Either:
+   * 1. clear(), clears current filled cells;
+   * 2. clear(row), clears row; or,
+   * 3. clear(row, col), clears cell.
    */
   clear() {
     if (arguments.length === 0) {
@@ -705,6 +707,9 @@ class Quadrille {
     }
     if (arguments.length === 1 && typeof arguments[0] === 'number') {
       this._memory2D[arguments[0]].fill(0);
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      this._memory2D[arguments[0]][arguments[1]] = 0;
     }
   }
 

@@ -40,6 +40,12 @@ function keyPressed() {
   if (key === 's') {
     quadrille.rasterize(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
   }
+  /*
+  if (key === 't') {
+    quadrille.clear(5, 5);
+    quadrille.fill(6, 6, color('cyan'));
+  }
+  */
 }
 
 // pretty similar to what p5.Quadrille.colorizeTriangle does
