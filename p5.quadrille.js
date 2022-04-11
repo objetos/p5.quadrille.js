@@ -596,7 +596,7 @@ class Quadrille {
   /**
    * Rasterize quadrille according to upper-left corner vertex pattern0,
    * bottom-left corner vertex pattern1, upper-right corner vertex pattern2,
-   * and bottom-right corner vertex pattern3.
+   * and bottom-right corner vertex pattern3, using (fragment) shader.
    */
   rasterize(shader, pattern0, pattern1 = pattern0, pattern2 = pattern0, pattern3 = pattern0) {
     this.rasterizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, shader, pattern0, pattern1, pattern2);
