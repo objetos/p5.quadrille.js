@@ -579,6 +579,11 @@ class Quadrille {
       [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
 
+  colorizeScreen(color0, color1 = color0, color2 = color0) {
+    this.colorize(0, 0, this.height - 1, 0, 0, this.width - 1, color0, color1, color2);
+    this.colorize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, color1, color2, pattern3);
+  }
+
   /**
    * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle,
    * from pattern0, pattern1 and pattern2 object vertex patterns(resp),
