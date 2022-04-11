@@ -546,13 +546,12 @@ class Quadrille {
     }
   }
 
-
   /**
-   * Rasterizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to
+   * Colorize the (row0, col0), (row1, col1), (row2, col2) triangle, according to
    * color0, color1 and color2 colors (either p5.Color, arrays or strings), respectively.
    */
-  colorize(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
-    this.rasterize(row0, col0, row1, col1, row2, col2,
+  colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
+    this.rasterizeTriangle(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
       ({ pattern: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
@@ -560,17 +559,21 @@ class Quadrille {
       [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
 
-  colorizeScreen(color0, color1 = color0, color2 = color0, color3 = color0) {
-    this.colorize(0, 0, this.height - 1, 0, 0, this.width - 1, color0, color1, color2);
-    this.colorize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, color1, color2, color3);
+  /**
+   * Colorize quadrille according to upper-left corner color0, bottom-left corner color1,
+   * upper-right corner color2, and bottom-right corner color3 colors.
+   */
+  colorize(color0, color1 = color0, color2 = color0, color3 = color0) {
+    this.colorizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, color0, color1, color2);
+    this.colorizeTriangle(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, color1, color2, color3);
   }
 
   /**
-   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle,
-   * from pattern0, pattern1 and pattern2 object vertex patterns(resp),
-   * using (fragment)shader.
+   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle
+   * according to pattern0, pattern1 and pattern2 object vertex patterns (resp),
+   * using (fragment) shader.
    */
-  rasterize(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
+  rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
     if (Array.isArray(pattern0) && Array.isArray(pattern1) && Array.isArray(pattern2)) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
@@ -590,9 +593,14 @@ class Quadrille {
     }
   }
 
-  screenSpace(shader, pattern0, pattern1 = pattern0, pattern2 = pattern0, pattern3 = pattern0) {
-    this.rasterize(0, 0, this.height - 1, 0, 0, this.width - 1, shader, pattern0, pattern1, pattern2);
-    this.rasterize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, pattern1, pattern2, pattern3);
+  /**
+   * Rasterize quadrille according to upper-left corner vertex pattern0,
+   * bottom-left corner vertex pattern1, upper-right corner vertex pattern2,
+   * and bottom-right corner vertex pattern3.
+   */
+  rasterize(shader, pattern0, pattern1 = pattern0, pattern2 = pattern0, pattern3 = pattern0) {
+    this.rasterizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, shader, pattern0, pattern1, pattern2);
+    this.rasterizeTriangle(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, pattern1, pattern2, pattern3);
   }
 
   /**

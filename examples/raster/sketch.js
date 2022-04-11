@@ -9,9 +9,9 @@ function setup() {
   quadrille = createQuadrille(20, 20);
   //randomize();
   // highlevel call:
-  //quadrille.colorize(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
-  //quadrille.colorize(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
-  quadrille.colorizeScreen('red', 'green', 'blue', 'cyan');
+  //quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, [255, 0, 0], [0, 255, 0], [0, 0, 255]);
+  //quadrille.colorizeTriangle(row0, col0, row1, col1, row2, col2, 'red', 'green', 'blue');
+  quadrille.colorize('red', 'green', 'blue', 'cyan');
 }
 
 function draw() {
@@ -35,14 +35,14 @@ function keyPressed() {
   if (key === 'r') {
     // low level call:
     // [r, g, b, x, y]: rgb -> color components; x, y -> 2d normal
-    quadrille.rasterize(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
+    quadrille.rasterizeTriangle(row0, col0, row1, col1, row2, col2, colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8]);
   }
   if (key === 's') {
-    quadrille.screenSpace(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
+    quadrille.rasterize(colorize_shader, [255, 0, 0, 7, 4], [0, 255, 0, -1, -10], [0, 0, 255, 5, 8], [255, 255, 0, -1, -10]);
   }
 }
 
-// pretty similar to what p5.Quadrille.colorize does
+// pretty similar to what p5.Quadrille.colorizeTriangle does
 function colorize_shader({ pattern: mixin }) {
   let rgb = mixin.slice(0, 3);
   // debug 2d normal
