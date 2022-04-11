@@ -4,7 +4,7 @@
 
 # Syntax
 
-> `drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [cellLength], [outlineWeight], [outline], [charColor], [board], [numberColor], [min], [max]}])`
+> `drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [tile], [contour], [cellLength], [outlineWeight], [outline], [charColor], [board], [numberColor], [min], [max]}])`
 
 # Parameters
 
@@ -14,6 +14,8 @@
 | graphics      | [p5.Graphics](https://p5js.org/reference/#/p5.Graphics): renderer taget default is `this` (main canvas) |
 | row           | Number: upper left quadrille row coordinate default is `0`                                              |
 | col           | Number: upper left quadrille col coordinate default is `0`                                              |
+| tile          | Function: cell fill drawing custom procedure                                                            |
+| contour       | Function: cell fill outline custom procedure                                                            |
 | pixelX        | Number: upper left quadrille pixel x coordinate default is `0`. Takes higher precedence than `col`      |
 | pixelY        | Number: upper left quadrille pixel y coordinate default is `0`. Takes higher precedence than `row`      |
 | cellLength    | Number: edge length in pixels default is `10`                                                           |
