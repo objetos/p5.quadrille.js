@@ -39,7 +39,7 @@
 > :Collapse label=Visual computing
 >
 > [filter()](/docs/vc/filter)
-> [rasterize()](/docs/vc/rasterize)1
+> [rasterize()](/docs/vc/rasterize)
 > [colorize()](/docs/vc/colorize)
 > [rasterizeTriangle()](/docs/vc/rasterize_triangle)
 > [colorizeTriangle()](/docs/vc/colorize_triangle)
