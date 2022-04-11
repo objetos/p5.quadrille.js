@@ -1,24 +1,19 @@
 # `rasterize()`
 
-Rasterize a triangle, defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). The user provided [software rendered](https://en.wikipedia.org/wiki/Software_rendering) [(fragment) shader](https://en.wikipedia.org/wiki/Shader) is a function parameterized with the object literal `{ pattern: interpolated_data_array, row: i, col: j }` and that should return a [p5.Color](https://p5js.org/reference/#/p5.Color). Refer to the [colorize()](/docs/vc/colorize) method for an example.
+Rasterize quadrille according to upper-left corner vertex `pattern0`, bottom-left corner vertex `pattern1`, upper-right corner vertex `pattern2`, and bottom-right corner vertex `pattern3`,  using (fragment) `shader`. Call [rasterizeTriangle()](/docs/vc/rasterize_triangle) on the two non-overlapping triangles entirely covering the quadrille.
 
 # Syntax
 
-> `rasterize(row0, col0, row1, col1, row2, col2, shader, pattern0, [pattern1], [pattern2])`
+> `rasterize(shader, pattern0, [pattern1], [pattern2], [pattern3])`
 
 # Parameters
 
 | <!-- --> | <!-- -->                                                                                                  |
 |----------|-----------------------------------------------------------------------------------------------------------|
-| row0     | Number: vertex0 row coordinate                                                                            |
-| col0     | Number: vertex0 col coordinate                                                                            |
-| row1     | Number: vertex1 row coordinate                                                                            |
-| col1     | Number: vertex1 col coordinate                                                                            |
-| row2     | Number: vertex2 row coordinate                                                                            |
-| col2     | Number: vertex2 col coordinate                                                                            |
 | shader   | Function: taking `{ pattern: interpolated_data_array, row: i, col: j }` params and returning a `p5.Color` |
-| pattern0 | Array: vertex0 attributes to be interpolated                                                              |
-| pattern1 | Array: vertex0 attributes to be interpolated default is pattern0                                          |
-| pattern2 | Array: vertex0 attributes to be interpolated default is pattern0                                          |
+| pattern0 | Array: corner0 attributes to be interpolated                                                              |
+| pattern1 | Array: corner1 attributes to be interpolated default is pattern0                                          |
+| pattern2 | Array: corner2 attributes to be interpolated default is pattern0                                          |
+| pattern3 | Array: corner3 attributes to be interpolated default is pattern0                                          |
 
 > :ToCPrevNext

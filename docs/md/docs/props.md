@@ -1,12 +1,16 @@
 # Quadrille properties
 
+## `memory2D`
+
+Array2D: quadrille memory read-write property.
+
 ## `width`
 
-Number: Read-only property that retrieves the quadrille width.
+Number: quadrille width read-write property.
 
 ## `height`
 
-Number: Read-only property that retrieves the quadrille height.
+Number: quadrille height read-write property.
 
 ## `size`
 

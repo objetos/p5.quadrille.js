@@ -1,6 +1,6 @@
 # `clear()`
 
-Sets quadrille cells to `0`. Either all quadrille cells or a given `row`.
+Sets quadrille cells to `0`. Either all quadrille cells, a given `row` or a given cell.
 
 # Syntax
 
@@ -8,10 +8,13 @@ Sets quadrille cells to `0`. Either all quadrille cells or a given `row`.
 
 > `clear(row)`
 
+> `clear(row, col)`
+
 # Parameters
 
-| <!-- --> | <!-- -->                                                                    |
-|----------|-----------------------------------------------------------------------------|
-| row      | Number: number of the row to be cleared [\[0..height\]](/docs/props#height) |
+| <!-- --> | <!-- -->                                                                      |
+|----------|-------------------------------------------------------------------------------|
+| row      | Number: number of the row to be cleared [\[0..height\]](/docs/props#height)   |
+| col      | Number: row number of the cell to be filled [\[0..width\]](/docs/props#width) |
 
 > :ToCPrevNext
