@@ -1,22 +1,3 @@
-/***************************************************************************************
-* p5.quadrille.js
-* Copyright (c) 2021-2022 Universidad Nacional de Colombia
-* @author Jean Pierre Charalambos, https://github.com/objetos/p5.quadrille.js/
-* Released under the terms of the GPLv3, refer to: http://www.gnu.org/licenses/gpl.html
-* 
-* In geometry, the square-tiling, square-tessellation or square-grid is a
-* regular tiling of the Euclidean plane.
-*
-* John Horton Conway called it a quadrille.
-*
-* The internal angle of the square is 90 degrees so four squares at a point
-* make a full 360 degrees. It is one of three regular tilings of the plane.
-* The other two are the triangular-tiling and the hexagonal-tiling.
-*
-* Refer to the [wikipedia square tiling](https://en.wikipedia.org/wiki/Square_tiling)
-* article for details.
-***************************************************************************************/
-
 'use strict';
 
 class Quadrille {
@@ -579,9 +560,9 @@ class Quadrille {
       [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
 
-  colorizeScreen(color0, color1 = color0, color2 = color0) {
+  colorizeScreen(color0, color1 = color0, color2 = color0, color3 = color0) {
     this.colorize(0, 0, this.height - 1, 0, 0, this.width - 1, color0, color1, color2);
-    this.colorize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, color1, color2, pattern3);
+    this.colorize(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, color1, color2, color3);
   }
 
   /**
