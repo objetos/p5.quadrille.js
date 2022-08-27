@@ -1,3 +1,5 @@
+'use strict';
+
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
@@ -63,7 +65,7 @@ function draw() {
   drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
   drawQuadrille(I, {
     col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true,
-    // /*
+    ///*
     tile: ({ outline: contour, cellLength: diameter }) => {
       push();
       fill(contour);
@@ -79,7 +81,8 @@ function draw() {
       pop();
     },
     // */
-    // /*
+    //tile: tile,
+    ///*
     contour: ({ outline: outline, cellLength: diameter }) => {
       push();
       noFill();
@@ -97,8 +100,47 @@ function draw() {
       pop();
     }
     // */
+    //contour: contour
   });
 }
+
+// /*
+function tile({ outline: contour, cellLength: diameter }) {
+  push();
+  fill(contour);
+  circle(0, 0, diameter);
+  pop();
+}
+// */
+
+/*
+function tile() {
+  push();
+  fill('blue');
+  circle(0, 0, LENGTH);
+  pop();
+}
+// */
+
+// /*
+function contour({ outline: outline, cellLength: diameter }) {
+  push();
+  noFill();
+  stroke(outline);
+  circle(0, 0, diameter);
+  pop();
+}
+// */
+
+/*
+function contour() {
+  push();
+  noFill();
+  stroke('blue');
+  circle(0, 0, LENGTH);
+  pop();
+}
+// */
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
