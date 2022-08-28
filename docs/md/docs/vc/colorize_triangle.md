@@ -6,11 +6,11 @@ Colorize a triangle, defined by vertices `(vertex0=) (row0, col0)`, `(vertex1=)(
 colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
     this.rasterizeTriangle(
       row0, col0, row1, col1, row2, col2,
-      /*!*/({ pattern: xyza }) => color(xyza), // --> shoftware "fragment shader" colorizes the (row0, col0), (row1, col1), (row2, col2) triangle
+/*!*/      ({ pattern: xyza }) => color(xyza), // --> shoftware "fragment shader" colorizes the (row0, col0), (row1, col1), (row2, col2) triangle
       // vertex attributes to be interpolated (each encoded as an array):
-      /*!*/[red(color0), green(color0), blue(color0), alpha(color0)], // --> vertex0 color
-      /*!*/[red(color1), green(color1), blue(color1), alpha(color1)], // --> vertex1 color
-      /*!*/[red(color2), green(color2), blue(color2), alpha(color2)] // --> vertex2 color
+/*!*/      [red(color0), green(color0), blue(color0), alpha(color0)], // --> vertex0 color
+/*!*/      [red(color1), green(color1), blue(color1), alpha(color1)], // --> vertex1 color
+/*!*/      [red(color2), green(color2), blue(color2), alpha(color2)] // --> vertex2 color
     );
 }
 ```
