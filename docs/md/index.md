@@ -10,7 +10,7 @@
 > > let image;
 > > 
 > > function preload() {
-> >   image = loadImage('/p5.quadrille.js/docs/sketches/mahakala.jpg');
+> >   image = loadImage('mahakala.jpg');
 > > }
 > > 
 > > function setup() {
