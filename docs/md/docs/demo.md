@@ -37,7 +37,7 @@
 > let al;
 > 
 > function preload() {
->   al = loadImage('/p5.quadrille.js/docs/sketches/abraham_lincoln.jpg');
+>   al = loadImage('abraham_lincoln.jpg');
 > }
 > 
 > function setup() {
