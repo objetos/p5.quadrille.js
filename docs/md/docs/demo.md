@@ -127,7 +127,7 @@ This demo displays two quadrilles: a static `board` and an interactive `quadrill
 
 ## Creation
 
-Different forms of the introduced [p5.js](https://p5js.org/) [createQuadrille](/docs/p5-fx/create_quadrille) command are used to instantiate some quadrilles. Both the `board` and the `quadrille` (using the implemented `active` function) are created in the [setup](https://p5js.org/reference/#/p5/setup):
+Different forms of the [p5.js](https://p5js.org/) [createQuadrille](/docs/p5-fx/create_quadrille) command are used to instantiate some quadrilles. Both the `board` and the `quadrille` (using the implemented `active` function) are created in the [setup](https://p5js.org/reference/#/p5/setup):
 
 ```js | excerpt from demo.js
 const ROWS = 20;
