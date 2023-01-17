@@ -112,7 +112,7 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Image | p5.Color  Array | string | number} pattern used to fill the returned quadrille.
+   * @param {p5.Image | p5.Graphics | p5.Color  Array | string | number} pattern used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
@@ -214,7 +214,7 @@ class Quadrille {
   _format(memory1D, size) {
     for (let i = 0; i < memory1D.length; i++) {
       if (typeof memory1D[i] !== 'number' && typeof memory1D[i] !== 'string' && !Array.isArray(memory1D[i])
-        && !(memory1D[i] instanceof p5.Color) && !(memory1D[i] instanceof p5.Image)) {
+        && !(memory1D[i] instanceof p5.Color) && !(memory1D[i] instanceof p5.Image) && !(memory1D[i] instanceof p5.Graphics)) {
         memory1D[i] = 0;
       }
     }
@@ -320,13 +320,13 @@ class Quadrille {
   }
 
   /**
-   * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
+   * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,
-   * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Color,
-   * a 4-length color array, a string or a number.
+   * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Graphics,
+   * p5.Color, a 4-length color array, a string or a number.
    */
   from() {
-    if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
+    if (arguments.length === 1 && (arguments[0] instanceof p5.Image || arguments[0] instanceof p5.Graphics)) {
       // a. image
       /*
       // 1st method uses image.resize
@@ -440,8 +440,8 @@ class Quadrille {
   // TODO isPolyomino
 
   /**
-   * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be
-   * either a p5.Image, p5.Color, a 4-length color array, a string or a number.
+   * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be either
+   * a p5.Image, p5.Graphics, p5.Color, a 4-length color array, a string or a number.
    */
   replace(pattern1, pattern2) {
     for (let i = 0; i < this.height; i++) {
@@ -458,7 +458,8 @@ class Quadrille {
    * 1. fill(pattern), fills current filled cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * pattern may be either a p5.Image, a p5.Color, a 4-length color array, a string or a number.
+   * pattern may be either a p5.Image, a p5.Graphics,
+   * a p5.Color, a 4-length color array, a string or a number.
    */
   fill() {
     if (arguments.length === 1) {
@@ -485,7 +486,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Color | Array | string | number} quadrille entry
+   * @returns {p5.Image | p5.Graphics | p5.Color | Array | string | number} quadrille entry
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
@@ -534,7 +535,7 @@ class Quadrille {
           let neighbour = this._memory2D[i][j];
           let mask_value = mask._memory2D[imask][jmask];
           if ((neighbour instanceof p5.Color || Array.isArray(neighbour)) &&
-            typeof mask_value !== 'string' && !(mask_value instanceof p5.Image)) {
+            typeof mask_value !== 'string' && !(mask_value instanceof p5.Image) && !(mask_value instanceof p5.Graphics)) {
             // luma coefficients are: 0.299, 0.587, 0.114, 0
             let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
             r += red(neighbour) * weight;
@@ -642,7 +643,7 @@ class Quadrille {
   /**
    * Randomly fills quadrille with pattern up to order.
    * @param {number} order 
-   * @param {p5.Image | p5.Color | Array | string | number} pattern 
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | string | number} pattern 
    * @see order
    */
   rand(order, pattern) {
@@ -801,7 +802,7 @@ class Quadrille {
     if (cell instanceof p5.Color || Array.isArray(cell)) {
       Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
-    else if (cell instanceof p5.Image) {
+    else if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
       Quadrille.IMAGE({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'string') {
@@ -995,7 +996,7 @@ class Quadrille {
           else if (cell instanceof p5.Color || Array.isArray(cell)) {
             Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
-          else if (cell instanceof p5.Image) {
+          else if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
             Quadrille.IMAGE({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'string') {

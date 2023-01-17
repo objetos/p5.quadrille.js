@@ -7,7 +7,8 @@ let animate = true;
 let al;
 
 function preload() {
-  al = loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/440px-Abraham_Lincoln_O-77_matte_collodion_print.jpg');
+  //al = loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/440px-Abraham_Lincoln_O-77_matte_collodion_print.jpg');
+  al = loadImage('p15.jpg');
 }
 
 function setup() {

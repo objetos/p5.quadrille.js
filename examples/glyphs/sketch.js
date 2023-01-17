@@ -1,29 +1,40 @@
+'use strict';
+
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-var t, I, T, L, Lbit, test;
-var quadrille;
-var clone;
-var x = 2, y = 2;
-var c;
+let t, I, T, L, Lbit, test;
+let quadrille;
+let clone;
+let x = 2, y = 2;
+let c;
+let pg;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+  let str = 'g';
+  let s = Quadrille.CELL_LENGTH * Quadrille.TEXT_ZOOM / str.length;
+  pg = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+  pg.noStroke();
+  pg.fill('red');
+  pg.textSize(s);
+  pg.textAlign(CENTER, CENTER);
+  pg.text(str, 0, 0, Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
   c = color('red');
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',             c ],
-                               [0,             color('#770811'), 0   ],
-                               ['g',           'o',             'l'  ]
-                              ]);
+  quadrille = createQuadrille([[color('cyan'), '👽', 0],
+  [0, '🤔', c],
+  [0, color('#770811'), 0],
+  [pg, 'o', 'l']
+  ]);
   T = createQuadrille([[0, c, 0],
-                       [c, c, 0],
-                       [0, c, 0],
-                      ]);
-  L = createQuadrille([ [c, 0, 0],
-                        [c, 0, 0],
-                        [c, 0, 0],
-                        [c, c, c],
-                       ]);
+  [c, c, 0],
+  [0, c, 0],
+  ]);
+  L = createQuadrille([[c, 0, 0],
+  [c, 0, 0],
+  [c, 0, 0],
+  [c, c, c],
+  ]);
   t = createQuadrille(3, 3);
   console.log(t.width, t.height);
   t.from(154, '👽');
@@ -48,20 +59,20 @@ function setup() {
     [0, c, 0, 0],
    ]);
    */
-   I = createQuadrille([
+  I = createQuadrille([
     [0, 0, 0, 0, 0, 0],
     [0, 0, c, 0, 0, 0],
     [0, 0, c, 0, 0, 0],
     [0, 0, c, 0, 0, 0],
     [0, 0, c, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
-   ]);
+  ]);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
-  drawQuadrille(I, {col:2, row:12, cellLength: LENGTH, outline:'blue'});
+  drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
+  drawQuadrille(I, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue' });
 }
 
 function keyPressed() {
