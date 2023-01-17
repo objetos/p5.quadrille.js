@@ -59,7 +59,7 @@ function draw() {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
     //graphics.background('white');
-    Quadrille.CHAR({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 3 });
+    Quadrille.STRING({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 3 });
     //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
     //image(graphics, 0, 0);
     /*

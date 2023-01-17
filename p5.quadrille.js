@@ -7,9 +7,14 @@ class Quadrille {
   static BACKGROUND = 'white';
 
   /**
-   * Default drawing char color.
+   * Default text drawing color.
    */
-  static CHAR_COLOR = 'cyan';
+  static TEXT_COLOR = 'cyan';
+
+  /**
+   * Default text drawing zoom.
+   */
+  static TEXT_ZOOM = 0.89;
 
   /**
   * Default drawing number color.
@@ -150,9 +155,9 @@ class Quadrille {
   /**
    * Constructs either an empty or a filled quadrille:
    * 1. Pass string.
-   * 2. Pass array or matrix of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
+   * 2. Pass array or matrix of patterns (p5 colors, 4-length color arrays, strings and numbers).
    * 3. Pass width and string.
-   * 4. Pass width and an array of patterns (p5 colors, 4-length color arrays, chars, emojis and numbers).
+   * 4. Pass width and an array of patterns (p5 colors, 4-length color arrays, strings and numbers).
    * 5. Pass width and heigth to construct and empty quadrille (filled with 0's).
    * 6. Pass width and image, to construct a quadrille filled image.
    * 7. Pass width, bitboard and pattern, to construct a quadrille filled with pattern from the given bitboard.
@@ -318,7 +323,7 @@ class Quadrille {
    * Converts image (p5.Image) or bitboard (integer) to quadrille. Forms:
    * 1. from(image); or,
    * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Color,
-   * a 4-length color array, a string (emoji) or a number.
+   * a 4-length color array, a string or a number.
    */
   from() {
     if (arguments.length === 1 && arguments[0] instanceof p5.Image) {
@@ -436,7 +441,7 @@ class Quadrille {
 
   /**
    * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be
-   * either a p5.Image, p5.Color, a 4-length color array, a string (emoji) or a number.
+   * either a p5.Image, p5.Color, a 4-length color array, a string or a number.
    */
   replace(pattern1, pattern2) {
     for (let i = 0; i < this.height; i++) {
@@ -453,7 +458,7 @@ class Quadrille {
    * 1. fill(pattern), fills current filled cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * pattern may be either a p5.Image, a p5.Color, a 4-length color array, a string (emoji) or a number.
+   * pattern may be either a p5.Image, a p5.Color, a 4-length color array, a string or a number.
    */
   fill() {
     if (arguments.length === 1) {
@@ -749,13 +754,13 @@ class Quadrille {
   /**
    * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
    */
-  sort({ mode = 'LUMA', target = 'magenta', ascending = true, charColor = 'black', background = this.BACKGROUND, cellLength = this.width, numberColor = this.numberColor, min = 0, max = 0 } = {}) {
+  sort({ mode = 'LUMA', target = 'magenta', ascending = true, textColor = 'black', background = this.BACKGROUND, cellLength = this.width, numberColor = this.numberColor, min = 0, max = 0 } = {}) {
     let memory1D = this.toArray();
     switch (mode) {
       case 'DISTANCE':
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
+          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
+          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -765,8 +770,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
+          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
+          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -775,8 +780,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, charColor: charColor, numberColor: numberColor, min: min, max: max });
+          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
+          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, numberColor: numberColor, min: min, max: max });
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -789,7 +794,7 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
-  static sample({ cell, charColor = 'black', background = this.BACKGROUND, cellLength = this.CELL_LENGTH, numberColor = this.numberColor, min = 0, max = 0 } = {}) {
+  static sample({ cell, textColor = 'black', background = this.BACKGROUND, cellLength = this.CELL_LENGTH, numberColor = this.numberColor, min = 0, max = 0 } = {}) {
     let r, g, b, a;
     let pg = createGraphics(cellLength, cellLength);
     pg.background(background);
@@ -800,7 +805,7 @@ class Quadrille {
       Quadrille.IMAGE({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'string') {
-      Quadrille.CHAR({ graphics: pg, charColor: charColor, outlineWeight: 0, cell: cell, cellLength: cellLength });
+      Quadrille.STRING({ graphics: pg, textColor: textColor, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (typeof cell === 'number') {
       Quadrille.NUMBER({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength, numberColor: numberColor, min: min, max: max });
@@ -862,20 +867,20 @@ class Quadrille {
   }
 
   /**
-   * Char cell drawing.
+   * String cell drawing.
    */
-  static CHAR({
+  static STRING({
     graphics,
     cell = '?',
-    charColor = this.CHAR_COLOR,
+    textColor = this.TEXT_COLOR,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.push();
     graphics.noStroke();
-    graphics.fill(charColor);
-    graphics.textSize(cellLength / cell.length);
+    graphics.fill(textColor);
+    graphics.textSize(cellLength * this.TEXT_ZOOM / cell.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
@@ -968,7 +973,7 @@ class Quadrille {
       cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = Quadrille.OUTLINE,
-      charColor = Quadrille.CHAR_COLOR,
+      textColor = Quadrille.TEXT_COLOR,
       board = false,
       numberColor = Quadrille.NUMBER_COLOR,
       min = 0,
@@ -994,7 +999,7 @@ class Quadrille {
             Quadrille.IMAGE({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'string') {
-            Quadrille.CHAR({ graphics: graphics, cell: cell, charColor: charColor, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+            Quadrille.STRING({ graphics: graphics, cell: cell, textColor: textColor, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'number') {
             Quadrille.NUMBER({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, numberColor: numberColor, min: min, max: max, cellLength: cellLength });
