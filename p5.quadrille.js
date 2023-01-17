@@ -875,7 +875,8 @@ class Quadrille {
     graphics.push();
     graphics.noStroke();
     graphics.fill(charColor);
-    graphics.textSize(cellLength);
+    graphics.textSize(cellLength / cell.length);
+    graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
     if (outlineWeight !== 0) {
@@ -945,7 +946,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '0.9.5',
+    VERSION: '1.0.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
