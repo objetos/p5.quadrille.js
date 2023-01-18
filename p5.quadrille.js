@@ -194,6 +194,11 @@ class Quadrille {
       this.from(arguments[1], arguments[2]);
       return;
     }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number' && typeof arguments[2] === 'boolean') {
+      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(0));
+      this.from(arguments[1], arguments[2]);
+      return;
+    }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
       this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
       this.rand(arguments[2], arguments[3]);
@@ -321,53 +326,20 @@ class Quadrille {
 
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
-   * 1. from(image); or,
+   * 1. from(image, [coherence = false]); or,
    * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Graphics,
    * p5.Color, a 4-length color array, a string or a number.
    */
   from() {
-    if (arguments.length === 1 && (arguments[0] instanceof p5.Image || arguments[0] instanceof p5.Graphics)) {
+    if (arguments.length === 0) {
+      console.warn('from always expects params');
+      return;
+    }
+    // a. image
+    if (arguments[0] instanceof p5.Image || arguments[0] instanceof p5.Graphics) {
       let image = new p5.Image(arguments[0].width, arguments[0].height);
       image.copy(arguments[0], 0, 0, arguments[0].width, arguments[0].height, 0, 0, arguments[0].width, arguments[0].height);
-      let coherence = true;
-      // a. image
-      if (coherence) {
-        // 1st method uses image.resize
-        image.resize(this.width, this.height);
-        image.loadPixels();
-        for (let i = 0; i < image.pixels.length / 4; i++) {
-          let r = image.pixels[4 * i];
-          let g = image.pixels[4 * i + 1];
-          let b = image.pixels[4 * i + 2];
-          let a = image.pixels[4 * i + 3];
-          let _ = this._fromIndex(i);
-          this._memory2D[_.row][_.col] = [r, g, b, a];
-        }
-      }
-      else {
-        // 2nd method seems to give better visual results
-        image.loadPixels();
-        let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
-        for (let i = 0; i < image.pixels.length / 4; i++) {
-          let _ = this._fromIndex(i, image.width);
-          let _i = Math.floor(_.row * this.height / image.height);
-          let _j = Math.floor(_.col * this.width / image.width);
-          r[_i][_j] += image.pixels[4 * i];
-          g[_i][_j] += image.pixels[4 * i + 1];
-          b[_i][_j] += image.pixels[4 * i + 2];
-          a[_i][_j] += image.pixels[4 * i + 3];
-          t[_i][_j] += 1;
-        }
-        for (let i = 0; i < this.height; i++) {
-          for (let j = 0; j < this.width; j++) {
-            this._memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
-          }
-        }
-      }
+      arguments.length === 1 ? this._pixelator2(image) : arguments[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // b. bitboard, pattern
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
@@ -380,6 +352,43 @@ class Quadrille {
         if ((bitboard & (1 << length - 1 - i))) {
           this._memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = arguments[1];
         }
+      }
+    }
+  }
+
+  _pixelator1(image) {
+    image.resize(this.width, this.height);
+    image.loadPixels();
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let r = image.pixels[4 * i];
+      let g = image.pixels[4 * i + 1];
+      let b = image.pixels[4 * i + 2];
+      let a = image.pixels[4 * i + 3];
+      let _ = this._fromIndex(i);
+      this._memory2D[_.row][_.col] = [r, g, b, a];
+    }
+  }
+
+  _pixelator2(image) {
+    image.loadPixels();
+    let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let _ = this._fromIndex(i, image.width);
+      let _i = Math.floor(_.row * this.height / image.height);
+      let _j = Math.floor(_.col * this.width / image.width);
+      r[_i][_j] += image.pixels[4 * i];
+      g[_i][_j] += image.pixels[4 * i + 1];
+      b[_i][_j] += image.pixels[4 * i + 2];
+      a[_i][_j] += image.pixels[4 * i + 3];
+      t[_i][_j] += 1;
+    }
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        this._memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
       }
     }
   }

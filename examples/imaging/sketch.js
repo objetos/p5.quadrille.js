@@ -17,14 +17,12 @@ function setup() {
   pg = createGraphics(i.width, i.height);
   //pg.image(i, 0, 0, 400, 200);
   pg.image(i, 0, 0);
-  console.log('cl', Quadrille.CELL_LENGTH);
   Quadrille.CELL_LENGTH = 8;
-  console.log('cl', Quadrille.CELL_LENGTH);
   Quadrille.OUTLINE_WEIGHT = 0.5;
   //Quadrille.SPATIAL_COHERENCE = false;
   i_quadrille = createQuadrille(50, i);
   //Quadrille.SPATIAL_COHERENCE = true;
-  pg_quadrille = createQuadrille(50, pg);
+  pg_quadrille = createQuadrille(50, pg, true);
 }
 
 function draw() {
