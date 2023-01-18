@@ -327,50 +327,47 @@ class Quadrille {
    */
   from() {
     if (arguments.length === 1 && (arguments[0] instanceof p5.Image || arguments[0] instanceof p5.Graphics)) {
-      // a. image
-      /*
-      // 1st method uses image.resize
       let image = new p5.Image(arguments[0].width, arguments[0].height);
-      image.copy(arguments[0], 0, 0, arguments[0].width, arguments[0].height,
-                               0, 0, arguments[0].width, arguments[0].height);
-      image.resize(this.width, this.height);
-      image.loadPixels();
-      for (let i = 0; i < image.pixels.length / 4; i++) {
-        let r = image.pixels[4 * i];
-        let g = image.pixels[4 * i + 1];
-        let b = image.pixels[4 * i + 2];
-        let a = image.pixels[4 * i + 3];
-        let _ = this._fromIndex(i);
-        this._memory2D[_.row][_.col] = [r, g, b, a];
-      }
-      image.updatePixels();
-      // */
-      // /*
-      // 2nd method seems to give better visual results
-      let image = arguments[0];
-      image.loadPixels();
-      let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
-      for (let i = 0; i < image.pixels.length / 4; i++) {
-        let _ = this._fromIndex(i, image.width);
-        let _i = Math.floor(_.row * this.height / image.height);
-        let _j = Math.floor(_.col * this.width / image.width);
-        r[_i][_j] += image.pixels[4 * i];
-        g[_i][_j] += image.pixels[4 * i + 1];
-        b[_i][_j] += image.pixels[4 * i + 2];
-        a[_i][_j] += image.pixels[4 * i + 3];
-        t[_i][_j] += 1;
-      }
-      image.updatePixels();
-      for (let i = 0; i < this.height; i++) {
-        for (let j = 0; j < this.width; j++) {
-          this._memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
+      image.copy(arguments[0], 0, 0, arguments[0].width, arguments[0].height, 0, 0, arguments[0].width, arguments[0].height);
+      let coherence = true;
+      // a. image
+      if (coherence) {
+        // 1st method uses image.resize
+        image.resize(this.width, this.height);
+        image.loadPixels();
+        for (let i = 0; i < image.pixels.length / 4; i++) {
+          let r = image.pixels[4 * i];
+          let g = image.pixels[4 * i + 1];
+          let b = image.pixels[4 * i + 2];
+          let a = image.pixels[4 * i + 3];
+          let _ = this._fromIndex(i);
+          this._memory2D[_.row][_.col] = [r, g, b, a];
         }
       }
-      // */
+      else {
+        // 2nd method seems to give better visual results
+        image.loadPixels();
+        let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+        for (let i = 0; i < image.pixels.length / 4; i++) {
+          let _ = this._fromIndex(i, image.width);
+          let _i = Math.floor(_.row * this.height / image.height);
+          let _j = Math.floor(_.col * this.width / image.width);
+          r[_i][_j] += image.pixels[4 * i];
+          g[_i][_j] += image.pixels[4 * i + 1];
+          b[_i][_j] += image.pixels[4 * i + 2];
+          a[_i][_j] += image.pixels[4 * i + 3];
+          t[_i][_j] += 1;
+        }
+        for (let i = 0; i < this.height; i++) {
+          for (let j = 0; j < this.width; j++) {
+            this._memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
+          }
+        }
+      }
     }
     // b. bitboard, pattern
     if (arguments.length === 2 && typeof arguments[0] === 'number') {

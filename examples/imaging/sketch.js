@@ -1,42 +1,37 @@
-//var scl = 20;
-var scl = 0;
-var quadrille;
-var image;
+'use strict';
+
+let i_quadrille;
+let pg_quadrille;
+let i;
+let pg;
+let mode = 0;
 
 function preload() {
-  // 1024x438
-  image = loadImage('mahakala.jpg');
-  // 300x300
-  //image = loadImage('abraham_lincoln.jpg');
+  //console.log(i.width, i.height); // 1024x512
+  //i = loadImage('mahakala.jpg');
+  i = loadImage('a6.png');
 }
 
 function setup() {
-  createCanvas(800, 800);
-  //console.log(image.width, image.height);
-  quadrille = createQuadrille(40 * (2 ** scl), image);
+  createCanvas(400, 400);
+  pg = createGraphics(i.width, i.height);
+  //pg.image(i, 0, 0, 400, 200);
+  pg.image(i, 0, 0);
+  console.log('cl', Quadrille.CELL_LENGTH);
+  Quadrille.CELL_LENGTH = 8;
+  console.log('cl', Quadrille.CELL_LENGTH);
+  Quadrille.OUTLINE_WEIGHT = 0.5;
+  //Quadrille.SPATIAL_COHERENCE = false;
+  i_quadrille = createQuadrille(50, i);
+  //Quadrille.SPATIAL_COHERENCE = true;
+  pg_quadrille = createQuadrille(50, pg);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille,
-    {
-      cellLength: 20 / (2 ** scl),
-      outlineWeight: 1.6 / (2 ** scl),
-    });
+  mode === 0 ? image(pg, 0, 0) : mode === 1 ? image(i, 0, 0) : mode === 2 ? drawQuadrille(i_quadrille, { outline: 'blue' }) : drawQuadrille(pg_quadrille, { outline: 'red' });
 }
 
 function keyPressed() {
-  scl = scl < 3 ? scl + 1 : 0;
-  quadrille = createQuadrille(40 * (2 ** scl), image);
-  /*
-  if (frameCount % 300 === 0) {
-    scl = scl < 3 ? scl + 1 : 0;
-    quadrille = createQuadrille(40 * (2 ** scl), image);
-  }
-  if (keyCode === UP_ARROW) {
-    quadrille.reflect();
-  } else if (keyCode === DOWN_ARROW) {
-    quadrille.rotate();
-  }
-  */
+  mode = parseInt(key);
 }
