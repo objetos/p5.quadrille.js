@@ -4,7 +4,7 @@
 
 # Syntax
 
-> `drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [tile], [contour], [cellLength], [outlineWeight], [outline], [textColor], [board], [numberColor], [min], [max]}])`
+> `drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [tile], [contour], [cellLength], [outlineWeight], [outline], [textColor], [textZoom], [board], [numberColor], [min], [max]}])`
 
 # Parameters
 
@@ -22,6 +22,7 @@
 | outlineWeight | Number: edge weight defaut is `2`. Use `0` to discard all edges                                         |
 | outline       | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: edge color default is `magenta`       |
 | textColor     | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: text color default is `cyan`          |
+| textZoom      | Number:: text zoom level default is `0.89`                                                              |
 | board         | Boolean: draw all cell edges no matter some of them are empty default is `false`                        |
 | numberColor   | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: number color default is `orange`      |
 | min           | Number: remap cell alpha when its entry is a number from [min, max] to [0, 255] number default is `0`   |
