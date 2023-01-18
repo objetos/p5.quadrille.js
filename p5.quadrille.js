@@ -880,6 +880,7 @@ class Quadrille {
     graphics,
     cell = '?',
     textColor = this.TEXT_COLOR,
+    textZoom = this.TEXT_ZOOM,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
@@ -887,7 +888,7 @@ class Quadrille {
     graphics.push();
     graphics.noStroke();
     graphics.fill(textColor);
-    graphics.textSize(cellLength * this.TEXT_ZOOM / cell.length);
+    graphics.textSize(cellLength * textZoom / cell.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
@@ -958,7 +959,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.0.0',
+    VERSION: '1.0.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -981,6 +982,7 @@ class Quadrille {
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = Quadrille.OUTLINE,
       textColor = Quadrille.TEXT_COLOR,
+      textZoom = Quadrille.TEXT_ZOOM,
       board = false,
       numberColor = Quadrille.NUMBER_COLOR,
       min = 0,
@@ -1006,7 +1008,7 @@ class Quadrille {
             Quadrille.IMAGE({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'string') {
-            Quadrille.STRING({ graphics: graphics, cell: cell, textColor: textColor, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+            Quadrille.STRING({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (typeof cell === 'number') {
             Quadrille.NUMBER({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, numberColor: numberColor, min: min, max: max, cellLength: cellLength });

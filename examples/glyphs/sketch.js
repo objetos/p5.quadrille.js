@@ -71,7 +71,7 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
+  drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green', textZoom: 0.6 });
   drawQuadrille(I, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue' });
 }
 
