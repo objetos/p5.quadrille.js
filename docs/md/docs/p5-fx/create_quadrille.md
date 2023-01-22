@@ -26,8 +26,8 @@
 
 | <!-- -->  | <!-- -->                                                                                                                                                                      |
 |-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| matrix    | 2D array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars (1-length strings) |
-| array     | array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and chars (1-length strings)    |
+| matrix    | 2D array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and strings                  |
+| array     | array: containing any combination of numbers (0's for empty cells), 4-length color arrays, [p5 colors](https://p5js.org/reference/#/p5.Color) and strings                     |
 | string    | String: containing any combination of chars                                                                                                                                   |
 | width     | Number: total number of columns                                                                                                                                               |
 | height    | Number: total number of rows                                                                                                                                                  |
