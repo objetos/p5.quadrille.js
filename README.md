@@ -12,7 +12,9 @@
     - [Geometry transformations](#geometry-transformations)
     - [I/O](#io)
     - [Visual Computing](#visual-computing)
-  - [Static methods](#static-methods)
+  - [Static variables and methods](#static-variables-and-methods)
+    - [Variables](#variables)
+    - [Methods](#methods-1)
 - [Installation](#installation)
 - [vs-code \& vs-codium \& gitpod hacking instructions](#vs-code--vs-codium--gitpod-hacking-instructions)
 
@@ -41,7 +43,7 @@
 
 ## drawQuadrille
 
-`drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [tile], [contour], [cellLength], [outlineWeight], [outline], [textColor], [textZoom], [board], [numberColor], [min], [max]}])`
+`drawQuadrille(quadrille, [{[graphics=this], [pixelX=0], [pixelY=0], [row=0], [col=0], [tile], [contour], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM], [board=false], [numberColor=Quadrille.NUMBER_COLOR], [min=0], [max=0]}])`
 
 **Observations**
 
@@ -59,7 +61,7 @@
 
 ### Conversion between representations
 
-1. `from(image, [coherence])`, `from(`[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`: fills quadrille cells with given `image` or `[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)` using `pattern`, resp.
+1. `from(image, [coherence=false])`, `from(`[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`: fills quadrille cells with given `image` or `bitboard` using `pattern`, resp.
 2. `toArray()`: returns a [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order) array of the quadrille cells. The resulting array has `quadrille.width * quadrille.height` dimensions.
 3. `toInt()`: returns the integer representation of the quadrille cells using [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
 4. `toMatrix()`: returns a [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order) matrix of the quadrille cells. The resulting 2D array has `quadrille.width * quadrille.height` dimensions.
@@ -85,10 +87,10 @@
 
 ### Visual Computing
 
-1. `colorize(color0, [color1], [color2], [color3])`: colorizes the quadrille according to upper-left corner `color0`, bottom-left corner `color1`, upper-right corner `color2`, and bottom-right corner `color3` colors.
-2. `colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, [color1], [color2])`: colorizes the triangle defined by vertices `(vertex0=) (row0, col0)`, `(vertex1=)(row1, col1)`, and `(vertex2=)(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/) to interpolate `color0`, `color1` and `color2`. Implemented as:
+1. `colorize(color0, [color1=color0], [color2=color0], [color3=color0])`: colorizes the quadrille according to upper-left corner `color0`, bottom-left corner `color1`, upper-right corner `color2`, and bottom-right corner `color3` colors.
+2. `colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, [color1=color0], [color2=color0])`: colorizes the triangle defined by vertices `(vertex0=) (row0, col0)`, `(vertex1=)(row1, col1)`, and `(vertex2=)(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/) to interpolate `color0`, `color1` and `color2`. Implemented as:
     ```js
-    colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
+    colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1=color0, color2=color0) {
       this.rasterizeTriangle(
         row0, col0, row1, col1, row2, col2,
         ({ pattern: xyza }) => color(xyza), // fragment shader colorizes (row0, col0), (row1, col1), (row2, col2) triangle
@@ -99,17 +101,29 @@
       );
     }
     ```
-3. `filter(mask, [row, col])`: applies [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) filter either to the whole quadrille or at specific `(row, col)` cell.
-4. `sort([{[mode], [target], [ascending], [textColor], [textZoom], [outline], [background], [numberColor], [min], [max]}])`: sorts quadrille cells according to their coloring. `mode` is either `LUMA`, `AVG`, or `DISTANCE` (default is `LUMA`), `target` a color and `ascending` a boolean. Remaining params defined as within the [`drawQuadrille`](#p5-functions) function.
-5. `rasterize(shader, pattern0, [pattern1], [pattern2], [pattern3])`: rasterizes the quadrille according to upper-left corner vertex `pattern0`, bottom-left corner vertex `pattern1`, upper-right corner vertex `pattern2`, and bottom-right corner vertex `pattern3`,  using (fragment) `shader`.
-6. `rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, pattern0, [pattern1], [pattern2])`: rasterizes the triangle defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). The user provided [software rendered](https://en.wikipedia.org/wiki/Software_rendering) [(fragment) shader](https://en.wikipedia.org/wiki/Shader) is a function parameterized with the object literal `{ pattern: interpolated_data_array, row: i, col: j }` and that should return a [p5.Color](https://p5js.org/reference/#/p5.Color).
+3. `filter(mask, [row=0, col=0])`: applies [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) filter either to the whole quadrille or at specific `(row, col)` cell.
+4. `sort([{[mode='LUMA'], [target='magenta'], [ascending=true], [textColor='black'], [textZoom=Quadrille.TEXT_ZOOM], [background=Quadrille.BACKGROUND], [cellLength=this.width], [numberColor=Quadrille.numberColor], [min=0], [max=0]}])`: sorts quadrille cells according to their coloring. `mode` is either `'LUMA'`, `'AVG'`, or `'DISTANCE'`, `target` a color and `ascending` a boolean. Remaining params defined as within the [`drawQuadrille`](#p5-functions) function.
+5. `rasterize(shader, pattern0, [pattern1=pattern0], [pattern2=pattern0], [pattern3=pattern0])`: rasterizes the quadrille according to upper-left corner vertex `pattern0`, bottom-left corner vertex `pattern1`, upper-right corner vertex `pattern2`, and bottom-right corner vertex `pattern3`,  using (fragment) `shader`.
+6. `rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, pattern0, [pattern1=pattern0], [pattern2=pattern0])`: rasterizes the triangle defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). The user provided [software rendered](https://en.wikipedia.org/wiki/Software_rendering) [(fragment) shader](https://en.wikipedia.org/wiki/Shader) is a function parameterized with the object literal `{ pattern: interpolated_data_array, row: i, col: j }` and that should return a [p5.Color](https://p5js.org/reference/#/p5.Color).
 
-## Static methods
+## Static variables and methods
 
-1. `Quadrille.AND(quadrille1, quadrille2, [row], [col])`: returns the quadrille obtained from the *intersection* of the two given quadrilles.
-2. `Quadrille.DIFF(quadrille1, quadrille2, [row], [col])`: returns the quadrille obtained from the *difference* of the two given quadrilles.
+### Variables
+
+1. `Quadrille.BACKGROUND='white'`: Default background used in sort.
+2. `Quadrille.TEXT_COLOR='cyan'`: Default text drawing color.
+3. `Quadrille.TEXT_ZOOM=0.89`: Default text drawing zoom.
+4. `Quadrille.NUMBER_COLOR='orange'`: Default drawing number color.
+5. `Quadrille.OUTLINE='magenta'`: Default drawing outline.
+6. `Quadrille.OUTLINE_WEIGHT=2`: Default drawing outline weight.
+7. `Quadrille.CELL_LENGTH=100`: Default drawing cell length.
+
+### Methods
+
+1. `Quadrille.AND(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *intersection* of the two given quadrilles.
+2. `Quadrille.DIFF(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *difference* of the two given quadrilles.
 3. `Quadrille.NEG(quadrille, pattern)`: returns the quadrille obtained from clearing the `quadrille` filled cells and filling its empty cells with `pattern`.
-4. `Quadrille.OP(quadrille1, quadrille2, operator, [row], [col])`: returns the quadrille obtained after applying the given logical operator between the two given quadrilles. This method is useful to implement the other _high-level_ logical operators. For instance the [AND](/docs/logic/and) operator is implemented as follows:
+4. `Quadrille.OP(quadrille1, quadrille2, operator, [row=0], [col=0])`: returns the quadrille obtained after applying the given logical operator between the two given quadrilles. This method is useful to implement the other _high-level_ logical operators. For instance the [AND](/docs/logic/and) operator is implemented as follows:
     ```js
     static AND(quadrille1, quadrille2, row=0, col=0) {
       return this.OP(quadrille1, quadrille2,
@@ -121,8 +135,8 @@
         row, col);
     }
     ```
-5. `Quadrille.OR(quadrille1, quadrille2, [row], [col])`: returns the quadrille obtained from the *union* of the two given quadrilles.
-6. `Quadrille.XOR(quadrille1, quadrille2, [row], [col])`: returns the quadrille obtained from the *intersection* minus the *union* of the two given quadrilles.
+5. `Quadrille.OR(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *union* of the two given quadrilles.
+6. `Quadrille.XOR(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *intersection* minus the *union* of the two given quadrilles.
 
 # Installation
 
