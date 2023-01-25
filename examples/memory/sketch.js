@@ -3,7 +3,7 @@ const COLS = 10;
 const LENGTH = 20;
 var quadrille, other;
 var board;
-var x = 2, y = 2;
+var col = 2, row = 2;
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
@@ -23,7 +23,7 @@ function setup() {
 function draw() {
   background(/*'#060621'*/ '#007ACC');
   drawQuadrille(board, {cellLength: LENGTH, outline: 'blue', board: true});
-  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outline: 'green'});
+  drawQuadrille(quadrille, {x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: 'green'});
 }
 
 function keyPressed() {
@@ -37,28 +37,28 @@ function keyPressed() {
     quadrille.transpose();
   }
   if (key === 'a') {
-    x--;
+    col--;
   }
   if (key === 's') {
-    x++;
+    col++;
   }
   if (key === 'w') {
-    y--;
+    row--;
   }
   if (key === 'z') {
-    y++;
+    row++;
   }
   if (key === 'g') {
-    board = Quadrille.OR(board, quadrille, y, x);
+    board = Quadrille.OR(board, quadrille, row, col);
   }
   if (key === 't') {
-    board = Quadrille.AND(board, quadrille, y, x);
+    board = Quadrille.AND(board, quadrille, row, col);
   }
   if (key === 'x') {
-    board = Quadrille.XOR(board, quadrille, y, x);
+    board = Quadrille.XOR(board, quadrille, row, col);
   }
   if (key === 'd') {
-    board = Quadrille.DIFF(board, quadrille, y, x);
+    board = Quadrille.DIFF(board, quadrille, row, col);
   }
   if (key === 'p') {
     console.log('width', board.width);

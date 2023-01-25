@@ -1001,10 +1001,8 @@ class Quadrille {
   p5.prototype.drawQuadrille = function (quadrille,
     {
       graphics = this,
-      pixelX = 0,
-      pixelY = 0,
-      row = 0,
-      col = 0,
+      x = 0,
+      y = 0,
       // TODO: tile -> cell; contour -> void?
       tile,
       contour,
@@ -1019,7 +1017,7 @@ class Quadrille {
       max = 0
     } = {}) {
     graphics.push();
-    graphics.translate(pixelX > 0 ? pixelX : col * cellLength, pixelY > 0 ? pixelY : row * cellLength);
+    graphics.translate(x, y);
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         graphics.push();

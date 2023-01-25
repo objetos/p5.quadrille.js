@@ -3,7 +3,7 @@ const COLS = 10;
 const LENGTH = 20;
 var r, T, L;
 var quadrille;
-var x = 2, y = 2;
+var col = 2, row = 2;
 var c;
 
 function setup() {
@@ -35,8 +35,8 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, {col: 2, row: 12, cellLength: LENGTH, outline: 'green'});
-  drawQuadrille(r, {col: x, row: y, cellLength: LENGTH, outline: 'blue', board: true});
+  drawQuadrille(quadrille, {x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'green'});
+  drawQuadrille(r, {x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: 'blue', board: true});
 }
 
 function keyPressed() {
@@ -49,16 +49,16 @@ function keyPressed() {
     r.clear();
   }
   if (key === 'a') {
-    x = x > 0 ? x - 1 : x;
+    col = col > 0 ? col - 1 : col;
   }
   if (key === 's') {
-    x = x < COLS - quadrille.width ? x + 1 : x;
+    col = col < COLS - quadrille.width ? col + 1 : col;
   }
   if (key === 'w') {
-    y = y > 0 ? y - 1 : y;
+    row = row > 0 ? row - 1 : row;
   }
   if (key === 'z') {
-    y = y < ROWS - quadrille.height ? y + 1 : y;
+    row = row < ROWS - quadrille.height ? row + 1 : row;
   }
   if (key == 'r') {
     r.rand(7, color('red'));

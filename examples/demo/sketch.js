@@ -123,7 +123,7 @@ function draw() {
     stick('u');
   }
   drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
-  drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined, textZoom: 0.5 });
+  drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: '#1EB2A6', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined, textZoom: 0.5 });
 }
 
 function animatePG() {
@@ -201,7 +201,7 @@ function active(value) {
     case 8:
       return createQuadrille([
         [c1, s3],
-        [0, s2, pg],
+        [null, s2, pg],
         [al, s1],
         [s2, c2, c3]
       ]);

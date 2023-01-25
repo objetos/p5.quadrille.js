@@ -3,9 +3,9 @@ const COLS = 20;
 const LENGTH = 20;
 var q1, q2, q3;
 var a2, a3;
-var x1 = 2, y1 = 2;
-var x2 = 8, y2 = 10;
-var x3 = 0, y3 = 0;
+var col1 = 2, row1 = 2;
+var col2 = 8, row2 = 10;
+var col3 = 0, row3 = 0;
 var c1, c2, c3;
 
 function setup() {
@@ -27,10 +27,10 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(q1, {col: x1, row: y1, cellLength: LENGTH, outline: 'green', board: true});
-  drawQuadrille(q2, {col: x2, row: y2, cellLength: LENGTH, outline: 'blue', board: true});
+  drawQuadrille(q1, {x: col1 * LENGTH, y: row1 * LENGTH, cellLength: LENGTH, outline: 'green', board: true});
+  drawQuadrille(q2, {x: col2 * LENGTH, y: row2 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true});
   if (q3) {
-    drawQuadrille(q3, {col: x3, row: y3, cellLength: LENGTH, board: true});
+    drawQuadrille(q3, {x: col3 * LENGTH, y: row3 * LENGTH, cellLength: LENGTH, board: true});
   }
 }
 
@@ -42,7 +42,7 @@ function keyPressed() {
   }
   if (key == 'c') {
     q3 = undefined;
-    x3 = y3 = 0;
+    col3 = row3 = 0;
     if (a3) {
       a3 = false;
     }
@@ -60,28 +60,28 @@ function keyPressed() {
     a3 = true;
   }
   if (key === 'a') {
-    a2 ? x2-- : a3 ? x3-- : x1--;
+    a2 ? col2-- : a3 ? col3-- : col1--;
   }
   if (key === 's') {
-    a2 ? x2++ : a3 ? x3++ : x1++;
+    a2 ? col2++ : a3 ? col3++ : col1++;
   }
   if (key === 'w') {
-    a2 ? y2-- : a3 ? y3-- : y1--;
+    a2 ? row2-- : a3 ? row3-- : row1--;
   }
   if (key === 'z') {
-    a2 ? y2++ : a3 ? y3++ : y1++;
+    a2 ? row2++ : a3 ? row3++ : row1++;
   }
   if (key === 'o') {
-    q3 = Quadrille.OR(q1, q2, y2-y1, x2-x1);
+    q3 = Quadrille.OR(q1, q2, row2-row1, col2-col1);
   }
   if (key === 'n') {
-    q3 = Quadrille.AND(q1, q2, y2-y1, x2-x1);
+    q3 = Quadrille.AND(q1, q2, row2-row1, col2-col1);
   }
   if (key === 'x') {
-    q3 = Quadrille.XOR(q1, q2, y2-y1, x2-x1);
+    q3 = Quadrille.XOR(q1, q2, row2-row1, col2-col1);
   }
   if (key === 'd') {
-    q3 = Quadrille.DIFF(q1, q2, y2-y1, x2-x1);
+    q3 = Quadrille.DIFF(q1, q2, row2-row1, col2-col1);
   }
   if (key == 'm') {
     q1.clear(1);
@@ -109,6 +109,6 @@ function keyPressed() {
     q1 = Quadrille.NEG(q1, color('green'));
   }
   if (key === 'p' && q3) {
-    console.log('y3', y3, 'x3', x3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
+    console.log('y3', row3, 'x3', col3, 'width', q3.width, 'height', q3.height, 'order', q3.order);
   }
 }

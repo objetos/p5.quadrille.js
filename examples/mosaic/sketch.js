@@ -2,7 +2,7 @@ const ROWS = 10;
 const COLS = 10;
 const LENGTH = 40;
 var quadrille;
-var x = 2, y = 2;
+var col = 2, row = 2;
 var c;
 var img1, img2;
 
@@ -21,7 +21,7 @@ function setup() {
 
 function draw() {
   background('#FDF6E3');
-  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outline: 'green'});
+  drawQuadrille(quadrille, {x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: 'green'});
 }
 
 function keyPressed() {
@@ -31,16 +31,16 @@ function keyPressed() {
     quadrille.rotate();
   }
   if (key === 'a') {
-    x = x > 0 ? x - 1 : x;
+    col = col > 0 ? col - 1 : col;
   }
   if (key === 's') {
-    x = x < COLS - quadrille.width ? x + 1 : x;
+    col = col < COLS - quadrille.width ? col + 1 : col;
   }
   if (key === 'w') {
-    y = y > 0 ? y - 1 : y;
+    row = row > 0 ? row - 1 : row;
   }
   if (key === 'z') {
-    y = y < ROWS - quadrille.height ? y + 1 : y;
+    row = row < ROWS - quadrille.height ? row + 1 : row;
   }
   if (key === 'r') {
     quadrille.randomize();

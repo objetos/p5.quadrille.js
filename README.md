@@ -43,7 +43,7 @@
 
 ## drawQuadrille
 
-`drawQuadrille(quadrille, [{[graphics=this], [pixelX=0], [pixelY=0], [row=0], [col=0], [tile], [contour], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM], [board=false], [numberColor=Quadrille.NUMBER_COLOR], [min=0], [max=0]}])`
+`drawQuadrille(quadrille, [{[graphics=this], [x=0], [y=0], [tile], [contour], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM], [board=false], [numberColor=Quadrille.NUMBER_COLOR], [min=0], [max=0]}])`
 
 **Observations**
 

@@ -4,7 +4,7 @@ const LENGTH = 20;
 let t, I, T, L, Lbit, test;
 let quadrille;
 let clone;
-let x = 2, y = 2;
+let col = 2, row = 2;
 let c;
 
 class Cuadricula extends Quadrille {
@@ -16,20 +16,20 @@ class Cuadricula extends Quadrille {
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c = color('red');
-  quadrille = new Cuadricula([[color('cyan'), '👽'                  ],
-                               [null,          '🤔',             c ],
-                               [null,          color('#770811')    ],
-                               ['g',           'o',             'l'  ]
-                              ]);
+  quadrille = new Cuadricula([[color('cyan'), '👽'],
+  [null, '🤔', c],
+  [null, color('#770811')],
+  ['g', 'o', 'l']
+  ]);
   T = new Cuadricula([[null, c, null],
-                       [c, c],
-                       [null, c],
-                      ]);
-  L = new Cuadricula([ [c],
-                        [c],
-                        [c],
-                        [c, c, c],
-                       ]);
+  [c, c],
+  [null, c],
+  ]);
+  L = new Cuadricula([[c],
+  [c],
+  [c],
+  [c, c, c],
+  ]);
   t = new Cuadricula(3, 3);
   console.log(t.width, t.height);
   t.from(154, '👽');
@@ -51,13 +51,13 @@ function setup() {
     [null, c],
     [null, c],
     [null, c],
-   ]);
+  ]);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
-  drawQuadrille(I, {col:2, row:12, cellLength: LENGTH, outline:'blue', board: true});
+  drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
+  drawQuadrille(I, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true });
 }
 
 function keyPressed() {
@@ -67,16 +67,16 @@ function keyPressed() {
     I.rotate();
   }
   if (key === 'a') {
-    x = x > 0 ? x - 1 : x;
+    col = col > 0 ? col - 1 : col;
   }
   if (key === 's') {
-    x = x < COLS - quadrille.width ? x + 1 : x;
+    col = col < COLS - quadrille.width ? col + 1 : col;
   }
   if (key === 'w') {
-    y = y > 0 ? y - 1 : y;
+    row = row > 0 ? row - 1 : row;
   }
   if (key === 'z') {
-    y = y < ROWS - quadrille.height ? y + 1 : y;
+    row = row < ROWS - quadrille.height ? row + 1 : row;
   }
   if (key === 't') {
     test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));

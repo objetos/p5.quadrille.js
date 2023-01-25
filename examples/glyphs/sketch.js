@@ -6,7 +6,7 @@ const LENGTH = 20;
 let t, I, T, L, Lbit, test;
 let quadrille;
 let clone;
-let x = 2, y = 2;
+let col = 2, row = 2;
 let c;
 let pg;
 
@@ -71,9 +71,9 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green', textZoom: 0.6 });
-  //drawQuadrille(I, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true });
-  drawQuadrille(test, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true });
+  drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outlineWeight: 2, outline: 'green', textZoom: 0.6 });
+  //drawQuadrille(I, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true });
+  drawQuadrille(test, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true });
 }
 
 function keyPressed() {
@@ -83,16 +83,16 @@ function keyPressed() {
     I.rotate();
   }
   if (key === 'a') {
-    x = x > 0 ? x - 1 : x;
+    col = col > 0 ? col - 1 : col;
   }
   if (key === 's') {
-    x = x < COLS - quadrille.width ? x + 1 : x;
+    col = col < COLS - quadrille.width ? col + 1 : col;
   }
   if (key === 'w') {
-    y = y > 0 ? y - 1 : y;
+    row = row > 0 ? row - 1 : row;
   }
   if (key === 'z') {
-    y = y < ROWS - quadrille.height ? y + 1 : y;
+    row = row < ROWS - quadrille.height ? row + 1 : row;
   }
   if (key === 't') {
     test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
