@@ -40,10 +40,10 @@ function setup() {
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
   // tesselation
-  ///*
-  tile = ({ cell: cell, outline: contour, cellLength: diameter }) => {
+  tile = ({ cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: diameter, textColor: textColor, textZoom: textZoom }) => {
     if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
-      ///*
+      push();
+      noStroke();
       let _al = new p5.Image(cell.width, cell.height);
       _al.copy(cell, 0, 0, cell.width, cell.height, 0, 0, cell.width, cell.height);
       let shape = createGraphics(cell.width, cell.height);
@@ -52,16 +52,35 @@ function setup() {
       shape.ellipse(0, 0, cell.width, cell.height);
       _al.mask(shape);
       image(_al, 0, 0, diameter, diameter);
+      pop();
     }
-    else {
+    else if (cell instanceof p5.Color) {
       push();
-      //cell instanceof p5.Image || cell instanceof p5.Graphics ? texture(al) : fill(contour);
-      fill(contour);
+      noStroke();
+      fill(cell);
       ellipseMode(CORNER);
       ellipse(0, 0, diameter, diameter);
       //circle(0, 0, diameter);
       pop();
     }
+    else if (typeof cell === 'string') {
+      push();
+      noStroke();
+      fill(textColor);
+      textSize(diameter * textZoom / cell.length);
+      textAlign(CENTER, CENTER);
+      //text('?', 0, 0, diameter, diameter);
+      text(cell, 0, 0, diameter, diameter);
+      pop();
+    }
+    push();
+    noFill();
+    stroke(outline);
+    strokeWeight(outlineWeight);
+    ellipseMode(CORNER);
+    ellipse(0, 0, diameter, diameter);
+    //circle(0, 0, diameter);
+    pop();
   };
   // */
   /*
@@ -74,10 +93,11 @@ function setup() {
   // */
   //tile: tile,
   ///*
-  contour = ({ outline: outline, cellLength: diameter }) => {
+  contour = ({ outline: outline, outlineWeight: outlineWeight, cellLength: diameter }) => {
     push();
     noFill();
     stroke(outline);
+    strokeWeight(outlineWeight);
     ellipseMode(CORNER);
     ellipse(0, 0, diameter, diameter);
     //circle(0, 0, diameter);
@@ -102,7 +122,7 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
+  //drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
   drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined, textZoom: 0.5 });
 }
 
@@ -166,7 +186,7 @@ function active(value) {
       return createQuadrille(w, h, int(random(1, w * h)), value === 3 ? al : c1);
     case 5:
     case 6:
-      return createQuadrille(4, int(random(1, 1048576)), value === 5 ? pg : s1 + s2);  
+      return createQuadrille(4, int(random(1, 1048576)), value === 5 ? pg : s1 + s2);
     case 7:
       return createQuadrille(5, s1 + s2 + s3);
     case 8:

@@ -365,7 +365,7 @@ class Quadrille {
       let b = image.pixels[4 * i + 2];
       let a = image.pixels[4 * i + 3];
       let _ = this._fromIndex(i);
-      this._memory2D[_.row][_.col] = [r, g, b, a];
+      this._memory2D[_.row][_.col] = color([r, g, b, a]);
     }
   }
 
@@ -388,7 +388,7 @@ class Quadrille {
     }
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
-        this._memory2D[i][j] = [r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]];
+        this._memory2D[i][j] = color([r[i][j] / t[i][j], g[i][j] / t[i][j], b[i][j] / t[i][j], a[i][j] / t[i][j]]);
       }
     }
   }
@@ -540,7 +540,7 @@ class Quadrille {
           let j = col + jmask - cache_half_size;
           let neighbour = this._memory2D[i][j];
           let mask_value = mask._memory2D[imask][jmask];
-          if ((neighbour instanceof p5.Color || Array.isArray(neighbour)) &&
+          if ((neighbour instanceof p5.Color) &&
             typeof mask_value !== 'string' && !(mask_value instanceof p5.Image) && !(mask_value instanceof p5.Graphics)) {
             // luma coefficients are: 0.299, 0.587, 0.114, 0
             let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
@@ -553,7 +553,6 @@ class Quadrille {
       r = constrain(r, 0, 255);
       g = constrain(g, 0, 255);
       b = constrain(b, 0, 255);
-      //this._memory2D[row][col] = [r, g, b];
       this._memory2D[row][col] = color(r, g, b);
     }
   }
@@ -805,7 +804,7 @@ class Quadrille {
     let r, g, b, a;
     let pg = createGraphics(cellLength, cellLength);
     pg.background(background);
-    if (cell instanceof p5.Color || Array.isArray(cell)) {
+    if (cell instanceof p5.Color) {
       Quadrille.COLOR({ graphics: pg, outlineWeight: 0, cell: cell, cellLength: cellLength });
     }
     else if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
@@ -959,7 +958,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.0.2',
+    VERSION: '1.1.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -976,6 +975,7 @@ class Quadrille {
       pixelY = 0,
       row = 0,
       col = 0,
+      // TODO: tile -> cell; contour -> void?
       tile,
       contour,
       cellLength = Quadrille.CELL_LENGTH,
@@ -995,13 +995,12 @@ class Quadrille {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
+        // TODO handle 0
         if (cell) {
           if (tile) {
-            tile({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, numberColor: numberColor, min: min, max: max });
+            tile({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, textColor: textColor, textZoom: textZoom, numberColor: numberColor, min: min, max: max });
           }
-          // Note that the Array.isArray(cell) condition should be rethought
-          // once 3D Quadrilles appear.
-          else if (cell instanceof p5.Color || Array.isArray(cell)) {
+          else if (cell instanceof p5.Color) {
             Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
           }
           else if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
@@ -1016,7 +1015,7 @@ class Quadrille {
         }
         else if (board) {
           if (contour) {
-            contour({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, numberColor: numberColor, min: min, max: max });
+            contour({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
           }
           else {
             Quadrille.FRAME({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
