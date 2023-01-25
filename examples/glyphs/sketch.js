@@ -21,18 +21,18 @@ function setup() {
   pg.textAlign(CENTER, CENTER);
   pg.text(str, 0, 0, Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
   c = color('red');
-  quadrille = createQuadrille([[color('cyan'), '👽', 0],
-  [0, '🤔', c],
-  [0, color('#770811'), 0],
+  quadrille = createQuadrille([[color('cyan'), '👽', null],
+  [null, '🤔', c],
+  [null, color('#770811')],
   [pg, 'o', 'l']
   ]);
-  T = createQuadrille([[0, c, 0],
-  [c, c, 0],
-  [0, c, 0],
+  T = createQuadrille([[null, c, null],
+  [c, c, null],
+  [null, c, null],
   ]);
-  L = createQuadrille([[c, 0, 0],
-  [c, 0, 0],
-  [c, 0, 0],
+  L = createQuadrille([[c],
+  [c],
+  [c],
   [c, c, c],
   ]);
   t = createQuadrille(3, 3);
@@ -53,26 +53,27 @@ function setup() {
   c.setBlue(255);
   /*
   I = createQuadrille([
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
+    [null, c, null],
+    [null, c],
+    [null, c],
+    [null, c],
    ]);
    */
   I = createQuadrille([
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
+    [null],
+    [null, null, c, null, null, null],
+    [null, null, c],
+    [null, null, c],
+    [null, null, c],
+    [null],
   ]);
 }
 
 function draw() {
   background('#060621');
   drawQuadrille(quadrille, { col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green', textZoom: 0.6 });
-  drawQuadrille(I, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue' });
+  //drawQuadrille(I, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true });
+  drawQuadrille(test, { col: 2, row: 12, cellLength: LENGTH, outline: 'blue', board: true });
 }
 
 function keyPressed() {

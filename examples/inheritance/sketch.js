@@ -16,18 +16,18 @@ class Cuadricula extends Quadrille {
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c = color('red');
-  quadrille = new Cuadricula([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',             c ],
-                               [0,             color('#770811'), 0   ],
+  quadrille = new Cuadricula([[color('cyan'), '👽'                  ],
+                               [null,          '🤔',             c ],
+                               [null,          color('#770811')    ],
                                ['g',           'o',             'l'  ]
                               ]);
-  T = new Cuadricula([[0, c, 0],
-                       [c, c, 0],
-                       [0, c, 0],
+  T = new Cuadricula([[null, c, null],
+                       [c, c],
+                       [null, c],
                       ]);
-  L = new Cuadricula([ [c, 0, 0],
-                        [c, 0, 0],
-                        [c, 0, 0],
+  L = new Cuadricula([ [c],
+                        [c],
+                        [c],
                         [c, c, c],
                        ]);
   t = new Cuadricula(3, 3);
@@ -46,28 +46,18 @@ function setup() {
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   c.setBlue(255);
-  /*
   I = createQuadrille([
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-   ]);
-   */
-   I = createQuadrille([
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
+    [null, c, null],
+    [null, c],
+    [null, c],
+    [null, c],
    ]);
 }
 
 function draw() {
   background('#060621');
   drawQuadrille(quadrille, {col: x, row: y, cellLength: LENGTH, outlineWeight: 2, outline: 'green'});
-  drawQuadrille(I, {col:2, row:12, cellLength: LENGTH, outline:'blue'});
+  drawQuadrille(I, {col:2, row:12, cellLength: LENGTH, outline:'blue', board: true});
 }
 
 function keyPressed() {

@@ -9,13 +9,13 @@ function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   board = createQuadrille(COLS, ROWS);
   quadrille = createQuadrille([[color('cyan'), '👽', 0],
-  [0, '🤔', '🙈'],
-  [0, color('#770811'), 0],
+  [null, '🤔', '🙈'],
+  [null, color('#770811')],
   ['g', 'o', 'l']
   ]);
-  other = createQuadrille([[0, 'k', 'g'],
-  [0, '🤔', '🙈'],
-  [0, color('#770811'), 0],
+  other = createQuadrille([[null, 'k', 'g'],
+  [null, '🤔', '🙈'],
+  [null, color('#770811')],
   ['g', 'o', 'l']
   ]);
 }

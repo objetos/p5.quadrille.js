@@ -12,18 +12,18 @@ var c;
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c = color('red');
-  quadrille = createQuadrille([[color('cyan'), '👽', 0],
-  [0, '🤔', c],
-  [0, color('#770811'), 0],
+  quadrille = createQuadrille([[color('cyan'), '👽', null],
+  [null, '🤔', c],
+  [null, color('#770811')],
   ['g', 'o', 'l']
   ]);
-  T = createQuadrille([[0, c, 0],
-  [c, c, 0],
-  [0, c, 0],
+  T = createQuadrille([[null, c, null],
+  [c, c],
+  [null, c],
   ]);
-  L = createQuadrille([[c, 0, 0],
-  [c, 0, 0],
-  [c, 0, 0],
+  L = createQuadrille([[c],
+  [c],
+  [c],
   [c, c, c],
   ]);
   t = createQuadrille(3, 3);
@@ -42,22 +42,12 @@ function setup() {
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   c.setBlue(255);
-  /*
   I = createQuadrille([
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
+    [null, c, null, null],
+    [null, c],
+    [null, c],
+    [null, c],
    ]);
-   */
-  I = createQuadrille([
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-  ]);
 }
 
 function draw() {

@@ -13,14 +13,14 @@ function setup() {
   c1 = color('cyan');
   c2 = color('yellow');
   c3 = color('#FBBC04');
-  q1 = createQuadrille([[c1, c1, 0],
-                        [0,  c1, c1],
-                        [0,  c1, 0],
+  q1 = createQuadrille([[c1, c1],
+                        [null,  c1, c1],
+                        [null,  c1],
                         [c1, c1, c1]
                        ]);
-  q2 = createQuadrille([[0,  c2],
+  q2 = createQuadrille([[null,  c2],
                         [c2, c2],
-                        [0,  c2],
+                        [null,  c2],
                         [c2, c2]
                        ]);
 }

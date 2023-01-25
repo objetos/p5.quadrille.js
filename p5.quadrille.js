@@ -116,10 +116,11 @@ class Quadrille {
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
+    if (pattern === null || pattern === undefined) return;
     let result = new Quadrille(quadrille.width, quadrille.height);
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
-        if (!quadrille._memory2D[i][j]) {
+        if (quadrille._memory2D[i][j] === null || quadrille._memory2D[i][j] === undefined) {
           result._memory2D[i][j] = pattern;
         }
       }
@@ -143,7 +144,7 @@ class Quadrille {
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
-        if (result) {
+        if (result !== undefined) {
           quadrille._memory2D[i][j] = result;
         }
       }
@@ -158,7 +159,7 @@ class Quadrille {
    * 2. Pass array or matrix of patterns (p5 colors, 4-length color arrays, strings and numbers).
    * 3. Pass width and string.
    * 4. Pass width and an array of patterns (p5 colors, 4-length color arrays, strings and numbers).
-   * 5. Pass width and heigth to construct and empty quadrille (filled with 0's).
+   * 5. Pass width and heigth to construct and empty quadrille (filled with null's).
    * 6. Pass width and image, to construct a quadrille filled image.
    * 7. Pass width, bitboard and pattern, to construct a quadrille filled with pattern from the given bitboard.
    * 8. Pass width, height, order and pattern, to construct a quadrille filled with pattern of the given order.
@@ -181,26 +182,26 @@ class Quadrille {
       }
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(null));
       return;
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number') {
-      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(null));
       this.from(arguments[1]);
       return;
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(null));
       this.from(arguments[1], arguments[2]);
       return;
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number' && typeof arguments[2] === 'boolean') {
-      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(null));
       this.from(arguments[1], arguments[2]);
       return;
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
-      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(0));
+      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(null));
       this.rand(arguments[2], arguments[3]);
       return;
     }
@@ -218,13 +219,12 @@ class Quadrille {
 
   _format(memory1D, size) {
     for (let i = 0; i < memory1D.length; i++) {
-      if (typeof memory1D[i] !== 'number' && typeof memory1D[i] !== 'string' && !Array.isArray(memory1D[i])
-        && !(memory1D[i] instanceof p5.Color) && !(memory1D[i] instanceof p5.Image) && !(memory1D[i] instanceof p5.Graphics)) {
-        memory1D[i] = 0;
+      if (memory1D[i] === undefined) {
+        memory1D[i] = null;
       }
     }
     if (memory1D.length < size) {
-      return memory1D.concat(new Array(size - memory1D.length).fill(0));
+      return memory1D.concat(new Array(size - memory1D.length).fill(null));
     }
     return memory1D;
   }
@@ -316,7 +316,7 @@ class Quadrille {
     let result = 0;
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
-        if (this._memory2D[i][j]) {
+        if (this._memory2D[i][j] !== null && this._memory2D[i][j] !== undefined) {
           result++;
         }
       }
@@ -342,7 +342,7 @@ class Quadrille {
       arguments.length === 1 ? this._pixelator2(image) : arguments[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // b. bitboard, pattern
-    if (arguments.length === 2 && typeof arguments[0] === 'number') {
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && arguments[1] !== null && arguments[1] !== undefined) {
       let length = this.width * this.height;
       let bitboard = Math.abs(Math.round(arguments[0]));
       if (bitboard.toString(2).length > length) {
@@ -371,11 +371,11 @@ class Quadrille {
 
   _pixelator2(image) {
     image.loadPixels();
-    let r = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let g = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let b = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let a = Array(this.height).fill().map(() => Array(this.width).fill(0));
-    let t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    let r = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let g = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let b = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let a = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let t = Array(this.height).fill().map(() => Array(this.width).fill(null));
     for (let i = 0; i < image.pixels.length / 4; i++) {
       let _ = this._fromIndex(i, image.width);
       let _i = Math.floor(_.row * this.height / image.height);
@@ -409,7 +409,7 @@ class Quadrille {
     let result = 0;
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
-        if (this._memory2D[i][j]) {
+        if (this._memory2D[i][j] !== null && this._memory2D[i][j] !== undefined) {
           result += Math.pow(2, this.width * (this.height - i) - (j + 1));
         }
       }
@@ -446,14 +446,28 @@ class Quadrille {
   // TODO isPolyomino
 
   /**
-   * Search pattern1 and replaces with pattern2, pattern1 and pattern2 may be either
-   * a p5.Image, p5.Graphics, p5.Color, a 4-length color array, a string or a number.
+   * Searches and replace patterns. Either:
+   * 1. replace(pattern), replaces non empty cells with pattern.
+   * 2. replace(pattern1, pattern2), searches pattern1 and replaces with pattern2,
+   * pattern1 and pattern2 may be either a p5.Image, p5.Graphics, p5.Color,
+   * a 4-length color array, a string or a number.
    */
-  replace(pattern1, pattern2) {
-    for (let i = 0; i < this.height; i++) {
-      for (let j = 0; j < this.width; j++) {
-        if (this._memory2D[i][j] === pattern1) {
-          this._memory2D[i][j] = pattern2;
+  replace() {
+    if (arguments.length === 1 && arguments[0] !== undefined) {
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          if (this._memory2D[i][j] !== null && this._memory2D[i][j] !== undefined) {
+            this._memory2D[i][j] = arguments[0];
+          }
+        }
+      }
+    }
+    if (arguments.length === 2 && arguments[1] !== undefined) {
+      for (let i = 0; i < this.height; i++) {
+        for (let j = 0; j < this.width; j++) {
+          if (this._memory2D[i][j] === arguments[0]) {
+            this._memory2D[i][j] = arguments[1];
+          }
         }
       }
     }
@@ -461,7 +475,7 @@ class Quadrille {
 
   /**
    * Fills quadrille cells with given pattern. Either:
-   * 1. fill(pattern), fills current filled cells;
+   * 1. fill(pattern), fills current empty cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
    * pattern may be either a p5.Image, a p5.Graphics,
@@ -469,22 +483,23 @@ class Quadrille {
    */
   fill() {
     if (arguments.length === 1) {
+      if (arguments[0] === null && arguments[0] === undefined) return;
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
-          if (this._memory2D[i][j]) {
-            this._memory2D[i][j] = arguments[0] ?? 0;
+          if ((this._memory2D[i][j] === null || this._memory2D[i][j] === undefined)) {
+            this._memory2D[i][j] = arguments[0];
           }
         }
       }
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height) {
-        this._memory2D[arguments[0]].fill(arguments[1] ?? 0);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] !== null && arguments[1] !== undefined) {
+        this._memory2D[arguments[0]].fill(arguments[1]);
       }
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._memory2D[arguments[0]][arguments[1]] = arguments[2] ?? 0;
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width && arguments[2] !== null && arguments[2] !== undefined) {
+        this._memory2D[arguments[0]][arguments[1]] = arguments[2];
       }
     }
   }
@@ -498,6 +513,18 @@ class Quadrille {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this._memory2D[row][col];
     }
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is null
+   */
+  isEmpty(row, col) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      return this._memory2D[row][col] === null;
+    }
+    return true;
   }
 
   /**
@@ -540,8 +567,7 @@ class Quadrille {
           let j = col + jmask - cache_half_size;
           let neighbour = this._memory2D[i][j];
           let mask_value = mask._memory2D[imask][jmask];
-          if ((neighbour instanceof p5.Color) &&
-            typeof mask_value !== 'string' && !(mask_value instanceof p5.Image) && !(mask_value instanceof p5.Graphics)) {
+          if ((neighbour instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
             // luma coefficients are: 0.299, 0.587, 0.114, 0
             let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
             r += red(neighbour) * weight;
@@ -597,7 +623,10 @@ class Quadrille {
               _pattern[k] = (pattern0[k] ?? 0) * coords.w0 + (pattern1[k] ?? 0) * coords.w1 + (pattern2[k] ?? 0) * coords.w2;
             }
             // call shader using the interpolated patterns to compute the current cell color
-            this._memory2D[i][j] = shader({ pattern: _pattern, row: i, col: j });
+            let _shader = shader({ pattern: _pattern, row: i, col: j });
+            if (_shader instanceof p5.Color) {
+              this._memory2D[i][j] = _shader;
+            }
           }
         }
       }
@@ -652,6 +681,7 @@ class Quadrille {
    * @see order
    */
   rand(order, pattern) {
+    if (pattern === null || pattern === undefined) return;
     order = Math.abs(order);
     if (order > this.size) {
       order = this.size;
@@ -661,7 +691,7 @@ class Quadrille {
     while (counter < Math.abs(order - disorder)) {
       let _ = this._fromIndex(Math.floor(Math.random() * this.size));
       if (order > disorder ? !this._memory2D[_.row][_.col] : this._memory2D[_.row][_.col]) {
-        this._memory2D[_.row][_.col] = order > disorder ? pattern : 0;
+        this._memory2D[_.row][_.col] = order > disorder ? pattern : null;
         counter++;
       }
     }
@@ -675,7 +705,7 @@ class Quadrille {
     this.clear();
     for (let i = 0; i < clone.height; i++) {
       for (let j = 0; j < clone.width; j++) {
-        if (clone._memory2D[i][j]) {
+        if (clone._memory2D[i][j] !== null && clone._memory2D[i][j] !== undefined) {
           let _i, _j;
           do {
             _i = int(random(this.height));
@@ -693,7 +723,7 @@ class Quadrille {
    * @param {number} row 
    */
   insert(row) {
-    this._memory2D.splice(row, 0, Array(this.width).fill(0));
+    this._memory2D.splice(row, 0, Array(this.width).fill(null));
   }
 
   /**
@@ -714,13 +744,13 @@ class Quadrille {
    */
   clear() {
     if (arguments.length === 0) {
-      this._memory2D = this._memory2D.map(x => x.map(y => y = 0));
+      this._memory2D = this._memory2D.map(x => x.map(y => y = null));
     }
     if (arguments.length === 1 && typeof arguments[0] === 'number') {
-      this._memory2D[arguments[0]].fill(0);
+      this._memory2D[arguments[0]].fill(null);
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D[arguments[0]][arguments[1]] = 0;
+      this._memory2D[arguments[0]][arguments[1]] = null;
     }
   }
 
@@ -995,8 +1025,7 @@ class Quadrille {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
-        // TODO handle 0
-        if (cell) {
+        if (quadrille._memory2D[i][j] !== null && quadrille._memory2D[i][j] !== undefined) {
           if (tile) {
             tile({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, textColor: textColor, textZoom: textZoom, numberColor: numberColor, min: min, max: max });
           }

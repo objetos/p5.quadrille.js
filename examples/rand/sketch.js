@@ -9,20 +9,20 @@ var c;
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
   c = color('#007ACC');
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',            '🙈' ],
-                               [0,             color('#770811'), 0   ],
+  quadrille = createQuadrille([[color('cyan'), '👽'                  ],
+                               [null,          '🤔',            '🙈' ],
+                               [null,          color('#770811'),     ],
                                ['g',           'o',             'l'  ]
                               ]);
   // 178                            
-  T = createQuadrille([[0, c, 0],
-                       [c, c, 0],
-                       [0, c, 0],
+  T = createQuadrille([[null, c, null],
+                       [c,    c],
+                       [null, c],
                       ]);
   // 2343
-  L = createQuadrille([ [c, 0, 0],
-                        [c, 0, 0],
-                        [c, 0, 0],
+  L = createQuadrille([ [c],
+                        [c],
+                        [c],
                         [c, c, c],
                        ]);
   console.log(`L bitboard:`, L.toInt());

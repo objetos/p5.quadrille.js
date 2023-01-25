@@ -122,7 +122,7 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  //drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
+  drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
   drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined, textZoom: 0.5 });
 }
 
@@ -163,8 +163,17 @@ function keyPressed() {
 }
 
 function stick(key) {
-  let clone = quadrille.clone();
+  /*
+  // op1
+  let neg = Quadrille.NEG(quadrille, 0);
+  let clone = neg.clone();
   clone.fill(color('#965695'));
+  clone = Quadrille.DIFF(clone, neg);
+  // */
+  // /*
+  let clone = quadrille.clone();
+  clone.replace(color('#965695'));
+  // */
   board = key === 'u' ?
     Quadrille.OR(board, clone, row, col) : key === 'x' ?
       Quadrille.XOR(board, clone, row, col) : key === 'i' ?

@@ -13,8 +13,8 @@ function setup() {
   img2 = loadImage('abraham_lincoln.jpg');
 
   quadrille = createQuadrille([[color('cyan'), '👽',            img2 ],
-                               [0,             img1,            '🙈' ],
-                               [0,             color('#770811'), 0   ],
+                               [null,          img1,            '🙈' ],
+                               [null,          color('#770811')      ],
                                ['g',           'o',             'l'  ]
                               ]);
 }

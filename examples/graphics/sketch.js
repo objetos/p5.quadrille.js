@@ -22,9 +22,9 @@ function setup() {
   //pg = createGraphics(COLS * LENGTH, ROWS * LENGTH);
   c = color('red');
   /*
-  quadrille = createQuadrille([[color('cyan'), '👽',             0    ],
-                               [0,             '🤔',             c ],
-                               [0,             color('#770811'), 0   ],
+  quadrille = createQuadrille([[color('cyan'), '👽'   ],
+                               [null,             '🤔',             c ],
+                               [null,             color('#770811') ],
                                ['g',           'o',             'l'  ]
                               ]);
   // */
@@ -33,13 +33,13 @@ function setup() {
   let r = color('red');
   quadrille = createQuadrille(2, [a,a,'g','o',i,i]);
   //quadrille = createQuadrille([[a,a],[b,b],[r,r]]);
-  T = createQuadrille([[0, c, 0],
-                       [c, c, 0],
-                       [0, c, 0],
+  T = createQuadrille([[null, c, null],
+                       [c, c],
+                       [null, c],
                       ]);
-  L = createQuadrille([ [c, 0, 0],
-                        [c, 0, 0],
-                        [c, 0, 0],
+  L = createQuadrille([ [c],
+                        [c],
+                        [c],
                         [c, c, c],
                        ]);
   t = createQuadrille(3, 3);
@@ -58,21 +58,12 @@ function setup() {
   clone.reflect();
   test = createQuadrille(4, int(random(1, 1048576)), color('#F0B25A'));
   c.setBlue(255);
-  /*
   I = createQuadrille([
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-    [0, c, 0, 0],
-   ]);
-   */
-   I = createQuadrille([
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, c, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
+    [null],
+    [null, c, null, null],
+    [null, c, null],
+    [null, c, null],
+    [null, c, null],
    ]);
 }
 

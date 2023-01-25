@@ -10,12 +10,12 @@ function setup() {
   b = 'a';
   c = '👽';
   d = color('#00FEFF');
-  e = [255, 0, 0, 255];
-  H = createQuadrille([ [c, 0, 0, e],
-                        [c, 0, 0, b],
+  e = color(255, 0, 0, 255);
+  H = createQuadrille([ [c, null, null, e],
+                        [c, null, null, b],
                         [c, d, c, b],
-                        [c, 0, 0, e],
-                        [c, c, 0, e],
+                        [c, null, null, e],
+                        [c, c, null, e],
                         [c, c, d, e],
                       ]);
   //other = createQuadrille(2, 3);
@@ -23,7 +23,7 @@ function setup() {
   //other = createQuadrille(8, 12);
   //other.from(1258, color('blue'));
   other =  H.clone();
-  other.replace('👽', [255, 255, 0, 255]);
+  other.replace('👽', color(255, 255, 0, 255));
 }
 
 function draw() {

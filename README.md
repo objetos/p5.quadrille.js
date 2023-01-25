@@ -77,13 +77,14 @@
 1. `clear()`, `clear(row)`, `clear(row, col)`: clears quadrille cells. Either all quadrille cells, a given `row` or a cell, resp.
 2. `clone()`: returns a [shallow copy](https://en.wikipedia.org/wiki/Object_copying#Shallow_copy) of the quadrille.
 3. `delete(row)`: deletes the given quadrille `row`.
-4. `fill(pattern)`, `fill(row, pattern)`, `fill(row, col, pattern)`: fills quadrille cells with given `pattern`. Either current filled cells, a whole `row`, or a cell, resp.
+4. `fill(pattern)`, `fill(row, pattern)`, `fill(row, col, pattern)`: fills quadrille cells with given `pattern`. Either current empty (or filled) cells, a whole `row`, or a cell, resp.
 5. `insert(row)`: inserts an empty `row` into the quadrille.
-6. `magnitude(row)`: returns the number of non-empty cells of a given quadrille `row`.
-7. `rand(order, pattern)`: fills the quadrille with `pattern` up to `order` (number of repeations), randomly adding or removing cells as necessary.
-8. `randomize()`: randomly re-arranges the quadrille cells.
-9. `read(row, col)`: returns the contents of the quadrille cell at `(row, col)`. Returns `undefined` if the cell doesn't exist.
-10. `replace(pattern1, pattern2)`: searches `pattern1` quadrille cell ocurrences and replaces them with `pattern2`.
+6. `isEmpty(row, col)`: returns `true` if cell found at `(row, col)` is empty and `flase` otherwise.
+7. `magnitude(row)`: returns the number of non-empty cells of a given quadrille `row`.
+8. `rand(order, pattern)`: fills the quadrille with `pattern` up to `order` (number of repeations), randomly adding or removing cells as necessary.
+9. `randomize()`: randomly re-arranges the quadrille cells.
+10. `read(row, col)`: returns the contents of the quadrille cell at `(row, col)`. Returns `undefined` if the cell doesn't exist.
+11. `replace(pattern)`, `replace(pattern1, pattern2)`: either replaces non empty cells with `pattern` or searches `pattern1` cell ocurrences and replaces them with `pattern2`, resp.
 
 ### Visual Computing
 
