@@ -4,7 +4,7 @@
 
 # Syntax
 
-> `drawQuadrille(quadrille, [{[graphics], [pixelX], [pixelY], [row], [col], [tile], [contour], [cellLength], [outlineWeight], [outline], [textColor], [textZoom], [board], [numberColor], [min], [max]}])`
+> `drawQuadrille(quadrille, [{[graphics], [x], [y], [tileDisplay], [imageDisplay], [colorDisplay], [stringDisplay], [numberDisplay], [arrayDisplay], [objectDisplay], [cellLength], [outlineWeight], [outline], [textColor], [textZoom]}])`
 
 # Parameters
 
@@ -12,20 +12,19 @@
 |---------------|---------------------------------------------------------------------------------------------------------|
 | quadrille     | Quadrille: `quadrille` to be drawn                                                                      |
 | graphics      | [p5.Graphics](https://p5js.org/reference/#/p5.Graphics): renderer taget default is `this` (main canvas) |
-| row           | Number: upper left quadrille row coordinate default is `0`                                              |
-| col           | Number: upper left quadrille col coordinate default is `0`                                              |
-| tile          | Function: cell fill drawing custom procedure                                                            |
-| contour       | Function: cell fill outline custom procedure                                                            |
-| pixelX        | Number: upper left quadrille pixel x coordinate default is `0`. Takes higher precedence than `col`      |
-| pixelY        | Number: upper left quadrille pixel y coordinate default is `0`. Takes higher precedence than `row`      |
+| tileDisplay   | Function: empty cell drawing custom procedure                                                           |
+| imageDisplay  | Function: image filled cell drawing custom procedure                                                    |
+| colorDisplay  | Function: color filled cell drawing custom procedure                                                    |
+| stringDisplay | Function: string filled cell drawing custom procedure                                                   |
+| numberDisplay | Function: number filled cell drawing custom procedure                                                   |
+| arrayDisplay  | Function: array filled cell drawing custom procedure                                                    |
+| objectDisplay | Function: object filled cell drawing custom procedure                                                   |
+| x             | Number: upper left quadrille pixel x coordinate default is `0`.                                         |
+| y             | Number: upper left quadrille pixel y coordinate default is `0`.                                         |
 | cellLength    | Number: edge length in pixels default is `10`                                                           |
 | outlineWeight | Number: edge weight defaut is `2`. Use `0` to discard all edges                                         |
 | outline       | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: edge color default is `magenta`       |
 | textColor     | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: text color default is `cyan`          |
 | textZoom      | Number:: text zoom level default is `0.89`                                                              |
-| board         | Boolean: draw all cell edges no matter some of them are empty default is `false`                        |
-| numberColor   | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: number color default is `orange`      |
-| min           | Number: remap cell alpha when its entry is a number from [min, max] to [0, 255] number default is `0`   |
-| max           | Number: remap cell alpha when its entry is a number from [min, max] to [0, 255] number default is `0`   |
 
 > :ToCPrevNext
