@@ -23,16 +23,16 @@ colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, co
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                                                                                            |
-|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| row0     | Number: vertex0 row coordinate                                                                                                                      |
-| col0     | Number: vertex0 col coordinate                                                                                                                      |
-| row1     | Number: vertex1 row coordinate                                                                                                                      |
-| col1     | Number: vertex1 col coordinate                                                                                                                      |
-| row2     | Number: vertex2 row coordinate                                                                                                                      |
-| col2     | Number: vertex2 col coordinate                                                                                                                      |
-| color0   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: vertex0 color to be interpolated                   |
-| color1   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: vertex1 color to be interpolated default is color0 |
-| color2   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: vertex2 color to be interpolated default is color0 |
+| <!-- --> | <!-- -->                                                                                               |
+|----------|--------------------------------------------------------------------------------------------------------|
+| row0     | Number: vertex0 row coordinate                                                                         |
+| col0     | Number: vertex0 col coordinate                                                                         |
+| row1     | Number: vertex1 row coordinate                                                                         |
+| col1     | Number: vertex1 col coordinate                                                                         |
+| row2     | Number: vertex2 row coordinate                                                                         |
+| col2     | Number: vertex2 col coordinate                                                                         |
+| color0   | [p5.Color](https://p5js.org/reference/#/p5.Color) : vertex0 color to be interpolated                   |
+| color1   | [p5.Color](https://p5js.org/reference/#/p5.Color) : vertex1 color to be interpolated default is color0 |
+| color2   | [p5.Color](https://p5js.org/reference/#/p5.Color) : vertex2 color to be interpolated default is color0 |
 
 > :ToCPrevNext

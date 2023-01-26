@@ -16,6 +16,6 @@ a [bitboard](https://en.wikipedia.org/wiki/Bitboard) represented as a [big-endia
 | image     | [p5.Image](https://p5js.org/reference/#/p5.Image)                                                                                                                   |
 | coherence | [boolean]: define whether or not to use spatial coherence to convert image default is false                                                                         |
 | bitboard  | number: integer bitboard value                                                                                                                                      |
-| pattern   | [p5.Image](https://p5js.org/reference/#/p5.Image) \| [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
+| pattern   | [p5.Image](https://p5js.org/reference/#/p5.Image) \| [p5.Graphics](https://p5js.org/reference/#/p5.Graphics) \| [p5.Color](https://p5js.org/reference/#/p5.Color) \| array \| object \| string \| number |
 
 > :ToCPrevNext

@@ -7,11 +7,11 @@ Colorize quadrille according to upper-left corner `color0`, bottom-left corner `
 
 # Parameters
 
-| <!-- --> | <!-- -->                                                                                                                                            |
-|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| color0   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: corner0 color to be interpolated                   |
-| color1   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: corner1 color to be interpolated default is color0 |
-| color2   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: corner2 color to be interpolated default is color0 |
-| color3   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \|: corner2 color to be interpolated default is color0 |
+| <!-- --> | <!-- -->                                                                                               |
+|----------|--------------------------------------------------------------------------------------------------------|
+| color0   | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner0 color to be interpolated                   |
+| color1   | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner1 color to be interpolated default is color0 |
+| color2   | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner2 color to be interpolated default is color0 |
+| color3   | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner2 color to be interpolated default is color0 |
 
 > :ToCPrevNext

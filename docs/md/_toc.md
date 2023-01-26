@@ -9,6 +9,7 @@
 
 > :Collapse label=I/O
 > 
+> [isEmpty()](/docs/io/is_empty)
 > [read()](/docs/io/read)
 > [fill()](/docs/io/fill)
 > [rand()](/docs/io/rand)

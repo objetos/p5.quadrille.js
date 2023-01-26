@@ -11,6 +11,6 @@ Static method that returns the quadrille obtained from clearing the `quadrille` 
 | <!-- -->  | <!-- -->                                                                                                       |
 |-----------|----------------------------------------------------------------------------------------------------------------|
 | quadrille | Quadrille: quadrille to be negated                                                                             |
-| pattern   | [p5.Color](https://p5js.org/reference/#/p5.Color) \| 4-length color array \| 1-length string \| 0: empty cells |
+| pattern   | [p5.Image](https://p5js.org/reference/#/p5.Image) \| [p5.Graphics](https://p5js.org/reference/#/p5.Graphics) \| [p5.Color](https://p5js.org/reference/#/p5.Color) \| array \| object \| string \| number |
 
 > :ToCPrevNext
