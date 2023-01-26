@@ -12,7 +12,7 @@ let col, row;
 let animate = true;
 // tesselation
 let circled;
-let tile, contour;
+let tileDisplay, colorDisplay, imageDisplay, stringDisplay;
 // patterns
 let rectX, pg;
 let al;
@@ -40,80 +40,39 @@ function setup() {
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
   // tesselation
-  tile = ({ cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: diameter, textColor: textColor, textZoom: textZoom }) => {
-    if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
-      push();
-      noStroke();
-      let _al = new p5.Image(cell.width, cell.height);
-      _al.copy(cell, 0, 0, cell.width, cell.height, 0, 0, cell.width, cell.height);
-      let shape = createGraphics(cell.width, cell.height);
-      shape.fill(0);
-      shape.ellipseMode(CORNER);
-      shape.ellipse(0, 0, cell.width, cell.height);
-      _al.mask(shape);
-      image(_al, 0, 0, diameter, diameter);
-      pop();
-    }
-    else if (cell instanceof p5.Color) {
-      push();
-      noStroke();
-      fill(cell);
-      ellipseMode(CORNER);
-      ellipse(0, 0, diameter, diameter);
-      //circle(0, 0, diameter);
-      pop();
-    }
-    else if (typeof cell === 'string') {
-      push();
-      noStroke();
-      fill(textColor);
-      textSize(diameter * textZoom / cell.length);
-      textAlign(CENTER, CENTER);
-      //text('?', 0, 0, diameter, diameter);
-      text(cell, 0, 0, diameter, diameter);
-      pop();
-    }
-    push();
+  tileDisplay = ({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
     noFill();
     stroke(outline);
     strokeWeight(outlineWeight);
     ellipseMode(CORNER);
-    ellipse(0, 0, diameter, diameter);
+    ellipse(0, 0, cellLength, cellLength);
     //circle(0, 0, diameter);
-    pop();
   };
-  // */
-  /*
-  tile: () => {
-    push();
-    fill('blue');
-    circle(0, 0, LENGTH);
-    pop();
-  },
-  // */
-  //tile: tile,
-  ///*
-  contour = ({ outline: outline, outlineWeight: outlineWeight, cellLength: diameter }) => {
-    push();
-    noFill();
+  colorDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
     stroke(outline);
-    strokeWeight(outlineWeight);
+    fill(cell);
     ellipseMode(CORNER);
-    ellipse(0, 0, diameter, diameter);
+    ellipse(0, 0, cellLength, cellLength);
     //circle(0, 0, diameter);
-    pop();
-  };
-  // */
-  /*
-  contour: () => {
-    push();
-    noFill();
-    stroke('blue');
-    circle(0, 0, LENGTH);
-    pop();
   }
-  // */
-  //contour: contour
+  imageDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    stroke(outline);
+    let _al = new p5.Image(cell.width, cell.height);
+    _al.copy(cell, 0, 0, cell.width, cell.height, 0, 0, cell.width, cell.height);
+    let shape = createGraphics(cell.width, cell.height);
+    shape.fill(0);
+    shape.ellipseMode(CORNER);
+    shape.ellipse(0, 0, cell.width, cell.height);
+    _al.mask(shape);
+    image(_al, 0, 0, cellLength, cellLength);
+  }
+  stringDisplay = ({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    noStroke();
+    fill(textColor);
+    textSize(cellLength * textZoom / cell.length);
+    textAlign(CENTER, CENTER);
+    text(cell, 0, 0, cellLength, cellLength);
+  }
 }
 
 function draw() {
@@ -122,8 +81,23 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined });
-  drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: '#1EB2A6', board: true, tile: circled ? tile : undefined, contour: circled ? contour : undefined, textZoom: 0.5 });
+  let params = {
+    cellLength: LENGTH,
+    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
+    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
+    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
+    stringDisplay: circled ? stringDisplay : Quadrille.STRING,
+  }
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+  let boardParams = Object.create(params);
+  boardParams.outline = 'magenta';
+  drawQuadrille(board, boardParams);
+  let quadrilleParams = Object.create(params);
+  quadrilleParams.outline = '#1EB2A6';
+  quadrilleParams.x = col * LENGTH;
+  quadrilleParams.y = row * LENGTH;
+  //quadrilleParams.emptyDisplay = null;
+  drawQuadrille(quadrille, quadrilleParams);
 }
 
 function animatePG() {

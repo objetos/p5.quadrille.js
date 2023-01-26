@@ -932,40 +932,9 @@ class Quadrille {
   }
 
   /**
-   * Number cell drawing.
+   * Tesselation or tiling. Used by the drawQuadrille board property.
    */
-  static NUMBER({
-    graphics,
-    // TODO better handling the cell 0 case
-    cell = 0,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    min = 0,
-    max = 0,
-    numberColor = this.NUMBER_COLOR,
-    cellLength = this.CELL_LENGTH
-  } = {}) {
-    if (min < max) {
-      graphics.push();
-      graphics.colorMode(graphics.RGB, 255);
-      graphics.fill(graphics.color(red(numberColor), green(numberColor), blue(numberColor), graphics.map(cell, min, max, 0, 255)));
-      graphics.rect(0, 0, cellLength, cellLength);
-      graphics.pop();
-    }
-    if (outlineWeight !== 0) {
-      graphics.push();
-      graphics.noFill();
-      graphics.stroke(outline);
-      graphics.strokeWeight(outlineWeight);
-      graphics.rect(0, 0, cellLength, cellLength);
-      graphics.pop();
-    }
-  }
-
-  /**
-   * Frame cell drawing. Used by the drawQuadrille board property.
-   */
-  static FRAME({
+  static TILE({
     graphics,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -1003,18 +972,18 @@ class Quadrille {
       graphics = this,
       x = 0,
       y = 0,
-      // TODO: tile -> cell; contour -> void?
-      tile,
-      contour,
+      tileDisplay = Quadrille.TILE,
+      imageDisplay = Quadrille.IMAGE,
+      colorDisplay = Quadrille.COLOR,
+      stringDisplay = Quadrille.STRING,
+      numberDisplay,
+      arrayDisplay,
+      objectDisplay,
       cellLength = Quadrille.CELL_LENGTH,
       outlineWeight = Quadrille.OUTLINE_WEIGHT,
       outline = Quadrille.OUTLINE,
       textColor = Quadrille.TEXT_COLOR,
-      textZoom = Quadrille.TEXT_ZOOM,
-      board = false,
-      numberColor = Quadrille.NUMBER_COLOR,
-      min = 0,
-      max = 0
+      textZoom = Quadrille.TEXT_ZOOM
     } = {}) {
     graphics.push();
     graphics.translate(x, y);
@@ -1023,30 +992,26 @@ class Quadrille {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
-        if (quadrille._memory2D[i][j] !== null && quadrille._memory2D[i][j] !== undefined) {
-          if (tile) {
-            tile({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, textColor: textColor, textZoom: textZoom, numberColor: numberColor, min: min, max: max });
-          }
-          else if (cell instanceof p5.Color) {
-            Quadrille.COLOR({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
-          }
-          else if (cell instanceof p5.Image || cell instanceof p5.Graphics) {
-            Quadrille.IMAGE({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
-          }
-          else if (typeof cell === 'string') {
-            Quadrille.STRING({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
-          }
-          else if (typeof cell === 'number') {
-            Quadrille.NUMBER({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, numberColor: numberColor, min: min, max: max, cellLength: cellLength });
-          }
+        if (tileDisplay && (cell === null || cell === undefined)) {
+          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
-        else if (board) {
-          if (contour) {
-            contour({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
-          }
-          else {
-            Quadrille.FRAME({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
-          }
+        else if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+          imageDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        else if (colorDisplay && cell instanceof p5.Color) {
+          colorDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        else if (numberDisplay && typeof cell === 'number') {
+          numberDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        else if (stringDisplay && typeof cell === 'string') {
+          stringDisplay({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        else if (arrayDisplay && Array.isArray(cell)) {
+          arrayDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        else if (objectDisplay && typeof cell === 'object') {
+          objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         graphics.pop();
       }
