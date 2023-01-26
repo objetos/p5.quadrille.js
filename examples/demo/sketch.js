@@ -1,12 +1,14 @@
 'use strict';
-/*
+// /*
 const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
-*/
+// */
+/*
 const ROWS = 10;
 const COLS = 20;
 const LENGTH = 40;
+// */
 let board, quadrille;
 let col, row;
 let animate = true;
@@ -98,12 +100,14 @@ function draw() {
   quadrilleParams.outline = '#1EB2A6';
   quadrilleParams.x = col * LENGTH;
   quadrilleParams.y = row * LENGTH;
-  //quadrilleParams.emptyDisplay = null;
+  //quadrilleParams.tileDisplay = null; // or 0
+  //quadrilleParams.outlineWeight = 0;
+  quadrilleParams.textColor = 'yellow'
   drawQuadrille(quadrille, quadrilleParams);
 }
 
 function animatePG() {
-  pg.background(200);
+  pg.background('orange');
   pg.fill(random(255));
   pg.triangle(10, 17, 15, 5, 18, 18);
 }

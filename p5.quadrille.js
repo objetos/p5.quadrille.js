@@ -870,11 +870,11 @@ class Quadrille {
     outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     graphics.push();
-    graphics.noStroke();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
     graphics.fill(cell);
     graphics.rect(0, 0, cellLength, cellLength);
     graphics.pop();
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -907,7 +907,6 @@ class Quadrille {
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     graphics.push();
     graphics.noStroke();
     graphics.fill(textColor);
@@ -915,6 +914,7 @@ class Quadrille {
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
     graphics.pop();
+    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
