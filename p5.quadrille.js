@@ -864,17 +864,15 @@ class Quadrille {
    */
   static COLOR({
     graphics,
-    cell = color('red'),
+    cell,
     cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
-    graphics.push();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
     graphics.fill(cell);
     graphics.rect(0, 0, cellLength, cellLength);
-    graphics.pop();
   }
 
   /**
@@ -882,17 +880,13 @@ class Quadrille {
    */
   static IMAGE({
     graphics,
-    cell = null,
+    cell,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    if (cell) {
-      graphics.push();
-      graphics.image(cell, 0, 0, cellLength, cellLength);
-      graphics.pop();
-      Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
-    }
+    graphics.image(cell, 0, 0, cellLength, cellLength);
+    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -900,20 +894,18 @@ class Quadrille {
    */
   static STRING({
     graphics,
-    cell = '?',
+    cell,
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    graphics.push();
     graphics.noStroke();
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / cell.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
-    graphics.pop();
     Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
@@ -927,12 +919,10 @@ class Quadrille {
     cellLength = this.CELL_LENGTH
   } = {}) {
     if (outlineWeight !== 0) {
-      graphics.push();
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
       graphics.rect(0, 0, cellLength, cellLength);
-      graphics.pop();
     }
   }
 }
