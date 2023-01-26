@@ -1,7 +1,11 @@
+'use strict';
+
 let scl = 0;
-let mask, quadrille, orig, conv;
+let mask, mask_vis, quadrille, orig, conv;
 let image;
 let image_mode = true;
+let objectDisplay;
+let numberDisplay;
 
 function update() {
   let c = quadrille == null ? false : quadrille === conv;
@@ -22,16 +26,44 @@ function preload() {
 
 function setup() {
   createCanvas(800, 800);
-  // /*
   mask = createQuadrille([[0.0625, 0.125, 0.0625],
-                          [0.125,  0.25,  0.125],
-                          [0.0625, 0.125, 0.0625]]);
+  [0.125, 0.25, 0.125],
+  [0.0625, 0.125, 0.0625]]);
+  let o = {
+    min: 0.0625,
+    max: 0.25,
+  }
+  let o1 = Object.create(o);
+  o1.val = 0.0625;
+  let o2 = Object.create(o);
+  o2.val = 0.125;
+  let o3 = Object.create(o);
+  o3.val = 0.25;
+  mask_vis = createQuadrille(
+    [[o1, o2, o1],
+    [o2, o3, o2],
+    [o1, o2, o1]]);
   // */
   /*
   mask = createQuadrille([ [ -1, -1, -1 ],
                            [ -1,  9, -1 ],
                            [ -1, -1, -1 ] ]); 
   // */
+  let counter = 0;
+  objectDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    graphics.fill(graphics.map(cell.val, cell.min, cell.max, 0, 255));
+    graphics.rect(0, 0, cellLength, cellLength);
+    //Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+  }
+  numberDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    let numberColor = 'blue';
+    let min = 0.0625;
+    let max = 0.25;
+    graphics.colorMode(graphics.RGB, 255);
+    graphics.fill(graphics.color(red(numberColor), green(numberColor), blue(numberColor), graphics.map(cell, min, max, 0, 255)));
+    graphics.rect(0, 0, cellLength, cellLength);
+    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+  }
   update();
 }
 
@@ -45,14 +77,21 @@ function draw() {
         outline: quadrille === orig ? 'magenta' : 'cyan'
       });
   } else {
+    /*
+    drawQuadrille(mask_vis,
+      {
+        x: 150,
+        y: 250,
+        cellLength: 50,
+        objectDisplay: objectDisplay
+      });
+      */
     drawQuadrille(mask,
       {
         x: 150,
         y: 250,
         cellLength: 50,
-        min: 0.0625,
-        max: 0.25,
-        numberColor: 'blue'
+        numberDisplay: numberDisplay
       });
   }
 }
