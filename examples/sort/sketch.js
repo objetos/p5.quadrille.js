@@ -37,12 +37,12 @@ function setup() {
   graphics = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
   colorCells = createQuadrille([color('red'), color('green'), color('blue'), color('cyan'), color('magenta'), color('yellow')/*, color(int(random(255)), int(random(255)), int(random(255)))*/]);
   matrixCells = createQuadrille([[c1, 'g'],
-  [0, 'o', al],
+  [null, 'o', al],
   [al, 'l'],
   [e1, c2, c3]
   ]);
   stringCells = createQuadrille('!@#,$%^>.,i*');
-  arrayCells = createQuadrille(5, [0, 'o', al, al, 'l', e1, c2, c3]);
+  arrayCells = createQuadrille(5, [null, 'o', al, al, 'l', e1, c2, c3]);
   bitboardCells = createQuadrille(4, int(random(1, 1048576)), e1);
   let w = int(random(2, 6));
   let h = int(random(2, 6));
