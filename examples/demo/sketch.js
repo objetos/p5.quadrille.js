@@ -25,6 +25,7 @@ function preload() {
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+  //Quadrille.TEXT_ZOOM = 1;
   // patterns
   c1 = color(random(255), random(255), random(255));
   c2 = color(random(255), random(255), random(255));
@@ -46,14 +47,13 @@ function setup() {
     strokeWeight(outlineWeight);
     ellipseMode(CORNER);
     ellipse(0, 0, cellLength, cellLength);
-    //circle(0, 0, diameter);
   };
   colorDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    stroke(outline);
     fill(cell);
     ellipseMode(CORNER);
     ellipse(0, 0, cellLength, cellLength);
     //circle(0, 0, diameter);
+    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
   imageDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
     stroke(outline);
@@ -65,8 +65,10 @@ function setup() {
     shape.ellipse(0, 0, cell.width, cell.height);
     _al.mask(shape);
     image(_al, 0, 0, cellLength, cellLength);
+    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
   stringDisplay = ({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
     noStroke();
     fill(textColor);
     textSize(cellLength * textZoom / cell.length);
