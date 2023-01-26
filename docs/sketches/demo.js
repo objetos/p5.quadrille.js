@@ -23,8 +23,8 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta', board: true });
-  drawQuadrille(quadrille, { col: col, row: row, cellLength: LENGTH, outline: '#1EB2A6', board: true });
+  drawQuadrille(board, { cellLength: LENGTH, outline: 'magenta' });
+  drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outline: '#1EB2A6' });
 }
 
 function keyPressed() {
@@ -72,10 +72,10 @@ function active(value) {
   let e1 = '👽';
   switch (value) {
     case 1:
-      return createQuadrille([[c1, 'g'],
-                              [0,  'o', al],
-                              [al, 'l'],
-                              [e1, c2, c3]
+      return createQuadrille([[c1,   'g'],
+                              [null, 'o', al],
+                              [al,   'l'],
+                              [e1,   c2,  c3]
                               ]);
     case 2:
       return createQuadrille(2, [c1, al, c3, e1, c2]);
