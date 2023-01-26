@@ -107,7 +107,7 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Image | p5.Graphics | p5.Color  Array | string | number} pattern used to fill the returned quadrille.
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} pattern used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
@@ -473,8 +473,8 @@ class Quadrille {
    * 1. fill(pattern), fills current empty cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * pattern may be either a p5.Image, a p5.Graphics,
-   * a p5.Color, a 4-length color array, a string or a number.
+   * pattern may be either a p5.Image, a p5.Graphics, a p5.Color,
+   * a 4-length color array, an object, a string or a number.
    */
   fill() {
     if (arguments.length === 1) {
@@ -502,7 +502,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Graphics | p5.Color | Array | string | number} quadrille entry
+   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
@@ -672,7 +672,7 @@ class Quadrille {
   /**
    * Randomly fills quadrille with pattern up to order.
    * @param {number} order 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | string | number} pattern 
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} pattern 
    * @see order
    */
   rand(order, pattern) {
