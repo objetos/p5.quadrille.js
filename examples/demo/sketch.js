@@ -44,21 +44,21 @@ function setup() {
   row = int(random(0, ROWS - 4));
   // tesselation
   tileDisplay = ({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    noFill();
-    stroke(outline);
-    strokeWeight(outlineWeight);
-    ellipseMode(CORNER);
-    ellipse(0, 0, cellLength, cellLength);
+    graphics.noFill();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
+    graphics.ellipseMode(CORNER);
+    graphics.ellipse(0, 0, cellLength, cellLength);
   };
   colorDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    fill(cell);
-    ellipseMode(CORNER);
-    ellipse(0, 0, cellLength, cellLength);
-    //circle(0, 0, diameter);
+    graphics.fill(cell);
+    graphics.ellipseMode(CORNER);
+    graphics.ellipse(0, 0, cellLength, cellLength);
+    //graphics.circle(0, 0, diameter);
     tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
   imageDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    stroke(outline);
+    graphics.stroke(outline);
     let _al = new p5.Image(cell.width, cell.height);
     _al.copy(cell, 0, 0, cell.width, cell.height, 0, 0, cell.width, cell.height);
     let shape = createGraphics(cell.width, cell.height);
@@ -66,16 +66,16 @@ function setup() {
     shape.ellipseMode(CORNER);
     shape.ellipse(0, 0, cell.width, cell.height);
     _al.mask(shape);
-    image(_al, 0, 0, cellLength, cellLength);
+    graphics.image(_al, 0, 0, cellLength, cellLength);
     tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
   stringDisplay = ({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+    graphics.noStroke();
+    graphics.fill(textColor);
+    graphics.textSize(cellLength * textZoom / cell.length);
+    graphics.textAlign(CENTER, CENTER);
+    graphics.text(cell, 0, 0, cellLength, cellLength);
     tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
-    noStroke();
-    fill(textColor);
-    textSize(cellLength * textZoom / cell.length);
-    textAlign(CENTER, CENTER);
-    text(cell, 0, 0, cellLength, cellLength);
   }
 }
 
