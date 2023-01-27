@@ -3,7 +3,7 @@
 const ROWS = 20;
 const COLS = 10;
 const LENGTH = 20;
-let t, I, T, L, Lbit, test;
+let t, I, T, L, Lbit, test, n;
 let quadrille;
 let clone;
 let col = 2, row = 2;
@@ -61,19 +61,26 @@ function setup() {
    */
   I = createQuadrille([
     [null],
-    [null, null, c, null, null, null],
+    [null, null, c, null, null, color('grey')],
     [null, null, c],
     [null, null, c],
     [null, null, c],
     [null],
   ]);
+  n = createQuadrille([[0, 50],
+  [null, 100, 150],
+  [200, 250],
+  ]);
+  console.log(n.order, n.size);
 }
 
 function draw() {
-  background('#060621');
+  //background('#060621');
+  background('orange');
   drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outlineWeight: 2, outline: 'green', textZoom: 0.6 });
-  //drawQuadrille(I, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true });
-  drawQuadrille(test, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true });
+  drawQuadrille(I, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue' });
+  //drawQuadrille(test, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue' });
+  //drawQuadrille(n, { x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue' });
 }
 
 function keyPressed() {

@@ -1,3 +1,5 @@
+'use strict';
+
 const ROWS = 20;
 const COLS = 20;
 const LENGTH = 20;
@@ -14,23 +16,23 @@ function setup() {
   c2 = color('yellow');
   c3 = color('#FBBC04');
   q1 = createQuadrille([[c1, c1],
-                        [null,  c1, c1],
-                        [null,  c1],
-                        [c1, c1, c1]
-                       ]);
-  q2 = createQuadrille([[null,  c2],
-                        [c2, c2],
-                        [null,  c2],
-                        [c2, c2]
-                       ]);
+  [null, c1, c1],
+  [null, c1],
+  [c1, c1, c1]
+  ]);
+  q2 = createQuadrille([[null, c2],
+  [c2, c2],
+  [null, c2],
+  [c2, c2]
+  ]);
 }
 
 function draw() {
   background('#060621');
-  drawQuadrille(q1, {x: col1 * LENGTH, y: row1 * LENGTH, cellLength: LENGTH, outline: 'green', board: true});
-  drawQuadrille(q2, {x: col2 * LENGTH, y: row2 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true});
+  drawQuadrille(q1, { x: col1 * LENGTH, y: row1 * LENGTH, cellLength: LENGTH, outline: 'green' });
+  drawQuadrille(q2, { x: col2 * LENGTH, y: row2 * LENGTH, cellLength: LENGTH, outline: 'blue' });
   if (q3) {
-    drawQuadrille(q3, {x: col3 * LENGTH, y: row3 * LENGTH, cellLength: LENGTH, board: true});
+    drawQuadrille(q3, { x: col3 * LENGTH, y: row3 * LENGTH, cellLength: LENGTH });
   }
 }
 
@@ -72,16 +74,16 @@ function keyPressed() {
     a2 ? row2++ : a3 ? row3++ : row1++;
   }
   if (key === 'o') {
-    q3 = Quadrille.OR(q1, q2, row2-row1, col2-col1);
+    q3 = Quadrille.OR(q1, q2, row2 - row1, col2 - col1);
   }
   if (key === 'n') {
-    q3 = Quadrille.AND(q1, q2, row2-row1, col2-col1);
+    q3 = Quadrille.AND(q1, q2, row2 - row1, col2 - col1);
   }
   if (key === 'x') {
-    q3 = Quadrille.XOR(q1, q2, row2-row1, col2-col1);
+    q3 = Quadrille.XOR(q1, q2, row2 - row1, col2 - col1);
   }
   if (key === 'd') {
-    q3 = Quadrille.DIFF(q1, q2, row2-row1, col2-col1);
+    q3 = Quadrille.DIFF(q1, q2, row2 - row1, col2 - col1);
   }
   if (key == 'm') {
     q1.clear(1);

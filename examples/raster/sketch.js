@@ -1,3 +1,5 @@
+'use strict';
+
 const ROWS = 20;
 const COLS = 20;
 const LENGTH = 20;
@@ -16,7 +18,7 @@ function setup() {
 
 function draw() {
   background('#060621');
-  drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'green', board: true });
+  drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'green' });
   tri();
 }
 

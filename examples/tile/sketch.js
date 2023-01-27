@@ -47,14 +47,14 @@ function setup() {
     [null, c],
     [null, c],
     [null, c],
-   ]);
+  ]);
 }
 
 function draw() {
   background('#060621');
   drawQuadrille(quadrille, { x: col * LENGTH, y: row * LENGTH, cellLength: LENGTH, outlineWeight: 2, outline: 'green' });
   drawQuadrille(I, {
-    x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue', board: true,
+    x: 2 * LENGTH, y: 12 * LENGTH, cellLength: LENGTH, outline: 'blue',
     ///*
     tile: ({ outline: contour, cellLength: diameter }) => {
       push();

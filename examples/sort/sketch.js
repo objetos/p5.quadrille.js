@@ -1,10 +1,12 @@
+'use strict';
+
 const ROWS = 20;
 const COLS = 40;
 const LENGTH = 20;
 let graphics;
-let current, matrixCells, stringCells, arrayCells, bitboardCells, uniformCells, colorCells;
+let current, matrixCells, stringCells, arrayCells, bitboardCells, uniformCells, colorCells, numberCells;
 let al;
-let a1, a2, a4, a5, a6;
+let a1, a2, a3, a4, a5, a6, a7;
 let f;
 //let w;
 let l;
@@ -48,12 +50,13 @@ function setup() {
   let h = int(random(2, 6));
   //uniformCells = createQuadrille(w, h, int(random(1, w * h)), al);
   uniformCells = createQuadrille(/*3, */[al, a1, a2, a3, a4, a5, a6, a7, f, l, i, m]);
+  numberCells = createQuadrille([0, 50, 100, 150, 200, 250]);
 }
 
 function draw() {
   background('#2E0E36');
   if (current) {
-    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', board: true, cellLength: 40 });
+    drawQuadrille(current, { /*cellLength: LENGTH,*/ outline: 'magenta', cellLength: 40 });
   }
   else {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
@@ -98,6 +101,9 @@ function keyPressed() {
   if (key === 'm') {
     current = matrixCells;
   }
+  if (key === 'n') {
+    current = numberCells;
+  }
   if (key === 's') {
     current = stringCells;
   }
@@ -110,5 +116,8 @@ function keyPressed() {
   if (key === 'x') {
     //current.sort({ mode: 'DISTANCE', target: 'magenta'/*, ascending: false*/ });
     current.sort({ mode: 'LUMA', ascending: true });
+  }
+  if (key === 'r') {
+    current.randomize();
   }
 }

@@ -19,7 +19,7 @@ class Quadrille {
   /**
    * Default drawing outline.
    */
-  static OUTLINE = 'magenta';
+  static OUTLINE = 'grey';
 
   /**
    * Default drawing outline weight.
@@ -787,7 +787,7 @@ class Quadrille {
    */
   sort({
     mode = 'LUMA',
-    target = 'magenta',
+    target = this.OUTLINE,
     ascending = true,
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM,
@@ -838,7 +838,7 @@ class Quadrille {
     imageDisplay = this.IMAGE,
     colorDisplay = this.COLOR,
     stringDisplay = this.STRING,
-    numberDisplay,
+    numberDisplay = this.NUMBER,
     arrayDisplay,
     objectDisplay,
     background = this.BACKGROUND,
@@ -883,6 +883,19 @@ class Quadrille {
   }
 
   /**
+   * Number cell drawing.
+   */
+  static NUMBER({
+    graphics,
+    cell,
+    cellLength = this.CELL_LENGTH,
+    outline = this.OUTLINE,
+    outlineWeight = this.OUTLINE_WEIGHT
+  } = {}) {
+    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength, outline: outline, outlineWeight: outlineWeight });
+  }
+
+  /**
    * Color cell drawing.
    */
   static COLOR({
@@ -904,9 +917,9 @@ class Quadrille {
   static IMAGE({
     graphics,
     cell,
+    cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    cellLength = this.CELL_LENGTH
+    outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     graphics.image(cell, 0, 0, cellLength, cellLength);
     Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
@@ -918,11 +931,11 @@ class Quadrille {
   static STRING({
     graphics,
     cell,
+    cellLength = this.CELL_LENGTH,
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM,
     outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    cellLength = this.CELL_LENGTH
+    outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     graphics.noStroke();
     graphics.fill(textColor);
@@ -937,9 +950,9 @@ class Quadrille {
    */
   static TILE({
     graphics,
+    cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    cellLength = this.CELL_LENGTH
+    outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     if (outlineWeight !== 0) {
       graphics.noFill();
@@ -956,7 +969,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.1.0',
+    VERSION: '1.1.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -974,7 +987,7 @@ class Quadrille {
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
     stringDisplay = Quadrille.STRING,
-    numberDisplay,
+    numberDisplay = Quadrille.NUMBER,
     arrayDisplay,
     objectDisplay,
     cellLength = Quadrille.CELL_LENGTH,

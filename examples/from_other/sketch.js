@@ -29,5 +29,5 @@ function setup() {
 function draw() {
   background('#060621');
   drawQuadrille(H, {x: 2 * LENGTH, y: 2 * LENGTH, cellLength: LENGTH});
-  drawQuadrille(other, {x: 2 * LENGTH, y: 10 * LENGTH, cellLength: LENGTH, board: true});
+  drawQuadrille(other, {x: 2 * LENGTH, y: 10 * LENGTH, cellLength: LENGTH});
 }
