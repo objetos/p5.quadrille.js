@@ -12,9 +12,7 @@
     - [Geometry transformations](#geometry-transformations)
     - [I/O](#io)
     - [Visual Computing](#visual-computing)
-  - [Static variables and methods](#static-variables-and-methods)
-    - [Variables](#variables)
-    - [Methods](#methods-1)
+  - [Static boolean operators](#static-boolean-operators)
 - [Installation](#installation)
 - [vs-code \& vs-codium \& gitpod hacking instructions](#vs-code--vs-codium--gitpod-hacking-instructions)
 
@@ -105,22 +103,13 @@
     }
     ```
 3. `filter(mask, [row=0, col=0])`: applies [convolution mask](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) filter either to the whole quadrille or at specific `(row, col)` cell.
-4. `sort([{[mode='LUMA'], [target='magenta'], [ascending=true], [textColor='black'], [textZoom=Quadrille.TEXT_ZOOM], [background=Quadrille.BACKGROUND], [cellLength=this.width], [numberColor=Quadrille.numberColor], [min=0], [max=0]}])`: sorts quadrille cells according to their coloring. `mode` is either `'LUMA'`, `'AVG'`, or `'DISTANCE'`, `target` a color and `ascending` a boolean. Remaining params defined as within the [`drawQuadrille`](#p5-functions) function.
+4. `sort([{[mode='LUMA'], [target='magenta'], [ascending=true], [textColor='black'], [textZoom=Quadrille.TEXT_ZOOM], [background=Quadrille.BACKGROUND], [cellLength=this.width], [numberColor=Quadrille.numberColor], [min=0], [max=0]}])`: sorts quadrille cells according to their coloring. Note that the `BACKGROUND` param is black, `mode` is either `'LUMA'`, `'AVG'`, or `'DISTANCE'`, `target` is a `p5.Color` instance and `ascending` is a boolean. Remaining params defined as within the [`drawQuadrille`](#p5-functions) function.
 5. `rasterize(shader, pattern0, [pattern1=pattern0], [pattern2=pattern0], [pattern3=pattern0])`: rasterizes the quadrille according to upper-left corner vertex `pattern0`, bottom-left corner vertex `pattern1`, upper-right corner vertex `pattern2`, and bottom-right corner vertex `pattern3`,  using (fragment) `shader`.
 6. `rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, pattern0, [pattern1=pattern0], [pattern2=pattern0])`: rasterizes the triangle defined by vertices `(row0, col0)`, `(row1, col1)`, and `(row2, col2)`, using [barycentric coordinates](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). The user provided [software rendered](https://en.wikipedia.org/wiki/Software_rendering) [(fragment) shader](https://en.wikipedia.org/wiki/Shader) is a function parameterized with the object literal `{ pattern: interpolated_data_array, row: i, col: j }` and that should return a [p5.Color](https://p5js.org/reference/#/p5.Color).
 
-## Static variables and methods
+## Static boolean operators
 
-### Variables
-
-1. `Quadrille.BACKGROUND='black'`: Default background used in sort.
-2. `Quadrille.TEXT_COLOR='white'`: Default text drawing color.
-3. `Quadrille.TEXT_ZOOM=0.89`: Default text drawing zoom.
-4. `Quadrille.OUTLINE='grey'`: Default drawing outline.
-5. `Quadrille.OUTLINE_WEIGHT=2`: Default drawing outline weight.
-6. `Quadrille.CELL_LENGTH=100`: Default drawing cell length.
-
-### Methods
+The following operators are inspired by [CSG](https://en.wikipedia.org/wiki/Constructive_solid_geometry) as a high-level quadrille modelling technique.
 
 1. `Quadrille.AND(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *intersection* of the two given quadrilles.
 2. `Quadrille.DIFF(quadrille1, quadrille2, [row=0], [col=0])`: returns the quadrille obtained from the *difference* of the two given quadrilles.
