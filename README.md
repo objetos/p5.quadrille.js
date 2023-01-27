@@ -18,32 +18,25 @@
 - [Installation](#installation)
 - [vs-code \& vs-codium \& gitpod hacking instructions](#vs-code--vs-codium--gitpod-hacking-instructions)
 
-
-**Observations**
-
-1. All the properties
-2. All the params defined below within `[` and `]` are optional.
-3. The `pattern` parameter is either a number, color, image or string which defines how an individual quadrille cell is filled.
-
 # p5 functions
 
 ## createQuadrille
 
-[Polymorphic](https://en.wikipedia.org/wiki/Function_overloading) [p5.js](https://p5js.org/) ([overloaded](https://en.wikipedia.org/wiki/Function_overloading)) function that creates a `quadrille` whose individual cells may be defined as numbers (**note** that a zero define an empty cell (see also `filter`), 4-length color arrays, images (both, [p5.Image](https://p5js.org/reference/#/p5.Image) and [p5.Graphics](https://p5js.org/reference/#/p5.Graphics) instances), colors ([p5.Color](https://p5js.org/reference/#/p5.Color) instances) and strings.
+[p5.js](https://p5js.org/) function that creates an empty or a filled `quadrille`.
 
-1. `createQuadrille(`[`jagged_array`](https://en.wikipedia.org/wiki/Jagged_array)`)`
-2. `createQuadrille(array)`
-3. `createQuadrille(width, array)`
-4. `createQuadrille(string)`
-5. `createQuadrille(width, string)`
-6. `createQuadrille(width, height)`
-7. `createQuadrille(width, image, [coherence])`: `coherence` defines whether or not the quadrille filling algorithm should use spatial coherence.
-8. `createQuadrille(width, `[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`
-9. `createQuadrille(width, height, order, pattern)`
+1. `createQuadrille(width, height)`: creates an empty quadrille having `width` number of columns and `height` number of rows.
+2. `createQuadrille(`[`jagged_array`](https://en.wikipedia.org/wiki/Jagged_array)`)`: creates a quadrille and fills its cells taking the `jagged_array` items as source. Note that `null` `array` items represent empty quadrille cells.
+3. `createQuadrille(array)`: creates a quadrille and fills its cells taking the `array` items as source. Note that `null` `array` items represent empty quadrille cells.
+4. `createQuadrille(width, array)`: creates a quadrille and fills its cells taking the `array` items as source up to `width` number of columns. Observe that (one or) several quadrille rows may be created to include all the `array` items. Note that `null` `array` items represent empty quadrille cells. 
+5. `createQuadrille(string)`: creates a quadrille and fills its cells taking `string` as source. The resulting number of quadrille `columns` matches that of the [string length](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length).
+6. `createQuadrille(width, string)`: creates a quadrille and fills its cells taking `string` as source. Note that (one or) several quadrille rows may be created to include all the `string` characters.
+7. `createQuadrille(width, image, [coherence])`: creates a quadrille and fills its cells taking `image` (either a [p5.Image](https://p5js.org/reference/#/p5.Image) or a [p5.Graphics](https://p5js.org/reference/#/p5.Graphics)) as source. The `coherence` boolean param defines whether or not the quadrille filling algorithm should use spatial coherence.
+8. `createQuadrille(width, height, order, pattern)`: creates a quadrille and fills its cells using `pattern` (any data but `undefined` or `null`) which is randomly repeated `along` the quadrille up to `order` number of times.
+9. `createQuadrille(width, `[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`: creates a quadrille and fills its cells taking `bitboard` as source, using `pattern` (any data but `undefined` or `null`) to represent [`1` (or on)](https://en.wikipedia.org/wiki/Bit) bits.
 
 ## drawQuadrille
 
-`drawQuadrille(quadrille, [{[graphics=this], [x=0], [y=0], [tile], [contour], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM], [board=false], [numberColor=Quadrille.NUMBER_COLOR], [min=0], [max=0]}])`
+`drawQuadrille(quadrille, [{[graphics=this], [x=0], [y=0], [tile], [contour], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM]}])`
 
 **Observations**
 
@@ -111,13 +104,12 @@
 
 ### Variables
 
-1. `Quadrille.BACKGROUND='white'`: Default background used in sort.
-2. `Quadrille.TEXT_COLOR='cyan'`: Default text drawing color.
+1. `Quadrille.BACKGROUND='black'`: Default background used in sort.
+2. `Quadrille.TEXT_COLOR='white'`: Default text drawing color.
 3. `Quadrille.TEXT_ZOOM=0.89`: Default text drawing zoom.
-4. `Quadrille.NUMBER_COLOR='orange'`: Default drawing number color.
-5. `Quadrille.OUTLINE='magenta'`: Default drawing outline.
-6. `Quadrille.OUTLINE_WEIGHT=2`: Default drawing outline weight.
-7. `Quadrille.CELL_LENGTH=100`: Default drawing cell length.
+4. `Quadrille.OUTLINE='grey'`: Default drawing outline.
+5. `Quadrille.OUTLINE_WEIGHT=2`: Default drawing outline weight.
+6. `Quadrille.CELL_LENGTH=100`: Default drawing cell length.
 
 ### Methods
 
