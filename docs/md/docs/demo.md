@@ -85,7 +85,7 @@
 > 
 > function stick(key) {
 >   let clone = quadrille.clone();
->   clone.fill(color('#965695'));
+>   clone.replace(color('#965695'));
 >   board = key === 'u' ? Quadrille.OR(board, clone, row, col) :
 >           key === 'x' ? Quadrille.XOR(board, clone, row, col) :
 >           key === 'i' ? Quadrille.AND(board, clone, row, col) :
@@ -235,13 +235,13 @@ function keyPressed() {
 }
 ```
 
- The `quadrille` is first [cloned](/docs/io/clone) and [filled](/docs/io/fill) to dim its color when stick it, and the `active` function is then called to start all over again:
+ The `quadrille` is first [cloned](/docs/io/clone) and dim (using the [replace](/docs/io/replace) method) its color when stick it, and the `active` function is then called to start all over again:
 
 
 ```js | excerpt from demo.js
 function stick(key) {
   let clone = quadrille.clone(); // --> performs a shallow copy of the quadrille
-  clone.fill(color('#965695')); // --> dim the cloned quadrille color
+  clone.replace(color('#965695')); // --> dim the cloned quadrille color
 /*!*/  board = key === 'u' ? Quadrille.OR(board, clone, col, row) :
           key === 'x' ? Quadrille.XOR(board, clone, col, row) :
           key === 'i' ? Quadrille.AND(board, clone, col, row) :

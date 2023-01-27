@@ -55,7 +55,7 @@ function keyPressed() {
 
 function stick(key) {
   let clone = quadrille.clone();
-  clone.fill(color('#965695'));
+  clone.replace(color('#965695'));
   board = key === 'u' ? Quadrille.OR(board, clone, row, col) :
           key === 'x' ? Quadrille.XOR(board, clone, row, col) :
           key === 'i' ? Quadrille.AND(board, clone, row, col) :
