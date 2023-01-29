@@ -36,7 +36,23 @@
 
 [p5.js](https://p5js.org/) function that draws the quadrille at `(x, y)` screen position on the [`graphics`](https://p5js.org/reference/#/p5.Graphics) (which is the main [`canvas`](https://p5js.org/reference/#/p5/createCanvas) by default), using the display parameter values.
 
-`drawQuadrille(quadrille, [{[graphics=this], [x=0], [y=0], [cellLength=Quadrille.CELL_LENGTH], [outlineWeight=Quadrille.OUTLINE_WEIGHT], [outline=Quadrille.OUTLINE], [textColor=Quadrille.TEXT_COLOR], [textZoom=Quadrille.TEXT_ZOOM], [tileDisplay=Quadrille.TILE], [imageDisplay=Quadrille.IMAGE], [stringDisplay=Quadrille.STRING], [colorDisplay=Quadrille.COLOR], [numberDisplay=Quadrille.NUMBER], [arrayDisplay], [objectDisplay]}])`:
+`drawQuadrille(quadrille, [{
+  [graphics=this],
+  [x=0],
+  [y=0],
+  [cellLength=Quadrille.CELL_LENGTH],
+  [outlineWeight=Quadrille.OUTLINE_WEIGHT],
+  [outline=Quadrille.OUTLINE],
+  [textColor=Quadrille.TEXT_COLOR],
+  [textZoom=Quadrille.TEXT_ZOOM],
+  [tileDisplay=Quadrille.TILE],
+  [imageDisplay=Quadrille.IMAGE],
+  [stringDisplay=Quadrille.STRING],
+  [colorDisplay=Quadrille.COLOR],
+  [numberDisplay=Quadrille.NUMBER],
+  [arrayDisplay],
+  [objectDisplay]
+  }])`:
 
 **Observations**
 
@@ -61,7 +77,7 @@
 
 ### Conversion between representations
 
-1. `from(image, [coherence=false])`, `from(`[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`: fills quadrille cells with given `image` or `bitboard` using `pattern` (any data type instane but `undefined` or `null`), respectively.
+1. `from(image, [coherence=false])`, `from(`[`bitboard`](https://en.wikipedia.org/wiki/Bitboard)`, pattern)`: fills quadrille cells with given `image` or `bitboard` using `pattern` (any data type instance but `undefined` or `null`), respectively.
 2. `toArray()`: returns a [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order) array of the quadrille cells. The resulting array has `quadrille.width * quadrille.height` dimensions.
 3. `toInt()`: returns the integer representation of the quadrille filled cells using [big-endian](https://en.wikipedia.org/wiki/Endianness) and [row-major ordering](https://en.wikipedia.org/wiki/Row-_and_column-major_order).
 4. `toMatrix()`: returns a [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order) matrix of the quadrille cells. The resulting 2D array has `quadrille.width * quadrille.height` dimensions.
