@@ -513,6 +513,22 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
+   * @param {number} dimension of ring
+   * @returns Quadrille of neighbour cells around the ring centered at (row, col)
+   */
+  ring(row, col, dimension = 1) {
+    let array1D = [];
+    for (let i = row - dimension; i <= row + dimension; i++) {
+      for (let j = col - dimension; j <= col + dimension; j++) {
+        array1D.push(this.read(i, j));
+      }
+    }
+    return new Quadrille(2 * dimension + 1, array1D);
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
    * @returns {boolean} true if cell is null
    */
   isEmpty(row, col) {

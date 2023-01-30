@@ -36,7 +36,8 @@
 
 [p5.js](https://p5js.org/) function that draws the quadrille at `(x, y)` screen position on the [`graphics`](https://p5js.org/reference/#/p5.Graphics) (which is the main [`canvas`](https://p5js.org/reference/#/p5/createCanvas) by default), using the display parameter values.
 
-`drawQuadrille(quadrille, [{
+```js
+drawQuadrille(quadrille, [{
   [graphics=this],
   [x=0],
   [y=0],
@@ -52,7 +53,8 @@
   [numberDisplay=Quadrille.NUMBER],
   [arrayDisplay],
   [objectDisplay]
-  }])`:
+  }])
+```
 
 **Observations**
 
