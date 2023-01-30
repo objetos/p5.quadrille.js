@@ -517,7 +517,7 @@ class Quadrille {
    * @param {number} row 
    * @param {number} col 
    * @param {number} dimension of ring
-   * @returns Quadrille of neighbour cells around the ring centered at (row, col)
+   * @returns Quadrille of neighbor cells around the ring centered at (row, col)
    */
   ring(row, col, dimension = 1) {
     let array1D = [];
@@ -580,14 +580,14 @@ class Quadrille {
         for (let jmask = 0; jmask < mask.width; jmask++) {
           let i = row + imask - cache_half_size;
           let j = col + jmask - cache_half_size;
-          let neighbour = this._memory2D[i][j];
+          let neighbor = this._memory2D[i][j];
           let mask_value = mask._memory2D[imask][jmask];
-          if ((neighbour instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
+          if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
             // luma coefficients are: 0.299, 0.587, 0.114, 0
             let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
-            r += red(neighbour) * weight;
-            g += green(neighbour) * weight;
-            b += blue(neighbour) * weight;
+            r += red(neighbor) * weight;
+            g += green(neighbor) * weight;
+            b += blue(neighbor) * weight;
           }
         }
       }
