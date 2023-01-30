@@ -103,6 +103,7 @@ drawQuadrille(quadrille, [{
 9. `randomize()`: randomly re-arranges the quadrille cells.
 10. `read(row, col)`: returns the contents of the quadrille cell at `(row, col)`. Returns `undefined` if the cell doesn't exist.
 11. `replace(pattern)`, `replace(pattern1, pattern2)`: either replaces non empty cells with `pattern` or searches `pattern1` cell ocurrences and replaces them with `pattern2`, respectively. Both, `pattern1` and `pattern2` are any data type instances but `undefined` or `null`.
+12. `ring(row, col, [dimension=1])`: returns the ring of neighbour cells centered at (row, col) as a new quadrille.
 
 ### Visual Computing
 

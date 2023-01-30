@@ -145,8 +145,11 @@ function keyPressed() {
   if (key === 'k') {
     board.clear();
     animate = false;
-    quadrille.randomize();
-    ring = quadrille.ring(0, 4, 2);
+    //quadrille.randomize();
+    //ring = quadrille.ring(0, 4, 2);
+    ring = quadrille.randomize().ring(0, 4, 2);
+    //ring = quadrille.clear(0).rotate().transpose().fill(0, 0, '?').ring(0, 4, 2);
+    //ring = quadrille.clear(0).rotate().ring(0, 4, 2);
   }
   row = key === 'w' ? row - 1 : key === 'z' ? row + 1 : row;
   col = key === 'a' ? col - 1 : key === 's' ? col + 1 : col;

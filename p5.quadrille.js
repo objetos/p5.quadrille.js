@@ -349,6 +349,7 @@ class Quadrille {
         }
       }
     }
+    return this;
   }
 
   _pixelator1(image) {
@@ -466,6 +467,7 @@ class Quadrille {
         }
       }
     }
+    return this;
   }
 
   /**
@@ -497,6 +499,7 @@ class Quadrille {
         this._memory2D[arguments[0]][arguments[1]] = arguments[2];
       }
     }
+    return this;
   }
 
   /**
@@ -564,6 +567,7 @@ class Quadrille {
         this._conv(mask, row, col, half_size);
       }
     }
+    return this;
   }
 
   _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2) {
@@ -642,6 +646,7 @@ class Quadrille {
         }
       }
     }
+    return this;
   }
 
   /**
@@ -706,6 +711,7 @@ class Quadrille {
         counter++;
       }
     }
+    return this;
   }
 
   /**
@@ -727,6 +733,7 @@ class Quadrille {
         }
       }
     }
+    return this;
   }
 
   /**
@@ -735,6 +742,7 @@ class Quadrille {
    */
   insert(row) {
     this._memory2D.splice(row, 0, Array(this.width).fill(null));
+    return this;
   }
 
   /**
@@ -745,6 +753,7 @@ class Quadrille {
     if (this.height > 1 && row >= 0 && row < this.height) {
       this._memory2D.splice(row, 1);
     }
+    return this;
   }
 
   /**
@@ -763,6 +772,7 @@ class Quadrille {
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
       this._memory2D[arguments[0]][arguments[1]] = null;
     }
+    return this;
   }
 
   /**
@@ -770,6 +780,7 @@ class Quadrille {
    */
   reflect() {
     this._memory2D.reverse();
+    return this;
   }
 
   /**
@@ -779,6 +790,7 @@ class Quadrille {
     // credit goes to Fawad Ghafoor
     // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
+    return this;
   }
 
   /**
@@ -788,6 +800,7 @@ class Quadrille {
     // credit goes to Nitin Jadhav: https://github.com/nitinja
     // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
+    return this;
   }
 
   /**
@@ -844,6 +857,7 @@ class Quadrille {
         break;
     }
     this._init1D(memory1D = ascending ? memory1D : memory1D.reverse(), this.width);
+    return this;
   }
 
   /**
@@ -985,7 +999,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.1.1',
+    VERSION: '1.2.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
