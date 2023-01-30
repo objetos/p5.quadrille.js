@@ -16,6 +16,7 @@
 > [randomize()](/docs/io/randomize)
 > [replace()](/docs/io/replace)
 > [clone()](/docs/io/clone)
+> [ring()](/docs/io/ring)
 > [clear()](/docs/io/clear)
 > [delete()](/docs/io/delete)
 > [insert()](/docs/io/insert)
