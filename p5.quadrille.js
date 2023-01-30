@@ -517,7 +517,7 @@ class Quadrille {
    * @param {number} row 
    * @param {number} col 
    * @param {number} dimension of ring
-   * @returns Quadrille of neighbor cells around the ring centered at (row, col)
+   * @returns Quadrille ring of neighbor cells centered at (row, col).
    */
   ring(row, col, dimension = 1) {
     let array1D = [];
