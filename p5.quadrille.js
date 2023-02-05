@@ -918,11 +918,9 @@ class Quadrille {
   static NUMBER({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength, outline: outline, outlineWeight: outlineWeight });
+    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength });
   }
 
   /**
@@ -991,7 +989,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.2.2',
+    VERSION: '1.2.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
