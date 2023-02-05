@@ -10,6 +10,7 @@ const COLS = 20;
 const LENGTH = 40;
 // */
 let board, quadrille;
+let boardParams, quadrilleParams;
 let col, row;
 let animate = true;
 // tesselation
@@ -27,6 +28,7 @@ function preload() {
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
+  //Quadrille.CELL_LENGTH = LENGTH;
   //Quadrille.TEXT_ZOOM = 1;
   // patterns
   c1 = color(random(255), random(255), random(255));
@@ -54,8 +56,6 @@ function setup() {
     graphics.fill(cell);
     graphics.ellipseMode(CORNER);
     graphics.ellipse(0, 0, cellLength, cellLength);
-    //graphics.circle(0, 0, diameter);
-    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
   imageDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
     graphics.stroke(outline);
@@ -67,16 +67,22 @@ function setup() {
     shape.ellipse(0, 0, cell.width, cell.height);
     _al.mask(shape);
     graphics.image(_al, 0, 0, cellLength, cellLength);
-    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
   }
-  stringDisplay = ({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    graphics.noStroke();
-    graphics.fill(textColor);
-    graphics.textSize(cellLength * textZoom / cell.length);
-    graphics.textAlign(CENTER, CENTER);
-    graphics.text(cell, 0, 0, cellLength, cellLength);
-    tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+  let params = {
+    cellLength: LENGTH,
+    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
+    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
+    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
+    //stringDisplay: circled ? stringDisplay : Quadrille.STRING,
   }
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+  boardParams = Object.create(params);
+  boardParams.outline = 'magenta';
+  quadrilleParams = Object.create(params);
+  quadrilleParams.outline = '#1EB2A6';
+  //quadrilleParams.tileDisplay = null; // or 0
+  //quadrilleParams.outlineWeight = 0;
+  quadrilleParams.textColor = 'yellow';
 }
 
 function draw() {
@@ -85,24 +91,9 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
-  let params = {
-    cellLength: LENGTH,
-    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
-    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
-    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
-    stringDisplay: circled ? stringDisplay : Quadrille.STRING,
-  }
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-  let boardParams = Object.create(params);
-  boardParams.outline = 'magenta';
   drawQuadrille(board, boardParams);
-  let quadrilleParams = Object.create(params);
-  quadrilleParams.outline = '#1EB2A6';
   quadrilleParams.x = col * LENGTH;
   quadrilleParams.y = row * LENGTH;
-  //quadrilleParams.tileDisplay = null; // or 0
-  //quadrilleParams.outlineWeight = 0;
-  quadrilleParams.textColor = 'yellow'
   drawQuadrille(quadrille, quadrilleParams);
 }
 

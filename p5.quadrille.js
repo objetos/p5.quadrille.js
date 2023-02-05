@@ -514,18 +514,6 @@ class Quadrille {
   }
 
   /**
-   * @param {number} x screen space horizontal offset
-   * @param {number} y screen space vertical offset
-   * @param {number} pointerX pointer horizontal position default is mouseX
-   * @param {number} pointerY pointer vertical position default is mouseY
-   * @param {number} cellLength default is Quadrille.CELL_LENGTH
-   * @returns cell coordinates from the current pointer postion
-   */
-  cellCoords({ x = 0, y = 0, pointerX = mouseX, pointerY = mouseY, cellLength = Quadrille.CELL_LENGTH }) {
-    return { row: floor((pointerY - y) / cellLength), col: floor((pointerX - x) / cellLength) };
-  }
-
-  /**
    * @param {number} row 
    * @param {number} col 
    * @param {number} dimension of ring
