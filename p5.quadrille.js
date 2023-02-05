@@ -514,6 +514,18 @@ class Quadrille {
   }
 
   /**
+   * @param {number} x screen space horizontal offset
+   * @param {number} y screen space vertical offset
+   * @param {number} pointerX pointer horizontal position default is mouseX
+   * @param {number} pointerY pointer vertical position default is mouseY
+   * @param {number} cellLength default is Quadrille.CELL_LENGTH
+   * @returns cell coordinates from the current pointer postion
+   */
+  cellCoords({ x = 0, y = 0, pointerX = mouseX, pointerY = mouseY, cellLength = Quadrille.CELL_LENGTH }) {
+    return { row: floor((pointerY - y) / cellLength), col: floor((pointerX - x) / cellLength) };
+  }
+
+  /**
    * @param {number} row 
    * @param {number} col 
    * @param {number} dimension of ring
@@ -952,7 +964,6 @@ class Quadrille {
     outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     graphics.image(cell, 0, 0, cellLength, cellLength);
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -972,7 +983,6 @@ class Quadrille {
     graphics.textSize(cellLength * textZoom / cell.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -999,7 +1009,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.2.0',
+    VERSION: '1.2.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1033,10 +1043,7 @@ class Quadrille {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
-        if (tileDisplay && (cell === null || cell === undefined)) {
-          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
-        }
-        else if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+        if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
           imageDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         else if (colorDisplay && cell instanceof p5.Color) {
@@ -1053,6 +1060,9 @@ class Quadrille {
         }
         else if (objectDisplay && typeof cell === 'object') {
           objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
+        if (tileDisplay) {
+          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         graphics.pop();
       }
