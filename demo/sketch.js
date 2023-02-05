@@ -10,7 +10,6 @@ const COLS = 20;
 const LENGTH = 40;
 // */
 let board, quadrille;
-let boardParams, quadrilleParams;
 let col, row;
 let animate = true;
 // tesselation
@@ -68,21 +67,6 @@ function setup() {
     _al.mask(shape);
     graphics.image(_al, 0, 0, cellLength, cellLength);
   }
-  let params = {
-    cellLength: LENGTH,
-    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
-    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
-    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
-    //stringDisplay: circled ? stringDisplay : Quadrille.STRING,
-  }
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-  boardParams = Object.create(params);
-  boardParams.outline = 'magenta';
-  quadrilleParams = Object.create(params);
-  quadrilleParams.outline = '#1EB2A6';
-  //quadrilleParams.tileDisplay = null; // or 0
-  //quadrilleParams.outlineWeight = 0;
-  quadrilleParams.textColor = 'yellow';
 }
 
 function draw() {
@@ -91,7 +75,22 @@ function draw() {
   if ((frameCount % 30 === 0) && animate) {
     stick('u');
   }
+  let params = {
+    cellLength: LENGTH,
+    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
+    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
+    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
+    //stringDisplay: circled ? stringDisplay : Quadrille.STRING,
+  }
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+  let boardParams = Object.create(params);
+  boardParams.outline = 'magenta';
   drawQuadrille(board, boardParams);
+  let quadrilleParams = Object.create(params);
+  quadrilleParams.outline = '#1EB2A6';
+  //quadrilleParams.tileDisplay = null; // or 0
+  //quadrilleParams.outlineWeight = 0;
+  quadrilleParams.textColor = 'yellow';
   quadrilleParams.x = col * LENGTH;
   quadrilleParams.y = row * LENGTH;
   drawQuadrille(quadrille, quadrilleParams);

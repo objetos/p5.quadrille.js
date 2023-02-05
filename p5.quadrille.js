@@ -931,12 +931,9 @@ class Quadrille {
   static COLOR({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
+    graphics.noStroke();
     graphics.fill(cell);
     graphics.rect(0, 0, cellLength, cellLength);
   }
@@ -947,10 +944,9 @@ class Quadrille {
   static IMAGE({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
+    graphics.noStroke();
     graphics.image(cell, 0, 0, cellLength, cellLength);
   }
 
@@ -962,9 +958,7 @@ class Quadrille {
     cell,
     cellLength = this.CELL_LENGTH,
     textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    textZoom = this.TEXT_ZOOM
   } = {}) {
     graphics.noStroke();
     graphics.fill(textColor);
@@ -997,7 +991,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.2.1',
+    VERSION: '1.2.2',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
