@@ -158,7 +158,7 @@ Link the `p5.quadrille.js` library into your HTML file, after you have linked in
 <head>
   <script src="p5.js"></script>
   <script src="p5.sound.js"></script>
-  <script src=https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js></script>
+  <script src="https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js"></script>
   <script src="sketch.js"></script>
 </head>
 <body>
