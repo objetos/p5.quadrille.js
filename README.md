@@ -2,6 +2,8 @@
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
 
+<!--really needs refactor
+
 - [p5 functions](#p5-functions)
   - [createQuadrille](#createquadrille)
   - [drawQuadrille](#drawquadrille)
@@ -181,3 +183,5 @@ To run and hack the [demo](https://github.com/objetos/p5.quadrille.js/blob/maste
 1. Clone the repo (`git clone https://github.com/objetos/p5.quadrille.js`) and open it with your favorite editor.
 2. Install the [p5-vscode extension](https://marketplace.visualstudio.com/items?itemName=samplavigne.p5-vscode).
 3. Head over `demo/index.html` and press your editor `Go Live` button.
+
+-->
