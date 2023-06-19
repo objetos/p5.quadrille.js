@@ -532,6 +532,7 @@ class Quadrille {
 
   _flood(row, col, pattern1, pattern2, directions = 4) {
     if (directions !== 4 && directions !== 8) {
+      directions = 4;
       console.warn('using 4 directions, see: https://en.m.wikipedia.org/wiki/Flood_fill');
     }
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
