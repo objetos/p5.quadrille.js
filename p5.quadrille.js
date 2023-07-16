@@ -471,16 +471,39 @@ class Quadrille {
   }
 
   /**
+   * Clear quadrille cells (fill them with null's). Either:
+   * 1. clear(), clears current filled cells;
+   * 2. clear(row), clears row; or,
+   * 3. clear(row, col), clears cell.
+   * 4. clear(row, col, directions), flood clearing using (row, col) cell pattern.
+   */
+  clear() {
+    if (arguments.length === 0) {
+      this._memory2D = this._memory2D.map(x => x.map(y => y = null));
+    }
+    if (arguments.length === 1 && typeof arguments[0] === 'number') {
+      this._memory2D[arguments[0]].fill(null);
+    }
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      this._memory2D[arguments[0]][arguments[1]] = null;
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+    }
+    return this;
+  }
+
+  /**
    * Fills quadrille cells with given pattern. Either:
    * 1. fill(pattern), fills current empty cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
+   * 4. fill(row, col, pattern, directions), flood filling using (row, col) cell pattern.
    * pattern may be either a p5.Image, a p5.Graphics, a p5.Color,
    * a 4-length color array, an object, a string or a number.
    */
   fill() {
-    if (arguments.length === 1) {
-      if (arguments[0] === null && arguments[0] === undefined) return;
+    if (arguments.length === 1 && arguments[0] !== null && arguments[0] !== undefined) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           if ((this._memory2D[i][j] === null || this._memory2D[i][j] === undefined)) {
@@ -489,17 +512,44 @@ class Quadrille {
         }
       }
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] !== null && arguments[1] !== undefined) {
+    if (arguments.length === 2 && typeof arguments[0] === 'number' && arguments[1] !== null && arguments[1] !== undefined) {
+      if (arguments[0] >= 0 && arguments[0] < this.height) {
         this._memory2D[arguments[0]].fill(arguments[1]);
       }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width && arguments[2] !== null && arguments[2] !== undefined) {
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined) {
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
         this._memory2D[arguments[0]][arguments[1]] = arguments[2];
       }
     }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
+    }
     return this;
+  }
+
+  _flood(row, col, pattern1, pattern2, directions = 4) {
+    if (directions !== 4 && directions !== 8) {
+      directions = 4;
+      console.warn('using 4 directions, see: https://en.m.wikipedia.org/wiki/Flood_fill');
+    }
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
+      if (this._memory2D[row][col] === pattern1) {
+        this._memory2D[row][col] = pattern2;
+        this._flood(row, col - 1, pattern1, pattern2, directions);
+        this._flood(row - 1, col, pattern1, pattern2, directions);
+        this._flood(row, col + 1, pattern1, pattern2, directions);
+        this._flood(row + 1, col, pattern1, pattern2, directions);
+        if (directions === 8) {
+          this._flood(row - 1, col - 1, pattern1, pattern2, directions);
+          this._flood(row - 1, col + 1, pattern1, pattern2, directions);
+          this._flood(row + 1, col + 1, pattern1, pattern2, directions);
+          this._flood(row + 1, col - 1, pattern1, pattern2, directions);
+        }
+      }
+    }
   }
 
   /**
@@ -757,25 +807,6 @@ class Quadrille {
   }
 
   /**
-   * Clear quadrille cells (cells are filled with 0s). Either:
-   * 1. clear(), clears current filled cells;
-   * 2. clear(row), clears row; or,
-   * 3. clear(row, col), clears cell.
-   */
-  clear() {
-    if (arguments.length === 0) {
-      this._memory2D = this._memory2D.map(x => x.map(y => y = null));
-    }
-    if (arguments.length === 1 && typeof arguments[0] === 'number') {
-      this._memory2D[arguments[0]].fill(null);
-    }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D[arguments[0]][arguments[1]] = null;
-    }
-    return this;
-  }
-
-  /**
    * Horizontal reflection.
    */
   reflect() {
@@ -918,11 +949,9 @@ class Quadrille {
   static NUMBER({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength, outline: outline, outlineWeight: outlineWeight });
+    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength });
   }
 
   /**
@@ -931,12 +960,9 @@ class Quadrille {
   static COLOR({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
+    graphics.noStroke();
     graphics.fill(cell);
     graphics.rect(0, 0, cellLength, cellLength);
   }
@@ -947,12 +973,10 @@ class Quadrille {
   static IMAGE({
     graphics,
     cell,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.CELL_LENGTH
   } = {}) {
+    graphics.noStroke();
     graphics.image(cell, 0, 0, cellLength, cellLength);
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -963,16 +987,13 @@ class Quadrille {
     cell,
     cellLength = this.CELL_LENGTH,
     textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    textZoom = this.TEXT_ZOOM
   } = {}) {
     graphics.noStroke();
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / cell.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(cell, 0, 0, cellLength, cellLength);
-    Quadrille.TILE({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
   }
 
   /**
@@ -999,7 +1020,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.2.0',
+    VERSION: '2.0.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1033,10 +1054,7 @@ class Quadrille {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
-        if (tileDisplay && (cell === null || cell === undefined)) {
-          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
-        }
-        else if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+        if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
           imageDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         else if (colorDisplay && cell instanceof p5.Color) {
@@ -1054,9 +1072,65 @@ class Quadrille {
         else if (objectDisplay && typeof cell === 'object') {
           objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
+        if (tileDisplay) {
+          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+        }
         graphics.pop();
       }
     }
     graphics.pop();
+  }
+
+  p5.prototype._visit = function (fx, cells, cell, i, j) {
+    if (cells) {
+      if (cells.has(cell)) {
+        fx(quadrille, { cell: cell, row: i, col: j });
+      }
+    }
+    else {
+      fx(quadrille, { cell: cell, row: i, col: j });
+    }
+  }
+
+  p5.prototype.visitQuadrille = function (quadrille, {
+    emptyCells,
+    numberCells,
+    stringCells,
+    colorCells,
+    imageCells,
+    arrayCells,
+    objectCells,
+    cells
+  } = {}) {
+    let _cells;
+    if (cells) {
+      _cells = new Set(cells);
+    }
+    for (let i = 0; i < quadrille.height; i++) {
+      for (let j = 0; j < quadrille.width; j++) {
+        const cell = quadrille._memory2D[i][j];
+        if (emptyCells && cell === null) {
+          emptyCells(quadrille, { row: i, col: j });
+        }
+        if (numberCells && typeof cell === 'number') {
+          this._visit(numberCells, _cells, cell, i, j);
+        }
+        if (stringCells && typeof cell === 'string') {
+          this._visit(stringCells, _cells, cell, i, j);
+        }
+        if (colorCells && cell instanceof p5.Color) {
+          this._visit(colorCells, _cells, cell, i, j);
+        }
+        if (arrayCells && Array.isArray(cell)) {
+          this._visit(arrayCells, _cells, cell, i, j);
+        }
+        if (objectCells && typeof cell === 'object' && !Array.isArray(cell)) {
+          this._visit(objectCells, _cells, cell, i, j);
+        }
+        if (imageCells && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+          this._visit(imageCells, _cells, cell, i, j);
+        }
+      }
+    }
   }
 })();
