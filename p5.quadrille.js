@@ -1141,29 +1141,7 @@ class Quadrille {
     graphics.pop();
   }
 
-  p5.prototype._visit = function (fx, cells, cell, i, j) {
-    if (cells) {
-      if (cells.has(cell)) {
-        fx(quadrille, { cell: cell, row: i, col: j });
-      }
-    }
-    else {
-      fx(quadrille, { cell: cell, row: i, col: j });
-    }
-  }
-
-  p5.prototype.visitQuadrille = function (quadrille, {
-    allCells,
-    emptyCells,
-    filledCells,
-    numberCells,
-    stringCells,
-    colorCells,
-    imageCells,
-    arrayCells,
-    objectCells,
-    cells
-  } = {}) {
+  p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
     let _cells;
     if (cells) {
       _cells = new Set(cells);
@@ -1171,36 +1149,13 @@ class Quadrille {
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         const cell = quadrille._memory2D[i][j];
-        if (allCells) {
-          allCells(quadrille, { cell: cell, row: i, col: j });
+        if (_cells) {
+          if (_cells.has(cell)) {
+            fx(quadrille, { cell: cell, row: i, col: j });
+          }
         }
         else {
-          if (emptyCells && cell === null) {
-            emptyCells(quadrille, { row: i, col: j });
-          }
-          if (filledCells && cell) {
-            this._visit(filledCells, _cells, cell, i, j);
-          }
-          else {
-            if (numberCells && typeof cell === 'number') {
-              this._visit(numberCells, _cells, cell, i, j);
-            }
-            if (stringCells && typeof cell === 'string') {
-              this._visit(stringCells, _cells, cell, i, j);
-            }
-            if (colorCells && cell instanceof p5.Color) {
-              this._visit(colorCells, _cells, cell, i, j);
-            }
-            if (arrayCells && Array.isArray(cell)) {
-              this._visit(arrayCells, _cells, cell, i, j);
-            }
-            if (objectCells && typeof cell === 'object' && !Array.isArray(cell)) {
-              this._visit(objectCells, _cells, cell, i, j);
-            }
-            if (imageCells && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
-              this._visit(imageCells, _cells, cell, i, j);
-            }
-          }
+          fx(quadrille, { cell: cell, row: i, col: j });
         }
       }
     }
