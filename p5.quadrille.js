@@ -1142,14 +1142,11 @@ class Quadrille {
   }
 
   p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
-    let _cells;
-    if (cells) {
-      _cells = new Set(cells);
-    }
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         const cell = quadrille._memory2D[i][j];
-        if (_cells) {
+        if (cells) {
+          const _cells = new Set(cells);
           if (_cells.has(cell)) {
             fx(quadrille, { cell: cell, row: i, col: j });
           }

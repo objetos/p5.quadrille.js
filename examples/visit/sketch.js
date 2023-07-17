@@ -93,6 +93,6 @@ function keyPressed() {
   }
   if (key === 'z') {
     //cells: [color ('red')] // doesn't work since it needs references
-    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color('cyan')), [color2, color3]);
+    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color('cyan')), [color2, color3, 'h']);
   }
 }
