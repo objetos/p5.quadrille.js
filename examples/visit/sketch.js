@@ -76,6 +76,8 @@ function keyPressed() {
     quadrille = Quadrille.NEG(quadrille, color('green'));
   }
   if (key === 'v') {
+    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, 125), [null]);
+    /*
     visitQuadrille(quadrille,
       (quadrille, { row: row, col: col }) => {
         if (quadrille.isEmpty(row, col)) {
@@ -83,6 +85,7 @@ function keyPressed() {
         }
       }
     );
+    */
   }
   if (key === 'x') {
     visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color('yellow')), [125]);
