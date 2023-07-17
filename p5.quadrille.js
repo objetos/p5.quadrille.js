@@ -582,13 +582,73 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {boolean} true if cell is null
+   * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      return this._memory2D[row][col] === null;
-    }
-    return true;
+    return this.read(row, col) ? false : true;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is filled
+   */
+  isFilled(row, col) {
+    return this.read(row, col) ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a number
+   */
+  isNumber(row, col) {
+    return typeof this.read(row, col) === 'number' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a string
+   */
+  isString(row, col) {
+    return typeof this.read(row, col) === 'string' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a color
+   */
+  isColor(row, col) {
+    return this.read(row, col) instanceof p5.Color ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an array
+   */
+  isArray(row, col) {
+    return Array.isArray(this.read(row, col)) ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return typeof this.read(row, col) === 'object' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an image
+   */
+  isImage(row, col) {
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics ? true : false;
   }
 
   /**

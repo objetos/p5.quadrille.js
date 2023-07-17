@@ -28,6 +28,14 @@ function setup() {
   color2 = color('lime');
   quadrille.fill(0, color1);
   quadrille.transpose().fill(1, color2).transpose();
+  console.log(quadrille.isEmpty(-1, 0));
+  console.log(quadrille.isEmpty(0, 0));
+  console.log(quadrille.isNumber(0, 0));
+  console.log(quadrille.isColor(0, 0));
+  quadrille.fill(5, 5, 255);
+  console.log(quadrille.isNumber(5, 5));
+  quadrille.fill(7, 7, 'h');
+  console.log(quadrille.isString(7, 7));
 }
 
 function draw() {
