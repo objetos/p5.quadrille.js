@@ -6,7 +6,8 @@ let clear;
 const p = 400 / 600;
 const f = 0.5;
 const w = 30;
-let red;
+let color1;
+let color2;
 
 function setup() {
   const h = floor(w * p);
@@ -23,8 +24,10 @@ function setup() {
   document.oncontextmenu = function () {
     return false;
   };
-  red = color ('red');
-  quadrille.fill(0, red);
+  color1 = color('red');
+  color2 = color('lime');
+  quadrille.fill(0, color1);
+  quadrille.transpose().fill(1, color2).transpose();
 }
 
 function draw() {
@@ -74,22 +77,31 @@ function keyPressed() {
   if (key === 'x') {
     visitQuadrille(quadrille,
       {
-        numberCells: (quadrille, { row: row, col: col, cell: cell }) => {
-          if (cell === 125) {
-            quadrille.fill(row, col, color('yellow'));
-          }
-        }
+        numberCells: (quadrille, { row: row, col: col }) => {
+          quadrille.fill(row, col, color('yellow'));
+        },
+        cells: [125]
       }
     );
   }
   if (key === 'y') {
     visitQuadrille(quadrille,
       {
-        colorCells: (quadrille, { row: row, col: col, cell: cell }) => {
+        colorCells: (quadrille, { row: row, col: col }) => {
           quadrille.fill(row, col, color('magenta'));
-          
         },
-        cells: [red]
+        cells: [color1]
+        //cells: [color ('red')] // doesn't work since it needs references
+      }
+    );
+  }
+  if (key === 'z') {
+    visitQuadrille(quadrille,
+      {
+        filledCells: (quadrille, { row: row, col: col }) => {
+          quadrille.fill(row, col, color('cyan'));
+        },
+        cells: [color2]
         //cells: [color ('red')] // doesn't work since it needs references
       }
     );

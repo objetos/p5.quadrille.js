@@ -1093,7 +1093,9 @@ class Quadrille {
   }
 
   p5.prototype.visitQuadrille = function (quadrille, {
+    allCells,
     emptyCells,
+    filledCells,
     numberCells,
     stringCells,
     colorCells,
@@ -1109,26 +1111,36 @@ class Quadrille {
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         const cell = quadrille._memory2D[i][j];
-        if (emptyCells && cell === null) {
-          emptyCells(quadrille, { row: i, col: j });
+        if (allCells) {
+          allCells(quadrille, { cell: cell, row: i, col: j });
         }
-        if (numberCells && typeof cell === 'number') {
-          this._visit(numberCells, _cells, cell, i, j);
-        }
-        if (stringCells && typeof cell === 'string') {
-          this._visit(stringCells, _cells, cell, i, j);
-        }
-        if (colorCells && cell instanceof p5.Color) {
-          this._visit(colorCells, _cells, cell, i, j);
-        }
-        if (arrayCells && Array.isArray(cell)) {
-          this._visit(arrayCells, _cells, cell, i, j);
-        }
-        if (objectCells && typeof cell === 'object' && !Array.isArray(cell)) {
-          this._visit(objectCells, _cells, cell, i, j);
-        }
-        if (imageCells && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
-          this._visit(imageCells, _cells, cell, i, j);
+        else {
+          if (emptyCells && cell === null) {
+            emptyCells(quadrille, { row: i, col: j });
+          }
+          if (filledCells && cell) {
+            this._visit(filledCells, _cells, cell, i, j);
+          }
+          else {
+            if (numberCells && typeof cell === 'number') {
+              this._visit(numberCells, _cells, cell, i, j);
+            }
+            if (stringCells && typeof cell === 'string') {
+              this._visit(stringCells, _cells, cell, i, j);
+            }
+            if (colorCells && cell instanceof p5.Color) {
+              this._visit(colorCells, _cells, cell, i, j);
+            }
+            if (arrayCells && Array.isArray(cell)) {
+              this._visit(arrayCells, _cells, cell, i, j);
+            }
+            if (objectCells && typeof cell === 'object' && !Array.isArray(cell)) {
+              this._visit(objectCells, _cells, cell, i, j);
+            }
+            if (imageCells && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+              this._visit(imageCells, _cells, cell, i, j);
+            }
+          }
         }
       }
     }
