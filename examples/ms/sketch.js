@@ -2,13 +2,11 @@
 let q, filter, mask;
 const p = 1;
 const w = 30;
-let mode = 0;
+let debug;
 let maskColor;
-let fillColor;
 
 function setup() {
-  maskColor = color(200);
-  fillColor = color('blue');
+  maskColor = color('magenta');
   const h = floor(w * p);
   Quadrille.CELL_LENGTH = 600 / w;
   createCanvas(w * Quadrille.CELL_LENGTH, h * Quadrille.CELL_LENGTH);
@@ -36,46 +34,22 @@ function setup() {
 
 function draw() {
   background('orange');
-  
-  drawQuadrille(q);
-  if (mode === 1) {
+  if (debug) {
     drawQuadrille(filter);
+    return;
   }
-  if (mode === 2) {
-    drawQuadrille(mask);
-  }
+  drawQuadrille(q);
+  drawQuadrille(mask, { outline: color('lime') });
 }
 
 function mouseClicked() {
   const row = floor(mouseY / Quadrille.CELL_LENGTH);
   const col = floor(mouseX / Quadrille.CELL_LENGTH);
-  if (q.isFilled(row, col)) {
-    mask.clear(row,col);
-    return;
-  }
-  /*
-  // option 1
-  filter.fill(row, col, fillColor, true);
-  visitQuadrille(mask,
-    (quadrille, { row: row, col: col }) => {
-      if (filter.isColor(row, col)) {
-        quadrille.clear(row, col);
-      }
-    }
-  );
-  */
-  // option 2
-  filter.clear(row, col, true);
-  visitQuadrille(mask,
-    (quadrille, { row: row, col: col }) => {
-      if (filter.isEmpty(row, col)) {
-        quadrille.clear(row, col);
-      }
-    }
-  );
+  q.isFilled(row, col) ? filter.clear(row, col) : filter.clear(row, col, true);
+  mask = Quadrille.NEG(filter, maskColor);
+  mask = Quadrille.NEG(mask, maskColor);
 }
 
 function keyPressed() {
-  mode = 0;
-  mode = parseInt(key);
+  debug = !debug;
 }
