@@ -476,6 +476,8 @@ class Quadrille {
    * 2. clear(row), clears row; or,
    * 3. clear(row, col), clears cell.
    * 4. clear(row, col, directions), flood clearing using (row, col) cell pattern.
+   * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell pattern.
+   * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell pattern.
    */
   clear() {
     if (arguments.length === 0) {
@@ -491,10 +493,17 @@ class Quadrille {
         this._memory2D[arguments[0]][arguments[1]] = null;
       }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
-      }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+    typeof arguments[2] === 'number') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+    typeof arguments[2] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+    typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
     }
     return this;
   }
@@ -504,9 +513,14 @@ class Quadrille {
    * 1. fill(pattern), fills current empty cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * 4. fill(row, col, pattern, directions), flood filling using (row, col) cell pattern.
-   * pattern may be either a p5.Image, a p5.Graphics, a p5.Color,
-   * a 4-length color array, an object, a string or a number.
+   * 4. fill(row, col, pattern, directions), flood filling without boder in the given number of directions,
+   * using (row, col) cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
+   * an object, a string or a number).
+   * 5. fill(row, col, pattern, border), flood filling with (without) border in 4 directions using (row, col)
+   * cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
+   * 6. fill(row, col, pattern, directions, border), flood filling with (without) border in the given number of directions
+   * using (row, col) cell pattern (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
+   * a string or a number).
    */
   fill() {
     if (arguments.length === 1 && arguments[0] !== null && arguments[0] !== undefined) {
@@ -531,14 +545,20 @@ class Quadrille {
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
-      }
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], 4, arguments[3]);
+    }
+    if (arguments.length === 5 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number' && typeof arguments[4] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3], arguments[4]);
     }
     return this;
   }
 
-  _flood(row, col, pattern1, pattern2, directions = 4) {
+  _flood(row, col, pattern1, pattern2, directions = 4, border = false) {
     if (directions !== 4 && directions !== 8) {
       directions = 4;
       console.warn('using 4 directions, see: https://en.m.wikipedia.org/wiki/Flood_fill');
@@ -546,16 +566,19 @@ class Quadrille {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
       if (this._memory2D[row][col] === pattern1) {
         this._memory2D[row][col] = pattern2;
-        this._flood(row, col - 1, pattern1, pattern2, directions);
-        this._flood(row - 1, col, pattern1, pattern2, directions);
-        this._flood(row, col + 1, pattern1, pattern2, directions);
-        this._flood(row + 1, col, pattern1, pattern2, directions);
+        this._flood(row, col - 1, pattern1, pattern2, directions, border);
+        this._flood(row - 1, col, pattern1, pattern2, directions, border);
+        this._flood(row, col + 1, pattern1, pattern2, directions, border);
+        this._flood(row + 1, col, pattern1, pattern2, directions, border);
         if (directions === 8) {
-          this._flood(row - 1, col - 1, pattern1, pattern2, directions);
-          this._flood(row - 1, col + 1, pattern1, pattern2, directions);
-          this._flood(row + 1, col + 1, pattern1, pattern2, directions);
-          this._flood(row + 1, col - 1, pattern1, pattern2, directions);
+          this._flood(row - 1, col - 1, pattern1, pattern2, directions, border);
+          this._flood(row - 1, col + 1, pattern1, pattern2, directions, border);
+          this._flood(row + 1, col + 1, pattern1, pattern2, directions, border);
+          this._flood(row + 1, col - 1, pattern1, pattern2, directions, border);
         }
+      }
+      if (border) {
+        this._memory2D[row][col] = pattern2;
       }
     }
   }
