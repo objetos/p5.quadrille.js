@@ -2,12 +2,13 @@
 let q, filter, mask;
 const p = 1;
 const w = 30;
+let h;
 let debug;
 let maskColor;
 
 function setup() {
   maskColor = color('magenta');
-  const h = floor(w * p);
+  h = floor(w * p);
   Quadrille.CELL_LENGTH = 600 / w;
   createCanvas(w * Quadrille.CELL_LENGTH, h * Quadrille.CELL_LENGTH);
   q = createQuadrille(w, h, floor(w * h) * 0.1, '💣');
@@ -45,6 +46,10 @@ function draw() {
 function mouseClicked() {
   const row = floor(mouseY / Quadrille.CELL_LENGTH);
   const col = floor(mouseX / Quadrille.CELL_LENGTH);
+  if (q.read(row, col) === '💣') {
+    mask = createQuadrille(w, h);
+    return;
+  }
   q.isFilled(row, col) ? filter.clear(row, col) : filter.clear(row, col, true);
   mask = Quadrille.NEG(filter, maskColor);
   mask = Quadrille.NEG(mask, maskColor);
