@@ -1,13 +1,9 @@
 'use strict';
-let q, filter, mask;
-const p = 1;
-const w = 30;
+let q, filter;
+const p = 1, w = 30;
 let h;
-let debug;
-let maskColor;
 
 function setup() {
-  maskColor = color('magenta');
   h = floor(w * p);
   Quadrille.CELL_LENGTH = 600 / w;
   createCanvas(w * Quadrille.CELL_LENGTH, h * Quadrille.CELL_LENGTH);
@@ -24,9 +20,8 @@ function setup() {
     }
   );
   q = clone;
-  filter = q.clone();
-  filter.fill(color('red'));
-  mask = createQuadrille(w, h, w * h, maskColor);
+  filter = Quadrille.NEG(q, color('red'));
+  filter.fill(color('green'));
   // suppress right-click context menu
   document.oncontextmenu = function () {
     return false;
@@ -35,26 +30,16 @@ function setup() {
 
 function draw() {
   background('orange');
-  if (debug) {
-    drawQuadrille(filter);
-    return;
-  }
   drawQuadrille(q);
-  drawQuadrille(mask, { outline: color('lime') });
+  drawQuadrille(Quadrille.NEG(Quadrille.NEG(filter, color('red')), color('magenta')), { outline: (color('lime')) });
 }
 
 function mouseClicked() {
   const row = floor(mouseY / Quadrille.CELL_LENGTH);
   const col = floor(mouseX / Quadrille.CELL_LENGTH);
   if (q.read(row, col) === '💣') {
-    mask = createQuadrille(w, h);
+    filter = createQuadrille(w, h);
     return;
   }
   q.isFilled(row, col) ? filter.clear(row, col) : filter.clear(row, col, true);
-  mask = Quadrille.NEG(filter, maskColor);
-  mask = Quadrille.NEG(mask, maskColor);
-}
-
-function keyPressed() {
-  debug = !debug;
 }
