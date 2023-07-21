@@ -494,15 +494,15 @@ class Quadrille {
       }
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-    typeof arguments[2] === 'number') {
+      typeof arguments[2] === 'number') {
       this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-    typeof arguments[2] === 'boolean') {
+      typeof arguments[2] === 'boolean') {
       this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-    typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
+      typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
       this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
     }
     return this;
@@ -1174,16 +1174,15 @@ class Quadrille {
 
   p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
     const _cells = new Set(cells);
-    for (let i = 0; i < quadrille.height; i++) {
-      for (let j = 0; j < quadrille.width; j++) {
-        const cell = quadrille._memory2D[i][j];
+    for (let row = 0; row < quadrille.height; row++) {
+      for (let col = 0; col < quadrille.width; col++) {
         if (cells) {
-          if (_cells.has(cell)) {
-            fx(quadrille, { cell: cell, row: i, col: j });
+          if (_cells.has(quadrille._memory2D[row][col])) {
+            fx(row, col);
           }
         }
         else {
-          fx(quadrille, { cell: cell, row: i, col: j });
+          fx(row, col);
         }
       }
     }

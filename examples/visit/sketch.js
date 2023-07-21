@@ -76,10 +76,10 @@ function keyPressed() {
     quadrille = Quadrille.NEG(quadrille, color('green'));
   }
   if (key === 'v') {
-    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, 125), [null]);
+    visitQuadrille(quadrille, (row, col) => quadrille.fill(row, col, 125), [null]);
     /*
     visitQuadrille(quadrille,
-      (quadrille, { row: row, col: col }) => {
+      (row, col) => {
         if (quadrille.isEmpty(row, col)) {
           quadrille.fill(row, col, 125);
         }
@@ -88,14 +88,14 @@ function keyPressed() {
     */
   }
   if (key === 'x') {
-    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color('yellow')), [125]);
+    visitQuadrille(quadrille, (row, col) => quadrille.fill(row, col, color('yellow')), [125]);
   }
   if (key === 'y') {
     //cells: [color ('red')] // doesn't work since it needs references
-    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color3), [color1]);
+    visitQuadrille(quadrille, (row, col) => quadrille.fill(row, col, color3), [color1]);
   }
   if (key === 'z') {
     //cells: [color ('red')] // doesn't work since it needs references
-    visitQuadrille(quadrille, (quadrille, { row: row, col: col }) => quadrille.fill(row, col, color('cyan')), [color2, color3, 'h']);
+    visitQuadrille(quadrille, (row, col) => quadrille.fill(row, col, color('cyan')), [color2, color3, 'h']);
   }
 }
