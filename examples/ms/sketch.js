@@ -35,8 +35,8 @@ function draw() {
 }
 
 function mouseClicked() {
-  const row = board.row;
-  const col = board.col;
+  const row = board.row(mouseY);
+  const col = board.col(mouseX);
   // const row = floor(mouseY / Quadrille.CELL_LENGTH);
   // const col = floor(mouseX / Quadrille.CELL_LENGTH);
   if (board.read(row, col) === '💣') {
