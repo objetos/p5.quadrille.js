@@ -163,6 +163,7 @@ class Quadrille {
    * @see order
    */
   constructor() {
+    this._lastDisplay = 0;
     if (arguments.length === 1) {
       this.memory2D = arguments[0];
     }
@@ -317,6 +318,14 @@ class Quadrille {
       }
     }
     return result;
+  }
+
+  get row() {
+    return this._lastDisplay < frameCount - 1 ? console.warn('row needs drawQuadrille to be called first') : this._row;
+  }
+
+  get col() {
+    return this._lastDisplay < frameCount - 1 ? console.warn('col needs drawQuadrille to be called first') : this._col;
   }
 
   /**
@@ -560,8 +569,8 @@ class Quadrille {
 
   _flood(row, col, pattern1, pattern2, directions = 4, border = false) {
     if (directions !== 4 && directions !== 8) {
+      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
-      console.warn('using 4 directions, see: https://en.m.wikipedia.org/wiki/Flood_fill');
     }
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
       if (this._memory2D[row][col] === pattern1) {
@@ -1138,6 +1147,9 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
+    quadrille._lastDisplay = frameCount;
+    quadrille._row = floor((mouseY - y) / cellLength);
+    quadrille._col = floor((mouseX - x) / cellLength);
     graphics.push();
     graphics.translate(x, y);
     for (let i = 0; i < quadrille.height; i++) {

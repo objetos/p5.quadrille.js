@@ -35,8 +35,10 @@ function draw() {
 }
 
 function mouseClicked() {
-  const row = floor(mouseY / Quadrille.CELL_LENGTH);
-  const col = floor(mouseX / Quadrille.CELL_LENGTH);
+  const row = board.row;
+  const col = board.col;
+  // const row = floor(mouseY / Quadrille.CELL_LENGTH);
+  // const col = floor(mouseX / Quadrille.CELL_LENGTH);
   if (board.read(row, col) === '💣') {
     mask = createQuadrille(w, h);
     return;
