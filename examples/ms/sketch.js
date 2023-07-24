@@ -1,5 +1,6 @@
 'use strict';
 let board, mask;
+let row, col
 const p = 1, w = 30;
 let h;
 
@@ -35,10 +36,12 @@ function draw() {
 }
 
 function mouseClicked() {
-  const row = board.row(mouseY);
-  const col = board.col(mouseX);
-  // const row = floor(mouseY / Quadrille.CELL_LENGTH);
-  // const col = floor(mouseX / Quadrille.CELL_LENGTH);
+  row = board.mouseRow;
+  col = board.mouseCol;
+  // row = board.screenRow(mouseY);
+  // col = board.screenCol(mouseX);
+  // row = floor(mouseY / Quadrille.CELL_LENGTH);
+  // col = floor(mouseX / Quadrille.CELL_LENGTH);
   if (board.read(row, col) === '💣') {
     mask = createQuadrille(w, h);
     return;

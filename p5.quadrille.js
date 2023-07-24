@@ -163,7 +163,10 @@ class Quadrille {
    * @see order
    */
   constructor() {
+    this._cellLength = Quadrille.CELL_LENGTH;
     this._lastDisplay = 0;
+    this._x = 0;
+    this._y = 0;
     if (arguments.length === 1) {
       this.memory2D = arguments[0];
     }
@@ -320,6 +323,32 @@ class Quadrille {
     return result;
   }
 
+  get mouseRow() {
+    return this.screenRow(mouseY);
+  }
+
+  get mouseCol() {
+    return this.screenCol(mouseX);
+  }
+
+  screenRow(pixelY, y, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
+      console.warn('screenRow without y / cellLength params needs drawQuadrille to be called first');
+    }
+    y ??= this._y ? this._y : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return floor((pixelY - y) / cellLength);
+  }
+
+  screenCol(pixelX, x, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
+      console.warn('screenCol without x / cellLength params needs drawQuadrille to be called first');
+    }
+    x ??= this._x ? this._x : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return floor((pixelX - x) / cellLength);
+  }
+
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
    * 1. from(image, [coherence = false]); or,
@@ -396,31 +425,6 @@ class Quadrille {
 
   _toIndex(row, col, width = this.width) {
     return row * width + col;
-  }
-
-  row(pixelY, y, cellLength) {
-    y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return floor((pixelY - y) / cellLength);
-    //return this._lastDisplay < frameCount - 1 ? console.warn('row needs drawQuadrille to be called first') : this._row;
-  }
-
-  col(pixelX, x, cellLength) {
-    x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return floor((pixelX - x) / cellLength);
-  }
-
-  pixelY(row, y, cellLength) {
-    y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return y + row * cellLength;
-  }
-
-  pixelX(col, x, cellLength) {
-    x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return x + col * cellLength;
   }
 
   /**
@@ -1164,7 +1168,7 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
-    //quadrille._lastDisplay = frameCount;
+    quadrille._lastDisplay = frameCount;
     quadrille._x = x;
     quadrille._y = y;
     quadrille._cellLength = cellLength;
