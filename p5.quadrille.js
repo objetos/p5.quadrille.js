@@ -1195,7 +1195,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.0',
+    VERSION: '1.3.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
