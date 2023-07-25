@@ -775,13 +775,13 @@ class Quadrille {
    * should be greater or equal than the mask half_size which is computed as:
    * (mask.width - 1) / 2).
    * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
-   * @param {number} row if 0 convolutes the whole quadrille
-   * @param {number} col if 0 convolutes the whole quadrille
+   * @param {number} row if undefined convolutes the whole quadrille
+   * @param {number} col if undefined convolutes the whole quadrille
    */
-  filter(mask, row = 0, col = 0) {
+  filter(mask, row, col) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let half_size = (mask.width - 1) / 2;
-      if (row == 0 || col == 0) {
+      if (row === undefined || col === undefined) {
         for (let i = half_size; i < this.height - half_size; i++) {
           for (let j = half_size; j < this.width - half_size; j++) {
             this._conv(mask, i, j, half_size);
@@ -796,8 +796,7 @@ class Quadrille {
   }
 
   _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2) {
-    if (row >= cache_half_size && col >= cache_half_size &&
-      row < this.height - cache_half_size && col < this.width - cache_half_size) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       let r = 0;
       let g = 0;
       let b = 0;
@@ -805,7 +804,7 @@ class Quadrille {
         for (let jmask = 0; jmask < mask.width; jmask++) {
           let i = row + imask - cache_half_size;
           let j = col + jmask - cache_half_size;
-          let neighbor = this._memory2D[i][j];
+          let neighbor = this.read(i, j);
           let mask_value = mask._memory2D[imask][jmask];
           if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
             // luma coefficients are: 0.299, 0.587, 0.114, 0
@@ -1195,7 +1194,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.0',
+    VERSION: '1.3.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
