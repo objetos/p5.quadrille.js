@@ -331,6 +331,21 @@ class Quadrille {
     return this.screenCol(mouseX);
   }
 
+  get mouseY() {
+    return this.screenY(this.mouseRow);
+  }
+
+  get mouseX() {
+    return this.screenX(this.mouseCol);
+  }
+
+  /**
+   * Screen y coordinate to quadrille row
+   * @param {number} pixelY 
+   * @param {number} y quadrille y coordinate origin
+   * @param {number} cellLength 
+   * @returns quadrille row
+   */
   screenRow(pixelY, y, cellLength) {
     if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
       console.warn('screenRow without y / cellLength params needs drawQuadrille to be called first');
@@ -340,6 +355,13 @@ class Quadrille {
     return floor((pixelY - y) / cellLength);
   }
 
+  /**
+   * Screen x coordinate to quadrille col
+   * @param {number} pixelX 
+   * @param {number} x quadrille x coordinate origin
+   * @param {number} cellLength 
+   * @returns quadrille col
+   */
   screenCol(pixelX, x, cellLength) {
     if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
       console.warn('screenCol without x / cellLength params needs drawQuadrille to be called first');
@@ -349,14 +371,13 @@ class Quadrille {
     return floor((pixelX - x) / cellLength);
   }
 
-  get mouseY() {
-    return this.screenY(this.mouseRow);
-  }
-
-  get mouseX() {
-    return this.screenX(this.mouseCol);
-  }
-
+  /**
+   * Quadrille row cell origin (upper left corner) to screen
+   * @param {number} row 
+   * @param {number} y quadrille y coordinate origin
+   * @param {number} cellLength 
+   * @returns screen y coordinate
+   */
   screenY(row, y, cellLength) {
     if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
       console.warn('screenY without y / cellLength params needs drawQuadrille to be called first');
@@ -366,6 +387,13 @@ class Quadrille {
     return y + row * cellLength;
   }
 
+  /**
+   * Quadrille col cell origin (upper left corner) to screen
+   * @param {number} row 
+   * @param {number} x quadrille x coordinate origin
+   * @param {number} cellLength 
+   * @returns screen x coordinate
+   */
   screenX(col, x, cellLength) {
     if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
       console.warn('screenX without x / cellLength params needs drawQuadrille to be called first');

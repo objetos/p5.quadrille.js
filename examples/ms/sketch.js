@@ -31,16 +31,13 @@ function setup() {
 
 function draw() {
   background('orange');
-  drawQuadrille(board, {x: 100, y: 150});
-  drawQuadrille(Quadrille.NEG(Quadrille.NEG(mask, color('red')), color('magenta')), { outline: (color('lime')), x: 100, y: 150 });
+  drawQuadrille(board);
+  drawQuadrille(Quadrille.NEG(Quadrille.NEG(mask, color('red')), color('magenta')), { outline: (color('lime')) });
 }
 
 function mouseClicked() {
-  console.log(mouseX, mouseY);
-  console.log(board.mouseX, board.mouseY);
   row = board.mouseRow;
   col = board.mouseCol;
-  console.log((100 + col * Quadrille.CELL_LENGTH), (150 + row * Quadrille.CELL_LENGTH));
   // row = board.screenRow(mouseY);
   // col = board.screenCol(mouseX);
   // row = floor(mouseY / Quadrille.CELL_LENGTH);
