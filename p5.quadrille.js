@@ -788,7 +788,7 @@ class Quadrille {
           }
         }
       }
-      else {
+      else if (row >= half_size && row < this.height - half_size && col >= half_size && col < this.width - half_size) {
         this._conv(mask, row, col, half_size);
       }
     }
@@ -796,30 +796,28 @@ class Quadrille {
   }
 
   _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      for (let imask = 0; imask < mask.height; imask++) {
-        for (let jmask = 0; jmask < mask.width; jmask++) {
-          let i = row + imask - cache_half_size;
-          let j = col + jmask - cache_half_size;
-          let neighbor = this.read(i, j);
-          let mask_value = mask._memory2D[imask][jmask];
-          if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
-            // luma coefficients are: 0.299, 0.587, 0.114, 0
-            let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
-            r += red(neighbor) * weight;
-            g += green(neighbor) * weight;
-            b += blue(neighbor) * weight;
-          }
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    for (let imask = 0; imask < mask.height; imask++) {
+      for (let jmask = 0; jmask < mask.width; jmask++) {
+        let i = row + imask - cache_half_size;
+        let j = col + jmask - cache_half_size;
+        let neighbor = this.read(i, j);
+        let mask_value = mask._memory2D[imask][jmask];
+        if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
+          // luma coefficients are: 0.299, 0.587, 0.114, 0
+          let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+          r += red(neighbor) * weight;
+          g += green(neighbor) * weight;
+          b += blue(neighbor) * weight;
         }
       }
-      r = constrain(r, 0, 255);
-      g = constrain(g, 0, 255);
-      b = constrain(b, 0, 255);
-      this._memory2D[row][col] = color(r, g, b);
     }
+    r = constrain(r, 0, 255);
+    g = constrain(g, 0, 255);
+    b = constrain(b, 0, 255);
+    this._memory2D[row][col] = color(r, g, b);
   }
 
   /**
@@ -1194,7 +1192,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.1',
+    VERSION: '1.3.2',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
