@@ -163,6 +163,10 @@ class Quadrille {
    * @see order
    */
   constructor() {
+    this._cellLength = Quadrille.CELL_LENGTH;
+    this._lastDisplay = 0;
+    this._x = 0;
+    this._y = 0;
     if (arguments.length === 1) {
       this.memory2D = arguments[0];
     }
@@ -317,6 +321,86 @@ class Quadrille {
       }
     }
     return result;
+  }
+
+  get mouseRow() {
+    return this.screenRow(mouseY);
+  }
+
+  get mouseCol() {
+    return this.screenCol(mouseX);
+  }
+
+  get mouseY() {
+    return this.screenY(this.mouseRow);
+  }
+
+  get mouseX() {
+    return this.screenX(this.mouseCol);
+  }
+
+  /**
+   * Screen y coordinate to quadrille row
+   * @param {number} pixelY 
+   * @param {number} y quadrille y coordinate origin
+   * @param {number} cellLength 
+   * @returns quadrille row
+   */
+  screenRow(pixelY, y, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
+      console.warn('screenRow without y / cellLength params needs drawQuadrille to be called first');
+    }
+    y ??= this._y ? this._y : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return floor((pixelY - y) / cellLength);
+  }
+
+  /**
+   * Screen x coordinate to quadrille col
+   * @param {number} pixelX 
+   * @param {number} x quadrille x coordinate origin
+   * @param {number} cellLength 
+   * @returns quadrille col
+   */
+  screenCol(pixelX, x, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
+      console.warn('screenCol without x / cellLength params needs drawQuadrille to be called first');
+    }
+    x ??= this._x ? this._x : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return floor((pixelX - x) / cellLength);
+  }
+
+  /**
+   * Quadrille row cell origin (upper left corner) to screen
+   * @param {number} row 
+   * @param {number} y quadrille y coordinate origin
+   * @param {number} cellLength 
+   * @returns screen y coordinate
+   */
+  screenY(row, y, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
+      console.warn('screenY without y / cellLength params needs drawQuadrille to be called first');
+    }
+    y ??= this._y ? this._y : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return y + row * cellLength;
+  }
+
+  /**
+   * Quadrille col cell origin (upper left corner) to screen
+   * @param {number} row 
+   * @param {number} x quadrille x coordinate origin
+   * @param {number} cellLength 
+   * @returns screen x coordinate
+   */
+  screenX(col, x, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
+      console.warn('screenX without x / cellLength params needs drawQuadrille to be called first');
+    }
+    x ??= this._x ? this._x : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return x + col * cellLength;
   }
 
   /**
@@ -476,19 +560,34 @@ class Quadrille {
    * 2. clear(row), clears row; or,
    * 3. clear(row, col), clears cell.
    * 4. clear(row, col, directions), flood clearing using (row, col) cell pattern.
+   * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell pattern.
+   * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell pattern.
    */
   clear() {
     if (arguments.length === 0) {
       this._memory2D = this._memory2D.map(x => x.map(y => y = null));
     }
     if (arguments.length === 1 && typeof arguments[0] === 'number') {
-      this._memory2D[arguments[0]].fill(null);
+      if (arguments[0] >= 0 && arguments[0] < this.height) {
+        this._memory2D[arguments[0]].fill(null);
+      }
     }
     if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D[arguments[0]][arguments[1]] = null;
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._memory2D[arguments[0]][arguments[1]] = null;
+      }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      typeof arguments[2] === 'number') {
       this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+    }
+    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      typeof arguments[2] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
+    }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
     }
     return this;
   }
@@ -498,9 +597,14 @@ class Quadrille {
    * 1. fill(pattern), fills current empty cells;
    * 2. fill(row, pattern), fills row; or,
    * 3. fill(row, col, pattern), fills cell.
-   * 4. fill(row, col, pattern, directions), flood filling using (row, col) cell pattern.
-   * pattern may be either a p5.Image, a p5.Graphics, a p5.Color,
-   * a 4-length color array, an object, a string or a number.
+   * 4. fill(row, col, pattern, directions), flood filling without boder in the given number of directions,
+   * using (row, col) cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
+   * an object, a string or a number).
+   * 5. fill(row, col, pattern, border), flood filling with (without) border in 4 directions using (row, col)
+   * cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
+   * 6. fill(row, col, pattern, directions, border), flood filling with (without) border in the given number of directions
+   * using (row, col) cell pattern (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
+   * a string or a number).
    */
   fill() {
     if (arguments.length === 1 && arguments[0] !== null && arguments[0] !== undefined) {
@@ -527,27 +631,38 @@ class Quadrille {
       arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number') {
       this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
     }
+    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], 4, arguments[3]);
+    }
+    if (arguments.length === 5 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
+      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number' && typeof arguments[4] === 'boolean') {
+      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3], arguments[4]);
+    }
     return this;
   }
 
-  _flood(row, col, pattern1, pattern2, directions = 4) {
+  _flood(row, col, pattern1, pattern2, directions = 4, border = false) {
     if (directions !== 4 && directions !== 8) {
+      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
-      console.warn('using 4 directions, see: https://en.m.wikipedia.org/wiki/Flood_fill');
     }
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
       if (this._memory2D[row][col] === pattern1) {
         this._memory2D[row][col] = pattern2;
-        this._flood(row, col - 1, pattern1, pattern2, directions);
-        this._flood(row - 1, col, pattern1, pattern2, directions);
-        this._flood(row, col + 1, pattern1, pattern2, directions);
-        this._flood(row + 1, col, pattern1, pattern2, directions);
+        this._flood(row, col - 1, pattern1, pattern2, directions, border);
+        this._flood(row - 1, col, pattern1, pattern2, directions, border);
+        this._flood(row, col + 1, pattern1, pattern2, directions, border);
+        this._flood(row + 1, col, pattern1, pattern2, directions, border);
         if (directions === 8) {
-          this._flood(row - 1, col - 1, pattern1, pattern2, directions);
-          this._flood(row - 1, col + 1, pattern1, pattern2, directions);
-          this._flood(row + 1, col + 1, pattern1, pattern2, directions);
-          this._flood(row + 1, col - 1, pattern1, pattern2, directions);
+          this._flood(row - 1, col - 1, pattern1, pattern2, directions, border);
+          this._flood(row - 1, col + 1, pattern1, pattern2, directions, border);
+          this._flood(row + 1, col + 1, pattern1, pattern2, directions, border);
+          this._flood(row + 1, col - 1, pattern1, pattern2, directions, border);
         }
+      }
+      if (border) {
+        this._memory2D[row][col] = pattern2;
       }
     }
   }
@@ -582,13 +697,73 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {boolean} true if cell is null
+   * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      return this._memory2D[row][col] === null;
-    }
-    return true;
+    return this.read(row, col) ? false : true;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is filled
+   */
+  isFilled(row, col) {
+    return this.read(row, col) ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a number
+   */
+  isNumber(row, col) {
+    return typeof this.read(row, col) === 'number' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a string
+   */
+  isString(row, col) {
+    return typeof this.read(row, col) === 'string' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a color
+   */
+  isColor(row, col) {
+    return this.read(row, col) instanceof p5.Color ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an array
+   */
+  isArray(row, col) {
+    return Array.isArray(this.read(row, col)) ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return typeof this.read(row, col) === 'object' ? true : false;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an image
+   */
+  isImage(row, col) {
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics ? true : false;
   }
 
   /**
@@ -1047,6 +1222,10 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
+    quadrille._lastDisplay = frameCount;
+    quadrille._x = x;
+    quadrille._y = y;
+    quadrille._cellLength = cellLength;
     graphics.push();
     graphics.translate(x, y);
     for (let i = 0; i < quadrille.height; i++) {
@@ -1079,5 +1258,21 @@ class Quadrille {
       }
     }
     graphics.pop();
+  }
+
+  p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
+    const _cells = new Set(cells);
+    for (let row = 0; row < quadrille.height; row++) {
+      for (let col = 0; col < quadrille.width; col++) {
+        if (cells) {
+          if (_cells.has(quadrille._memory2D[row][col])) {
+            fx(row, col);
+          }
+        }
+        else {
+          fx(row, col);
+        }
+      }
+    }
   }
 })();
