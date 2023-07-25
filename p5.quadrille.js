@@ -349,6 +349,32 @@ class Quadrille {
     return floor((pixelX - x) / cellLength);
   }
 
+  get mouseY() {
+    return this.screenY(this.mouseRow);
+  }
+
+  get mouseX() {
+    return this.screenX(this.mouseCol);
+  }
+
+  screenY(row, y, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
+      console.warn('screenY without y / cellLength params needs drawQuadrille to be called first');
+    }
+    y ??= this._y ? this._y : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return y + row * cellLength;
+  }
+
+  screenX(col, x, cellLength) {
+    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
+      console.warn('screenX without x / cellLength params needs drawQuadrille to be called first');
+    }
+    x ??= this._x ? this._x : 0;
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    return x + col * cellLength;
+  }
+
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
    * 1. from(image, [coherence = false]); or,
