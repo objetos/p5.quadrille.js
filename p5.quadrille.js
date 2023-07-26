@@ -138,7 +138,7 @@ class Quadrille {
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
-        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
+        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j, false), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j, false));
         if (result !== undefined) {
           quadrille._memory2D[i][j] = result;
         }
@@ -672,9 +672,12 @@ class Quadrille {
    * @param {number} col 
    * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
    */
-  read(row, col) {
+  read(row, col, warn = true) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this._memory2D[row][col];
+    }
+    else if (warn) {
+      console.warn(`undefined cell @(${row}, ${col}) which is out of bounds ([0..${this.height}], [0..${this.width}])`);
     }
   }
 

@@ -39,6 +39,7 @@ function setup() {
   s3 = '?'
   // quadrilles
   board = createQuadrille(COLS, ROWS);
+  console.log(board.isFilled(-1, 0));
   quadrille = active(int(random(8)));
   // current position
   col = int(random(0, COLS - 4));
