@@ -693,7 +693,7 @@ class Quadrille {
    * @returns {boolean} true if cell is filled
    */
   isFilled(row, col) {
-    return this.read(row, col) !== null;
+    return this.read(row, col) !== null && this.read(row, col) !== undefined;
   }
 
   /**
@@ -1192,7 +1192,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.3',
+    VERSION: '1.3.4',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
