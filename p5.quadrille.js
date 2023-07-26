@@ -670,12 +670,84 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry
+   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this._memory2D[row][col];
     }
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is empty
+   */
+  isEmpty(row, col) {
+    return this.read(row, col) === null;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is filled
+   */
+  isFilled(row, col) {
+    return this.read(row, col) !== null;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a number
+   */
+  isNumber(row, col) {
+    return typeof this.read(row, col) === 'number';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a string
+   */
+  isString(row, col) {
+    return typeof this.read(row, col) === 'string';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a color
+   */
+  isColor(row, col) {
+    return this.read(row, col) instanceof p5.Color;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an array
+   */
+  isArray(row, col) {
+    return Array.isArray(this.read(row, col));
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return typeof this.read(row, col) === 'object';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an image
+   */
+  isImage(row, col) {
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
   }
 
   /**
@@ -692,78 +764,6 @@ class Quadrille {
       }
     }
     return new Quadrille(2 * dimension + 1, array1D);
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is empty
-   */
-  isEmpty(row, col) {
-    return this.read(row, col) ? false : true;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is filled
-   */
-  isFilled(row, col) {
-    return this.read(row, col) ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a number
-   */
-  isNumber(row, col) {
-    return typeof this.read(row, col) === 'number' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a string
-   */
-  isString(row, col) {
-    return typeof this.read(row, col) === 'string' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a color
-   */
-  isColor(row, col) {
-    return this.read(row, col) instanceof p5.Color ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an array
-   */
-  isArray(row, col) {
-    return Array.isArray(this.read(row, col)) ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an object
-   */
-  isObject(row, col) {
-    return typeof this.read(row, col) === 'object' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an image
-   */
-  isImage(row, col) {
-    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics ? true : false;
   }
 
   /**
@@ -1192,7 +1192,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.2',
+    VERSION: '1.3.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
