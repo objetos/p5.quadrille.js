@@ -4,6 +4,7 @@
 >
 > [createQuadrille()](/docs/p5-fx/create_quadrille)
 > [drawQuadrille()](/docs/p5-fx/draw_quadrille)
+> [visitQuadrille()](/docs/p5-fx/visit_quadrille)
 
 [Properties](/docs/props)
 
