@@ -677,7 +677,7 @@ class Quadrille {
       return this._memory2D[row][col];
     }
     else if (warn) {
-      console.warn(`undefined cell @(${row}, ${col}) which is out of bounds ([0..${this.height}], [0..${this.width}])`);
+      console.warn(`undefined cell @(${row}, ${col}) which is out of bounds ([0..${this.height - 1}], [0..${this.width - 1}])`);
     }
   }
 
@@ -1195,7 +1195,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.4',
+    VERSION: '1.3.5',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
