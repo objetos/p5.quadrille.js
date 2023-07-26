@@ -1,6 +1,6 @@
 # `isEmpty()`
 
-Returns `true` if the cell found at `(row, col)` is empty and `false otherwise`. Only cells defined as `null` are considered empty.
+Returns `true` if the cell found at `(row, col)` is empty and `false` otherwise. Only cells defined as `null` are considered empty.
 
 # Syntax
 

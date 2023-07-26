@@ -11,6 +11,13 @@
 > :Collapse label=I/O
 > 
 > [isEmpty()](/docs/io/is_empty)
+> [isFilled()](/docs/io/is_filled)
+> [isNumber()](/docs/io/is_number)
+> [isString()](/docs/io/is_string)
+> [isColor()](/docs/io/is_color)
+> [isArray()](/docs/io/is_array)
+> [isObject()](/docs/io/is_object)
+> [isImage()](/docs/io/is_image)
 > [read()](/docs/io/read)
 > [fill()](/docs/io/fill)
 > [rand()](/docs/io/rand)
