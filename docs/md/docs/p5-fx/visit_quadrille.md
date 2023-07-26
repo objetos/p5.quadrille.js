@@ -1,6 +1,6 @@
 # `visitQuadrille()`
 
-[p5.js](https://p5js.org/) function that visits `quadrille` `cells` executing the `fx` function on each one of them.
+[p5.js](https://p5js.org/) function that visits `quadrille` cells executing the `fx` function either on all cells or those defined in the `cells` array.
 
 ## Syntax
 
