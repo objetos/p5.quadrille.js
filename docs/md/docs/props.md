@@ -20,4 +20,12 @@ Number: Read-only property that retrieves the quadrille width times the quadrill
 
 Number: Read only property that retrieves the quadrille non-empty number of cells. See also [magnitude()](/docs/io/magnitude).
 
+## `mouseCol`
+
+Number: Read only property that retrieves the quadrille col under the current mouse position.
+
+## `mouseRow`
+
+Number: Read only property that retrieves the quadrille row under the current mouse position.
+
 > :ToCPrevNext
