@@ -30,6 +30,10 @@
 > [insert()](/docs/io/insert)
 > [sort()](/docs/io/sort)
 > [magnitude()](/docs/io/magnitude)
+> [screenCol()](/docs/io/screen_col)
+> [screenRow()](/docs/io/screen_row)
+> [screenX()](/docs/io/screen_x)
+> [screenY()](/docs/io/screen_y)
 
 > :Collapse label=Boolean operators
 >
