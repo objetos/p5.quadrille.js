@@ -1145,7 +1145,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.6',
+    VERSION: '1.3.7',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1157,10 +1157,10 @@ class Quadrille {
 
   p5.prototype.drawQuadrille = function (quadrille, {
     graphics = this,
-    x = 0,
-    y = 0,
-    row = 0,
-    col = 0,
+    x,
+    y,
+    row,
+    col,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1174,8 +1174,8 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
-    quadrille._x = x ?? row * cellLength;
-    quadrille._y = y ?? col * cellLength;
+    quadrille._x = x ? x : col ? col * cellLength : 0;
+    quadrille._y = y ? y : row ? row * cellLength : 0;
     quadrille._cellLength = cellLength;
     graphics.push();
     graphics.translate(quadrille._x, quadrille._y);
