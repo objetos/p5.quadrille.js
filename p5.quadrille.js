@@ -138,7 +138,7 @@ class Quadrille {
     // ii. fill result with passed quadrilles
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
-        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j, false), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j, false));
+        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
         if (result !== undefined) {
           quadrille._memory2D[i][j] = result;
         }
@@ -164,7 +164,6 @@ class Quadrille {
    */
   constructor() {
     this._cellLength = Quadrille.CELL_LENGTH;
-    this._lastDisplay = 0;
     this._x = 0;
     this._y = 0;
     if (arguments.length === 1) {
@@ -331,14 +330,6 @@ class Quadrille {
     return this.screenCol(mouseX);
   }
 
-  get mouseY() {
-    return this.screenY(this.mouseRow);
-  }
-
-  get mouseX() {
-    return this.screenX(this.mouseCol);
-  }
-
   /**
    * Screen y coordinate to quadrille row
    * @param {number} pixelY 
@@ -347,9 +338,6 @@ class Quadrille {
    * @returns quadrille row
    */
   screenRow(pixelY, y, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
-      console.warn('screenRow without y / cellLength params needs drawQuadrille to be called first');
-    }
     y ??= this._y ? this._y : 0;
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     return floor((pixelY - y) / cellLength);
@@ -363,44 +351,9 @@ class Quadrille {
    * @returns quadrille col
    */
   screenCol(pixelX, x, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
-      console.warn('screenCol without x / cellLength params needs drawQuadrille to be called first');
-    }
     x ??= this._x ? this._x : 0;
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     return floor((pixelX - x) / cellLength);
-  }
-
-  /**
-   * Quadrille row cell origin (upper left corner) to screen
-   * @param {number} row 
-   * @param {number} y quadrille y coordinate origin
-   * @param {number} cellLength 
-   * @returns screen y coordinate
-   */
-  screenY(row, y, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
-      console.warn('screenY without y / cellLength params needs drawQuadrille to be called first');
-    }
-    y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return y + row * cellLength;
-  }
-
-  /**
-   * Quadrille col cell origin (upper left corner) to screen
-   * @param {number} row 
-   * @param {number} x quadrille x coordinate origin
-   * @param {number} cellLength 
-   * @returns screen x coordinate
-   */
-  screenX(col, x, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
-      console.warn('screenX without x / cellLength params needs drawQuadrille to be called first');
-    }
-    x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return x + col * cellLength;
   }
 
   /**
@@ -672,12 +625,9 @@ class Quadrille {
    * @param {number} col 
    * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
    */
-  read(row, col, warn = true) {
+  read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this._memory2D[row][col];
-    }
-    else if (warn) {
-      console.warn(`undefined cell @(${row}, ${col}) which is out of bounds ([0..${this.height - 1}], [0..${this.width - 1}])`);
     }
   }
 
@@ -1195,7 +1145,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.5',
+    VERSION: '1.3.6',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1209,6 +1159,8 @@ class Quadrille {
     graphics = this,
     x = 0,
     y = 0,
+    row = 0,
+    col = 0,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1222,12 +1174,11 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
-    quadrille._lastDisplay = frameCount;
-    quadrille._x = x;
-    quadrille._y = y;
+    quadrille._x = x ?? row * cellLength;
+    quadrille._y = y ?? col * cellLength;
     quadrille._cellLength = cellLength;
     graphics.push();
-    graphics.translate(x, y);
+    graphics.translate(quadrille._x, quadrille._y);
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         graphics.push();
