@@ -4,7 +4,7 @@
 
 # Syntax
 
-> `drawQuadrille(quadrille, [{[graphics], [x], [y], [tileDisplay], [imageDisplay], [colorDisplay], [stringDisplay], [numberDisplay], [arrayDisplay], [objectDisplay], [cellLength], [outlineWeight], [outline], [textColor], [textZoom]}])`
+> `drawQuadrille(quadrille, [{[graphics], [x], [y], [col], [row], [tileDisplay], [imageDisplay], [colorDisplay], [stringDisplay], [numberDisplay], [arrayDisplay], [objectDisplay], [cellLength], [outlineWeight], [outline], [textColor], [textZoom]}])`
 
 # Parameters
 
@@ -19,8 +19,10 @@
 | numberDisplay | Function: number filled cell drawing custom procedure                                                   |
 | arrayDisplay  | Function: array filled cell drawing custom procedure                                                    |
 | objectDisplay | Function: object filled cell drawing custom procedure                                                   |
-| x             | Number: upper left quadrille pixel x coordinate default is `0`.                                         |
-| y             | Number: upper left quadrille pixel y coordinate default is `0`.                                         |
+| x             | Number: upper left quadrille pixel x coordinate default is `0`. Takes higher precedence than `col`      |
+| y             | Number: upper left quadrille pixel y coordinate default is `0`. Takes higher precedence than `row`      |
+| col           | Number: upper left quadrille col default is `0`.                                                        |
+| row           | Number: upper left quadrille row default is `0`.                                                        |
 | cellLength    | Number: edge length in pixels default is `10`                                                           |
 | outlineWeight | Number: edge weight defaut is `2`. Use `0` to discard all edges                                         |
 | outline       | [p5.Color](https://p5js.org/reference/#/p5.Color) representation: edge color default is `magenta`       |
