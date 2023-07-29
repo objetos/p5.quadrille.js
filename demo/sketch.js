@@ -150,7 +150,7 @@ function stick(key) {
         Quadrille.AND(board, clone, row, col) : Quadrille.DIFF(board, clone, row, col);
   // */
   // /* // pending
-  let clone = quadrille.clone();
+  let clone = quadrille.clone(false);
   clone.replace(color('#965695'));
   board = key === 'u' ?
     Quadrille.OR(board, clone) : key === 'x' ?

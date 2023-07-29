@@ -268,7 +268,7 @@ class Quadrille {
    * @returns {Array} Quadrille matrix (Array2D) representation.
    */
   get memory2D() {
-    return this.clone()._memory2D;
+    return this.clone(false)._memory2D;
   }
 
   /**
@@ -458,7 +458,7 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    let memory2D = this.clone()._memory2D;
+    let memory2D = this.clone(false)._memory2D;
     let result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
@@ -897,7 +897,7 @@ class Quadrille {
    * Randomly re-arranges cell entries.
    */
   randomize() {
-    let clone = this.clone();
+    let clone = this.clone(false);
     this.clear();
     for (let i = 0; i < clone.height; i++) {
       for (let j = 0; j < clone.width; j++) {
@@ -967,13 +967,15 @@ class Quadrille {
    * Returns a shallow copy of this quadrille. May be used in conjunction with
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
-  clone() {
+  clone(cache = true) {
     let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
-    clone._cellLength = this._cellLength;
-    clone._x = this._x;
-    clone._y = this._y;
-    clone._col = this._col;
-    clone._row = this._row;
+    if (cache) {
+      clone._cellLength = this._cellLength;
+      clone._x = this._x;
+      clone._y = this._y;
+      clone._col = this._col;
+      clone._row = this._row;
+    }
     return clone;
   }
 
