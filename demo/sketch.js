@@ -92,8 +92,8 @@ function draw() {
   //quadrilleParams.tileDisplay = null; // or 0
   //quadrilleParams.outlineWeight = 0;
   quadrilleParams.textColor = 'yellow';
-  quadrilleParams.x = col * LENGTH;
-  quadrilleParams.y = row * LENGTH;
+  quadrilleParams.col = col;
+  quadrilleParams.row = row;
   drawQuadrille(quadrille, quadrilleParams);
 }
 
