@@ -38,7 +38,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
    */
-  static AND(quadrille1, quadrille2, row = 0, col = 0) {
+  static AND(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && q2) {
@@ -55,7 +55,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
    */
-  static OR(quadrille1, quadrille2, row = 0, col = 0) {
+  static OR(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1) {
@@ -75,7 +75,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
    */
-  static XOR(quadrille1, quadrille2, row = 0, col = 0) {
+  static XOR(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
@@ -95,7 +95,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
    */
-  static DIFF(quadrille1, quadrille2, row = 0, col = 0) {
+  static DIFF(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
@@ -131,7 +131,11 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
    */
-  static OP(quadrille1, quadrille2, operator, row = 0, col = 0) {
+  static OP(quadrille1, quadrille2, operator, row, col) {
+    row = row ?? ((quadrille1._row !== undefined && quadrille2._row !== undefined && quadrille1._cellLength !== undefined &&
+      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._row - quadrille1._row : 0);
+    col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
+      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._col - quadrille1._col : 0);
     // i. create resulted quadrille
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
@@ -963,7 +967,7 @@ class Quadrille {
    * Returns a shallow copy of this quadrille. May be used in conjunction with
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
-  clone() {
+  clone(cache = true) {
     return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
   }
 
@@ -1145,7 +1149,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.7',
+    VERSION: '1.4.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1174,9 +1178,11 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
+    quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
     quadrille._y = y ? y : row ? row * cellLength : 0;
-    quadrille._cellLength = cellLength;
+    quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
+    quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
     graphics.translate(quadrille._x, quadrille._y);
     for (let i = 0; i < quadrille.height; i++) {

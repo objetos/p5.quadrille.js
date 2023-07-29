@@ -39,7 +39,6 @@ function setup() {
   s3 = '?'
   // quadrilles
   board = createQuadrille(COLS, ROWS);
-  console.log(board.isFilled(-1, 0));
   quadrille = active(int(random(8)));
   // current position
   col = int(random(0, COLS - 4));
@@ -68,6 +67,7 @@ function setup() {
     _al.mask(shape);
     graphics.image(_al, 0, 0, cellLength, cellLength);
   }
+  console.log('hey', Number.isInteger(7.5 * 2));
 }
 
 function draw() {
@@ -141,14 +141,36 @@ function stick(key) {
   clone.fill(color('#965695'));
   clone = Quadrille.DIFF(clone, neg);
   // */
-  // /*
+  /*
   let clone = quadrille.clone();
   clone.replace(color('#965695'));
-  // */
   board = key === 'u' ?
     Quadrille.OR(board, clone, row, col) : key === 'x' ?
       Quadrille.XOR(board, clone, row, col) : key === 'i' ?
         Quadrille.AND(board, clone, row, col) : Quadrille.DIFF(board, clone, row, col);
+  // */
+  /* // pending
+  let clone = quadrille.clone();
+  clone.replace(color('#965695'));
+  board = key === 'u' ?
+    Quadrille.OR(board, clone) : key === 'x' ?
+      Quadrille.XOR(board, clone) : key === 'i' ?
+        Quadrille.AND(board, clone) : Quadrille.DIFF(board, clone);
+  // */
+  /*
+  quadrille.replace(color('#965695'));
+  board = key === 'u' ?
+    Quadrille.OR(board, quadrille, row, col) : key === 'x' ?
+      Quadrille.XOR(board, quadrille, row, col) : key === 'i' ?
+        Quadrille.AND(board, quadrille, row, col) : Quadrille.DIFF(board, quadrille, row, col);
+  // */
+  // /*
+  quadrille.replace(color('#965695'));
+  board = key === 'u' ?
+    Quadrille.OR(board, quadrille) : key === 'x' ?
+      Quadrille.XOR(board, quadrille) : key === 'i' ?
+        Quadrille.AND(board, quadrille) : Quadrille.DIFF(board, quadrille);
+  // */
   quadrille = active(int(random(5)));
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
