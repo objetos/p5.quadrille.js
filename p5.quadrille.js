@@ -968,7 +968,13 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone() {
-    return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+    let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+    clone._cellLength = this._cellLength;
+    clone._x = this._x;
+    clone._y = this._y;
+    clone._col = this._col;
+    clone._row = this._row;
+    return clone;
   }
 
   /**
