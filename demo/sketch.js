@@ -149,7 +149,7 @@ function stick(key) {
       Quadrille.XOR(board, clone, row, col) : key === 'i' ?
         Quadrille.AND(board, clone, row, col) : Quadrille.DIFF(board, clone, row, col);
   // */
-  /* // pending
+  // /* // pending
   let clone = quadrille.clone();
   clone.replace(color('#965695'));
   board = key === 'u' ?
@@ -164,7 +164,7 @@ function stick(key) {
       Quadrille.XOR(board, quadrille, row, col) : key === 'i' ?
         Quadrille.AND(board, quadrille, row, col) : Quadrille.DIFF(board, quadrille, row, col);
   // */
-  // /*
+  /*
   quadrille.replace(color('#965695'));
   board = key === 'u' ?
     Quadrille.OR(board, quadrille) : key === 'x' ?
