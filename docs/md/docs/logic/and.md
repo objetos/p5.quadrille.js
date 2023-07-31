@@ -15,6 +15,6 @@ Static method that returns the quadrille obtained from the *intersection* of the
 | row        | Number: `quadrille2` to `quadrille1` vertical displacement[^1]. Negative values are allowed   |
 | col        | Number: `quadrille2` to `quadrille1` horizontal displacement[^1]. Negative values are allowed |
 
-[^1]: Default `q2` displacement respect to `q1` is computed either as `col = col2 - col1` and `row = row2 - row1` if both `q1` and `q2` are drawn, or as `0` otherwise. 
+[^1]: Default `q2` displacement respect to `q1` is defined either as `col = col2 - col1` and `row = row2 - row1` if both `q1` and `q2` are drawn, or as `0` otherwise. 
 
 > :ToCPrevNext
