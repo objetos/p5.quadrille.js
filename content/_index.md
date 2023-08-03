@@ -5,7 +5,7 @@ type: docs
 
 # p5.quadrille.js
 
-Welcome.
+Welcome to p5.quadrille.js.
 
 ## Goal
 
