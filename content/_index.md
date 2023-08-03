@@ -3,7 +3,7 @@ title: Introduction
 type: docs
 ---
 
-# Visual Computing
+# p5.quadrille.js
 
 Welcome to the _visual computing_ course & book site.
 
