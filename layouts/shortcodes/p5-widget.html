@@ -1,0 +1,10 @@
+{{ $defver := `1.7.0` }}
+
+<script src="//toolness.github.io/p5.js-widget/p5-widget.js"></script>    
+{{ with .Get "lib1" }}<script src="{{ . }}"></script>{{ end }}
+<script type="text/p5" data-p5-version={{ default $defver (.Get `ver`) }}
+                       {{ with .Get "autoplay" }} data-autoplay {{ end }}
+                       {{ with .Get "height" }} data-height="{{ . }}" {{ end }}
+                       {{ with .Get "width" }} data-preview-width="{{ . }}" {{ end }}>
+    {{ .Inner | safeJS }}
+</script>

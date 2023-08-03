@@ -1,0 +1,30 @@
+{{ $defver := `1.7.0` }}
+{{ $lib1 := .Get `lib1` }}
+{{ $lib2 := .Get `lib2` }}
+{{ $lib3 := .Get `lib3` }}
+{{ $lib4 := .Get `lib4` }}
+{{ $lib5 := .Get `lib5` }}
+
+<iframe
+  id="{{ .Get `id` }}"
+  style="width:{{ default "800" (.Get `width`) }}px; height:{{ default "600" (.Get `height`) }}px"
+  srcdoc="
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/p5.min.js></script>
+            <script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/addons/p5.sound.min.js></script>
+            {{ if isset .Params "lib1" }} <script src={{ $lib1 }}></script> {{ end }}
+            {{ if isset .Params "lib2" }} <script src={{ $lib2 }}></script> {{ end }}
+            {{ if isset .Params "lib3" }} <script src={{ $lib3 }}></script> {{ end }}
+            {{ if isset .Params "lib4" }} <script src={{ $lib4 }}></script> {{ end }}
+            {{ if isset .Params "lib5" }} <script src={{ $lib5 }}></script> {{ end }}
+            <script>
+              {{ .Inner | safeJS }}
+            </script>
+          </head>
+          <body>
+          </body>
+        </html>
+      "
+></iframe>

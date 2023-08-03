@@ -1,6 +1,6 @@
 baseURL = "https://objetos.github.io/p5.quadrille.js"
 languageCode = "en-us"
-title = "Visual Computing"
+title = "p5.quadrille.js"
 theme = 'book'
 
 # Book configuration
@@ -18,7 +18,7 @@ enableGitInfo = true
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
-  BookTheme = 'light'
+  BookTheme = 'dark'
 
   # Set source repository location.
   # Used for 'Last Modified' and 'Edit this page' links.
