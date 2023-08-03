@@ -1,6 +1,7 @@
-.codedoc/node_modules/
-.vscode/
-dist
-#docs/assets/
-#*.html
-#docs/*.html
+/public/
+/resources/_gen/
+# Backup Files
+*.md~
+# Logs
+*.log
+.hugo_build.lock
