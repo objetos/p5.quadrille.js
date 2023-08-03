@@ -38,7 +38,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
    */
-  static AND(quadrille1, quadrille2, row = 0, col = 0) {
+  static AND(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && q2) {
@@ -55,7 +55,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
    */
-  static OR(quadrille1, quadrille2, row = 0, col = 0) {
+  static OR(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1) {
@@ -75,7 +75,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
    */
-  static XOR(quadrille1, quadrille2, row = 0, col = 0) {
+  static XOR(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
@@ -95,7 +95,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
    */
-  static DIFF(quadrille1, quadrille2, row = 0, col = 0) {
+  static DIFF(quadrille1, quadrille2, row, col) {
     return this.OP(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
@@ -131,7 +131,11 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
    */
-  static OP(quadrille1, quadrille2, operator, row = 0, col = 0) {
+  static OP(quadrille1, quadrille2, operator, row, col) {
+    row = row ?? ((quadrille1._row !== undefined && quadrille2._row !== undefined && quadrille1._cellLength !== undefined &&
+      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._row - quadrille1._row : 0);
+    col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
+      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._col - quadrille1._col : 0);
     // i. create resulted quadrille
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
@@ -164,7 +168,6 @@ class Quadrille {
    */
   constructor() {
     this._cellLength = Quadrille.CELL_LENGTH;
-    this._lastDisplay = 0;
     this._x = 0;
     this._y = 0;
     if (arguments.length === 1) {
@@ -265,7 +268,7 @@ class Quadrille {
    * @returns {Array} Quadrille matrix (Array2D) representation.
    */
   get memory2D() {
-    return this.clone()._memory2D;
+    return this.clone(false)._memory2D;
   }
 
   /**
@@ -331,14 +334,6 @@ class Quadrille {
     return this.screenCol(mouseX);
   }
 
-  get mouseY() {
-    return this.screenY(this.mouseRow);
-  }
-
-  get mouseX() {
-    return this.screenX(this.mouseCol);
-  }
-
   /**
    * Screen y coordinate to quadrille row
    * @param {number} pixelY 
@@ -347,9 +342,6 @@ class Quadrille {
    * @returns quadrille row
    */
   screenRow(pixelY, y, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
-      console.warn('screenRow without y / cellLength params needs drawQuadrille to be called first');
-    }
     y ??= this._y ? this._y : 0;
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     return floor((pixelY - y) / cellLength);
@@ -363,44 +355,9 @@ class Quadrille {
    * @returns quadrille col
    */
   screenCol(pixelX, x, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
-      console.warn('screenCol without x / cellLength params needs drawQuadrille to be called first');
-    }
     x ??= this._x ? this._x : 0;
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     return floor((pixelX - x) / cellLength);
-  }
-
-  /**
-   * Quadrille row cell origin (upper left corner) to screen
-   * @param {number} row 
-   * @param {number} y quadrille y coordinate origin
-   * @param {number} cellLength 
-   * @returns screen y coordinate
-   */
-  screenY(row, y, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!y || !cellLength)) {
-      console.warn('screenY without y / cellLength params needs drawQuadrille to be called first');
-    }
-    y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return y + row * cellLength;
-  }
-
-  /**
-   * Quadrille col cell origin (upper left corner) to screen
-   * @param {number} row 
-   * @param {number} x quadrille x coordinate origin
-   * @param {number} cellLength 
-   * @returns screen x coordinate
-   */
-  screenX(col, x, cellLength) {
-    if (this._lastDisplay < frameCount - 1 && (!x || !cellLength)) {
-      console.warn('screenX without x / cellLength params needs drawQuadrille to be called first');
-    }
-    x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
-    return x + col * cellLength;
   }
 
   /**
@@ -501,7 +458,7 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    let memory2D = this.clone()._memory2D;
+    let memory2D = this.clone(false)._memory2D;
     let result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
@@ -670,12 +627,84 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry
+   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
       return this._memory2D[row][col];
     }
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is empty
+   */
+  isEmpty(row, col) {
+    return this.read(row, col) === null;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is filled
+   */
+  isFilled(row, col) {
+    return this.read(row, col) !== null && this.read(row, col) !== undefined;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a number
+   */
+  isNumber(row, col) {
+    return typeof this.read(row, col) === 'number';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a string
+   */
+  isString(row, col) {
+    return typeof this.read(row, col) === 'string';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a color
+   */
+  isColor(row, col) {
+    return this.read(row, col) instanceof p5.Color;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an array
+   */
+  isArray(row, col) {
+    return Array.isArray(this.read(row, col));
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return typeof this.read(row, col) === 'object';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an image
+   */
+  isImage(row, col) {
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
   }
 
   /**
@@ -695,78 +724,6 @@ class Quadrille {
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is empty
-   */
-  isEmpty(row, col) {
-    return this.read(row, col) ? false : true;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is filled
-   */
-  isFilled(row, col) {
-    return this.read(row, col) ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a number
-   */
-  isNumber(row, col) {
-    return typeof this.read(row, col) === 'number' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a string
-   */
-  isString(row, col) {
-    return typeof this.read(row, col) === 'string' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a color
-   */
-  isColor(row, col) {
-    return this.read(row, col) instanceof p5.Color ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an array
-   */
-  isArray(row, col) {
-    return Array.isArray(this.read(row, col)) ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an object
-   */
-  isObject(row, col) {
-    return typeof this.read(row, col) === 'object' ? true : false;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an image
-   */
-  isImage(row, col) {
-    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics ? true : false;
-  }
-
-  /**
    * Convolutes this quadrille against the quadrille kernel mask. kernel weights
    * may be encoded within the quadrille mask, both numerically or using colors.
    * Luma is used in the latter case to convert colors to weights. Forms:
@@ -775,20 +732,20 @@ class Quadrille {
    * should be greater or equal than the mask half_size which is computed as:
    * (mask.width - 1) / 2).
    * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
-   * @param {number} row if 0 convolutes the whole quadrille
-   * @param {number} col if 0 convolutes the whole quadrille
+   * @param {number} row if undefined convolutes the whole quadrille
+   * @param {number} col if undefined convolutes the whole quadrille
    */
-  filter(mask, row = 0, col = 0) {
+  filter(mask, row, col) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let half_size = (mask.width - 1) / 2;
-      if (row == 0 || col == 0) {
+      if (row === undefined || col === undefined) {
         for (let i = half_size; i < this.height - half_size; i++) {
           for (let j = half_size; j < this.width - half_size; j++) {
             this._conv(mask, i, j, half_size);
           }
         }
       }
-      else {
+      else if (row >= half_size && row < this.height - half_size && col >= half_size && col < this.width - half_size) {
         this._conv(mask, row, col, half_size);
       }
     }
@@ -796,31 +753,28 @@ class Quadrille {
   }
 
   _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2) {
-    if (row >= cache_half_size && col >= cache_half_size &&
-      row < this.height - cache_half_size && col < this.width - cache_half_size) {
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      for (let imask = 0; imask < mask.height; imask++) {
-        for (let jmask = 0; jmask < mask.width; jmask++) {
-          let i = row + imask - cache_half_size;
-          let j = col + jmask - cache_half_size;
-          let neighbor = this._memory2D[i][j];
-          let mask_value = mask._memory2D[imask][jmask];
-          if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
-            // luma coefficients are: 0.299, 0.587, 0.114, 0
-            let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
-            r += red(neighbor) * weight;
-            g += green(neighbor) * weight;
-            b += blue(neighbor) * weight;
-          }
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    for (let imask = 0; imask < mask.height; imask++) {
+      for (let jmask = 0; jmask < mask.width; jmask++) {
+        let i = row + imask - cache_half_size;
+        let j = col + jmask - cache_half_size;
+        let neighbor = this.read(i, j);
+        let mask_value = mask._memory2D[imask][jmask];
+        if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
+          // luma coefficients are: 0.299, 0.587, 0.114, 0
+          let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+          r += red(neighbor) * weight;
+          g += green(neighbor) * weight;
+          b += blue(neighbor) * weight;
         }
       }
-      r = constrain(r, 0, 255);
-      g = constrain(g, 0, 255);
-      b = constrain(b, 0, 255);
-      this._memory2D[row][col] = color(r, g, b);
     }
+    r = constrain(r, 0, 255);
+    g = constrain(g, 0, 255);
+    b = constrain(b, 0, 255);
+    this._memory2D[row][col] = color(r, g, b);
   }
 
   /**
@@ -943,7 +897,7 @@ class Quadrille {
    * Randomly re-arranges cell entries.
    */
   randomize() {
-    let clone = this.clone();
+    let clone = this.clone(false);
     this.clear();
     for (let i = 0; i < clone.height; i++) {
       for (let j = 0; j < clone.width; j++) {
@@ -1013,8 +967,16 @@ class Quadrille {
    * Returns a shallow copy of this quadrille. May be used in conjunction with
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
-  clone() {
-    return new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+  clone(cache = true) {
+    let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+    if (cache) {
+      clone._cellLength = this._cellLength;
+      clone._x = this._x;
+      clone._y = this._y;
+      clone._col = this._col;
+      clone._row = this._row;
+    }
+    return clone;
   }
 
   /**
@@ -1195,7 +1157,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.3.0',
+    VERSION: '1.4.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1207,8 +1169,10 @@ class Quadrille {
 
   p5.prototype.drawQuadrille = function (quadrille, {
     graphics = this,
-    x = 0,
-    y = 0,
+    x,
+    y,
+    row,
+    col,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1222,12 +1186,13 @@ class Quadrille {
     textColor = Quadrille.TEXT_COLOR,
     textZoom = Quadrille.TEXT_ZOOM
   } = {}) {
-    quadrille._lastDisplay = frameCount;
-    quadrille._x = x;
-    quadrille._y = y;
     quadrille._cellLength = cellLength;
+    quadrille._x = x ? x : col ? col * cellLength : 0;
+    quadrille._y = y ? y : row ? row * cellLength : 0;
+    quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
+    quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
-    graphics.translate(x, y);
+    graphics.translate(quadrille._x, quadrille._y);
     for (let i = 0; i < quadrille.height; i++) {
       for (let j = 0; j < quadrille.width; j++) {
         graphics.push();

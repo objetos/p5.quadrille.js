@@ -9,20 +9,21 @@ function setup() {
   Quadrille.CELL_LENGTH = 600 / w;
   createCanvas(w * Quadrille.CELL_LENGTH, h * Quadrille.CELL_LENGTH);
   board = createQuadrille(w, h, floor(w * h) * 0.1, '💣');
-  let clone = board.clone();
+  //let clone = board.clone();
+  mask = board.clone();
   visitQuadrille(board,
     (row, col) => {
       if (board.isEmpty(row, col)) {
         let order = board.ring(row, col).order;
         if (order) {
-          clone.fill(row, col, order.toString());
+          mask.fill(row, col, order.toString());
         }
       }
     }
   );
-  board = clone;
-  mask = Quadrille.NEG(board, color('red'));
-  mask.fill(color('green'));
+  board = mask.clone();
+  mask.replace(color('green'));
+  mask.fill(color('red'));
   // suppress right-click context menu
   document.oncontextmenu = function () {
     return false;
@@ -32,7 +33,7 @@ function setup() {
 function draw() {
   background('orange');
   drawQuadrille(board);
-  drawQuadrille(Quadrille.NEG(Quadrille.NEG(mask, color('red')), color('magenta')), { outline: (color('lime')) });
+  drawQuadrille(mask.clone().replace(color('magenta')), { outline: (color('lime')) });
 }
 
 function mouseClicked() {
