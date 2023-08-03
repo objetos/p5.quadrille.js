@@ -1,0 +1,37 @@
+baseURL = "https://objetos.github.io/p5.quadrille.js"
+languageCode = "en-us"
+title = "Visual Computing"
+theme = 'book'
+
+# Book configuration
+disablePathToLower = true
+enableGitInfo = true
+
+# Needed for mermaid/katex shortcodes
+[markup]
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.tableOfContents]
+  startLevel = 1
+
+[params]
+  # (Optional, default light) Sets color theme: light, dark or auto.
+  # Theme 'auto' switches between dark and light modes based on browser/os preferences
+  BookTheme = 'dark'
+
+  # Set source repository location.
+  # Used for 'Last Modified' and 'Edit this page' links.
+  BookRepo = 'https://github.com/objetos/p5.quadrille.js/tree/pages'
+
+  # Configure the date format used on the pages
+  # - In git information
+  # - In blog posts
+  BookDateFormat = 'January 2, 2006'
+
+  # /!\ This is an experimental feature, might be removed or changed at any time
+  # (Optional, experimental, default false) Enables portable links and link checks in markdown pages.
+  # Portable links meant to work with text editors and let you write markdown without {{< relref >}} shortcode
+  # Theme will print warning if page referenced in markdown does not exists.
+  BookPortableLinks = false
+
