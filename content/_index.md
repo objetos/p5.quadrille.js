@@ -5,7 +5,7 @@ type: docs
 
 # p5.quadrille.js
 
-Welcome to the _visual computing_ course & book site.
+Welcome.
 
 ## Goal
 
