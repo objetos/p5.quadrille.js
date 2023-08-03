@@ -5,90 +5,18 @@ type: docs
 
 # p5.quadrille.js
 
-Welcome to p5.quadrille.js.
+[p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
 
-## Goal
+In geometry, the square-tiling, square-tessellation or square-grid is a regular tiling of the Euclidean plane. [John Horton Conway](https://en.wikipedia.org/wiki/John_Horton_Conway) called it a quadrille.
 
-To study the process of creation and manipulation of a digital image of a modern visual application, using current hardware. Skills to be developed:
+The internal angle of the square is π/2 so four squares at a point make a full 2π angle. It is one of three regular tilings of the plane. The other two are the [triangular-tiling](https://en.wikipedia.org/wiki/Triangular_tiling) and the [hexagonal-tiling](https://en.wikipedia.org/wiki/Hexagonal_tiling).
 
-<!-- 
-https://www.indeed.com/career-advice/career-development/student-skills
--->
+The library comprises a `Quadrille` class and provides the [createQuadrille](/docs/p5-fx/create_quadrille) and [drawQuadrille](/docs/p5-fx/draw_quadrille) p5 functions. The `Quadrille` class implements geometry transformation and [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry)-like logical operators, and visual computing methods such as image filtering using [convolution matrices](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) and [triangle rasterization](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). It also implements several memory management methods, such as [clear](/docs/io/clear), [clone](/docs/io/clone), [fill](/docs/io/fill), [insert](/docs/io/insert), [replace](/docs/io/replace) and [sort](/docs/io/sort). It can be used as an interface to convert to / from other representations such as [arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), [images](https://p5js.org/reference/#/p5.Image) and [bitboards](https://en.wikipedia.org/wiki/Bitboard).
 
-* Information literacy.
-* Organization, communication & collaboration.
-* Curiosity & critical thinking.
-* Problem solving, analytical reasoning & creativity.
-* Self-direction.
+The library reference together with a [demo](/docs/demo) which illustrates most of its functionality, are found along this site.
 
-## Methodology
+# Releases
 
-Collaborative (rather than competitive) [active learning](https://en.wikipedia.org/wiki/Active_learning) to complete the exercises selected by the different teams, to be developed in [java-script](https://www.javascript.com/) using [p5.js](https://p5js.org/).
-
-{{< hint info >}}
-**Requirements**   
-1. Teams should be conformed of **three** people.
-2. **Never use someone else's code** unless it's explicitly allowed. Doing so usually produces confusion.
-3. The exercises should be presented in a [showcase](https://visualcomputing.github.io/showcase/),
-written as [academic reports](https://www.wordy.com/writers-workshop/writing-an-academic-report/) having the following outline:
-     * Intro & background
-     * Code (solution) & results
-     * Conclusions & future work
-4. The exercises should be exposed publicly by **all** team mates.
-{{< /hint >}}
-
-{{< hint warning >}}
-**Warning**   
-Always properly [cite & attribute](https://opentextbc.ca/selfpublishguide/chapter/citation-vs-attribution/) third-party references (reports, books, cites, software, etc), including this site.
-{{< /hint >}}
-
-## Grading
-
-Exercises.
-
-{{< hint danger >}}
-**Remarks**   
-1. Grading feedback is **only** discussed personally in class soon after gradings take place.
-2. Top gradings are **only** obtained when most of the exercises are completed & an in-depth study is carried out on a proposed subject.
-3. External circumstances such as honors or grade point averages are **never** taking into account.
-{{< /hint >}}
-
-## Outline
-
-* [P5 and showcase intro](/docs/p5_intro)
-* [Visual illusions](/docs/visual_illusions)
-* [Rendering](/docs/rendering)
-  * [Barycentric coordinates](/docs/rendering/barycentric_coordinates)
-  * [Homogenous coordinates](/docs/rendering/homogenous_coordinates)
-* [Shaders](/docs/shaders)
-  * [Coloring](/docs/shaders/coloring)
-  * [Texturing](/docs/shaders/texturing)
-  * [Image processing](/docs/shaders/image_processing)
-  * [Photomosaic](/docs/shaders/photomosaic)
-  * [ascii-art](/docs/shaders/asciiart)
-  * [Post-effects](/docs/shaders/post_effects)
-* [Space transformations](/docs/space_transformations)
-  * [Texturing](/docs/space_transformations/texturing)
-  * [Non-euclidean geometry](/docs/space_transformations/non-euclidean_geometry)
-  * [3D brush](/docs/space_transformations/3D_Brush)
-  * [3D gui](/docs/space_transformations/3D_GUI)
-  * [Orthogonal viewer](/docs/space_transformations/orthogonal_viewer)
-  * [Superliminal](/docs/space_transformations/superliminal)
-  * [View frustum culling](/docs/space_transformations/view_frustum_culling)
-* [Lighting](/docs/lighting)
-  * [Ambient light](/docs/lighting/ambient_light)
-  * [Diffuse reflection](/docs/lighting/diffuse_reflection.md)
-  * [Specular reflection](/docs/lighting/specular_reflection)
-  * [Depthmap](/docs/lighting/depth_map)
-  * [DOF](/docs/lighting/dof)
-## Resources
-
-* [book](https://visualcomputing.github.io/).
-* [showcase](https://github.com/VisualComputing/showcase), including the [p5 shortcodes](https://github.com/VisualComputing/showcase/tree/main/layouts/shortcodes).
-* [Slides](https://github.com/orgs/VisualComputing/teams/presentations/repositories).
-* [p5.treegl](https://github.com/VisualComputing/p5.treegl).
-* [p5.quadrille.js](https://github.com/objetos/p5.quadrille.js).
-
-## Academic staff
-
-* [Jean Pierre Charalambos](mailto:jpcharalambosh@unal.edu.co), professor (meetings, brainstorming & discussions).
+- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
+- [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)
+- [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
