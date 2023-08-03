@@ -18,7 +18,7 @@ enableGitInfo = true
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
-  BookTheme = 'dark'
+  BookTheme = 'light'
 
   # Set source repository location.
   # Used for 'Last Modified' and 'Edit this page' links.
