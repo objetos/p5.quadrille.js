@@ -14,8 +14,8 @@
 	path = content/docs/geometry_transformations
 	url = git@github.com:objetos/q_geom.git
 [submodule "content/docs/immutable"]
-	path = content/docs/immutable
+	path = content/docs/immutable_methods
 	url = git@github.com:objetos/q_immutable.git
 [submodule "content/docs/mutable"]
-	path = content/docs/mutable
+	path = content/docs/mutable_methods
 	url = git@github.com:objetos/q_mutable.git
