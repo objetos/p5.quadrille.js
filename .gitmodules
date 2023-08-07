@@ -1,3 +1,21 @@
 [submodule "themes/book"]
 	path = themes/book
 	url = https://github.com/alex-shpak/hugo-book
+[submodule "content/docs/p5_functions"]
+	path = content/docs/p5_functions
+	url = git@github.com:objetos/q_p5fx.git
+[submodule "content/docs/properties"]
+	path = content/docs/properties
+	url = git@github.com:objetos/q_props.git
+[submodule "content/docs/boolean_operators"]
+	path = content/docs/boolean_operators
+	url = git@github.com:objetos/q_bool.git
+[submodule "content/docs/geometry_transformations"]
+	path = content/docs/geometry_transformations
+	url = git@github.com:objetos/q_geom.git
+[submodule "content/docs/immutable"]
+	path = content/docs/immutable
+	url = git@github.com:objetos/q_immutable.git
+[submodule "content/docs/mutable"]
+	path = content/docs/mutable
+	url = git@github.com:objetos/q_mutable.git
