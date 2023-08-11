@@ -1,6 +1,7 @@
 'use strict';
 let board, mask;
-let row, col
+let row, col;
+const debug = false;
 const p = 1, w = 30;
 let h;
 
@@ -9,7 +10,6 @@ function setup() {
   Quadrille.CELL_LENGTH = 600 / w;
   createCanvas(w * Quadrille.CELL_LENGTH, h * Quadrille.CELL_LENGTH);
   board = createQuadrille(w, h, floor(w * h) * 0.1, '💣');
-  //let clone = board.clone();
   mask = board.clone();
   visitQuadrille(board,
     (row, col) => {
@@ -33,16 +33,12 @@ function setup() {
 function draw() {
   background('orange');
   drawQuadrille(board);
-  drawQuadrille(mask.clone().replace(color('magenta')), { outline: (color('lime')) });
+  drawQuadrille(debug ? mask : mask.clone().replace(color('magenta')), { outline: (color('lime')) });
 }
 
 function mouseClicked() {
   row = board.mouseRow;
   col = board.mouseCol;
-  // row = board.screenRow(mouseY);
-  // col = board.screenCol(mouseX);
-  // row = floor(mouseY / Quadrille.CELL_LENGTH);
-  // col = floor(mouseX / Quadrille.CELL_LENGTH);
   if (board.read(row, col) === '💣') {
     mask = createQuadrille(w, h);
     return;
