@@ -1,4 +1,4 @@
-baseURL = "https://objetos.github.io/p5.quadrille.js"
+baseURL = "https://objetos.github.io/p5.quadrille.js/"
 languageCode = "en-us"
 title = "p5.quadrille.js"
 theme = 'book'
@@ -22,7 +22,7 @@ enableGitInfo = true
 
   # Set source repository location.
   # Used for 'Last Modified' and 'Edit this page' links.
-  BookRepo = 'https://github.com/objetos/p5.quadrille.js/tree/pages'
+  BookRepo = 'https://github.com/objetos/p5.quadrille.js/tree/pages/'
 
   # Configure the date format used on the pages
   # - In git information
