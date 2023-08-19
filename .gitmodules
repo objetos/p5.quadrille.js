@@ -19,3 +19,9 @@
 [submodule "content/docs/mutable"]
 	path = content/docs/mutable_methods
 	url = git@github.com:objetos/q_mutable.git
+[submodule "content/docs/visual_computing"]
+	path = content/docs/visual_computing
+	url = git@github.com:objetos/q_visual.git
+[submodule "content/docs/conversion_methods"]
+	path = content/docs/conversion_methods
+	url = git@github.com:objetos/q_conversion.git
