@@ -25,3 +25,6 @@
 [submodule "content/docs/conversion_methods"]
 	path = content/docs/conversion_methods
 	url = git@github.com:objetos/q_conversion.git
+[submodule "content/docs/constants"]
+	path = content/docs/constants
+	url = git@github.com:objetos/q_constants.git
