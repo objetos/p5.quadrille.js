@@ -473,7 +473,7 @@ class Quadrille {
   magnitude(row) {
     let result = 0;
     for (let j = 0; j < this.width; j++) {
-      if (this._memory2D[row][j]) {
+      if (this.read(row, j)) {
         result++;
       }
     }
@@ -1157,7 +1157,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.0',
+    VERSION: '1.4.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
