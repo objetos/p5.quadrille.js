@@ -1,8 +1,12 @@
 # IDEs
 .vscode/
 
-# codedoc
-dist/
+# hugo
+content/
+public/
+resources/
+themes/
+.hugo*
 
 # dependencies
 libraries/*
