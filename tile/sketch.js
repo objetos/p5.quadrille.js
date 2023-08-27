@@ -31,6 +31,6 @@ function setup() {
 
 function draw() {
   background('yellow');
-  drawQuadrille(q);
-  //Quadrille.TILE( { graphics: this, outlineWeight: 9, mode: 0 } );
+  //drawQuadrille(q);
+  Quadrille.TILE( { graphics: this, outlineWeight: 9 } );
 }

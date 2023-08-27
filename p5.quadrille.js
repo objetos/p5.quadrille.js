@@ -1138,12 +1138,17 @@ class Quadrille {
    */
   static TILE({
     graphics,
-    mode = 0,
+    row = 0,
+    col = 0,
+    width = 1,
+    height = 1,
     cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     if (outlineWeight !== 0) {
+      const mode = row === height - 1 && col === width - 1 ? 0 :
+        row < height - 1 && col < width - 1 ? 1 : row === height - 1 && col < width - 1 ? 2 : 3;
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
@@ -1264,10 +1269,7 @@ class Quadrille {
           objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         if (tileDisplay) {
-          let mode = i === quadrille.height - 1 && j === quadrille.width - 1 ? 0 : 
-                     i <  quadrille.height - 1 && j < quadrille.width - 1 ? 1 :
-                     i === quadrille.height - 1 && j < quadrille.width - 1 ? 2 : 3;
-          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, mode: mode });
+          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, width: quadrille.width, height: quadrille.height });
         }
         graphics.pop();
       }
