@@ -1138,6 +1138,7 @@ class Quadrille {
    */
   static TILE({
     graphics,
+    mode = 0,
     cellLength = this.CELL_LENGTH,
     outline = this.OUTLINE,
     outlineWeight = this.OUTLINE_WEIGHT
@@ -1146,7 +1147,53 @@ class Quadrille {
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
-      graphics.rect(0, 0, cellLength, cellLength);
+      // /*
+      graphics.beginShape();
+      if (mode === 2) graphics.vertex(cellLength, cellLength);
+      graphics.vertex(0, cellLength);
+      graphics.vertex(0, 0);
+      graphics.vertex(cellLength, 0);
+      if (mode === 0 || mode === 3) graphics.vertex(cellLength, cellLength);
+      mode === 0 ? graphics.endShape(CLOSE) : graphics.endShape();
+      // */
+      /*
+      switch (mode) {
+        case 1: // frequent case
+          graphics.stroke('red'); // debug
+          graphics.beginShape();
+          graphics.vertex(0, cellLength);
+          graphics.vertex(0, 0);
+          graphics.vertex(cellLength, 0);
+          graphics.endShape();
+          break;
+        case 2: // last row
+          graphics.stroke('green'); // debug
+          graphics.beginShape();
+          graphics.vertex(cellLength, cellLength);
+          graphics.vertex(0, cellLength);
+          graphics.vertex(0, 0);
+          graphics.vertex(cellLength, 0);
+          graphics.endShape();
+          break;
+        case 3: // last col
+          graphics.stroke('blue'); // debug
+          graphics.beginShape();
+          graphics.vertex(0, cellLength);
+          graphics.vertex(0, 0);
+          graphics.vertex(cellLength, 0);
+          graphics.vertex(cellLength, cellLength);
+          graphics.endShape();
+          break;
+        default: // all edges (last row & last col)
+          graphics.stroke('magenta'); // debug
+          graphics.beginShape();
+          graphics.vertex(0, cellLength);
+          graphics.vertex(0, 0);
+          graphics.vertex(cellLength, 0);
+          graphics.vertex(cellLength, cellLength);
+          graphics.endShape(CLOSE);
+      }
+      // */
     }
   }
 }
@@ -1157,7 +1204,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.1',
+    VERSION: '1.5.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1217,7 +1264,10 @@ class Quadrille {
           objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
         }
         if (tileDisplay) {
-          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          let mode = i === quadrille.height - 1 && j === quadrille.width - 1 ? 0 : 
+                     i <  quadrille.height - 1 && j < quadrille.width - 1 ? 1 :
+                     i === quadrille.height - 1 && j < quadrille.width - 1 ? 2 : 3;
+          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, mode: mode });
         }
         graphics.pop();
       }
