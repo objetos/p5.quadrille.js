@@ -1147,12 +1147,13 @@ class Quadrille {
     outlineWeight = this.OUTLINE_WEIGHT
   } = {}) {
     if (outlineWeight !== 0) {
+      // modes                _                    _                _                _
+      // 0 (last row & col): |_| 1 (inner cells): |  2 (last row): |_ 3 (last col): | |
       const mode = row === height - 1 && col === width - 1 ? 0 :
         row < height - 1 && col < width - 1 ? 1 : row === height - 1 && col < width - 1 ? 2 : 3;
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
-      // /*
       graphics.beginShape();
       if (mode === 2) graphics.vertex(cellLength, cellLength);
       graphics.vertex(0, cellLength);
@@ -1160,45 +1161,6 @@ class Quadrille {
       graphics.vertex(cellLength, 0);
       if (mode === 0 || mode === 3) graphics.vertex(cellLength, cellLength);
       mode === 0 ? graphics.endShape(CLOSE) : graphics.endShape();
-      // */
-      /*
-      switch (mode) {
-        case 1: // frequent case
-          graphics.stroke('red'); // debug
-          graphics.beginShape();
-          graphics.vertex(0, cellLength);
-          graphics.vertex(0, 0);
-          graphics.vertex(cellLength, 0);
-          graphics.endShape();
-          break;
-        case 2: // last row
-          graphics.stroke('green'); // debug
-          graphics.beginShape();
-          graphics.vertex(cellLength, cellLength);
-          graphics.vertex(0, cellLength);
-          graphics.vertex(0, 0);
-          graphics.vertex(cellLength, 0);
-          graphics.endShape();
-          break;
-        case 3: // last col
-          graphics.stroke('blue'); // debug
-          graphics.beginShape();
-          graphics.vertex(0, cellLength);
-          graphics.vertex(0, 0);
-          graphics.vertex(cellLength, 0);
-          graphics.vertex(cellLength, cellLength);
-          graphics.endShape();
-          break;
-        default: // all edges (last row & last col)
-          graphics.stroke('magenta'); // debug
-          graphics.beginShape();
-          graphics.vertex(0, cellLength);
-          graphics.vertex(0, 0);
-          graphics.vertex(cellLength, 0);
-          graphics.vertex(cellLength, cellLength);
-          graphics.endShape(CLOSE);
-      }
-      // */
     }
   }
 }
