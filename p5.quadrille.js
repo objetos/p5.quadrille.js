@@ -536,15 +536,21 @@ class Quadrille {
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       typeof arguments[2] === 'number') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+      }
     }
     if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       typeof arguments[2] === 'boolean') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
+      }
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
+      }
     }
     return this;
   }
@@ -586,15 +592,21 @@ class Quadrille {
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
+      }
     }
     if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'boolean') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], 4, arguments[3]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], 4, arguments[3]);
+      }
     }
     if (arguments.length === 5 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
       arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number' && typeof arguments[4] === 'boolean') {
-      this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3], arguments[4]);
+      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
+        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3], arguments[4]);
+      }
     }
     return this;
   }
@@ -1171,7 +1183,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.2',
+    VERSION: '1.4.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
