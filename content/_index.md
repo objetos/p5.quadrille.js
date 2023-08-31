@@ -5,7 +5,7 @@ type: docs
 
 # p5.quadrille.js
 
-[p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) library.
+[p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) open source library.
 
 In geometry, the square-tiling, square-tessellation or square-grid is a regular tiling of the Euclidean plane. [John Horton Conway](https://en.wikipedia.org/wiki/John_Horton_Conway) called it a quadrille.
 
@@ -14,6 +14,8 @@ The internal angle of the square is π/2 so four squares at a point make a full 
 The library comprises a `Quadrille` class and provides [p5 functions]({{< ref "p5_functions" >}}) to manipulate instances of it, even allowing to customize the quadrille tiling. The `Quadrille` class supports several read / write [properties]({{< ref "properties" >}}) and implements [geometry transformations]({{< ref "geometry_transformations" >}}), [boolean operators]({{< ref "boolean_operators" >}}) inspired by [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), and [visual computing]({{< ref "visual_computing" >}}) methods such as image filtering using [convolution matrices](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) and [triangle rasterization](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/). It also implements several [immutable]({{< ref "immutable_methods" >}}) and [mutable]({{< ref "mutable_methods" >}}) methods, such as [clear]({{< ref "clear" >}}), [clone]({{< ref "clone" >}}), [fill]({{< ref "fill" >}}), [insert]({{< ref "insert" >}}) and [replace]({{< ref "replace" >}}) among others. It can be used as an interface to convert to / from other representations such as [arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), [images](https://p5js.org/reference/#/p5.Image) and [bitboards](https://en.wikipedia.org/wiki/Bitboard).
 
 The library reference which illustrates most of its functionality is found along this site.
+
+Contributions are welcome at the [GitHub library site](https://github.com/objetos/p5.quadrille.js).
 
 # Releases
 
