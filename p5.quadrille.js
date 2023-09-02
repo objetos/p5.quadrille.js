@@ -1183,7 +1183,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.3',
+    VERSION: '1.4.4',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1219,31 +1219,38 @@ class Quadrille {
     quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
     graphics.translate(quadrille._x, quadrille._y);
-    for (let i = 0; i < quadrille.height; i++) {
-      for (let j = 0; j < quadrille.width; j++) {
+    const height = quadrille.height;
+    const width = quadrille.width;
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
         graphics.push();
         graphics.translate(j * cellLength, i * cellLength);
         let cell = quadrille._memory2D[i][j];
+        const params = {
+          quadrille: quadrille, graphics: graphics, outline: outline, outlineWeight: outlineWeight,
+          cellLength: cellLength, textColor: textColor, textZoom: textZoom, row: i, col: j,
+          cell: cell, width: width, height: height
+        };
         if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
-          imageDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          imageDisplay(params);
         }
         else if (colorDisplay && cell instanceof p5.Color) {
-          colorDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          colorDisplay(params);
         }
         else if (numberDisplay && typeof cell === 'number') {
-          numberDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          numberDisplay(params);
         }
         else if (stringDisplay && typeof cell === 'string') {
-          stringDisplay({ graphics: graphics, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          stringDisplay(params);
         }
         else if (arrayDisplay && Array.isArray(cell)) {
-          arrayDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          arrayDisplay(params);
         }
         else if (objectDisplay && typeof cell === 'object') {
-          objectDisplay({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j });
+          objectDisplay(params);
         }
         if (tileDisplay) {
-          tileDisplay({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j, width: quadrille.width, height: quadrille.height });
+          tileDisplay(params);
         }
         graphics.pop();
       }
