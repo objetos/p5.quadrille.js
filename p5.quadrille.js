@@ -919,7 +919,7 @@ class Quadrille {
             _i = int(random(this.height));
             _j = int(random(this.width));
           }
-          while (this._memory2D[_i][_j]);
+          while (this.isFilled(_row, _col));
           this._memory2D[_i][_j] = clone._memory2D[i][j];
         }
       }
@@ -1183,7 +1183,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.4',
+    VERSION: '1.4.5',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
