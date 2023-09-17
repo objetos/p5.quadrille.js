@@ -166,45 +166,45 @@ class Quadrille {
    * @see rand
    * @see order
    */
-  constructor() {
+  constructor(...args) {
     this._cellLength = Quadrille.CELL_LENGTH;
     this._x = 0;
     this._y = 0;
-    if (arguments.length === 1) {
-      this.memory2D = arguments[0];
+    if (args.length === 1) {
+      this.memory2D = args[0];
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number') {
-      if (typeof arguments[1] === 'string') {
-        this._init1D([...arguments[1]], arguments[0]);
+    if (args.length === 2 && typeof args[0] === 'number') {
+      if (typeof args[1] === 'string') {
+        this._init1D([...args[1]], args[0]);
         return;
       }
-      if (Array.isArray(arguments[1])) {
-        this._init1D(arguments[1], arguments[0]);
+      if (Array.isArray(args[1])) {
+        this._init1D(args[1], args[0]);
         return;
       }
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(null));
+    if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
       return;
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number') {
-      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(null));
-      this.from(arguments[1]);
+    if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] !== 'number') {
+      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
+      this.from(args[1]);
       return;
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      this._memory2D = Array(Math.ceil(arguments[1].toString(2).length / arguments[0])).fill().map(() => Array(arguments[0]).fill(null));
-      this.from(arguments[1], arguments[2]);
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+      this._memory2D = Array(Math.ceil(args[1].toString(2).length / args[0])).fill().map(() => Array(args[0]).fill(null));
+      this.from(args[1], args[2]);
       return;
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] !== 'number' && typeof arguments[2] === 'boolean') {
-      this._memory2D = Array(Math.round(arguments[0] * arguments[1].height / arguments[1].width)).fill().map(() => Array(arguments[0]).fill(null));
-      this.from(arguments[1], arguments[2]);
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] !== 'number' && typeof args[2] === 'boolean') {
+      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
+      this.from(args[1], args[2]);
       return;
     }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' && typeof arguments[2] === 'number') {
-      this._memory2D = Array(arguments[1]).fill().map(() => Array(arguments[0]).fill(null));
-      this.rand(arguments[2], arguments[3]);
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
+      this.rand(args[2], args[3]);
       return;
     }
   }
@@ -366,27 +366,27 @@ class Quadrille {
    * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Graphics,
    * p5.Color, a 4-length color array, a string or a number.
    */
-  from() {
-    if (arguments.length === 0) {
+  from(...args) {
+    if (args.length === 0) {
       console.warn('from always expects params');
       return;
     }
     // a. image
-    if (arguments[0] instanceof p5.Image || arguments[0] instanceof p5.Graphics) {
-      let image = new p5.Image(arguments[0].width, arguments[0].height);
-      image.copy(arguments[0], 0, 0, arguments[0].width, arguments[0].height, 0, 0, arguments[0].width, arguments[0].height);
-      arguments.length === 1 ? this._pixelator2(image) : arguments[1] ? this._pixelator1(image) : this._pixelator2(image);
+    if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
+      let image = new p5.Image(args[0].width, args[0].height);
+      image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
+      args.length === 1 ? this._pixelator2(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // b. bitboard, pattern
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && arguments[1] !== null && arguments[1] !== undefined) {
+    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== null && args[1] !== undefined) {
       let length = this.width * this.height;
-      let bitboard = Math.abs(Math.round(arguments[0]));
+      let bitboard = Math.abs(Math.round(args[0]));
       if (bitboard.toString(2).length > length) {
         throw new Error('Value is to high to fill quadrille');
       }
       for (let i = 0; i <= length - 1; i++) {
         if ((bitboard & (1 << length - 1 - i))) {
-          this._memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = arguments[1];
+          this._memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = args[1];
         }
       }
     }
@@ -489,21 +489,21 @@ class Quadrille {
    * pattern1 and pattern2 may be either a p5.Image, p5.Graphics, p5.Color,
    * a 4-length color array, a string or a number.
    */
-  replace() {
-    if (arguments.length === 1 && arguments[0] !== undefined) {
+  replace(...args) {
+    if (args.length === 1 && args[0] !== undefined) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           if (this._memory2D[i][j] !== null && this._memory2D[i][j] !== undefined) {
-            this._memory2D[i][j] = arguments[0];
+            this._memory2D[i][j] = args[0];
           }
         }
       }
     }
-    if (arguments.length === 2 && arguments[1] !== undefined) {
+    if (args.length === 2 && args[1] !== undefined) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
-          if (this._memory2D[i][j] === arguments[0]) {
-            this._memory2D[i][j] = arguments[1];
+          if (this._memory2D[i][j] === args[0]) {
+            this._memory2D[i][j] = args[1];
           }
         }
       }
@@ -520,36 +520,36 @@ class Quadrille {
    * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell pattern.
    * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell pattern.
    */
-  clear() {
-    if (arguments.length === 0) {
+  clear(...args) {
+    if (args.length === 0) {
       this._memory2D = this._memory2D.map(x => x.map(y => y = null));
     }
-    if (arguments.length === 1 && typeof arguments[0] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height) {
-        this._memory2D[arguments[0]].fill(null);
+    if (args.length === 1 && typeof args[0] === 'number') {
+      if (args[0] >= 0 && args[0] < this.height) {
+        this._memory2D[args[0]].fill(null);
       }
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._memory2D[arguments[0]][arguments[1]] = null;
+    if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._memory2D[args[0]][args[1]] = null;
       }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      typeof arguments[2] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2]);
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'number') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2]);
       }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      typeof arguments[2] === 'boolean') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, 4, arguments[2]);
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'boolean') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, 4, args[2]);
       }
     }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      typeof arguments[2] === 'number' && typeof arguments[3] === 'boolean') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], null, arguments[2], arguments[3]);
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'number' && typeof args[3] === 'boolean') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2], args[3]);
       }
     }
     return this;
@@ -569,43 +569,43 @@ class Quadrille {
    * using (row, col) cell pattern (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
    * a string or a number).
    */
-  fill() {
-    if (arguments.length === 1 && arguments[0] !== null && arguments[0] !== undefined) {
+  fill(...args) {
+    if (args.length === 1 && args[0] !== null && args[0] !== undefined) {
       for (let i = 0; i < this.height; i++) {
         for (let j = 0; j < this.width; j++) {
           if ((this._memory2D[i][j] === null || this._memory2D[i][j] === undefined)) {
-            this._memory2D[i][j] = arguments[0];
+            this._memory2D[i][j] = args[0];
           }
         }
       }
     }
-    if (arguments.length === 2 && typeof arguments[0] === 'number' && arguments[1] !== null && arguments[1] !== undefined) {
-      if (arguments[0] >= 0 && arguments[0] < this.height) {
-        this._memory2D[arguments[0]].fill(arguments[1]);
+    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== null && args[1] !== undefined) {
+      if (args[0] >= 0 && args[0] < this.height) {
+        this._memory2D[args[0]].fill(args[1]);
       }
     }
-    if (arguments.length === 3 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      arguments[2] !== null && arguments[2] !== undefined) {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._memory2D[arguments[0]][arguments[1]] = arguments[2];
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      args[2] !== null && args[2] !== undefined) {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._memory2D[args[0]][args[1]] = args[2];
       }
     }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3]);
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      args[2] !== null && args[2] !== undefined && typeof args[3] === 'number') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], args[3]);
       }
     }
-    if (arguments.length === 4 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'boolean') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], 4, arguments[3]);
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      args[2] !== null && args[2] !== undefined && typeof args[3] === 'boolean') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], 4, args[3]);
       }
     }
-    if (arguments.length === 5 && typeof arguments[0] === 'number' && typeof arguments[1] === 'number' &&
-      arguments[2] !== null && arguments[2] !== undefined && typeof arguments[3] === 'number' && typeof arguments[4] === 'boolean') {
-      if (arguments[0] >= 0 && arguments[0] < this.height && arguments[1] >= 0 && arguments[1] < this.width) {
-        this._flood(arguments[0], arguments[1], this._memory2D[arguments[0]][arguments[1]], arguments[2], arguments[3], arguments[4]);
+    if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      args[2] !== null && args[2] !== undefined && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
+      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], args[3], args[4]);
       }
     }
     return this;
@@ -1189,8 +1189,8 @@ class Quadrille {
 
   console.log(INFO);
 
-  p5.prototype.createQuadrille = function () {
-    return new Quadrille(...arguments);
+  p5.prototype.createQuadrille = function (...args) {
+    return new Quadrille(...args);
   }
 
   p5.prototype.drawQuadrille = function (quadrille, {
