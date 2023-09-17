@@ -1162,7 +1162,7 @@ class Quadrille {
   console.log(INFO);
 
   p5.prototype.createQuadrille = function (...args) {
-    return new Quadrille(args);
+    return new Quadrille(...args);
   }
 
   p5.prototype.drawQuadrille = function (quadrille, {
