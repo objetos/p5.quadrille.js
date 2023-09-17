@@ -871,7 +871,7 @@ class Quadrille {
     let counter = 0;
     while (counter < Math.abs(order - disorder)) {
       let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-      if (order > disorder ? !this._memory2D[_.row][_.col] : this._memory2D[_.row][_.col]) {
+      if (order > disorder ? this.isEmpty(_.row, _.col) : this.isFilled(_.row, _.col)) {
         this._memory2D[_.row][_.col] = order > disorder ? pattern : null;
         counter++;
       }
