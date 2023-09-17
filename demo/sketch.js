@@ -40,6 +40,7 @@ function setup() {
   // quadrilles
   board = createQuadrille(COLS, ROWS);
   quadrille = active(int(random(8)));
+  console.log('hey jean pi', quadrille.order);
   // current position
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
@@ -110,6 +111,7 @@ function keyPressed() {
   let intKey = parseInt(key);
   if (intKey) {
     quadrille = active(intKey);
+    console.log('hey j p', quadrille.order);
   }
   if (key === 'u' || key === 'x' || key === 'i' || key === 'd') {
     stick(key);
@@ -173,6 +175,7 @@ function stick(key) {
         Quadrille.AND(board, quadrille) : Quadrille.DIFF(board, quadrille);
   // */
   quadrille = active(int(random(5)));
+  console.log('hey j p', quadrille.order);
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
 }

@@ -316,6 +316,14 @@ class Quadrille {
    */
   get order() {
     let result = 0;
+    // /*
+    visitQuadrille(this, (row, col) => {
+      if (this.isFilled(row, col)) {
+        result++;
+      }
+    });
+    // */
+    /*
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if (this._memory2D[i][j] !== null && this._memory2D[i][j] !== undefined) {
@@ -323,6 +331,7 @@ class Quadrille {
         }
       }
     }
+    // */
     return result;
   }
 
@@ -1183,7 +1192,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.4',
+    VERSION: '1.5.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
