@@ -554,7 +554,7 @@ class Quadrille {
     if (args.length === 1 && args[0] !== null && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
-          this.fill(row, col, args[0]);
+          this._memory2D[row][col] = args[0];
         }
       });
     }
