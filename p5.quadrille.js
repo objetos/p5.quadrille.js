@@ -482,7 +482,7 @@ class Quadrille {
         }
       });
     }
-    if (args.length === 2 && args[1] !== undefined) {
+    if (args.length === 2 && args[0] !== undefined && args[1] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.read(row, col) === args[0]) {
           this.fill(row, col, args[1]);
@@ -551,7 +551,7 @@ class Quadrille {
    * a string or a number).
    */
   fill(...args) {
-    if (args.length === 1 && args[0] !== null && args[0] !== undefined) {
+    if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
           this._memory2D[row][col] = args[0];
