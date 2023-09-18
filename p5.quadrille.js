@@ -729,6 +729,15 @@ class Quadrille {
   filter(mask, row, col) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let half_size = (mask.width - 1) / 2;
+      // TODO decide  visit use
+      if (row === undefined || col === undefined) {
+        visitQuadrille(this, (i, j) => {
+          if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
+            this._conv(mask, i, j, half_size)
+          }
+        });
+      }
+      /*
       if (row === undefined || col === undefined) {
         for (let i = half_size; i < this.height - half_size; i++) {
           for (let j = half_size; j < this.width - half_size; j++) {
@@ -736,6 +745,7 @@ class Quadrille {
           }
         }
       }
+      // */
       else if (row >= half_size && row < this.height - half_size && col >= half_size && col < this.width - half_size) {
         this._conv(mask, row, col, half_size);
       }
