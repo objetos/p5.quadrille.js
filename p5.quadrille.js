@@ -138,16 +138,7 @@ class Quadrille {
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
-    // TODO debug init
-    for (let i = 0; i < quadrille.height; i++) {
-      for (let j = 0; j < quadrille.width; j++) {
-        let result = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j));
-        if (result !== undefined) {
-          quadrille._memory2D[i][j] = result;
-        }
-      }
-    }
-    // visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j))));
+    visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
     // iii. return resulted quadrille
     return quadrille;
   }
