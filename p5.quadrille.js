@@ -111,7 +111,7 @@ class Quadrille {
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
   static NEG(quadrille, pattern) {
-    if (pattern === null || pattern === undefined) return;
+    if (pattern === undefined) return;
     let result = new Quadrille(quadrille.width, quadrille.height);
     visitQuadrille(quadrille, (row, col) => {
       if (quadrille.isEmpty(row, col)) {
@@ -138,7 +138,7 @@ class Quadrille {
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
-    visitQuadrille(quadrille, (i, j) => quadrille._memory2D[i][j] = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j)));
+    visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j))));
     // iii. return resulted quadrille
     return quadrille;
   }
@@ -367,7 +367,7 @@ class Quadrille {
       args.length === 1 ? this._pixelator2(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // b. bitboard, pattern
-    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== null && args[1] !== undefined) {
+    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       let length = this.width * this.height;
       let bitboard = Math.abs(Math.round(args[0]));
       if (bitboard.toString(2).length > length) {
@@ -375,7 +375,7 @@ class Quadrille {
       }
       for (let i = 0; i <= length - 1; i++) {
         if ((bitboard & (1 << length - 1 - i))) {
-          this._memory2D[this._fromIndex(i).row][this._fromIndex(i).col] = args[1];
+          this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
         }
       }
     }
@@ -391,7 +391,7 @@ class Quadrille {
       let b = image.pixels[4 * i + 2];
       let a = image.pixels[4 * i + 3];
       let _ = this._fromIndex(i);
-      this._memory2D[_.row][_.col] = color([r, g, b, a]);
+      this.fill(_.row, _.col, color([r, g, b, a]));
     }
   }
 
@@ -558,31 +558,31 @@ class Quadrille {
         }
       });
     }
-    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== null && args[1] !== undefined) {
+    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height) {
         this._memory2D[args[0]].fill(args[1]);
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      args[2] !== null && args[2] !== undefined) {
+      rgs[2] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
         this._memory2D[args[0]][args[1]] = args[2];
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      args[2] !== null && args[2] !== undefined && typeof args[3] === 'number') {
+      args[2] !== undefined && typeof args[3] === 'number') {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], args[3]);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      args[2] !== null && args[2] !== undefined && typeof args[3] === 'boolean') {
+      args[2] !== undefined && typeof args[3] === 'boolean') {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], 4, args[3]);
       }
     }
     if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      args[2] !== null && args[2] !== undefined && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
+      args[2] !== undefined && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2], args[3], args[4]);
       }
@@ -775,7 +775,7 @@ class Quadrille {
     r = constrain(r, 0, 255);
     g = constrain(g, 0, 255);
     b = constrain(b, 0, 255);
-    this._memory2D[row][col] = color(r, g, b);
+    this.fill(row, col, color(r, g, b));
   }
 
   /**
@@ -872,7 +872,7 @@ class Quadrille {
    * @see order
    */
   rand(order, pattern) {
-    if (pattern === null || pattern === undefined) return;
+    if (pattern === undefined) return;
     order = Math.abs(order);
     if (order > this.size) {
       order = this.size;
@@ -882,7 +882,9 @@ class Quadrille {
     while (counter < Math.abs(order - disorder)) {
       let _ = this._fromIndex(Math.floor(Math.random() * this.size));
       if (order > disorder ? this.isEmpty(_.row, _.col) : this.isFilled(_.row, _.col)) {
-        this._memory2D[_.row][_.col] = order > disorder ? pattern : null;
+        // TODO test
+        //this.fill(_.row, _.col, order > disorder && pattern !== null ? pattern : null);
+        this.fill(_.row, _.col, order > disorder ? pattern : null);
         counter++;
       }
     }
