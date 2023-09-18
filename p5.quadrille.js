@@ -138,7 +138,7 @@ class Quadrille {
     let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
-    visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
+    visitQuadrille(quadrille, (i, j) => quadrille._memory2D[i][j] = operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j)));
     // iii. return resulted quadrille
     return quadrille;
   }
@@ -762,7 +762,7 @@ class Quadrille {
         let i = row + imask - cache_half_size;
         let j = col + jmask - cache_half_size;
         let neighbor = this.read(i, j);
-        let mask_value = mask._memory2D[imask][jmask];
+        let mask_value = mask.read(imask, jmask);
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           // luma coefficients are: 0.299, 0.587, 0.114, 0
           let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
@@ -1204,7 +1204,7 @@ class Quadrille {
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
-      let cell = quadrille._memory2D[row][col];
+      let cell = quadrille.read(row, col);
       const params = {
         quadrille: quadrille, graphics: graphics, outline: outline, outlineWeight: outlineWeight,
         cellLength: cellLength, textColor: textColor, textZoom: textZoom, row: row, col: col,
@@ -1241,7 +1241,7 @@ class Quadrille {
     for (let row = 0; row < quadrille.height; row++) {
       for (let col = 0; col < quadrille.width; col++) {
         if (cells) {
-          if (_cells.has(quadrille._memory2D[row][col])) {
+          if (_cells.has(quadrille.read(row, col))) {
             fx(row, col);
           }
         }
