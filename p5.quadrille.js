@@ -564,7 +564,7 @@ class Quadrille {
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      rgs[2] !== undefined) {
+      args[2] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
         this._memory2D[args[0]][args[1]] = args[2];
       }
