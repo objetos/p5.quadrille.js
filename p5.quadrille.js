@@ -866,25 +866,22 @@ class Quadrille {
   // TODO perlin noise
 
   /**
-   * Randomly fills quadrille with pattern up to order.
-   * @param {number} order 
+   * Randomly fills quadrille with pattern for the specified number of times.
+   * @param {number} times 
    * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} pattern 
-   * @see order
    */
-  rand(order, pattern) {
+  rand(times, pattern = null) {
     if (pattern === undefined) return;
-    order = Math.abs(order);
-    if (order > this.size) {
-      order = this.size;
+    times = Math.abs(times);
+    const maxTimes = pattern === null ? this.order : this.size - this.order;
+    if (times > maxTimes) {
+      times = maxTimes;
     }
-    let disorder = this.order;
     let counter = 0;
-    while (counter < Math.abs(order - disorder)) {
+    while (counter < times) {
       let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-      if (order > disorder ? this.isEmpty(_.row, _.col) : this.isFilled(_.row, _.col)) {
-        // TODO test
-        //this.fill(_.row, _.col, order > disorder && pattern !== null ? pattern : null);
-        this.fill(_.row, _.col, order > disorder ? pattern : null);
+      if (pattern === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
+        pattern === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, pattern);
         counter++;
       }
     }
