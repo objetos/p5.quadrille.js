@@ -1154,7 +1154,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.5',
+    VERSION: '1.5.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1170,6 +1170,7 @@ class Quadrille {
     y,
     row,
     col,
+    cells,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1221,7 +1222,7 @@ class Quadrille {
         tileDisplay(params);
       }
       graphics.pop();
-    });
+    }, cells);
     graphics.pop();
   }
 
