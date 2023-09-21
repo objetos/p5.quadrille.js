@@ -1227,15 +1227,10 @@ class Quadrille {
   }
 
   p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
-    const _cells = new Set(cells);
+    cells = new Set(cells);
     for (let row = 0; row < quadrille.height; row++) {
       for (let col = 0; col < quadrille.width; col++) {
-        if (cells) {
-          if (_cells.has(quadrille.read(row, col))) {
-            fx(row, col);
-          }
-        }
-        else {
+        if (cells.size ? cells.has(quadrille.read(row, col)) : true) {
           fx(row, col);
         }
       }
