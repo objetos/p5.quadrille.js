@@ -452,6 +452,37 @@ class Quadrille {
   }
 
   /**
+   * Convert this quadrille to an image.
+   * @param {String} filename png or jpg
+   * @param {Object} params drawing params
+   */
+  toImage(filename, {
+    cells,
+    tileDisplay = Quadrille.TILE,
+    imageDisplay = Quadrille.IMAGE,
+    colorDisplay = Quadrille.COLOR,
+    stringDisplay = Quadrille.STRING,
+    numberDisplay = Quadrille.NUMBER,
+    arrayDisplay,
+    objectDisplay,
+    cellLength,
+    outlineWeight = Quadrille.OUTLINE_WEIGHT,
+    outline = Quadrille.OUTLINE,
+    textColor = Quadrille.TEXT_COLOR,
+    textZoom = Quadrille.TEXT_ZOOM
+  } = {}) {
+    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
+    drawQuadrille(this, {
+      graphics: graphics, cells: cells, tileDisplay: tileDisplay, imageDisplay: imageDisplay,
+      colorDisplay: colorDisplay, stringDisplay: stringDisplay, numberDisplay: numberDisplay, arrayDisplay: arrayDisplay,
+      objectDisplay: objectDisplay, cellLength: cellLength, outlineWeight: outlineWeight, outline: outline,
+      textColor: textColor, textZoom: textZoom
+    });
+    save(graphics, filename);
+  }
+
+  /**
    * @param {number} row.
    * @returns {number} Number of non-empty quadrille cells at row.
    */

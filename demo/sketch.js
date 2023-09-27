@@ -131,6 +131,12 @@ function keyPressed() {
   if (key === 'o') {
     circled = !circled;
   }
+  if (key === 's') {
+    quadrille.toImage('quadrille.png', { tileDisplay: null });
+  }
+  if (key === 'S') {
+    board.toImage('board.jpg');
+  }
   row = key === 'w' ? row - 1 : key === 'z' ? row + 1 : row;
   col = key === 'a' ? col - 1 : key === 's' ? col + 1 : col;
 }
