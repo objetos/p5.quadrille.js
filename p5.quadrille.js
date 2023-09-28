@@ -107,15 +107,15 @@ class Quadrille {
 
   /**
    * @param {Quadrille} quadrille 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} pattern used to fill the returned quadrille.
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
    */
-  static NEG(quadrille, pattern) {
-    if (pattern === undefined) return;
+  static NEG(quadrille, value) {
+    if (value === undefined) return;
     let result = new Quadrille(quadrille.width, quadrille.height);
     visitQuadrille(quadrille, (row, col) => {
       if (quadrille.isEmpty(row, col)) {
-        result.fill(row, col, pattern);
+        result.fill(row, col, value);
       }
     });
     return result;
@@ -146,13 +146,13 @@ class Quadrille {
   /**
    * Constructs either an empty or a filled quadrille:
    * 1. Pass string.
-   * 2. Pass array or matrix of patterns (p5 colors, 4-length color arrays, strings and numbers).
+   * 2. Pass array or matrix (of colors, images, graphics, arrays, objects, strings, numbers and null).
    * 3. Pass width and string.
-   * 4. Pass width and an array of patterns (p5 colors, 4-length color arrays, strings and numbers).
+   * 4. Pass width and an array (of colors, images, graphics arrays, objects, strings, numbers and null).
    * 5. Pass width and heigth to construct and empty quadrille (filled with null's).
    * 6. Pass width and image, to construct a quadrille filled image.
-   * 7. Pass width, bitboard and pattern, to construct a quadrille filled with pattern from the given bitboard.
-   * 8. Pass width, height, order and pattern, to construct a quadrille filled with pattern of the given order.
+   * 7. Pass width, bitboard and value, to construct a quadrille filled with value from the given bitboard.
+   * 8. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
    * @see from
    * @see rand
    * @see order
@@ -372,8 +372,8 @@ class Quadrille {
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
    * 1. from(image, [coherence = false]); or,
-   * 2. from(bitboard, pattern) where pattern may be either a p5.Image, p5.Graphics,
-   * p5.Color, a 4-length color array, a string or a number.
+   * 2. from(bitboard, value) where value may be either a p5.Image, p5.Graphics,
+   * p5.Color, a 4-length color array, a string, a number or null.
    */
   from(...args) {
     if (args.length === 0) {
@@ -386,7 +386,7 @@ class Quadrille {
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
       args.length === 1 ? this._pixelator2(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
-    // b. bitboard, pattern
+    // b. bitboard, value
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       let length = this.width * this.height;
       let bitboard = Math.abs(Math.round(args[0]));
@@ -519,10 +519,10 @@ class Quadrille {
   // TODO isPolyomino
 
   /**
-   * Searches and replace patterns. Either:
-   * 1. replace(pattern), replaces non empty cells with pattern.
-   * 2. replace(pattern1, pattern2), searches pattern1 and replaces with pattern2,
-   * pattern1 and pattern2 may be either a p5.Image, p5.Graphics, p5.Color,
+   * Searches and replace values. Either:
+   * 1. replace(value), replaces non empty cells with value.
+   * 2. replace(value1, value2), searches value1 and replaces with value2,
+   * value1 and value2 may be either a p5.Image, p5.Graphics, p5.Color,
    * a 4-length color array, a string or a number.
    */
   replace(...args) {
@@ -548,9 +548,9 @@ class Quadrille {
    * 1. clear(), clears current filled cells;
    * 2. clear(row), clears row; or,
    * 3. clear(row, col), clears cell.
-   * 4. clear(row, col, directions), flood clearing using (row, col) cell pattern.
-   * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell pattern.
-   * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell pattern.
+   * 4. clear(row, col, directions), flood clearing using (row, col) cell value.
+   * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell value.
+   * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell value.
    */
   clear(...args) {
     if (args.length === 0) {
@@ -588,17 +588,17 @@ class Quadrille {
   }
 
   /**
-   * Fills quadrille cells with given pattern. Either:
-   * 1. fill(pattern), fills current empty cells;
-   * 2. fill(row, pattern), fills row; or,
-   * 3. fill(row, col, pattern), fills cell.
-   * 4. fill(row, col, pattern, directions), flood filling without boder in the given number of directions,
-   * using (row, col) cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
+   * Fills quadrille cells with given value. Either:
+   * 1. fill(value), fills current empty cells;
+   * 2. fill(row, value), fills row; or,
+   * 3. fill(row, col, value), fills cell.
+   * 4. fill(row, col, value, directions), flood filling without boder in the given number of directions,
+   * using (row, col) cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
    * an object, a string or a number).
-   * 5. fill(row, col, pattern, border), flood filling with (without) border in 4 directions using (row, col)
-   * cell pattern (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
-   * 6. fill(row, col, pattern, directions, border), flood filling with (without) border in the given number of directions
-   * using (row, col) cell pattern (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
+   * 5. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
+   * cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
+   * 6. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
+   * using (row, col) cell value (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
    * a string or a number).
    */
   fill(...args) {
@@ -641,27 +641,27 @@ class Quadrille {
     return this;
   }
 
-  _flood(row, col, pattern1, pattern2, directions = 4, border = false) {
+  _flood(row, col, value1, value2, directions = 4, border = false) {
     if (directions !== 4 && directions !== 8) {
       console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
     }
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== pattern2) {
-      if (this._memory2D[row][col] === pattern1) {
-        this._memory2D[row][col] = pattern2;
-        this._flood(row, col - 1, pattern1, pattern2, directions, border);
-        this._flood(row - 1, col, pattern1, pattern2, directions, border);
-        this._flood(row, col + 1, pattern1, pattern2, directions, border);
-        this._flood(row + 1, col, pattern1, pattern2, directions, border);
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== value2) {
+      if (this._memory2D[row][col] === value1) {
+        this._memory2D[row][col] = value2;
+        this._flood(row, col - 1, value1, value2, directions, border);
+        this._flood(row - 1, col, value1, value2, directions, border);
+        this._flood(row, col + 1, value1, value2, directions, border);
+        this._flood(row + 1, col, value1, value2, directions, border);
         if (directions === 8) {
-          this._flood(row - 1, col - 1, pattern1, pattern2, directions, border);
-          this._flood(row - 1, col + 1, pattern1, pattern2, directions, border);
-          this._flood(row + 1, col + 1, pattern1, pattern2, directions, border);
-          this._flood(row + 1, col - 1, pattern1, pattern2, directions, border);
+          this._flood(row - 1, col - 1, value1, value2, directions, border);
+          this._flood(row - 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col - 1, value1, value2, directions, border);
         }
       }
       if (border) {
-        this._memory2D[row][col] = pattern2;
+        this._memory2D[row][col] = value2;
       }
     }
   }
@@ -826,8 +826,8 @@ class Quadrille {
   colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
     this.rasterizeTriangle(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
-      // pattern0.xyza, pattern1.xyza and pattern2.xyza interpolated color vertex patterns, respectively.
-      ({ pattern: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
+      // array0.xyza, array1.xyza and array2.xyza interpolated color vertex arrays, respectively.
+      ({ array: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
       [red(color1), green(color1), blue(color1), alpha(color1)],
       [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
@@ -843,22 +843,22 @@ class Quadrille {
 
   /**
    * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle
-   * according to pattern0, pattern1 and pattern2 object vertex patterns (resp),
+   * according to array0, array1 and array2 object vertex data (resp),
    * using (fragment) shader.
    */
-  rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, pattern0, pattern1 = pattern0, pattern2 = pattern0) {
-    if (Array.isArray(pattern0) && Array.isArray(pattern1) && Array.isArray(pattern2)) {
+  rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
+    if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
       visitQuadrille(this, (row, col) => {
         let coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
-        // interpolate all pattern attributes for the current cell only if it is inside the triangle
+        // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-          let length = Math.max(pattern0.length, pattern1.length, pattern2.length);
-          let pattern = new Array(length);
-          for (let k = 0; k < pattern.length; k++) {
-            pattern[k] = (pattern0[k] ?? 0) * coords.w0 + (pattern1[k] ?? 0) * coords.w1 + (pattern2[k] ?? 0) * coords.w2;
+          let length = Math.max(array0.length, array1.length, array2.length);
+          let array = new Array(length);
+          for (let k = 0; k < array.length; k++) {
+            array[k] = (array0[k] ?? 0) * coords.w0 + (array1[k] ?? 0) * coords.w1 + (array2[k] ?? 0) * coords.w2;
           }
-          // call shader using the interpolated patterns to compute the current cell contents
-          this.fill(row, col, shader({ pattern: pattern, row: row, col: col }));
+          // call shader using the interpolated arrays to compute the current cell contents
+          this.fill(row, col, shader({ array, row, col }));
         }
       });
     }
@@ -866,13 +866,13 @@ class Quadrille {
   }
 
   /**
-   * Rasterize quadrille according to upper-left corner vertex pattern0,
-   * bottom-left corner vertex pattern1, upper-right corner vertex pattern2,
-   * and bottom-right corner vertex pattern3, using (fragment) shader.
+   * Rasterize quadrille according to upper-left corner vertex array0,
+   * bottom-left corner vertex array1, upper-right corner vertex array2,
+   * and bottom-right corner vertex array3, using (fragment) shader.
    */
-  rasterize(shader, pattern0, pattern1 = pattern0, pattern2 = pattern0, pattern3 = pattern0) {
-    this.rasterizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, shader, pattern0, pattern1, pattern2);
-    this.rasterizeTriangle(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, pattern1, pattern2, pattern3);
+  rasterize(shader, array0, array1 = array0, array2 = array0, array3 = array0) {
+    this.rasterizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, shader, array0, array1, array2);
+    this.rasterizeTriangle(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, array1, array2, array3);
   }
 
   /**
@@ -907,22 +907,22 @@ class Quadrille {
   // TODO perlin noise
 
   /**
-   * Randomly fills quadrille with pattern for the specified number of times.
+   * Randomly fills quadrille with value for the specified number of times.
    * @param {number} times 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} pattern 
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value 
    */
-  rand(times, pattern = null) {
-    if (pattern === undefined) return;
+  rand(times, value = null) {
+    if (value === undefined) return;
     times = Math.abs(times);
-    const maxTimes = pattern === null ? this.order : this.size - this.order;
+    const maxTimes = value === null ? this.order : this.size - this.order;
     if (times > maxTimes) {
       times = maxTimes;
     }
     let counter = 0;
     while (counter < times) {
       let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-      if (pattern === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
-        pattern === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, pattern);
+      if (value === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
+        value === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, value);
         counter++;
       }
     }
