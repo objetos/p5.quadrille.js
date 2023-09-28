@@ -323,6 +323,26 @@ class Quadrille {
     return this.screenCol(mouseX);
   }
 
+  [Symbol.iterator]() {
+    let row = 0;
+    let col = 0;
+    const memory2D = this._memory2D;
+    return {
+      next() {
+        if (row < memory2D.length) {
+          if (col < memory2D[row].length) {
+            return { value: { value: memory2D[row][col], row, col: col++ }, done: false };
+          } else { // Move to the next row and reset column
+            row++;
+            col = 0;
+            return this.next(); // Recursive call to continue iteration
+          }
+        }
+        return { done: true };
+      }
+    };
+  }
+
   /**
    * Screen y coordinate to quadrille row
    * @param {number} pixelY 
@@ -961,8 +981,8 @@ class Quadrille {
    * Transpose the quadrille.
    */
   transpose() {
-    // credit goes to Fawad Ghafoor
-    // who wrote about it here: https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
+    // credit goes to Fawad Ghafoorwho wrote about it here:
+    // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
     return this;
   }
@@ -971,8 +991,8 @@ class Quadrille {
    * π/2 clockwise rotation.
    */
   rotate() {
-    // credit goes to Nitin Jadhav: https://github.com/nitinja
-    // who wrote about it here: https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
+    // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
+    // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
     return this;
   }
@@ -1185,7 +1205,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.6',
+    VERSION: '1.4.7',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1257,6 +1277,9 @@ class Quadrille {
     graphics.pop();
   }
 
+  /**
+   * @deprecated
+   */
   p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
     cells = new Set(cells);
     for (let row = 0; row < quadrille.height; row++) {
