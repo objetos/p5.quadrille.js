@@ -477,7 +477,7 @@ class Quadrille {
    * @param {Object} params drawing params
    */
   toImage(filename, {
-    cells,
+    values,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -494,7 +494,7 @@ class Quadrille {
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
-      graphics, cells, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
+      graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
     });
     save(graphics, filename);
@@ -1219,7 +1219,7 @@ class Quadrille {
     y,
     row,
     col,
-    cells,
+    values,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1270,15 +1270,15 @@ class Quadrille {
         tileDisplay(params);
       }
       graphics.pop();
-    }, cells);
+    }, values);
     graphics.pop();
   }
 
-  p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
-    cells = new Set(cells);
+  p5.prototype.visitQuadrille = function (quadrille, fx, values) {
+    values = new Set(values);
     for (let row = 0; row < quadrille.height; row++) {
       for (let col = 0; col < quadrille.width; col++) {
-        if (cells.size ? cells.has(quadrille.read(row, col)) : true) {
+        if (values.size ? values.has(quadrille.read(row, col)) : true) {
           fx(row, col);
         }
       }
