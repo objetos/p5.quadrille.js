@@ -1028,9 +1028,9 @@ class Quadrille {
     let memory1D = this.toArray();
     switch (mode) {
       case 'DISTANCE':
-        memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+        memory1D.sort((valueA, valueB) => {
+          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -1039,9 +1039,9 @@ class Quadrille {
         });
         break;
       case 'AVG':
-        memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+        memory1D.sort((valueA, valueB) => {
+          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -1049,9 +1049,9 @@ class Quadrille {
         break;
       case 'LUMA':
       default:
-        memory1D.sort((cellA, cellB) => {
-          let sa = Quadrille.sample({ cell: cellA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ cell: cellB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+        memory1D.sort((valueA, valueB) => {
+          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -1066,7 +1066,7 @@ class Quadrille {
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
   static sample({
-    cell,
+    value,
     imageDisplay = this.IMAGE,
     colorDisplay = this.COLOR,
     stringDisplay = this.STRING,
@@ -1083,23 +1083,23 @@ class Quadrille {
     let r, g, b, a;
     let pg = createGraphics(cellLength, cellLength);
     pg.background(background);
-    if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
-      imageDisplay({ graphics: pg, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
+      imageDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
-    else if (colorDisplay && cell instanceof p5.Color) {
-      colorDisplay({ graphics: pg, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    else if (colorDisplay && value instanceof p5.Color) {
+      colorDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
-    else if (numberDisplay && typeof cell === 'number') {
-      numberDisplay({ graphics: pg, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    else if (numberDisplay && typeof value === 'number') {
+      numberDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
-    else if (stringDisplay && typeof cell === 'string') {
-      stringDisplay({ graphics: pg, cell: cell, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    else if (stringDisplay && typeof value === 'string') {
+      stringDisplay({ graphics: pg, value: value, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
-    else if (arrayDisplay && Array.isArray(cell)) {
-      arrayDisplay({ graphics: pg, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    else if (arrayDisplay && Array.isArray(value)) {
+      arrayDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
-    else if (objectDisplay && typeof cell === 'object') {
-      objectDisplay({ graphics: pg, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+    else if (objectDisplay && typeof value === 'object') {
+      objectDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
     }
     pg.loadPixels();
     r = g = b = a = 0;
@@ -1119,10 +1119,10 @@ class Quadrille {
    */
   static NUMBER({
     graphics,
-    cell,
+    value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.COLOR({ graphics: graphics, cell: graphics.color(graphics.constrain(cell, 0, 255)), cellLength: cellLength });
+    Quadrille.COLOR({ graphics: graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength: cellLength });
   }
 
   /**
@@ -1130,11 +1130,11 @@ class Quadrille {
    */
   static COLOR({
     graphics,
-    cell,
+    value,
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.noStroke();
-    graphics.fill(cell);
+    graphics.fill(value);
     graphics.rect(0, 0, cellLength, cellLength);
   }
 
@@ -1143,11 +1143,11 @@ class Quadrille {
    */
   static IMAGE({
     graphics,
-    cell,
+    value,
     cellLength = this.CELL_LENGTH
   } = {}) {
     graphics.noStroke();
-    graphics.image(cell, 0, 0, cellLength, cellLength);
+    graphics.image(value, 0, 0, cellLength, cellLength);
   }
 
   /**
@@ -1155,16 +1155,16 @@ class Quadrille {
    */
   static STRING({
     graphics,
-    cell,
+    value,
     cellLength = this.CELL_LENGTH,
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM
   } = {}) {
     graphics.noStroke();
     graphics.fill(textColor);
-    graphics.textSize(cellLength * textZoom / cell.length);
+    graphics.textSize(cellLength * textZoom / value.length);
     graphics.textAlign(CENTER, CENTER);
-    graphics.text(cell, 0, 0, cellLength, cellLength);
+    graphics.text(value, 0, 0, cellLength, cellLength);
   }
 
   /**
@@ -1221,7 +1221,6 @@ class Quadrille {
     y,
     row,
     col,
-    cells,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1245,41 +1244,38 @@ class Quadrille {
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
-      let cell = quadrille.read(row, col);
+      let value = quadrille.read(row, col);
       const params = {
         quadrille: quadrille, graphics: graphics, outline: outline, outlineWeight: outlineWeight,
         cellLength: cellLength, textColor: textColor, textZoom: textZoom, row: row, col: col,
-        cell: cell, width: quadrille.width, height: quadrille.height
+        value: value, width: quadrille.width, height: quadrille.height
       };
-      if (imageDisplay && (cell instanceof p5.Image || cell instanceof p5.Graphics)) {
+      if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
         imageDisplay(params);
       }
-      else if (colorDisplay && cell instanceof p5.Color) {
+      else if (colorDisplay && value instanceof p5.Color) {
         colorDisplay(params);
       }
-      else if (numberDisplay && typeof cell === 'number') {
+      else if (numberDisplay && typeof value === 'number') {
         numberDisplay(params);
       }
-      else if (stringDisplay && typeof cell === 'string') {
+      else if (stringDisplay && typeof value === 'string') {
         stringDisplay(params);
       }
-      else if (arrayDisplay && Array.isArray(cell)) {
+      else if (arrayDisplay && Array.isArray(value)) {
         arrayDisplay(params);
       }
-      else if (objectDisplay && typeof cell === 'object') {
+      else if (objectDisplay && typeof value === 'object') {
         objectDisplay(params);
       }
       if (tileDisplay) {
         tileDisplay(params);
       }
       graphics.pop();
-    }, cells);
+    });
     graphics.pop();
   }
 
-  /**
-   * @deprecated
-   */
   p5.prototype.visitQuadrille = function (quadrille, fx, cells) {
     cells = new Set(cells);
     for (let row = 0; row < quadrille.height; row++) {
