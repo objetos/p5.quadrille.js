@@ -332,10 +332,10 @@ class Quadrille {
         if (row < memory2D.length) {
           if (col < memory2D[row].length) {
             return { value: { value: memory2D[row][col], row, col: col++ }, done: false };
-          } else { // Move to the next row and reset column
+          } else {
             row++;
             col = 0;
-            return this.next(); // Recursive call to continue iteration
+            return this.next();
           }
         }
         return { done: true };
