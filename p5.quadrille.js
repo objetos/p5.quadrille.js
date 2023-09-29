@@ -477,6 +477,7 @@ class Quadrille {
    * @param {Object} params drawing params
    */
   toImage(filename, {
+    cells,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -493,7 +494,7 @@ class Quadrille {
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
-      graphics, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
+      graphics, cells, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
     });
     save(graphics, filename);
@@ -1218,6 +1219,7 @@ class Quadrille {
     y,
     row,
     col,
+    cells,
     tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
@@ -1268,7 +1270,7 @@ class Quadrille {
         tileDisplay(params);
       }
       graphics.pop();
-    });
+    }, cells);
     graphics.pop();
   }
 
