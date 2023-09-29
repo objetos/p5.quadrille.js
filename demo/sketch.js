@@ -45,26 +45,26 @@ function setup() {
   col = int(random(0, COLS - 4));
   row = int(random(0, ROWS - 4));
   // tesselation
-  tileDisplay = ({ graphics: graphics, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+  tileDisplay = ({ graphics, outline, outlineWeight, cellLength, row: i, col: j }) => {
     graphics.noFill();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
     graphics.ellipseMode(CORNER);
     graphics.ellipse(0, 0, cellLength, cellLength);
   };
-  colorDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
-    graphics.fill(cell);
+  colorDisplay = ({ graphics, value, outline, outlineWeight, cellLength, row: i, col: j }) => {
+    graphics.fill(value);
     graphics.ellipseMode(CORNER);
     graphics.ellipse(0, 0, cellLength, cellLength);
   }
-  imageDisplay = ({ graphics: graphics, cell: cell, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength, row: i, col: j }) => {
+  imageDisplay = ({ graphics, value, outline, outlineWeight, cellLength, row: i, col: j }) => {
     graphics.stroke(outline);
-    let _al = new p5.Image(cell.width, cell.height);
-    _al.copy(cell, 0, 0, cell.width, cell.height, 0, 0, cell.width, cell.height);
-    let shape = createGraphics(cell.width, cell.height);
+    let _al = new p5.Image(value.width, value.height);
+    _al.copy(value, 0, 0, value.width, value.height, 0, 0, value.width, value.height);
+    let shape = createGraphics(value.width, value.height);
     shape.fill(0);
     shape.ellipseMode(CORNER);
-    shape.ellipse(0, 0, cell.width, cell.height);
+    shape.ellipse(0, 0, value.width, value.height);
     _al.mask(shape);
     graphics.image(_al, 0, 0, cellLength, cellLength);
   }

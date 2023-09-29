@@ -516,7 +516,122 @@ class Quadrille {
     return result;
   }
 
+  /**
+   * Returns a shallow copy of this quadrille. May be used in conjunction with
+   * {@link reflect} and {@link rotate} to create different quadrille instances.
+   */
+  clone(cache = true) {
+    let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+    if (cache) {
+      clone._cellLength = this._cellLength;
+      clone._x = this._x;
+      clone._y = this._y;
+      clone._col = this._col;
+      clone._row = this._row;
+    }
+    return clone;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @param {number} dimension of ring
+   * @returns Quadrille ring of neighbor cells centered at (row, col).
+   */
+  ring(row, col, dimension = 1) {
+    let array1D = [];
+    for (let i = row - dimension; i <= row + dimension; i++) {
+      for (let j = col - dimension; j <= col + dimension; j++) {
+        array1D.push(this.read(i, j));
+      }
+    }
+    return new Quadrille(2 * dimension + 1, array1D);
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
+   */
+  read(row, col) {
+    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+      return this._memory2D[row][col];
+    }
+  }
+
   // TODO isPolyomino
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is empty
+   */
+  isEmpty(row, col) {
+    return this.read(row, col) === null;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is filled
+   */
+  isFilled(row, col) {
+    return this.read(row, col) !== null && this.read(row, col) !== undefined;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a number
+   */
+  isNumber(row, col) {
+    return typeof this.read(row, col) === 'number';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a string
+   */
+  isString(row, col) {
+    return typeof this.read(row, col) === 'string';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a color
+   */
+  isColor(row, col) {
+    return this.read(row, col) instanceof p5.Color;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an array
+   */
+  isArray(row, col) {
+    return Array.isArray(this.read(row, col));
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return typeof this.read(row, col) === 'object';
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an image
+   */
+  isImage(row, col) {
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
+  }
 
   /**
    * Searches and replace values. Either:
@@ -586,6 +701,8 @@ class Quadrille {
     }
     return this;
   }
+
+  // TODO perlin noise
 
   /**
    * Fills quadrille cells with given value. Either:
@@ -667,102 +784,94 @@ class Quadrille {
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
+   * Randomly fills quadrille with value for the specified number of times.
+   * @param {number} times 
+   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value 
    */
-  read(row, col) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
-      return this._memory2D[row][col];
+  rand(times, value = null) {
+    if (value === undefined) return;
+    times = Math.abs(times);
+    const maxTimes = value === null ? this.order : this.size - this.order;
+    if (times > maxTimes) {
+      times = maxTimes;
     }
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is empty
-   */
-  isEmpty(row, col) {
-    return this.read(row, col) === null;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is filled
-   */
-  isFilled(row, col) {
-    return this.read(row, col) !== null && this.read(row, col) !== undefined;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a number
-   */
-  isNumber(row, col) {
-    return typeof this.read(row, col) === 'number';
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a string
-   */
-  isString(row, col) {
-    return typeof this.read(row, col) === 'string';
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a color
-   */
-  isColor(row, col) {
-    return this.read(row, col) instanceof p5.Color;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an array
-   */
-  isArray(row, col) {
-    return Array.isArray(this.read(row, col));
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an object
-   */
-  isObject(row, col) {
-    return typeof this.read(row, col) === 'object';
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an image
-   */
-  isImage(row, col) {
-    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @param {number} dimension of ring
-   * @returns Quadrille ring of neighbor cells centered at (row, col).
-   */
-  ring(row, col, dimension = 1) {
-    let array1D = [];
-    for (let i = row - dimension; i <= row + dimension; i++) {
-      for (let j = col - dimension; j <= col + dimension; j++) {
-        array1D.push(this.read(i, j));
+    let counter = 0;
+    while (counter < times) {
+      let _ = this._fromIndex(Math.floor(Math.random() * this.size));
+      if (value === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
+        value === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, value);
+        counter++;
       }
     }
-    return new Quadrille(2 * dimension + 1, array1D);
+    return this;
+  }
+
+  /**
+   * Randomly re-arranges cell entries.
+   */
+  randomize() {
+    let clone = this.clone(false);
+    this.clear();
+    visitQuadrille(clone, (row, col) => {
+      if (clone.isFilled(row, col)) {
+        let _row, _col;
+        do {
+          _row = int(random(this.height));
+          _col = int(random(this.width));
+        }
+        while (this.isFilled(_row, _col));
+        this.fill(_row, _col, clone.read(row, col));
+      }
+    });
+    return this;
+  }
+
+  /**
+   * Inserts an empty row.
+   * @param {number} row 
+   */
+  insert(row) {
+    this._memory2D.splice(row, 0, Array(this.width).fill(null));
+    return this;
+  }
+
+  /**
+   * Deletes the given row.
+   * @param {number} row 
+   */
+  delete(row) {
+    if (this.height > 1 && row >= 0 && row < this.height) {
+      this._memory2D.splice(row, 1);
+    }
+    return this;
+  }
+
+  /**
+   * Horizontal reflection.
+   */
+  reflect() {
+    this._memory2D.reverse();
+    return this;
+  }
+
+  /**
+   * Transpose the quadrille.
+   */
+  transpose() {
+    // credit goes to Fawad Ghafoorwho wrote about it here:
+    // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
+    return this;
+  }
+
+  /**
+   * π/2 clockwise rotation.
+   */
+  rotate() {
+    // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
+    // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
+    return this;
   }
 
   /**
@@ -904,115 +1013,6 @@ class Quadrille {
     return { e01, e12, e20 };
   }
 
-  // TODO perlin noise
-
-  /**
-   * Randomly fills quadrille with value for the specified number of times.
-   * @param {number} times 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value 
-   */
-  rand(times, value = null) {
-    if (value === undefined) return;
-    times = Math.abs(times);
-    const maxTimes = value === null ? this.order : this.size - this.order;
-    if (times > maxTimes) {
-      times = maxTimes;
-    }
-    let counter = 0;
-    while (counter < times) {
-      let _ = this._fromIndex(Math.floor(Math.random() * this.size));
-      if (value === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
-        value === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, value);
-        counter++;
-      }
-    }
-    return this;
-  }
-
-  /**
-   * Randomly re-arranges cell entries.
-   */
-  randomize() {
-    let clone = this.clone(false);
-    this.clear();
-    visitQuadrille(clone, (row, col) => {
-      if (clone.isFilled(row, col)) {
-        let _row, _col;
-        do {
-          _row = int(random(this.height));
-          _col = int(random(this.width));
-        }
-        while (this.isFilled(_row, _col));
-        this.fill(_row, _col, clone.read(row, col));
-      }
-    });
-    return this;
-  }
-
-  /**
-   * Inserts an empty row.
-   * @param {number} row 
-   */
-  insert(row) {
-    this._memory2D.splice(row, 0, Array(this.width).fill(null));
-    return this;
-  }
-
-  /**
-   * Deletes the given row.
-   * @param {number} row 
-   */
-  delete(row) {
-    if (this.height > 1 && row >= 0 && row < this.height) {
-      this._memory2D.splice(row, 1);
-    }
-    return this;
-  }
-
-  /**
-   * Horizontal reflection.
-   */
-  reflect() {
-    this._memory2D.reverse();
-    return this;
-  }
-
-  /**
-   * Transpose the quadrille.
-   */
-  transpose() {
-    // credit goes to Fawad Ghafoorwho wrote about it here:
-    // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
-    return this;
-  }
-
-  /**
-   * π/2 clockwise rotation.
-   */
-  rotate() {
-    // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
-    // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
-    return this;
-  }
-
-  /**
-   * Returns a shallow copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different quadrille instances.
-   */
-  clone(cache = true) {
-    let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
-    if (cache) {
-      clone._cellLength = this._cellLength;
-      clone._x = this._x;
-      clone._y = this._y;
-      clone._col = this._col;
-      clone._row = this._row;
-    }
-    return clone;
-  }
-
   /**
    * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
    */
@@ -1029,8 +1029,8 @@ class Quadrille {
     switch (mode) {
       case 'DISTANCE':
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -1040,8 +1040,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -1050,8 +1050,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
-          let sb = Quadrille.sample({ value: valueB, background: background, cellLength: cellLength, textColor: textColor, textZoom: textZoom });
+          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -1081,36 +1081,36 @@ class Quadrille {
     textZoom = this.TEXT_ZOOM
   } = {}) {
     let r, g, b, a;
-    let pg = createGraphics(cellLength, cellLength);
-    pg.background(background);
+    let graphics = createGraphics(cellLength, cellLength);
+    graphics.background(background);
     if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
-      imageDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      imageDisplay({ graphics, value, outline, outlineWeight, cellLength });
     }
     else if (colorDisplay && value instanceof p5.Color) {
-      colorDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      colorDisplay({ graphics, value, outline, outlineWeight, cellLength });
     }
     else if (numberDisplay && typeof value === 'number') {
-      numberDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      numberDisplay({ graphics, value, outline, outlineWeight, cellLength });
     }
     else if (stringDisplay && typeof value === 'string') {
-      stringDisplay({ graphics: pg, value: value, textColor: textColor, textZoom: textZoom, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      stringDisplay({ graphics, value, textColor, textZoom, outline, outlineWeight, cellLength });
     }
     else if (arrayDisplay && Array.isArray(value)) {
-      arrayDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      arrayDisplay({ graphics, value, outline, outlineWeight, cellLength });
     }
     else if (objectDisplay && typeof value === 'object') {
-      objectDisplay({ graphics: pg, value: value, outline: outline, outlineWeight: outlineWeight, cellLength: cellLength });
+      objectDisplay({ graphics, value, outline, outlineWeight, cellLength });
     }
-    pg.loadPixels();
+    graphics.loadPixels();
     r = g = b = a = 0;
-    let total = pg.pixels.length / 4;
+    let total = graphics.pixels.length / 4;
     for (let i = 0; i < total; i++) {
-      r += pg.pixels[4 * i];
-      g += pg.pixels[4 * i + 1];
-      b += pg.pixels[4 * i + 2];
-      a += pg.pixels[4 * i + 3];
+      r += graphics.pixels[4 * i];
+      g += graphics.pixels[4 * i + 1];
+      b += graphics.pixels[4 * i + 2];
+      a += graphics.pixels[4 * i + 3];
     }
-    pg.updatePixels();
+    graphics.updatePixels();
     return { r, g, b, a, total };
   }
 
@@ -1122,7 +1122,7 @@ class Quadrille {
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.COLOR({ graphics: graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength: cellLength });
+    Quadrille.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
 
   /**
@@ -1246,9 +1246,8 @@ class Quadrille {
       graphics.translate(col * cellLength, row * cellLength);
       let value = quadrille.read(row, col);
       const params = {
-        quadrille: quadrille, graphics: graphics, outline: outline, outlineWeight: outlineWeight,
-        cellLength: cellLength, textColor: textColor, textZoom: textZoom, row: row, col: col,
-        value: value, width: quadrille.width, height: quadrille.height
+        quadrille, graphics, outline, outlineWeight, cellLength, textColor, textZoom, value, row, col,
+        width: quadrille.width, height: quadrille.height
       };
       if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
         imageDisplay(params);
