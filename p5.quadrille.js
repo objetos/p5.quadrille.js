@@ -235,7 +235,7 @@ class Quadrille {
         this._init1D(memory);
         return;
       }
-      let memory2D = memory.map(array => { return array.slice(); });
+      let memory2D = memory.map(array => array.slice());
       let width;
       for (const entry of memory2D) {
         if (!Array.isArray(entry)) {
@@ -519,7 +519,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone(cache = true) {
-    let clone = new Quadrille(this._memory2D.map(array => { return array.slice(); }));
+    let clone = new Quadrille(this._memory2D.map(array => array.slice()));
     if (cache) {
       clone._cellLength = this._cellLength;
       clone._x = this._x;
