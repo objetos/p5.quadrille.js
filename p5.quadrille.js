@@ -2,11 +2,6 @@
 
 class Quadrille {
   /**
-   * Default background used in sort.
-   */
-  static BACKGROUND = 'black';
-
-  /**
    * Default text drawing color.
    */
   static TEXT_COLOR = 'white';
@@ -30,6 +25,11 @@ class Quadrille {
    * Default drawing cell length.
    */
   static CELL_LENGTH = 100;
+
+  /**
+   * Default background used in sort.
+   */
+  static BACKGROUND = 'black';
 
   /**
    * @param {Quadrille} quadrille1 
@@ -371,7 +371,7 @@ class Quadrille {
 
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
-   * 1. from(image, [coherence = false]); or,
+   * 1. from(image, [coherence]); or,
    * 2. from(bitboard, value) where value may be either a p5.Image, p5.Graphics,
    * p5.Color, a 4-length color array, a string, a number or null.
    */
@@ -384,7 +384,7 @@ class Quadrille {
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
       let image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
-      args.length === 1 ? this._pixelator2(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
+      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // b. bitboard, value
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
@@ -435,6 +435,12 @@ class Quadrille {
     visitQuadrille(this, (row, col) =>
       this.fill(row, col, color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
     );
+  }
+
+  _images(image) {
+    const cellWidth = image.width / this.width;
+    const cellHeight = image.height / this.height;
+    visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   _fromIndex(index, width = this.width) {
@@ -1203,7 +1209,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.4.7',
+    VERSION: '1.5.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
