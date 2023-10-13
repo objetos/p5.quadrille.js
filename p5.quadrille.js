@@ -640,19 +640,17 @@ class Quadrille {
   /**
    * Pattern searching.
    * @param {Quadrille} pattern 
-   * @param {boolean} strict 
+   * @param {boolean} strict tells whether the algorithm requires values to match (besides filled cells)
    * @returns an array of { row, col } object literals hits whose length may be 0 (no hits found).
    */
   search(pattern, strict = false) {
     const hits = [];
     visitQuadrille(this, (row, col) =>
-      Quadrille.OP(pattern, this,
-        (q1, q2) => {
-          if (q1 && (strict ? q2 !== q1 : !q2)) {
-            return q1;
-          }
-        },
-        -row, -col).order === 0 && hits.push({ row, col }));
+      Quadrille.OP(pattern, this, (q1, q2) => {
+        if (q1 && (strict ? q2 !== q1 : !q2)) {
+          return q1;
+        }
+      }, -row, -col).order === 0 && hits.push({ row, col }));
     return hits;
   }
 
