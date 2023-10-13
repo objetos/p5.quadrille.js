@@ -638,6 +638,25 @@ class Quadrille {
   }
 
   /**
+   * Pattern searching.
+   * @param {Quadrille} pattern 
+   * @param {boolean} strict 
+   * @returns an array of { row, col } object literals hits whose length may be 0 (no hits found).
+   */
+  search(pattern, strict = false) {
+    const hits = [];
+    visitQuadrille(this, (row, col) =>
+      Quadrille.OP(pattern, this,
+        (q1, q2) => {
+          if (q1 && (strict ? q2 !== q1 : !q2)) {
+            return q1;
+          }
+        },
+        -row, -col).order === 0 && hits.push({ row, col }));
+    return hits;
+  }
+
+  /**
    * Searches and replace values. Either:
    * 1. replace(value), replaces non empty cells with value.
    * 2. replace(value1, value2), searches value1 and replaces with value2,
@@ -705,8 +724,6 @@ class Quadrille {
     }
     return this;
   }
-
-  // TODO perlin noise
 
   /**
    * Fills quadrille cells with given value. Either:
@@ -786,6 +803,8 @@ class Quadrille {
       }
     }
   }
+
+  // TODO perlin noise
 
   /**
    * Randomly fills quadrille with value for the specified number of times.
