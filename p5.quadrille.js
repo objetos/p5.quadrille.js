@@ -51,13 +51,13 @@ class Quadrille {
     'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
   };
 
-  static pieceMapReverse = Object.fromEntries(
+  static reversePieceMap = Object.fromEntries(
     Object.entries(Quadrille.pieceMap).map(([k, v]) => [v, k])
   );
 
   static setPieceMap(pieceMap) {
     Quadrille.pieceMap = pieceMap;
-    Quadrille.pieceMapReverse = Object.fromEntries(
+    Quadrille.reversePieceMap = Object.fromEntries(
       Object.entries(pieceMap).map(([k, v]) => [v, k])
     );
   }
@@ -602,7 +602,7 @@ class Quadrille {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          const fenChar = Quadrille.pieceMapReverse[this._memory2D[i][j]];
+          const fenChar = Quadrille.reversePieceMap[this._memory2D[i][j]];
           if (!fenChar) {
             console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
             fen += '?'; // Placeholder for unrecognized pieces
