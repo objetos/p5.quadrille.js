@@ -583,7 +583,14 @@ class Quadrille {
     save(graphics, filename);
   }
 
+  /**
+   * @returns quadrille chess board position in FEN notation
+   */
   toFEN() {
+    if (this.width !== 8 || this.height !== 8) {
+      console.warn('toFEN() only works on 8x8 chess boards');
+      return;
+    }
     let fen = '';
     for (let i = 0; i < 8; i++) {
       let emptySquares = 0;
@@ -595,7 +602,13 @@ class Quadrille {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          fen += Quadrille.pieceMapReverse[this._memory2D[i][j]];
+          const fenChar = Quadrille.pieceMapReverse[this._memory2D[i][j]];
+          if (!fenChar) {
+            console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
+            fen += '?'; // Placeholder for unrecognized pieces
+          } else {
+            fen += fenChar;
+          }
         }
       }
       if (emptySquares > 0) {
