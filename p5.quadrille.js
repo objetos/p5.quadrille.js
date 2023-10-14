@@ -2,6 +2,19 @@
 
 class Quadrille {
   /**
+   * Default chess black squares.
+   */
+  //static BLACK = '#D28C45';
+  //static BLACK = null;
+  static BLACK = 0;
+
+  /**
+   * Default chess white squares.
+   */
+  //static WHITE = '#FDCDAA';
+  static WHITE = 255;
+
+  /**
    * Default text drawing color.
    */
   static TEXT_COLOR = 'white';
@@ -163,14 +176,14 @@ class Quadrille {
     this._y = 0;
     if (args.length === 0) {
       this.memory2D = [
-        [0, 255, 0, 255, 0, 255, 0, 255],
-        [255, 0, 255, 0, 255, 0, 255, 0],
-        [0, 255, 0, 255, 0, 255, 0, 255],
-        [255, 0, 255, 0, 255, 0, 255, 0],
-        [0, 255, 0, 255, 0, 255, 0, 255],
-        [255, 0, 255, 0, 255, 0, 255, 0],
-        [0, 255, 0, 255, 0, 255, 0, 255],
-        [255, 0, 255, 0, 255, 0, 255, 0]
+        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
+        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
+        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
+        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
+        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
+        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
+        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
+        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK]
       ];
     }
     if (args.length === 1) {
@@ -195,8 +208,8 @@ class Quadrille {
       this.from(args[1]);
       return;
     }
-    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
-      this._memory2D = Array(Math.ceil(args[1].toString(2).length / args[0])).fill().map(() => Array(args[0]).fill(null));
+    if (args.length === 3 && typeof args[0] === 'number' && (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
+      this._memory2D = Array(Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]))).fill().map(() => Array(args[0]).fill(null));
       this.from(args[1], args[2]);
       return;
     }
@@ -407,6 +420,7 @@ class Quadrille {
     if (typeof args[0] === 'string') {
       if (args[0].split('/').length - 1 === 7) {
         this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+        // TODO move as global
         const fenPieceToEmoticon = {
           'P': '♙',
           'N': '♘',
@@ -431,7 +445,7 @@ class Quadrille {
             } else {
               const numSpaces = parseInt(char, 10);
               for (let i = 0; i < numSpaces; i++) {
-                row.push(' ');
+                row.push(null);
               }
             }
           }
@@ -446,14 +460,17 @@ class Quadrille {
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
     // c. bitboard, value
-    if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
+    if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] !== undefined) {
       let length = this.width * this.height;
-      let bitboard = Math.abs(Math.round(args[0]));
+      let bitboard = BigInt(args[0]);
+      if (bitboard < 0) {
+        throw new Error('Value cannot be negative');
+      }
       if (bitboard.toString(2).length > length) {
-        throw new Error('Value is to high to fill quadrille');
+        throw new Error('Value is too high to fill quadrille');
       }
       for (let i = 0; i <= length - 1; i++) {
-        if ((bitboard & (1 << length - 1 - i))) {
+        if ((bitboard & (1n << BigInt(length) - 1n - BigInt(i)))) {
           this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
         }
       }
@@ -510,22 +527,6 @@ class Quadrille {
     return row * width + col;
   }
 
-  // TODO remove toInt
-
-  /**
-   * @returns {number} integer representation using big-endian and row-major ordering
-   * of the quadrille entries.
-   */
-  toInt() {
-    let result = 0;
-    visitQuadrille(this, (row, col) => {
-      if (this.isFilled(row, col)) {
-        result += Math.pow(2, this.width * (this.height - row) - (col + 1));
-      }
-    });
-    return result;
-  }
-
   /**
    * 
    * @returns {bigint} integer representation using big-endian and row-major ordering
@@ -552,6 +553,8 @@ class Quadrille {
     }
     return result;
   }
+
+  // TODO implement me
 
   toFEN() {
 
