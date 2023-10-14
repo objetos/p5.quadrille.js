@@ -437,19 +437,16 @@ class Quadrille {
     // a. fen
     if (typeof args[0] === 'string') {
       if (args[0].split('/').length - 1 === 7) {
-        // Clear the board before setting pieces
+        const [placement] = args[0].split(' ');
         this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-        // Split the FEN string into rows
-        const rows = args[0].split(' ')[0].split('/');
+        const rows = placement.split('/');
         for (let i = 0; i < 8; i++) {
           let col = 0;
           for (const char of rows[i]) {
-            // Check if char is a number (empty squares)
             if (isNaN(char)) {
               this._memory2D[i][col] = Quadrille.pieceMap[char];
               col++;
             } else {
-              // Skip the specified number of squares
               col += parseInt(char);
             }
           }
