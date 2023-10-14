@@ -344,6 +344,16 @@ class Quadrille {
   }
 
   /**
+   * @param {number} row 
+   * @returns row as a new quadrille
+   */
+  row(row) {
+    if (row >= 0 && row < this.height) {
+      return new Quadrille(this._memory2D[row]);
+    }
+  }
+
+  /**
    * Screen y coordinate to quadrille row
    * @param {number} pixelY 
    * @param {number} y quadrille y coordinate origin
