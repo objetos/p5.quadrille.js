@@ -161,6 +161,18 @@ class Quadrille {
     this._cellLength = Quadrille.CELL_LENGTH;
     this._x = 0;
     this._y = 0;
+    if (args.length === 0) {
+      this.memory2D = [
+        [0, 255, 0, 255, 0, 255, 0, 255],
+        [255, 0, 255, 0, 255, 0, 255, 0],
+        [0, 255, 0, 255, 0, 255, 0, 255],
+        [255, 0, 255, 0, 255, 0, 255, 0],
+        [0, 255, 0, 255, 0, 255, 0, 255],
+        [255, 0, 255, 0, 255, 0, 255, 0],
+        [0, 255, 0, 255, 0, 255, 0, 255],
+        [255, 0, 255, 0, 255, 0, 255, 0]
+      ];
+    }
     if (args.length === 1) {
       this.memory2D = args[0];
     }
@@ -227,7 +239,7 @@ class Quadrille {
    */
   set memory2D(memory) {
     if (typeof memory === 'string') {
-      this._init1D([...memory]);
+      memory.split('/').length - 1 === 7 ? this.from(memory) : this._init1D([...memory]);
       return;
     }
     if (Array.isArray(memory)) {
@@ -381,8 +393,9 @@ class Quadrille {
 
   /**
    * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
-   * 1. from(image, [coherence]); or,
-   * 2. from(bitboard, value) where value may be either a p5.Image, p5.Graphics,
+   * 1. from(fen)
+   * 2. from(image, [coherence]); or,
+   * 3. from(bitboard, value) where value may be either a p5.Image, p5.Graphics,
    * p5.Color, a 4-length color array, a string, a number or null.
    */
   from(...args) {
@@ -390,13 +403,49 @@ class Quadrille {
       console.warn('from always expects params');
       return;
     }
-    // a. image
+    // a. fen
+    if (typeof args[0] === 'string') {
+      if (args[0].split('/').length - 1 === 7) {
+        this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+        const fenPieceToEmoticon = {
+          'P': '♙',
+          'N': '♘',
+          'B': '♗',
+          'R': '♖',
+          'Q': '♕',
+          'K': '♔',
+          'p': '♟',
+          'n': '♞',
+          'b': '♝',
+          'r': '♜',
+          'q': '♛',
+          'k': '♚',
+          '/': '',
+        };
+        const fenRows = fen.split(' ')[0].split('/');
+        for (const fenRow of fenRows) {
+          const row = [];
+          for (const char of fenRow) {
+            if (isNaN(char)) {
+              row.push(fenPieceToEmoticon[char]);
+            } else {
+              const numSpaces = parseInt(char, 10);
+              for (let i = 0; i < numSpaces; i++) {
+                row.push(' ');
+              }
+            }
+          }
+          this._memory2D.push(row);
+        }
+      }
+    }
+    // b. image
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
       let image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
-    // b. bitboard, value
+    // c. bitboard, value
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       let length = this.width * this.height;
       let bitboard = Math.abs(Math.round(args[0]));
@@ -461,6 +510,8 @@ class Quadrille {
     return row * width + col;
   }
 
+  // TODO remove toInt
+
   /**
    * @returns {number} integer representation using big-endian and row-major ordering
    * of the quadrille entries.
@@ -476,6 +527,21 @@ class Quadrille {
   }
 
   /**
+   * 
+   * @returns {bigint} integer representation using big-endian and row-major ordering
+   * of the quadrille entries.
+   */
+  toBigInt() {
+    let result = 0n;
+    visitQuadrille(this, (row, col) => {
+      if (this.isFilled(row, col)) {
+        result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
+      }
+    });
+    return result;
+  }
+
+  /**
    * @returns {Array} Quadrille representation.
    */
   toArray() {
@@ -485,6 +551,10 @@ class Quadrille {
       result = result.concat(memory2D[i]);
     }
     return result;
+  }
+
+  toFEN() {
+
   }
 
   /**
@@ -1236,7 +1306,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '1.5.0',
+    VERSION: '2.0.0.dev',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
