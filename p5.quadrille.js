@@ -2,19 +2,6 @@
 
 class Quadrille {
   /**
-   * Default chess black squares.
-   */
-  //static BLACK = '#D28C45';
-  //static BLACK = null;
-  static BLACK = 100;
-
-  /**
-   * Default chess white squares.
-   */
-  //static WHITE = '#FDCDAA';
-  static WHITE = 200;
-
-  /**
    * Default text drawing color.
    */
   static TEXT_COLOR = 'white';
@@ -43,6 +30,37 @@ class Quadrille {
    * Default background used in sort.
    */
   static BACKGROUND = 'black';
+
+  // chess specific stuff
+
+  /**
+   * Default chess black squares.
+   */
+  //static BLACK = '#D28C45';
+  //static BLACK = null;
+  static BLACK = 100;
+
+  /**
+   * Default chess white squares.
+   */
+  //static WHITE = '#FDCDAA';
+  static WHITE = 200;
+
+  static pieceMap = {
+    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+    'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
+  };
+
+  static pieceMapReverse = Object.fromEntries(
+    Object.entries(Quadrille.pieceMap).map(([k, v]) => [v, k])
+  );
+
+  static setPieceMap(pieceMap) {
+    Quadrille.pieceMap = pieceMap;
+    Quadrille.pieceMapReverse = Object.fromEntries(
+      Object.entries(pieceMap).map(([k, v]) => [v, k])
+    );
+  }
 
   /**
    * @param {Quadrille} quadrille1 
@@ -419,10 +437,6 @@ class Quadrille {
     // a. fen
     if (typeof args[0] === 'string') {
       if (args[0].split('/').length - 1 === 7) {
-        const pieceMap = {
-          'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-          'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-        };
         // Clear the board before setting pieces
         this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
         // Split the FEN string into rows
@@ -432,7 +446,7 @@ class Quadrille {
           for (const char of rows[i]) {
             // Check if char is a number (empty squares)
             if (isNaN(char)) {
-              this._memory2D[i][col] = pieceMap[char];
+              this._memory2D[i][col] = Quadrille.pieceMap[char];
               col++;
             } else {
               // Skip the specified number of squares
@@ -543,12 +557,6 @@ class Quadrille {
     return result;
   }
 
-  // TODO implement me
-
-  toFEN() {
-
-  }
-
   /**
    * Convert this quadrille to an image.
    * @param {String} filename png or jpg
@@ -576,6 +584,31 @@ class Quadrille {
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
     });
     save(graphics, filename);
+  }
+
+  toFEN() {
+    let fen = '';
+    for (let i = 0; i < 8; i++) {
+      let emptySquares = 0;
+      for (let j = 0; j < 8; j++) {
+        if (this._memory2D[i][j] === null) {
+          emptySquares++;
+        } else {
+          if (emptySquares > 0) {
+            fen += emptySquares.toString();
+            emptySquares = 0;
+          }
+          fen += Quadrille.pieceMapReverse[this._memory2D[i][j]];
+        }
+      }
+      if (emptySquares > 0) {
+        fen += emptySquares.toString();
+      }
+      if (i < 7) {
+        fen += '/';
+      }
+    }
+    return fen;
   }
 
   /**
