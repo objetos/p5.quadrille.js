@@ -36,15 +36,12 @@ class Quadrille {
   /**
    * Default chess black squares.
    */
-  //static BLACK = '#D28C45';
-  //static BLACK = null;
-  static BLACK = 100;
+  static BLACK = '#D28C45';
 
   /**
    * Default chess white squares.
    */
-  //static WHITE = '#FDCDAA';
-  static WHITE = 200;
+  static WHITE = '#FDCDAA';
 
   static pieceMap = {
     'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
@@ -193,16 +190,11 @@ class Quadrille {
     this._x = 0;
     this._y = 0;
     if (args.length === 0) {
-      this.memory2D = [
-        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
-        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
-        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
-        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
-        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
-        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
-        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
-        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE]
-      ];
+      const white = Quadrille.WHITE ? color(Quadrille.WHITE) : Quadrille.WHITE;
+      const black = Quadrille.BLACK ? color(Quadrille.BLACK) : Quadrille.BLACK;
+      const row1 = [white, black, white, black, white, black, white, black];
+      const row2 = [black, white, black, white, black, white, black, white];
+      this.memory2D = [row1, row2, row1, row2, row1, row2, row1, row2];
     }
     if (args.length === 1) {
       this.memory2D = args[0];
