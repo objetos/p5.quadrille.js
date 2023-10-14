@@ -6,13 +6,13 @@ class Quadrille {
    */
   //static BLACK = '#D28C45';
   //static BLACK = null;
-  static BLACK = 0;
+  static BLACK = 100;
 
   /**
    * Default chess white squares.
    */
   //static WHITE = '#FDCDAA';
-  static WHITE = 255;
+  static WHITE = 200;
 
   /**
    * Default text drawing color.
@@ -176,14 +176,14 @@ class Quadrille {
     this._y = 0;
     if (args.length === 0) {
       this.memory2D = [
-        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
         [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
         [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
         [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
         [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
         [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
         [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE],
-        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK]
+        [Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK],
+        [Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE, Quadrille.BLACK, Quadrille.WHITE]
       ];
     }
     if (args.length === 1) {
@@ -419,37 +419,26 @@ class Quadrille {
     // a. fen
     if (typeof args[0] === 'string') {
       if (args[0].split('/').length - 1 === 7) {
-        this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-        // TODO move as global
-        const fenPieceToEmoticon = {
-          'P': '♙',
-          'N': '♘',
-          'B': '♗',
-          'R': '♖',
-          'Q': '♕',
-          'K': '♔',
-          'p': '♟',
-          'n': '♞',
-          'b': '♝',
-          'r': '♜',
-          'q': '♛',
-          'k': '♚',
-          '/': '',
+        const pieceMap = {
+          'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+          'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
         };
-        const fenRows = fen.split(' ')[0].split('/');
-        for (const fenRow of fenRows) {
-          const row = [];
-          for (const char of fenRow) {
+        // Clear the board before setting pieces
+        this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+        // Split the FEN string into rows
+        const rows = args[0].split(' ')[0].split('/');
+        for (let i = 0; i < 8; i++) {
+          let col = 0;
+          for (const char of rows[i]) {
+            // Check if char is a number (empty squares)
             if (isNaN(char)) {
-              row.push(fenPieceToEmoticon[char]);
+              this._memory2D[i][col] = pieceMap[char];
+              col++;
             } else {
-              const numSpaces = parseInt(char, 10);
-              for (let i = 0; i < numSpaces; i++) {
-                row.push(null);
-              }
+              // Skip the specified number of squares
+              col += parseInt(char);
             }
           }
-          this._memory2D.push(row);
         }
       }
     }
