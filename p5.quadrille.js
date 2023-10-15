@@ -43,19 +43,19 @@ class Quadrille {
    */
   static WHITE = '#FDCDAA';
 
-  static pieceMap = {
+  static chessSymbols = {
     'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
     'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
   };
 
-  static reversePieceMap = Object.fromEntries(
-    Object.entries(Quadrille.pieceMap).map(([k, v]) => [v, k])
+  static chessCodes = Object.fromEntries(
+    Object.entries(Quadrille.chessSymbols).map(([k, v]) => [v, k])
   );
 
-  static setPieceMap(pieceMap) {
-    Quadrille.pieceMap = pieceMap;
-    Quadrille.reversePieceMap = Object.fromEntries(
-      Object.entries(pieceMap).map(([k, v]) => [v, k])
+  static setChessSymbols(chessSymbols) {
+    Quadrille.chessSymbols = chessSymbols;
+    Quadrille.chessCodes = Object.fromEntries(
+      Object.entries(chessSymbols).map(([k, v]) => [v, k])
     );
   }
 
@@ -436,7 +436,7 @@ class Quadrille {
           let col = 0;
           for (const char of rows[i]) {
             if (isNaN(char)) {
-              this._memory2D[i][col] = Quadrille.pieceMap[char];
+              this._memory2D[i][col] = Quadrille.chessSymbols[char];
               col++;
             } else {
               col += parseInt(char);
@@ -594,12 +594,12 @@ class Quadrille {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          const fenChar = Quadrille.reversePieceMap[this._memory2D[i][j]];
-          if (!fenChar) {
+          const fenCode = Quadrille.chessCodes[this._memory2D[i][j]];
+          if (!fenCode) {
             console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
             fen += '?'; // Placeholder for unrecognized pieces
           } else {
-            fen += fenChar;
+            fen += fenCode;
           }
         }
       }
