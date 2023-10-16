@@ -181,7 +181,6 @@ class Quadrille {
    * 6. Pass width and image, to construct a quadrille filled image.
    * 7. Pass width, bitboard and value, to construct a quadrille filled with value from the given bitboard.
    * 8. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
-   * @see from
    * @see rand
    * @see order
    */
@@ -191,7 +190,7 @@ class Quadrille {
     this._y = 0;
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this.fill();
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? Quadrille.WHITE_SQUARE : Quadrille.BLACK_SQUARE));
     }
     if (args.length === 1) {
       this.memory2D = args[0];
@@ -212,17 +211,17 @@ class Quadrille {
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] !== 'number') {
       this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
-      this.from(args[1]);
-      return;
-    }
-    if (args.length === 3 && typeof args[0] === 'number' && (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
-      this._memory2D = Array(Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]))).fill().map(() => Array(args[0]).fill(null));
-      this.from(args[1], args[2]);
+      this._fromImage(args[1]);
       return;
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] !== 'number' && typeof args[2] === 'boolean') {
       this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
-      this.from(args[1], args[2]);
+      this._fromImage(args[1], args[2]);
+      return;
+    }
+    if (args.length === 3 && typeof args[0] === 'number' && (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
+      this._memory2D = Array(Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]))).fill().map(() => Array(args[0]).fill(null));
+      this._fromBigInt(args[1], args[2]);
       return;
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number') {
@@ -254,12 +253,100 @@ class Quadrille {
     return memory1D;
   }
 
+  _fromBigInt(...args) {
+    if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] !== undefined) {
+      let length = this.width * this.height;
+      let bitboard = BigInt(args[0]);
+      if (bitboard < 0) {
+        throw new Error('Value cannot be negative');
+      }
+      if (bitboard.toString(2).length > length) {
+        throw new Error('Value is too high to fill quadrille');
+      }
+      for (let i = 0; i <= length - 1; i++) {
+        if ((bitboard & (1n << BigInt(length) - 1n - BigInt(i)))) {
+          this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
+        }
+      }
+    }
+  }
+
+  _fromFEN(...args) {
+    if (typeof args[0] === 'string') {
+      if (args[0].split('/').length - 1 === 7) {
+        const [placement] = args[0].split(' ');
+        this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+        const rows = placement.split('/');
+        for (let i = 0; i < 8; i++) {
+          let col = 0;
+          for (const char of rows[i]) {
+            if (isNaN(char)) {
+              this._memory2D[i][col] = Quadrille.chessSymbols[char];
+              col++;
+            } else {
+              col += parseInt(char);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  _fromImage(...args) {
+    if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
+      let image = new p5.Image(args[0].width, args[0].height);
+      image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
+      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
+    }
+  }
+
+  _pixelator1(image) {
+    image.resize(this.width, this.height);
+    image.loadPixels();
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let r = image.pixels[4 * i];
+      let g = image.pixels[4 * i + 1];
+      let b = image.pixels[4 * i + 2];
+      let a = image.pixels[4 * i + 3];
+      let _ = this._fromIndex(i);
+      this.fill(_.row, _.col, color([r, g, b, a]));
+    }
+  }
+
+  _pixelator2(image) {
+    image.loadPixels();
+    let r = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let g = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let b = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let a = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let t = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let _ = this._fromIndex(i, image.width);
+      let _i = Math.floor(_.row * this.height / image.height);
+      let _j = Math.floor(_.col * this.width / image.width);
+      r[_i][_j] += image.pixels[4 * i];
+      g[_i][_j] += image.pixels[4 * i + 1];
+      b[_i][_j] += image.pixels[4 * i + 2];
+      a[_i][_j] += image.pixels[4 * i + 3];
+      t[_i][_j] += 1;
+    }
+    visitQuadrille(this, (row, col) =>
+      this.fill(row, col, color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
+    );
+  }
+
+  _images(image) {
+    const cellWidth = image.width / this.width;
+    const cellHeight = image.height / this.height;
+    visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+  }
+
   /**
    * Sets quadrille from 2D memory internal array representation.
    */
   set memory2D(memory) {
     if (typeof memory === 'string') {
-      memory.split('/').length - 1 === 7 ? this.from(memory) : this._init1D([...memory]);
+      memory.split('/').length - 1 === 7 ? this._fromFEN(memory) : this._init1D([...memory]);
       return;
     }
     if (Array.isArray(memory)) {
@@ -409,103 +496,6 @@ class Quadrille {
     x ??= this._x ? this._x : 0;
     cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
     return floor((pixelX - x) / cellLength);
-  }
-
-  /**
-   * Converts image (p5.Image or p5.Graphics) or bitboard (integer) to quadrille. Forms:
-   * 1. from(fen)
-   * 2. from(image, [coherence]); or,
-   * 3. from(bitboard, value) where value may be either a p5.Image, p5.Graphics,
-   * p5.Color, a 4-length color array, a string, a number or null.
-   */
-  from(...args) {
-    if (args.length === 0) {
-      console.warn('from always expects params');
-      return;
-    }
-    // a. fen
-    if (typeof args[0] === 'string') {
-      if (args[0].split('/').length - 1 === 7) {
-        const [placement] = args[0].split(' ');
-        this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-        const rows = placement.split('/');
-        for (let i = 0; i < 8; i++) {
-          let col = 0;
-          for (const char of rows[i]) {
-            if (isNaN(char)) {
-              this._memory2D[i][col] = Quadrille.chessSymbols[char];
-              col++;
-            } else {
-              col += parseInt(char);
-            }
-          }
-        }
-      }
-    }
-    // b. image
-    if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
-      let image = new p5.Image(args[0].width, args[0].height);
-      image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
-      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
-    }
-    // c. bitboard, value
-    if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] !== undefined) {
-      let length = this.width * this.height;
-      let bitboard = BigInt(args[0]);
-      if (bitboard < 0) {
-        throw new Error('Value cannot be negative');
-      }
-      if (bitboard.toString(2).length > length) {
-        throw new Error('Value is too high to fill quadrille');
-      }
-      for (let i = 0; i <= length - 1; i++) {
-        if ((bitboard & (1n << BigInt(length) - 1n - BigInt(i)))) {
-          this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
-        }
-      }
-    }
-    return this;
-  }
-
-  _pixelator1(image) {
-    image.resize(this.width, this.height);
-    image.loadPixels();
-    for (let i = 0; i < image.pixels.length / 4; i++) {
-      let r = image.pixels[4 * i];
-      let g = image.pixels[4 * i + 1];
-      let b = image.pixels[4 * i + 2];
-      let a = image.pixels[4 * i + 3];
-      let _ = this._fromIndex(i);
-      this.fill(_.row, _.col, color([r, g, b, a]));
-    }
-  }
-
-  _pixelator2(image) {
-    image.loadPixels();
-    let r = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let g = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let b = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let a = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let t = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    for (let i = 0; i < image.pixels.length / 4; i++) {
-      let _ = this._fromIndex(i, image.width);
-      let _i = Math.floor(_.row * this.height / image.height);
-      let _j = Math.floor(_.col * this.width / image.width);
-      r[_i][_j] += image.pixels[4 * i];
-      g[_i][_j] += image.pixels[4 * i + 1];
-      b[_i][_j] += image.pixels[4 * i + 2];
-      a[_i][_j] += image.pixels[4 * i + 3];
-      t[_i][_j] += 1;
-    }
-    visitQuadrille(this, (row, col) =>
-      this.fill(row, col, color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
-    );
-  }
-
-  _images(image) {
-    const cellWidth = image.width / this.width;
-    const cellHeight = image.height / this.height;
-    visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   _fromIndex(index, width = this.width) {
