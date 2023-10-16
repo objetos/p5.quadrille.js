@@ -190,11 +190,8 @@ class Quadrille {
     this._x = 0;
     this._y = 0;
     if (args.length === 0) {
-      const white = Quadrille.WHITE_SQUARE ? color(Quadrille.WHITE_SQUARE) : Quadrille.WHITE_SQUARE;
-      const black = Quadrille.BLACK_SQUARE ? color(Quadrille.BLACK_SQUARE) : Quadrille.BLACK_SQUARE;
-      const row1 = [white, black, white, black, white, black, white, black];
-      const row2 = [black, white, black, white, black, white, black, white];
-      this.memory2D = [row1, row2, row1, row2, row1, row2, row1, row2];
+      this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+      this.fill();
     }
     if (args.length === 1) {
       this.memory2D = args[0];
@@ -832,19 +829,24 @@ class Quadrille {
 
   /**
    * Fills quadrille cells with given value. Either:
-   * 1. fill(value), fills current empty cells;
-   * 2. fill(row, value), fills row; or,
-   * 3. fill(row, col, value), fills cell.
-   * 4. fill(row, col, value, directions), flood filling without boder in the given number of directions,
+   * 1. fill(), chess board pattern filling of all cells.
+   * 2. fill(value), fills current empty cells;
+   * 3. fill(row, value), fills row; or,
+   * 4. fill(row, col, value), fills cell.
+   * 5. fill(row, col, value, directions), flood filling without boder in the given number of directions,
    * using (row, col) cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
    * an object, a string or a number).
-   * 5. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
+   * 6. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
    * cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
-   * 6. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
+   * 7. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
    * using (row, col) cell value (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
    * a string or a number).
    */
   fill(...args) {
+    if (args.length === 0) {
+      visitQuadrille(this, (row, col) =>
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? Quadrille.WHITE_SQUARE : Quadrille.BLACK_SQUARE));
+    }
     if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
