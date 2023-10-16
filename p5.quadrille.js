@@ -36,25 +36,25 @@ class Quadrille {
   /**
    * Default chess black squares.
    */
-  static BLACK = '#D28C45';
+  static BLACK_SQUARE = '#D28C45';
 
   /**
    * Default chess white squares.
    */
-  static WHITE = '#FDCDAA';
+  static WHITE_SQUARE = '#FDCDAA';
 
   static chessSymbols = {
-    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-    'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
+    K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
+    k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟'
   };
 
-  static chessCodes = Object.fromEntries(
+  static chessKeys = Object.fromEntries(
     Object.entries(Quadrille.chessSymbols).map(([k, v]) => [v, k])
   );
 
   static setChessSymbols(chessSymbols) {
     Quadrille.chessSymbols = chessSymbols;
-    Quadrille.chessCodes = Object.fromEntries(
+    Quadrille.chessKeys = Object.fromEntries(
       Object.entries(chessSymbols).map(([k, v]) => [v, k])
     );
   }
@@ -190,8 +190,8 @@ class Quadrille {
     this._x = 0;
     this._y = 0;
     if (args.length === 0) {
-      const white = Quadrille.WHITE ? color(Quadrille.WHITE) : Quadrille.WHITE;
-      const black = Quadrille.BLACK ? color(Quadrille.BLACK) : Quadrille.BLACK;
+      const white = Quadrille.WHITE_SQUARE ? color(Quadrille.WHITE_SQUARE) : Quadrille.WHITE_SQUARE;
+      const black = Quadrille.BLACK_SQUARE ? color(Quadrille.BLACK_SQUARE) : Quadrille.BLACK_SQUARE;
       const row1 = [white, black, white, black, white, black, white, black];
       const row2 = [black, white, black, white, black, white, black, white];
       this.memory2D = [row1, row2, row1, row2, row1, row2, row1, row2];
@@ -594,12 +594,12 @@ class Quadrille {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          const fenCode = Quadrille.chessCodes[this._memory2D[i][j]];
-          if (!fenCode) {
+          const fenKey = Quadrille.chessKeys[this._memory2D[i][j]];
+          if (!fenKey) {
             console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
             fen += '?'; // Placeholder for unrecognized pieces
           } else {
-            fen += fenCode;
+            fen += fenKey;
           }
         }
       }
