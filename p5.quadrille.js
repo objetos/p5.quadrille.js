@@ -1,10 +1,24 @@
 'use strict';
 
+/*
+TODOs API docs
+i. completion
+ii.  warnings about search fill and clear references
+iii. static fields -> style
+iV. remove cell drawing form objetos.io
+*/
+
 class Quadrille {
-  /**
-   * Default text drawing color.
-   */
-  static TEXT_COLOR = 'white';
+
+  // STYLE 
+
+  // TODO decide final text color acording to chess pieces and background
+
+  // good contrast over b & w backgrounds
+  static TEXT_COLOR = 'DodgerBlue';
+  //static TEXT_COLOR = 'Teal';
+  //static TEXT_COLOR = 'DeepSkyBlue';
+  //static TEXT_COLOR = 'white'; // v1.* version
 
   /**
    * Default text drawing zoom.
@@ -26,6 +40,8 @@ class Quadrille {
    */
   static CELL_LENGTH = 100;
 
+  // sort
+
   /**
    * Default background used in sort.
    */
@@ -33,15 +49,19 @@ class Quadrille {
 
   // chess specific stuff
 
+  // TODO define default chess board color scheme
+
   /**
    * Default chess black squares.
    */
-  static BLACK_SQUARE = '#D28C45';
+  static BLACK_SQUARE = '#D28C45'; // wikipedia
+  //static BLACK_SQUARE = '#769656'; // chess.com
 
   /**
    * Default chess white squares.
    */
-  static WHITE_SQUARE = '#FDCDAA';
+  static WHITE_SQUARE = '#FDCDAA'; // wikipedia
+  //static WHITE_SQUARE = '#EEEED2'; //chess.com
 
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
@@ -173,14 +193,18 @@ class Quadrille {
 
   /**
    * Constructs either an empty or a filled quadrille:
-   * 1. Pass string.
-   * 2. Pass array or matrix (of colors, images, graphics, arrays, objects, strings, numbers and null).
-   * 3. Pass width and string.
-   * 4. Pass width and an array (of colors, images, graphics arrays, objects, strings, numbers and null).
-   * 5. Pass width and heigth to construct and empty quadrille (filled with null's).
-   * 6. Pass width and image, to construct a quadrille filled image.
-   * 7. Pass width, bitboard and value, to construct a quadrille filled with value from the given bitboard.
-   * 8. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
+   * 1. Pass no params.
+   * 2. Pass width and height to construct and empty quadrille (filled with null's).
+   * 3. Pass jagged array (of colors, images, graphics, arrays, objects, strings, numbers and null).
+   * 4. Pass array (of colors, images, graphics arrays, objects, strings, numbers and null).
+   * 5. Pass width and array (of colors, images, graphics arrays, objects, strings, numbers and null).
+   * 6. Pass fen.
+   * 7. Pass string.
+   * 8. Pass width and string.
+   * 9. Pass width and image, to construct a quadrille filled with image.
+   * 10. Pass width, image and boolean, to construct a quadrille from pixalated image.
+   * 11. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
+   * 12. Pass width, BigInt (or int) and value, to construct a quadrille filled with value from the given BigInt.
    * @see rand
    * @see order
    */
@@ -256,15 +280,15 @@ class Quadrille {
   _fromBigInt(...args) {
     if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] !== undefined) {
       let length = this.width * this.height;
-      let bitboard = BigInt(args[0]);
-      if (bitboard < 0) {
+      let bigint = BigInt(args[0]);
+      if (bigint < 0) {
         throw new Error('Value cannot be negative');
       }
-      if (bitboard.toString(2).length > length) {
+      if (bigint.toString(2).length > length) {
         throw new Error('Value is too high to fill quadrille');
       }
       for (let i = 0; i <= length - 1; i++) {
-        if ((bitboard & (1n << BigInt(length) - 1n - BigInt(i)))) {
+        if ((bigint & (1n << BigInt(length) - 1n - BigInt(i)))) {
           this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
         }
       }
@@ -296,6 +320,12 @@ class Quadrille {
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
       let image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
+      // TODO decide which design to use ?
+      // (image, pixelate = false)
+      //args.length === 1 || (args.length === 2 && !args[1]) ? this._images(image) : (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image));
+      // (image, pixelate = true), tries to match quadrille v1.
+      // args.length === 1 || (args.length === 2 && args[1]) ? (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image)) : this._images(image);
+      // (image) -> doesn't pixelate and (image, coherence) pixelates & doesn't use Quadrille.COHERENCE
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
   }
@@ -1325,7 +1355,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.0.dev',
+    VERSION: '2.0.0.b1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
