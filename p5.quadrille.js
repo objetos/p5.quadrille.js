@@ -14,13 +14,13 @@ class Quadrille {
   // TODO decide final text color acording to chess pieces and background
 
   // good contrast over b & w backgrounds
-  //static TEXT_COLOR = 'DodgerBlue';
+  static TEXT_COLOR = 'DodgerBlue';
   //static TEXT_COLOR = 'Teal';
   //static TEXT_COLOR = 'DeepSkyBlue';
   //static TEXT_COLOR = 'white'; // v1.* version
   // TODO should decide ascending (as v1.*) vs descending in sort
   // require BACKGROUND = 'white'
-  static TEXT_COLOR = 'black';
+  //static TEXT_COLOR = 'black';
 
   /**
    * Default text drawing zoom.
