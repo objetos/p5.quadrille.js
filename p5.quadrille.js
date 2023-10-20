@@ -240,6 +240,11 @@ class Quadrille {
       this._fromImage(args[1]);
       return;
     }
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] !== 'number' && typeof args[2] === 'boolean') {
+      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
+      this._fromImage(args[1], args[2]);
+      return;
+    }
     if (args.length === 3 && typeof args[0] === 'number' && (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
       this._memory2D = Array(Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]))).fill().map(() => Array(args[0]).fill(null));
       this._fromBigInt(args[1], args[2]);
@@ -317,10 +322,55 @@ class Quadrille {
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
       let image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
-      const cellWidth = image.width / this.width;
-      const cellHeight = image.height / this.height;
-      visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+      // TODO decide which design to use ?
+      // (image, pixelate = false)
+      //args.length === 1 || (args.length === 2 && !args[1]) ? this._images(image) : (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image));
+      // (image, pixelate = true), tries to match quadrille v1.
+      // args.length === 1 || (args.length === 2 && args[1]) ? (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image)) : this._images(image);
+      // (image) -> doesn't pixelate and (image, coherence) pixelates & doesn't use Quadrille.COHERENCE
+      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
+  }
+
+  _pixelator1(image) {
+    image.resize(this.width, this.height);
+    image.loadPixels();
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let r = image.pixels[4 * i];
+      let g = image.pixels[4 * i + 1];
+      let b = image.pixels[4 * i + 2];
+      let a = image.pixels[4 * i + 3];
+      let _ = this._fromIndex(i);
+      this.fill(_.row, _.col, color([r, g, b, a]));
+    }
+  }
+
+  _pixelator2(image) {
+    image.loadPixels();
+    let r = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let g = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let b = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let a = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    let t = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      let _ = this._fromIndex(i, image.width);
+      let _i = Math.floor(_.row * this.height / image.height);
+      let _j = Math.floor(_.col * this.width / image.width);
+      r[_i][_j] += image.pixels[4 * i];
+      g[_i][_j] += image.pixels[4 * i + 1];
+      b[_i][_j] += image.pixels[4 * i + 2];
+      a[_i][_j] += image.pixels[4 * i + 3];
+      t[_i][_j] += 1;
+    }
+    visitQuadrille(this, (row, col) =>
+      this.fill(row, col, color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
+    );
+  }
+
+  _images(image) {
+    const cellWidth = image.width / this.width;
+    const cellHeight = image.height / this.height;
+    visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   /**
@@ -1011,17 +1061,13 @@ class Quadrille {
     let b = 0;
     for (let imask = 0; imask < mask.height; imask++) {
       for (let jmask = 0; jmask < mask.width; jmask++) {
-        const i = row + imask - cache_half_size;
-        const j = col + jmask - cache_half_size;
+        let i = row + imask - cache_half_size;
+        let j = col + jmask - cache_half_size;
         let neighbor = this.read(i, j);
-        if (!this.isColor(i, j)) {
-          const sample = Quadrille.sample({ value: neighbor, cellLength: this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH });
-          neighbor = color(sample.r / sample.total, sample.g / sample.total, sample.b / sample.total, sample.a / sample.total);
-        }
-        const mask_value = mask.read(imask, jmask);
-        if (typeof mask_value === 'number' || mask_value instanceof p5.Color) {
+        let mask_value = mask.read(imask, jmask);
+        if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           // luma coefficients are: 0.299, 0.587, 0.114, 0
-          const weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+          let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
           r += red(neighbor) * weight;
           g += green(neighbor) * weight;
           b += blue(neighbor) * weight;
@@ -1311,7 +1357,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.0.b2',
+    VERSION: '2.0.0.b3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
