@@ -190,7 +190,7 @@ function active(value) {
   switch (value) {
     case 1:
     case 2:
-      return createQuadrille(7, value === 1 ? al : pg);
+      return createQuadrille(7, value === 1 ? al : pg, false);
     case 3:
     case 4:
       let w = int(random(2, 6));
