@@ -1059,6 +1059,7 @@ class Quadrille {
     let r = 0;
     let g = 0;
     let b = 0;
+    let apply;
     for (let imask = 0; imask < mask.height; imask++) {
       for (let jmask = 0; jmask < mask.width; jmask++) {
         let i = row + imask - cache_half_size;
@@ -1066,6 +1067,7 @@ class Quadrille {
         let neighbor = this.read(i, j);
         let mask_value = mask.read(imask, jmask);
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
+          apply = true;
           // luma coefficients are: 0.299, 0.587, 0.114, 0
           let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
           r += red(neighbor) * weight;
@@ -1074,10 +1076,12 @@ class Quadrille {
         }
       }
     }
-    r = constrain(r, 0, 255);
-    g = constrain(g, 0, 255);
-    b = constrain(b, 0, 255);
-    this.fill(row, col, color(r, g, b));
+    if (apply) {
+      r = constrain(r, 0, 255);
+      g = constrain(g, 0, 255);
+      b = constrain(b, 0, 255);
+      this.fill(row, col, color(r, g, b));
+    }
   }
 
   /**
