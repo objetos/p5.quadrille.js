@@ -1015,7 +1015,7 @@ class Quadrille {
         const j = col + jmask - cache_half_size;
         let neighbor = this.read(i, j);
         if (!this.isColor(i, j)) {
-          const sample = this.sample({ value: neighbor, cellLength: this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH });
+          const sample = Quadrille.sample({ value: neighbor, cellLength: this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH });
           neighbor = color(sample.r / sample.total, sample.g / sample.total, sample.b / sample.total, sample.a / sample.total);
         }
         const mask_value = mask.read(imask, jmask);
