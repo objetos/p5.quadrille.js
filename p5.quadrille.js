@@ -1259,6 +1259,7 @@ class Quadrille {
    */
   static sample({
     value,
+    tileDisplay = this.TILE,
     imageDisplay = this.IMAGE,
     colorDisplay = this.COLOR,
     stringDisplay = this.STRING,
@@ -1272,29 +1273,12 @@ class Quadrille {
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM
   } = {}) {
-    let r, g, b, a;
-    let graphics = createGraphics(cellLength, cellLength);
+    const graphics = createGraphics(cellLength, cellLength);
     graphics.background(background);
-    if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
-      imageDisplay({ graphics, value, outline, outlineWeight, cellLength });
-    }
-    else if (colorDisplay && value instanceof p5.Color) {
-      colorDisplay({ graphics, value, outline, outlineWeight, cellLength });
-    }
-    else if (numberDisplay && typeof value === 'number') {
-      numberDisplay({ graphics, value, outline, outlineWeight, cellLength });
-    }
-    else if (stringDisplay && typeof value === 'string') {
-      stringDisplay({ graphics, value, textColor, textZoom, outline, outlineWeight, cellLength });
-    }
-    else if (arrayDisplay && Array.isArray(value)) {
-      arrayDisplay({ graphics, value, outline, outlineWeight, cellLength });
-    }
-    else if (objectDisplay && typeof value === 'object') {
-      objectDisplay({ graphics, value, outline, outlineWeight, cellLength });
-    }
+    const params = { graphics, value, textColor, textZoom, outline, outlineWeight, cellLength };
+    Quadrille._display(tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, params);
     graphics.loadPixels();
-    r = g = b = a = 0;
+    let r = g = b = a = 0;
     let total = graphics.pixels.length / 4;
     for (let i = 0; i < total; i++) {
       r += graphics.pixels[4 * i];
@@ -1305,39 +1289,6 @@ class Quadrille {
     graphics.updatePixels();
     return { r, g, b, a, total };
   }
-
-  /*
-  static _display(
-    tileDisplay,
-    imageDisplay,
-    colorDisplay,
-    stringDisplay,
-    numberDisplay,
-    arrayDisplay,
-    objectDisplay,
-    params
-  ) {
-    const value = params.value;
-
-    if (Quadrille._isImage(value) && imageDisplay) {
-      imageDisplay(params);
-    } else if (Quadrille._isColor(value) && colorDisplay) {
-      colorDisplay(params);
-    } else if (Quadrille._isNumber(value) && numberDisplay) {
-      numberDisplay(params);
-    } else if (Quadrille._isString(value) && stringDisplay) {
-      stringDisplay(params);
-    } else if (Quadrille._isArray(value) && arrayDisplay) {
-      arrayDisplay(params);
-    } else if (Quadrille._isObject(value) && objectDisplay) {
-      objectDisplay(params);
-    }
-
-    if (tileDisplay) {
-      tileDisplay(params);
-    }
-  }
-  */
 
   static _display(
     tileDisplay,
@@ -1505,29 +1456,6 @@ class Quadrille {
         row, col, outline, outlineWeight, cellLength, textColor, textZoom
       };
       Quadrille._display(tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, params);
-      /*
-      if (imageDisplay && (params.value instanceof p5.Image || params.value instanceof p5.Graphics)) {
-        imageDisplay(params);
-      }
-      else if (colorDisplay && params.value instanceof p5.Color) {
-        colorDisplay(params);
-      }
-      else if (numberDisplay && typeof params.value === 'number') {
-        numberDisplay(params);
-      }
-      else if (stringDisplay && typeof params.value === 'string') {
-        stringDisplay(params);
-      }
-      else if (arrayDisplay && Array.isArray(params.value)) {
-        arrayDisplay(params);
-      }
-      else if (objectDisplay && typeof params.value === 'object') {
-        objectDisplay(params);
-      }
-      if (tileDisplay) {
-        tileDisplay(params);
-      }
-      */
       graphics.pop();
     }, values);
     graphics.pop();
