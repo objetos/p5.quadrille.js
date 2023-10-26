@@ -30,7 +30,8 @@ class Quadrille {
   /**
    * Default drawing outline.
    */
-  static OUTLINE = 'grey';
+  //static OUTLINE = 'grey';
+  static OUTLINE = 'OrangeRed';
 
   /**
    * Default drawing outline weight.
@@ -1259,13 +1260,13 @@ class Quadrille {
    */
   static sample({
     value,
-    tileDisplay = this.TILE,
     imageDisplay = this.IMAGE,
     colorDisplay = this.COLOR,
     stringDisplay = this.STRING,
     numberDisplay = this.NUMBER,
     arrayDisplay,
     objectDisplay,
+    tileDisplay,
     background = this.BACKGROUND,
     cellLength = this.CELL_LENGTH,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -1275,8 +1276,11 @@ class Quadrille {
   } = {}) {
     const graphics = createGraphics(cellLength, cellLength);
     graphics.background(background);
-    const params = { graphics, value, textColor, textZoom, outline, outlineWeight, cellLength };
-    Quadrille._display(tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, params);
+    const params = {
+      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+    };
+    Quadrille._display(params);
     graphics.loadPixels();
     let r = g = b = a = 0;
     let total = graphics.pixels.length / 4;
@@ -1290,35 +1294,25 @@ class Quadrille {
     return { r, g, b, a, total };
   }
 
-  static _display(
-    tileDisplay,
-    imageDisplay,
-    colorDisplay,
-    stringDisplay,
-    numberDisplay,
-    arrayDisplay,
-    objectDisplay,
-    params
-  ) {
+  static _display(params) {
     const handlers = [
-      { check: Quadrille._isImage, display: imageDisplay },
-      { check: Quadrille._isColor, display: colorDisplay },
-      { check: Quadrille._isNumber, display: numberDisplay },
-      { check: Quadrille._isString, display: stringDisplay },
-      { check: Quadrille._isArray, display: arrayDisplay },
-      { check: Quadrille._isObject, display: objectDisplay },
+      { check: Quadrille._isImage, display: params.imageDisplay },
+      { check: Quadrille._isColor, display: params.colorDisplay },
+      { check: Quadrille._isNumber, display: params.numberDisplay },
+      { check: Quadrille._isString, display: params.stringDisplay },
+      { check: Quadrille._isArray, display: params.arrayDisplay },
+      { check: Quadrille._isObject, display: params.objectDisplay }
     ];
-    for (let handler of handlers) {
+    for (const handler of handlers) {
       if (handler.check(params.value) && handler.display) {
         handler.display(params);
-        break; // Exit after the first match
+        break;
       }
     }
-    if (tileDisplay) {
-      tileDisplay(params);
+    if (params.tileDisplay) {
+      params.tileDisplay(params);
     }
   }
-
 
   /**
    * Number cell drawing.
@@ -1428,11 +1422,11 @@ class Quadrille {
     row,
     col,
     values,
-    tileDisplay = Quadrille.TILE,
     imageDisplay = Quadrille.IMAGE,
     colorDisplay = Quadrille.COLOR,
     stringDisplay = Quadrille.STRING,
     numberDisplay = Quadrille.NUMBER,
+    tileDisplay = Quadrille.TILE,
     arrayDisplay,
     objectDisplay,
     cellLength = Quadrille.CELL_LENGTH,
@@ -1453,9 +1447,10 @@ class Quadrille {
       graphics.translate(col * cellLength, row * cellLength);
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom
+        row, col, outline, outlineWeight, cellLength, textColor, textZoom,
+        imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
-      Quadrille._display(tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, params);
+      Quadrille._display(params);
       graphics.pop();
     }, values);
     graphics.pop();
