@@ -32,6 +32,7 @@ class Quadrille {
    */
   //static OUTLINE = 'grey';
   static OUTLINE = 'OrangeRed';
+  //static OUTLINE = 'crimson';
 
   /**
    * Default drawing outline weight.
@@ -1258,39 +1259,33 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
-  static sample({
-    value,
-    imageDisplay = this.IMAGE,
-    colorDisplay = this.COLOR,
-    stringDisplay = this.STRING,
-    numberDisplay = this.NUMBER,
-    arrayDisplay,
-    objectDisplay,
-    tileDisplay,
-    background = this.BACKGROUND,
-    cellLength = this.CELL_LENGTH,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    outline = this.OUTLINE,
-    textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM
-  } = {}) {
-    const graphics = createGraphics(cellLength, cellLength);
-    graphics.background(background);
-    const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
-    };
+  static sample(params = {}) { // Setting default values
+    params.imageDisplay = params.imageDisplay || this.IMAGE;
+    params.colorDisplay = params.colorDisplay || this.COLOR;
+    params.stringDisplay = params.stringDisplay || this.STRING;
+    params.numberDisplay = params.numberDisplay || this.NUMBER;
+    params.arrayDisplay = params.arrayDisplay; // Default is undefined
+    params.objectDisplay = params.objectDisplay; // Default is undefined
+    params.tileDisplay = params.tileDisplay; // Default is undefined
+    params.background = params.background || this.BACKGROUND;
+    params.cellLength = params.cellLength || this.CELL_LENGTH;
+    params.outlineWeight = params.outlineWeight || this.OUTLINE_WEIGHT;
+    params.outline = params.outline || this.OUTLINE;
+    params.textColor = params.textColor || this.TEXT_COLOR;
+    params.textZoom = params.textZoom || this.TEXT_ZOOM;
+    params.graphics = createGraphics(params.cellLength, params.cellLength);
+    params.graphics.background(params.background);
     Quadrille._display(params);
-    graphics.loadPixels();
-    let r = g = b = a = 0;
-    let total = graphics.pixels.length / 4;
+    params.graphics.loadPixels();
+    let r = 0, g = 0, b = 0, a = 0;
+    let total = params.graphics.pixels.length / 4;
     for (let i = 0; i < total; i++) {
-      r += graphics.pixels[4 * i];
-      g += graphics.pixels[4 * i + 1];
-      b += graphics.pixels[4 * i + 2];
-      a += graphics.pixels[4 * i + 3];
+      r += params.graphics.pixels[4 * i];
+      g += params.graphics.pixels[4 * i + 1];
+      b += params.graphics.pixels[4 * i + 2];
+      a += params.graphics.pixels[4 * i + 3];
     }
-    graphics.updatePixels();
+    params.graphics.updatePixels();
     return { r, g, b, a, total };
   }
 
