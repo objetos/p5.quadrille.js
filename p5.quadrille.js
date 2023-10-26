@@ -691,13 +691,49 @@ class Quadrille {
 
   // TODO isPolyomino
 
+  // Static "private" methods:
+
+  static _isEmpty(value) {
+    return value === null;
+  }
+
+  static _isFilled(value) {
+    return value !== null && value !== undefined;
+  }
+
+  static _isNumber(value) {
+    return typeof value === 'number';
+  }
+
+  static _isString(value) {
+    return typeof value === 'string';
+  }
+
+  static _isColor(value) {
+    return value instanceof p5.Color;
+  }
+
+  static _isArray(value) {
+    return Array.isArray(value);
+  }
+
+  static _isObject(value) {
+    return typeof value === 'object';
+  }
+
+  static _isImage(value) {
+    return value instanceof p5.Image || value instanceof p5.Graphics;
+  }
+
+  // Instance methods:
+
   /**
    * @param {number} row 
    * @param {number} col 
    * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    return this.read(row, col) === null;
+    return Quadrille._isEmpty(this.read(row, col));
   }
 
   /**
@@ -706,7 +742,7 @@ class Quadrille {
    * @returns {boolean} true if cell is filled
    */
   isFilled(row, col) {
-    return this.read(row, col) !== null && this.read(row, col) !== undefined;
+    return Quadrille._isFilled(this.read(row, col));
   }
 
   /**
@@ -715,7 +751,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a number
    */
   isNumber(row, col) {
-    return typeof this.read(row, col) === 'number';
+    return Quadrille._isNumber(this.read(row, col));
   }
 
   /**
@@ -724,7 +760,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a string
    */
   isString(row, col) {
-    return typeof this.read(row, col) === 'string';
+    return Quadrille._isString(this.read(row, col));
   }
 
   /**
@@ -733,7 +769,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a color
    */
   isColor(row, col) {
-    return this.read(row, col) instanceof p5.Color;
+    return Quadrille._isColor(this.read(row, col));
   }
 
   /**
@@ -742,7 +778,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an array
    */
   isArray(row, col) {
-    return Array.isArray(this.read(row, col));
+    return Quadrille._isArray(this.read(row, col));
   }
 
   /**
@@ -751,7 +787,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an object
    */
   isObject(row, col) {
-    return typeof this.read(row, col) === 'object';
+    return Quadrille._isObject(this.read(row, col));
   }
 
   /**
@@ -760,7 +796,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an image
    */
   isImage(row, col) {
-    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
+    return Quadrille._isImage(this.read(row, col));
   }
 
   /**
@@ -1270,6 +1306,69 @@ class Quadrille {
     return { r, g, b, a, total };
   }
 
+  /*
+  static _display(
+    tileDisplay,
+    imageDisplay,
+    colorDisplay,
+    stringDisplay,
+    numberDisplay,
+    arrayDisplay,
+    objectDisplay,
+    params
+  ) {
+    const value = params.value;
+
+    if (Quadrille._isImage(value) && imageDisplay) {
+      imageDisplay(params);
+    } else if (Quadrille._isColor(value) && colorDisplay) {
+      colorDisplay(params);
+    } else if (Quadrille._isNumber(value) && numberDisplay) {
+      numberDisplay(params);
+    } else if (Quadrille._isString(value) && stringDisplay) {
+      stringDisplay(params);
+    } else if (Quadrille._isArray(value) && arrayDisplay) {
+      arrayDisplay(params);
+    } else if (Quadrille._isObject(value) && objectDisplay) {
+      objectDisplay(params);
+    }
+
+    if (tileDisplay) {
+      tileDisplay(params);
+    }
+  }
+  */
+
+  static _display(
+    tileDisplay,
+    imageDisplay,
+    colorDisplay,
+    stringDisplay,
+    numberDisplay,
+    arrayDisplay,
+    objectDisplay,
+    params
+  ) {
+    const handlers = [
+      { check: Quadrille._isImage, display: imageDisplay },
+      { check: Quadrille._isColor, display: colorDisplay },
+      { check: Quadrille._isNumber, display: numberDisplay },
+      { check: Quadrille._isString, display: stringDisplay },
+      { check: Quadrille._isArray, display: arrayDisplay },
+      { check: Quadrille._isObject, display: objectDisplay },
+    ];
+    for (let handler of handlers) {
+      if (handler.check(params.value) && handler.display) {
+        handler.display(params);
+        break; // Exit after the first match
+      }
+    }
+    if (tileDisplay) {
+      tileDisplay(params);
+    }
+  }
+
+
   /**
    * Number cell drawing.
    */
@@ -1401,32 +1500,34 @@ class Quadrille {
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
-      let value = quadrille.read(row, col);
       const params = {
-        quadrille, graphics, outline, outlineWeight, cellLength, textColor, textZoom, value, row, col,
-        width: quadrille.width, height: quadrille.height
+        quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
+        row, col, outline, outlineWeight, cellLength, textColor, textZoom
       };
-      if (imageDisplay && (value instanceof p5.Image || value instanceof p5.Graphics)) {
+      Quadrille._display(tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, params);
+      /*
+      if (imageDisplay && (params.value instanceof p5.Image || params.value instanceof p5.Graphics)) {
         imageDisplay(params);
       }
-      else if (colorDisplay && value instanceof p5.Color) {
+      else if (colorDisplay && params.value instanceof p5.Color) {
         colorDisplay(params);
       }
-      else if (numberDisplay && typeof value === 'number') {
+      else if (numberDisplay && typeof params.value === 'number') {
         numberDisplay(params);
       }
-      else if (stringDisplay && typeof value === 'string') {
+      else if (stringDisplay && typeof params.value === 'string') {
         stringDisplay(params);
       }
-      else if (arrayDisplay && Array.isArray(value)) {
+      else if (arrayDisplay && Array.isArray(params.value)) {
         arrayDisplay(params);
       }
-      else if (objectDisplay && typeof value === 'object') {
+      else if (objectDisplay && typeof params.value === 'object') {
         objectDisplay(params);
       }
       if (tileDisplay) {
         tileDisplay(params);
       }
+      */
       graphics.pop();
     }, values);
     graphics.pop();
