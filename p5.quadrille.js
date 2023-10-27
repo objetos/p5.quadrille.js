@@ -68,10 +68,10 @@ class Quadrille {
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
    * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic AND operation on the two given quadrilles.
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic and operation on the two given quadrilles.
    */
-  static AND(quadrille1, quadrille2, row, col) {
-    return this.OP(quadrille1, quadrille2,
+  static and(quadrille1, quadrille2, row, col) {
+    return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && q2) {
           return q1;
@@ -85,10 +85,10 @@ class Quadrille {
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
    * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic OR operation on the two given quadrilles.
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic or operation on the two given quadrilles.
    */
-  static OR(quadrille1, quadrille2, row, col) {
-    return this.OP(quadrille1, quadrille2,
+  static or(quadrille1, quadrille2, row, col) {
+    return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1) {
           return q1;
@@ -105,10 +105,10 @@ class Quadrille {
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
    * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic XOR operation on the two given quadrilles.
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic xor operation on the two given quadrilles.
    */
-  static XOR(quadrille1, quadrille2, row, col) {
-    return this.OP(quadrille1, quadrille2,
+  static xor(quadrille1, quadrille2, row, col) {
+    return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
           return q1;
@@ -125,10 +125,10 @@ class Quadrille {
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
    * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic DIFF operation on the two given quadrilles.
+   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic diff operation on the two given quadrilles.
    */
-  static DIFF(quadrille1, quadrille2, row, col) {
-    return this.OP(quadrille1, quadrille2,
+  static diff(quadrille1, quadrille2, row, col) {
+    return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
         if (q1 && !q2) {
           return q1;
@@ -140,9 +140,9 @@ class Quadrille {
   /**
    * @param {Quadrille} quadrille 
    * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value used to fill the returned quadrille.
-   * @returns {Quadrille} the Quadrille obtained after applying a logic NEG operation on the given quadrille.
+   * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
    */
-  static NEG(quadrille, value) {
+  static neg(quadrille, value) {
     if (value === undefined) return;
     let result = new Quadrille(quadrille.width, quadrille.height);
     visitQuadrille(quadrille, (row, col) => {
@@ -161,7 +161,7 @@ class Quadrille {
    * @param {number} col respect to quadrille1 origin
    * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
    */
-  static OP(quadrille1, quadrille2, operator, row, col) {
+  static merge(quadrille1, quadrille2, operator, row, col) {
     row = row ?? ((quadrille1._row !== undefined && quadrille2._row !== undefined && quadrille1._cellLength !== undefined &&
       quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._row - quadrille1._row : 0);
     col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
@@ -548,11 +548,11 @@ class Quadrille {
    */
   toImage(filename, {
     values,
-    tileDisplay = this.constructor.TILE,
-    imageDisplay = this.constructor.IMAGE,
-    colorDisplay = this.constructor.COLOR,
-    stringDisplay = this.constructor.STRING,
-    numberDisplay = this.constructor.NUMBER,
+    tileDisplay = this.constructor.tile,
+    imageDisplay = this.constructor.image,
+    colorDisplay = this.constructor.color,
+    stringDisplay = this.constructor.string,
+    numberDisplay = this.constructor.number,
     arrayDisplay,
     objectDisplay,
     cellLength,
@@ -784,7 +784,7 @@ class Quadrille {
   search(pattern, strict = false) {
     const hits = [];
     visitQuadrille(this, (row, col) =>
-      this.constructor.OP(pattern, this, (q1, q2) => {
+      this.constructor.merge(pattern, this, (q1, q2) => {
         if (q1 && (strict ? q2 !== q1 : !q2)) {
           return q1;
         }
@@ -1235,10 +1235,10 @@ class Quadrille {
    */
   static sample({
     value,
-    imageDisplay = this.IMAGE,
-    colorDisplay = this.COLOR,
-    stringDisplay = this.STRING,
-    numberDisplay = this.NUMBER,
+    imageDisplay = this.image,
+    colorDisplay = this.color,
+    stringDisplay = this.string,
+    numberDisplay = this.number,
     arrayDisplay,
     objectDisplay,
     tileDisplay,
@@ -1292,23 +1292,22 @@ class Quadrille {
   /**
    * Number cell drawing.
    */
-  static NUMBER({
+  static number({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    this.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+    this.color({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
 
   /**
    * Color cell drawing.
    */
-  static COLOR({
+  static color({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    console.log('COLOR ', this);
     graphics.noStroke();
     graphics.fill(value);
     graphics.rect(0, 0, cellLength, cellLength);
@@ -1317,7 +1316,7 @@ class Quadrille {
   /**
    * Image cell drawing.
    */
-  static IMAGE({
+  static image({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
@@ -1329,7 +1328,7 @@ class Quadrille {
   /**
    * String cell drawing.
    */
-  static STRING({
+  static string({
     graphics,
     value,
     cellLength = this.CELL_LENGTH,
@@ -1346,7 +1345,7 @@ class Quadrille {
   /**
    * Tesselation or tiling. Used by the drawQuadrille board property.
    */
-  static TILE({
+  static tile({
     graphics,
     row = 0,
     col = 0,
@@ -1398,11 +1397,11 @@ class Quadrille {
     row,
     col,
     values,
-    imageDisplay = quadrille.constructor.IMAGE,
-    colorDisplay = quadrille.constructor.COLOR,
-    stringDisplay = quadrille.constructor.STRING,
-    numberDisplay = quadrille.constructor.NUMBER,
-    tileDisplay = quadrille.constructor.TILE,
+    imageDisplay = quadrille.constructor.image,
+    colorDisplay = quadrille.constructor.color,
+    stringDisplay = quadrille.constructor.string,
+    numberDisplay = quadrille.constructor.number,
+    tileDisplay = quadrille.constructor.tile,
     arrayDisplay,
     objectDisplay,
     cellLength = quadrille.constructor.CELL_LENGTH,
