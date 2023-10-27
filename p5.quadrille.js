@@ -1280,12 +1280,12 @@ class Quadrille {
     ];
     for (const handler of handlers) {
       if (handler.check(params.value) && handler.display) {
-        handler.display(params);
+        handler.display.call(this, params);
         break;
       }
     }
     if (params.tileDisplay) {
-      params.tileDisplay(params);
+      params.tileDisplay.call(this, params);
     }
   }
 
@@ -1297,15 +1297,7 @@ class Quadrille {
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    // TODO final debug
-    console.log(this);
     this.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
-    // workaround
-    /*
-    graphics.noStroke();
-    graphics.fill(graphics.constrain(value, 0, 255)));
-    graphics.rect(0, 0, cellLength, cellLength);
-    // */
   }
 
   /**
@@ -1316,6 +1308,7 @@ class Quadrille {
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
+    console.log('COLOR ', this);
     graphics.noStroke();
     graphics.fill(value);
     graphics.rect(0, 0, cellLength, cellLength);
