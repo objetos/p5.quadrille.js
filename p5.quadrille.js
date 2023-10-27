@@ -1297,7 +1297,15 @@ class Quadrille {
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
+    // TODO final debug
+    console.log(this);
     this.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+    // workaround
+    /*
+    graphics.noStroke();
+    graphics.fill(graphics.constrain(value, 0, 255)));
+    graphics.rect(0, 0, cellLength, cellLength);
+    // */
   }
 
   /**
