@@ -1255,7 +1255,7 @@ class Quadrille {
       graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
       imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
     };
-    this.constructor.display(params);
+    this.display(params);
     graphics.loadPixels();
     let r = 0, g = 0, b = 0, a = 0;
     let total = graphics.pixels.length / 4;
