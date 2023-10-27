@@ -53,12 +53,12 @@ class Quadrille {
   };
 
   static chessKeys = Object.fromEntries(
-    Object.entries(Quadrille.chessSymbols).map(([k, v]) => [v, k])
+    Object.entries(this.chessSymbols).map(([k, v]) => [v, k])
   );
 
   static setChessSymbols(chessSymbols) {
-    Quadrille.chessSymbols = chessSymbols;
-    Quadrille.chessKeys = Object.fromEntries(
+    this.chessSymbols = chessSymbols;
+    this.chessKeys = Object.fromEntries(
       Object.entries(chessSymbols).map(([k, v]) => [v, k])
     );
   }
@@ -193,12 +193,12 @@ class Quadrille {
    * @see order
    */
   constructor(...args) {
-    this._cellLength = Quadrille.CELL_LENGTH;
+    this._cellLength = this.constructor.CELL_LENGTH;
     this._x = 0;
     this._y = 0;
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? Quadrille.WHITE_SQUARE : Quadrille.BLACK_SQUARE));
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.WHITE_SQUARE : this.constructor.BLACK_SQUARE));
     }
     if (args.length === 1) {
       this.memory2D = args[0];
@@ -289,7 +289,7 @@ class Quadrille {
           let col = 0;
           for (const char of rows[i]) {
             if (isNaN(char)) {
-              this._memory2D[i][col] = Quadrille.chessSymbols[char];
+              this._memory2D[i][col] = this.constructor.chessSymbols[char];
               col++;
             } else {
               col += parseInt(char);
@@ -489,7 +489,7 @@ class Quadrille {
    */
   screenRow(pixelY, y, cellLength) {
     y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
     return floor((pixelY - y) / cellLength);
   }
 
@@ -502,7 +502,7 @@ class Quadrille {
    */
   screenCol(pixelX, x, cellLength) {
     x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
     return floor((pixelX - x) / cellLength);
   }
 
@@ -548,20 +548,20 @@ class Quadrille {
    */
   toImage(filename, {
     values,
-    tileDisplay = Quadrille.TILE,
-    imageDisplay = Quadrille.IMAGE,
-    colorDisplay = Quadrille.COLOR,
-    stringDisplay = Quadrille.STRING,
-    numberDisplay = Quadrille.NUMBER,
+    tileDisplay = this.constructor.TILE,
+    imageDisplay = this.constructor.IMAGE,
+    colorDisplay = this.constructor.COLOR,
+    stringDisplay = this.constructor.STRING,
+    numberDisplay = this.constructor.NUMBER,
     arrayDisplay,
     objectDisplay,
     cellLength,
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
-    outline = Quadrille.OUTLINE,
-    textColor = Quadrille.TEXT_COLOR,
-    textZoom = Quadrille.TEXT_ZOOM
+    outlineWeight = this.constructor.OUTLINE_WEIGHT,
+    outline = this.constructor.OUTLINE,
+    textColor = this.constructor.TEXT_COLOR,
+    textZoom = this.constructor.TEXT_ZOOM
   } = {}) {
-    cellLength ??= this._cellLength ? this._cellLength : Quadrille.CELL_LENGTH;
+    cellLength ??= this._cellLength ? this._cellLength : this.constructor.CELL_LENGTH;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
       graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
@@ -589,7 +589,7 @@ class Quadrille {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          const fenKey = Quadrille.chessKeys[this._memory2D[i][j]];
+          const fenKey = this.constructor.chessKeys[this._memory2D[i][j]];
           if (!fenKey) {
             console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
             fen += '?'; // Placeholder for unrecognized pieces
@@ -709,7 +709,7 @@ class Quadrille {
    * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    return Quadrille._isEmpty(this.read(row, col));
+    return this.constructor._isEmpty(this.read(row, col));
   }
 
   /**
@@ -718,7 +718,7 @@ class Quadrille {
    * @returns {boolean} true if cell is filled
    */
   isFilled(row, col) {
-    return Quadrille._isFilled(this.read(row, col));
+    return this.constructor._isFilled(this.read(row, col));
   }
 
   /**
@@ -727,7 +727,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a number
    */
   isNumber(row, col) {
-    return Quadrille._isNumber(this.read(row, col));
+    return this.constructor._isNumber(this.read(row, col));
   }
 
   /**
@@ -736,7 +736,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a string
    */
   isString(row, col) {
-    return Quadrille._isString(this.read(row, col));
+    return this.constructor._isString(this.read(row, col));
   }
 
   /**
@@ -745,7 +745,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a color
    */
   isColor(row, col) {
-    return Quadrille._isColor(this.read(row, col));
+    return this.constructor._isColor(this.read(row, col));
   }
 
   /**
@@ -754,7 +754,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an array
    */
   isArray(row, col) {
-    return Quadrille._isArray(this.read(row, col));
+    return this.constructor._isArray(this.read(row, col));
   }
 
   /**
@@ -763,7 +763,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an object
    */
   isObject(row, col) {
-    return Quadrille._isObject(this.read(row, col));
+    return this.constructor._isObject(this.read(row, col));
   }
 
   /**
@@ -772,7 +772,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an image
    */
   isImage(row, col) {
-    return Quadrille._isImage(this.read(row, col));
+    return this.constructor._isImage(this.read(row, col));
   }
 
   /**
@@ -784,7 +784,7 @@ class Quadrille {
   search(pattern, strict = false) {
     const hits = [];
     visitQuadrille(this, (row, col) =>
-      Quadrille.OP(pattern, this, (q1, q2) => {
+      this.constructor.OP(pattern, this, (q1, q2) => {
         if (q1 && (strict ? q2 !== q1 : !q2)) {
           return q1;
         }
@@ -879,7 +879,7 @@ class Quadrille {
   fill(...args) {
     if (args.length === 0) {
       visitQuadrille(this, (row, col) =>
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? Quadrille.WHITE_SQUARE : Quadrille.BLACK_SQUARE));
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.WHITE_SQUARE : this.constructor.BLACK_SQUARE));
     }
     if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
@@ -1197,8 +1197,8 @@ class Quadrille {
     switch (mode) {
       case 'DISTANCE':
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -1208,8 +1208,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -1218,8 +1218,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((valueA, valueB) => {
-          let sa = Quadrille.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = Quadrille.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
+          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -1271,12 +1271,12 @@ class Quadrille {
 
   static display(params) {
     const handlers = [
-      { check: Quadrille._isImage, display: params.imageDisplay },
-      { check: Quadrille._isColor, display: params.colorDisplay },
-      { check: Quadrille._isNumber, display: params.numberDisplay },
-      { check: Quadrille._isString, display: params.stringDisplay },
-      { check: Quadrille._isArray, display: params.arrayDisplay },
-      { check: Quadrille._isObject, display: params.objectDisplay }
+      { check: this._isImage, display: params.imageDisplay },
+      { check: this._isColor, display: params.colorDisplay },
+      { check: this._isNumber, display: params.numberDisplay },
+      { check: this._isString, display: params.stringDisplay },
+      { check: this._isArray, display: params.arrayDisplay },
+      { check: this._isObject, display: params.objectDisplay }
     ];
     for (const handler of handlers) {
       if (handler.check(params.value) && handler.display) {
@@ -1297,7 +1297,7 @@ class Quadrille {
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    Quadrille.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+    this.COLOR({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
 
   /**
@@ -1397,18 +1397,18 @@ class Quadrille {
     row,
     col,
     values,
-    imageDisplay = Quadrille.IMAGE,
-    colorDisplay = Quadrille.COLOR,
-    stringDisplay = Quadrille.STRING,
-    numberDisplay = Quadrille.NUMBER,
-    tileDisplay = Quadrille.TILE,
+    imageDisplay = quadrille.constructor.IMAGE,
+    colorDisplay = quadrille.constructor.COLOR,
+    stringDisplay = quadrille.constructor.STRING,
+    numberDisplay = quadrille.constructor.NUMBER,
+    tileDisplay = quadrille.constructor.TILE,
     arrayDisplay,
     objectDisplay,
-    cellLength = Quadrille.CELL_LENGTH,
-    outlineWeight = Quadrille.OUTLINE_WEIGHT,
-    outline = Quadrille.OUTLINE,
-    textColor = Quadrille.TEXT_COLOR,
-    textZoom = Quadrille.TEXT_ZOOM
+    cellLength = quadrille.constructor.CELL_LENGTH,
+    outlineWeight = quadrille.constructor.OUTLINE_WEIGHT,
+    outline = quadrille.constructor.OUTLINE,
+    textColor = quadrille.constructor.TEXT_COLOR,
+    textZoom = quadrille.constructor.TEXT_ZOOM
   } = {}) {
     quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
