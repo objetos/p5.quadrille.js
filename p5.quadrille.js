@@ -1,26 +1,12 @@
 'use strict';
 
-/*
-TODOs API docs
-i. completion
-ii.  warnings about search fill and clear references
-iii. static fields -> style
-iV. remove cell drawing form objetos.io
-*/
-
 class Quadrille {
   // STYLE 
 
-  // TODO decide final text color acording to chess pieces and background
-
-  // good contrast over b & w backgrounds
+  /**
+   * Default text color.
+   */
   static TEXT_COLOR = 'DodgerBlue';
-  //static TEXT_COLOR = 'Teal';
-  //static TEXT_COLOR = 'DeepSkyBlue';
-  //static TEXT_COLOR = 'white'; // v1.* version
-  // TODO should decide ascending (as v1.*) vs descending in sort
-  // require BACKGROUND = 'white'
-  //static TEXT_COLOR = 'black';
 
   /**
    * Default text drawing zoom.
@@ -30,9 +16,7 @@ class Quadrille {
   /**
    * Default drawing outline.
    */
-  //static OUTLINE = 'grey';
   static OUTLINE = 'OrangeRed';
-  //static OUTLINE = 'crimson';
 
   /**
    * Default drawing outline weight.
@@ -53,19 +37,15 @@ class Quadrille {
 
   // chess specific stuff
 
-  // TODO define default chess board color scheme
-
   /**
    * Default chess black squares.
    */
-  static BLACK_SQUARE = '#D28C45'; // wikipedia
-  //static BLACK_SQUARE = '#769656'; // chess.com
+  static BLACK_SQUARE = '#D28C45'; // wikipedia; '#769656' // chess.com
 
   /**
    * Default chess white squares.
    */
-  static WHITE_SQUARE = '#FDCDAA'; // wikipedia
-  //static WHITE_SQUARE = '#EEEED2'; //chess.com
+  static WHITE_SQUARE = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
 
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
@@ -324,12 +304,6 @@ class Quadrille {
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
       let image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
-      // TODO decide which design to use ?
-      // (image, pixelate = false)
-      //args.length === 1 || (args.length === 2 && !args[1]) ? this._images(image) : (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image));
-      // (image, pixelate = true), tries to match quadrille v1.
-      // args.length === 1 || (args.length === 2 && args[1]) ? (Quadrille.COHERENCE ? this._pixelator1(image) : this._pixelator2(image)) : this._images(image);
-      // (image) -> doesn't pixelate and (image, coherence) pixelates & doesn't use Quadrille.COHERENCE
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
   }
@@ -693,7 +667,7 @@ class Quadrille {
 
   // TODO isPolyomino
 
-  // Static "private" methods:
+  // Static "protected" methods:
 
   static _isEmpty(value) {
     return value === null;
@@ -1259,37 +1233,43 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
-  static sample(params = {}) { // Setting default values
-    params.imageDisplay = params.imageDisplay || this.IMAGE;
-    params.colorDisplay = params.colorDisplay || this.COLOR;
-    params.stringDisplay = params.stringDisplay || this.STRING;
-    params.numberDisplay = params.numberDisplay || this.NUMBER;
-    params.arrayDisplay = params.arrayDisplay; // Default is undefined
-    params.objectDisplay = params.objectDisplay; // Default is undefined
-    params.tileDisplay = params.tileDisplay; // Default is undefined
-    params.background = params.background || this.BACKGROUND;
-    params.cellLength = params.cellLength || this.CELL_LENGTH;
-    params.outlineWeight = params.outlineWeight || this.OUTLINE_WEIGHT;
-    params.outline = params.outline || this.OUTLINE;
-    params.textColor = params.textColor || this.TEXT_COLOR;
-    params.textZoom = params.textZoom || this.TEXT_ZOOM;
-    params.graphics = createGraphics(params.cellLength, params.cellLength);
-    params.graphics.background(params.background);
-    Quadrille._display(params);
-    params.graphics.loadPixels();
+  static sample({
+    value,
+    imageDisplay = this.IMAGE,
+    colorDisplay = this.COLOR,
+    stringDisplay = this.STRING,
+    numberDisplay = this.NUMBER,
+    arrayDisplay,
+    objectDisplay,
+    tileDisplay,
+    background = this.BACKGROUND,
+    cellLength = this.CELL_LENGTH,
+    outlineWeight = this.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    textColor = this.TEXT_COLOR,
+    textZoom = this.TEXT_ZOOM
+  } = {}) {
+    const graphics = createGraphics(cellLength, cellLength);
+    graphics.background(background);
+    const params = {
+      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+    };
+    this.constructor.display(params);
+    graphics.loadPixels();
     let r = 0, g = 0, b = 0, a = 0;
-    let total = params.graphics.pixels.length / 4;
+    let total = graphics.pixels.length / 4;
     for (let i = 0; i < total; i++) {
-      r += params.graphics.pixels[4 * i];
-      g += params.graphics.pixels[4 * i + 1];
-      b += params.graphics.pixels[4 * i + 2];
-      a += params.graphics.pixels[4 * i + 3];
+      r += graphics.pixels[4 * i];
+      g += graphics.pixels[4 * i + 1];
+      b += graphics.pixels[4 * i + 2];
+      a += graphics.pixels[4 * i + 3];
     }
-    params.graphics.updatePixels();
+    graphics.updatePixels();
     return { r, g, b, a, total };
   }
 
-  static _display(params) {
+  static display(params) {
     const handlers = [
       { check: Quadrille._isImage, display: params.imageDisplay },
       { check: Quadrille._isColor, display: params.colorDisplay },
@@ -1400,7 +1380,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.0.b3',
+    VERSION: '2.0.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1445,7 +1425,7 @@ class Quadrille {
         row, col, outline, outlineWeight, cellLength, textColor, textZoom,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
-      Quadrille._display(params);
+      quadrille.constructor.display(params);
       graphics.pop();
     }, values);
     graphics.pop();
