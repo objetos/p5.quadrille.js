@@ -1255,7 +1255,7 @@ class Quadrille {
       graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
       imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
     };
-    this.display(params);
+    this._display(params);
     graphics.loadPixels();
     let r = 0, g = 0, b = 0, a = 0;
     let total = graphics.pixels.length / 4;
@@ -1269,7 +1269,7 @@ class Quadrille {
     return { r, g, b, a, total };
   }
 
-  static display(params) {
+  static _display(params) {
     const handlers = [
       { check: this._isImage, display: params.imageDisplay },
       { check: this._isColor, display: params.colorDisplay },
@@ -1425,7 +1425,7 @@ class Quadrille {
         row, col, outline, outlineWeight, cellLength, textColor, textZoom,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
-      quadrille.constructor.display(params);
+      quadrille.constructor._display(params);
       graphics.pop();
     }, values);
     graphics.pop();
