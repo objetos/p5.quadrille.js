@@ -144,41 +144,41 @@ function keyPressed() {
 function stick(key) {
   /*
   // op1
-  let neg = Quadrille.NEG(quadrille, 0);
+  let neg = Quadrille.neg(quadrille, 0);
   let clone = neg.clone();
   clone.fill(color('#965695'));
-  clone = Quadrille.DIFF(clone, neg);
+  clone = Quadrille.diff(clone, neg);
   // */
   /*
   let clone = quadrille.clone();
   clone.replace(color('#965695'));
   board = key === 'u' ?
-    Quadrille.OR(board, clone, row, col) : key === 'x' ?
-      Quadrille.XOR(board, clone, row, col) : key === 'i' ?
-        Quadrille.AND(board, clone, row, col) : Quadrille.DIFF(board, clone, row, col);
+    Quadrille.or(board, clone, row, col) : key === 'x' ?
+      Quadrille.xor(board, clone, row, col) : key === 'i' ?
+        Quadrille.and(board, clone, row, col) : Quadrille.diff(board, clone, row, col);
   // */
   // /*
   // let clone = quadrille.clone(false); // fails as expected
   let clone = quadrille.clone(); // works as expected
   clone.replace(color('#965695'));
   board = key === 'u' ?
-    Quadrille.OR(board, clone) : key === 'x' ?
-      Quadrille.XOR(board, clone) : key === 'i' ?
-        Quadrille.AND(board, clone) : Quadrille.DIFF(board, clone);
+    Quadrille.or(board, clone) : key === 'x' ?
+      Quadrille.xor(board, clone) : key === 'i' ?
+        Quadrille.and(board, clone) : Quadrille.diff(board, clone);
   // */
   /*
   quadrille.replace(color('#965695'));
   board = key === 'u' ?
-    Quadrille.OR(board, quadrille, row, col) : key === 'x' ?
-      Quadrille.XOR(board, quadrille, row, col) : key === 'i' ?
-        Quadrille.AND(board, quadrille, row, col) : Quadrille.DIFF(board, quadrille, row, col);
+    Quadrille.or(board, quadrille, row, col) : key === 'x' ?
+      Quadrille.xor(board, quadrille, row, col) : key === 'i' ?
+        Quadrille.and(board, quadrille, row, col) : Quadrille.diff(board, quadrille, row, col);
   // */
   /*
   quadrille.replace(color('#965695'));
   board = key === 'u' ?
-    Quadrille.OR(board, quadrille) : key === 'x' ?
-      Quadrille.XOR(board, quadrille) : key === 'i' ?
-        Quadrille.AND(board, quadrille) : Quadrille.DIFF(board, quadrille);
+    Quadrille.or(board, quadrille) : key === 'x' ?
+      Quadrille.xor(board, quadrille) : key === 'i' ?
+        Quadrille.and(board, quadrille) : Quadrille.diff(board, quadrille);
   // */
   quadrille = active(int(random(5)));
   console.log('hey j p', quadrille.order);
