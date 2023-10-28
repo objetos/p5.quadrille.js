@@ -515,7 +515,6 @@ class Quadrille {
   }
 
   /**
-   * 
    * @returns {bigint} integer representation using big-endian and row-major ordering
    * of the quadrille entries.
    */
