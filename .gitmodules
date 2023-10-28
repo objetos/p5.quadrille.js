@@ -26,7 +26,7 @@
 	path = content/docs/conversion_methods
 	url = git@github.com:objetos/q_conversion.git
 [submodule "content/docs/constants"]
-	path = content/docs/static_fields
+	path = content/docs/style
 	url = git@github.com:objetos/q_constants.git
 [submodule "content/docs/cell_drawing"]
 	path = content/docs/cell_drawing
