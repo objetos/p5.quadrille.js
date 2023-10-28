@@ -1190,9 +1190,7 @@ class Quadrille {
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM,
     background = this.BACKGROUND,
-    // TODO needs testing
-    //cellLength = this.CELL_LENGTH,
-    cellLength = this.width,
+    cellLength = int(max(width / this.width, height / this.height) / 10),
     outlineWeight = this.OUTLINE_WEIGHT,
     outline = this.OUTLINE,
     imageDisplay = this.image,
