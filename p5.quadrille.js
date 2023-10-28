@@ -1190,14 +1190,30 @@ class Quadrille {
     textColor = this.TEXT_COLOR,
     textZoom = this.TEXT_ZOOM,
     background = this.BACKGROUND,
-    cellLength = this.width
+    // TODO needs testing
+    //cellLength = this.CELL_LENGTH,
+    cellLength = this.width,
+    outlineWeight = this.OUTLINE_WEIGHT,
+    outline = this.OUTLINE,
+    imageDisplay = this.image,
+    colorDisplay = this.color,
+    stringDisplay = this.string,
+    numberDisplay = this.number,
+    arrayDisplay = this.array,
+    objectDisplay = this.object,
+    tileDisplay = 0,
   } = {}) {
     let memory1D = this.toArray();
+    const params = {
+      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
+      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+    };
     switch (mode) {
       case 'DISTANCE':
         memory1D.sort((valueA, valueB) => {
-          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          params.value = valueA;
+          let sa = this.constructor.sample({ ...params, value: valueA });
+          let sb = this.constructor.sample({ ...params, value: valueB });
           let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
           let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
@@ -1207,8 +1223,8 @@ class Quadrille {
         break;
       case 'AVG':
         memory1D.sort((valueA, valueB) => {
-          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          let sa = this.constructor.sample({ ...params, value: valueA });
+          let sb = this.constructor.sample({ ...params, value: valueB });
           let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
           let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
@@ -1217,8 +1233,8 @@ class Quadrille {
       case 'LUMA':
       default:
         memory1D.sort((valueA, valueB) => {
-          let sa = this.constructor.sample({ value: valueA, background, cellLength, textColor, textZoom });
-          let sb = this.constructor.sample({ value: valueB, background, cellLength, textColor, textZoom });
+          let sa = this.constructor.sample({ ...params, value: valueA });
+          let sb = this.constructor.sample({ ...params, value: valueB });
           let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
           let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
@@ -1238,9 +1254,9 @@ class Quadrille {
     colorDisplay = this.color,
     stringDisplay = this.string,
     numberDisplay = this.number,
-    arrayDisplay,
-    objectDisplay,
-    tileDisplay,
+    arrayDisplay = this.array,
+    objectDisplay = this.object,
+    tileDisplay = this.tile,
     background = this.BACKGROUND,
     cellLength = this.CELL_LENGTH,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -1379,7 +1395,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.0',
+    VERSION: '2.0.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1401,8 +1417,8 @@ class Quadrille {
     stringDisplay = quadrille.constructor.string,
     numberDisplay = quadrille.constructor.number,
     tileDisplay = quadrille.constructor.tile,
-    arrayDisplay,
-    objectDisplay,
+    arrayDisplay = quadrille.constructor.array,
+    objectDisplay = quadrille.constructor.object,
     cellLength = quadrille.constructor.CELL_LENGTH,
     outlineWeight = quadrille.constructor.OUTLINE_WEIGHT,
     outline = quadrille.constructor.OUTLINE,
