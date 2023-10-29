@@ -3,6 +3,10 @@
 class Quadrille {
   // STYLE 
 
+  // TODOs
+  // i. remove deprecanted stuff
+  // ii. prefer Quadrille.CONSTANT over this.CONSTANT ?
+
   /**
    * Default text color.
    */
@@ -1490,7 +1494,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.2',
+    VERSION: '2.0.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
