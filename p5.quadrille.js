@@ -64,6 +64,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `and` instead.
+   */
+  static AND() {
+    console.warn('Warning: AND is deprecated! Use and instead.');
+    return this.and(...arguments);
+  }
+
+  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -78,6 +86,14 @@ class Quadrille {
         }
       },
       row, col);
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `or` instead.
+   */
+  static OR() {
+    console.warn('Warning: OR is deprecated! Use or instead.');
+    return this.or(...arguments);
   }
 
   /**
@@ -101,6 +117,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `xor` instead.
+   */
+  static XOR() {
+    console.warn('Warning: XOR is deprecated! Use xor instead.');
+    return this.xor(...arguments);
+  }
+
+  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -121,6 +145,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `diff` instead.
+   */
+  static DIFF() {
+    console.warn('Warning: DIFF is deprecated! Use diff instead.');
+    return this.diff(...arguments);
+  }
+
+  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -138,6 +170,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `neg` instead.
+   */
+  static NEG() {
+    console.warn('Warning: NEG is deprecated! Use neg instead.');
+    return this.neg(...arguments);
+  }
+
+  /**
    * @param {Quadrille} quadrille 
    * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
@@ -151,6 +191,14 @@ class Quadrille {
       }
     });
     return result;
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `merge` instead.
+   */
+  static OP() {
+    console.warn('Warning: OP is deprecated! Use merge instead.');
+    return this.merge(...arguments);
   }
 
   /**
@@ -512,6 +560,14 @@ class Quadrille {
 
   _toIndex(row, col, width = this.width) {
     return row * width + col;
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `toBigInt` instead.
+   */
+  toInt() {
+    console.warn('Warning: toInt is deprecated! Use toBigInt instead.');
+    return this.toBigInt(...arguments);
   }
 
   /**
@@ -1199,6 +1255,7 @@ class Quadrille {
     numberDisplay = this.number,
     arrayDisplay = this.array,
     objectDisplay = this.object,
+    // TODO decide better (tile) params
     tileDisplay = 0,
   } = {}) {
     let memory1D = this.toArray();
@@ -1303,6 +1360,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `number` instead.
+   */
+  static NUMBER() {
+    console.warn('Warning: NUMBER is deprecated! Use number instead.');
+    this.number(...arguments);
+  }
+
+  /**
    * Number cell drawing.
    */
   static number({
@@ -1311,6 +1376,14 @@ class Quadrille {
     cellLength = this.CELL_LENGTH
   } = {}) {
     this.color({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `color` instead.
+   */
+  static COLOR() {
+    console.warn('Warning: COLOR is deprecated! Use color instead.');
+    this.color(...arguments);
   }
 
   /**
@@ -1327,6 +1400,14 @@ class Quadrille {
   }
 
   /**
+   * @deprecated since version 2.0. Use `image` instead.
+   */
+  static IMAGE() {
+    console.warn('Warning: IMAGE is deprecated! Use image instead.');
+    this.image(...arguments);
+  }
+
+  /**
    * Image cell drawing.
    */
   static image({
@@ -1336,6 +1417,14 @@ class Quadrille {
   } = {}) {
     graphics.noStroke();
     graphics.image(value, 0, 0, cellLength, cellLength);
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `string` instead.
+   */
+  static STRING() {
+    console.warn('Warning: STRING is deprecated! Use string instead.');
+    this.string(...arguments);
   }
 
   /**
@@ -1353,6 +1442,14 @@ class Quadrille {
     graphics.textSize(cellLength * textZoom / value.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(value, 0, 0, cellLength, cellLength);
+  }
+
+  /**
+   * @deprecated since version 2.0. Use `tile` instead.
+   */
+  static TILE() {
+    console.warn('Warning: TILE is deprecated! Use tile instead.');
+    this.tile(...arguments);
   }
 
   /**
@@ -1393,7 +1490,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.1',
+    VERSION: '2.0.2',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 

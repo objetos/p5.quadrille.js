@@ -79,10 +79,10 @@ function draw() {
   }
   let params = {
     cellLength: LENGTH,
-    tileDisplay: circled ? tileDisplay : Quadrille.TILE,
-    colorDisplay: circled ? colorDisplay : Quadrille.COLOR,
-    imageDisplay: circled ? imageDisplay : Quadrille.IMAGE,
-    //stringDisplay: circled ? stringDisplay : Quadrille.STRING,
+    tileDisplay: circled ? tileDisplay : Quadrille.tile,
+    colorDisplay: circled ? colorDisplay : Quadrille.color,
+    imageDisplay: circled ? imageDisplay : Quadrille.image,
+    //stringDisplay: circled ? stringDisplay : Quadrille.string,
   }
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
   let boardParams = Object.create(params);
