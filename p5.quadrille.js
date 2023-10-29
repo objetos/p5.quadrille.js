@@ -1549,7 +1549,8 @@ class Quadrille {
     values = new Set(values);
     for (let row = 0; row < quadrille.height; row++) {
       for (let col = 0; col < quadrille.width; col++) {
-        if (values.size ? values.has(quadrille.read(row, col)) : true) {
+        // TODO test new condition
+        if (values.size === 0 || values.has(quadrille.read(row, col))) {
           fx(row, col);
         }
       }
