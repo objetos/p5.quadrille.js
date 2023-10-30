@@ -4,7 +4,7 @@ class Quadrille {
   // STYLE 
 
   // TODOs
-  // i. remove deprecanted stuff
+  // i. remove deprecated stuff
   // ii. prefer Quadrille.CONSTANT over this.CONSTANT ?
 
   /**
@@ -727,6 +727,7 @@ class Quadrille {
   // TODO isPolyomino
 
   // Static "protected" methods:
+  // TODO can they be made mutually exclusive ?
 
   static _isEmpty(value) {
     return value === null;
@@ -1253,12 +1254,12 @@ class Quadrille {
     cellLength = int(max(width / this.width, height / this.height) / 10),
     outlineWeight = this.OUTLINE_WEIGHT,
     outline = this.OUTLINE,
-    imageDisplay = this.image,
-    colorDisplay = this.color,
-    stringDisplay = this.string,
-    numberDisplay = this.number,
-    arrayDisplay = this.array,
-    objectDisplay = this.object,
+    imageDisplay = this.imageDisplay,
+    colorDisplay = this.colorDisplay,
+    stringDisplay = this.stringDisplay,
+    numberDisplay = this.numberDisplay,
+    arrayDisplay = this.arrayDisplay,
+    objectDisplay = this.objectDisplay,
     // TODO decide better (tile) params
     tileDisplay = 0,
   } = {}) {
@@ -1309,13 +1310,13 @@ class Quadrille {
    */
   static sample({
     value,
-    imageDisplay = this.image,
-    colorDisplay = this.color,
-    stringDisplay = this.string,
-    numberDisplay = this.number,
-    arrayDisplay = this.array,
-    objectDisplay = this.object,
-    tileDisplay = this.tile,
+    imageDisplay = this.imageDisplay,
+    colorDisplay = this.colorDisplay,
+    stringDisplay = this.stringDisplay,
+    numberDisplay = this.numberDisplay,
+    arrayDisplay = this.arrayDisplay,
+    objectDisplay = this.objectDisplay,
+    tileDisplay = this.tileDisplay,
     background = this.BACKGROUND,
     cellLength = this.CELL_LENGTH,
     outlineWeight = this.OUTLINE_WEIGHT,
@@ -1364,36 +1365,36 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `number` instead.
+   * @deprecated since version 2.0. Use `numberDisplay` instead.
    */
   static NUMBER() {
-    console.warn('Warning: NUMBER is deprecated! Use number instead.');
-    this.number(...arguments);
+    console.warn('Warning: NUMBER is deprecated! Use numberDisplay instead.');
+    this.numberDisplay(...arguments);
   }
 
   /**
    * Number cell drawing.
    */
-  static number({
+  static numberDisplay({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
   } = {}) {
-    this.color({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+    this.colorDisplay({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
 
   /**
-   * @deprecated since version 2.0. Use `color` instead.
+   * @deprecated since version 2.0. Use `colorDisplay` instead.
    */
   static COLOR() {
-    console.warn('Warning: COLOR is deprecated! Use color instead.');
-    this.color(...arguments);
+    console.warn('Warning: COLOR is deprecated! Use colorDisplay instead.');
+    this.colorDisplay(...arguments);
   }
 
   /**
    * Color cell drawing.
    */
-  static color({
+  static colorDisplay({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
@@ -1404,17 +1405,17 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `image` instead.
+   * @deprecated since version 2.0. Use `imageDisplay` instead.
    */
   static IMAGE() {
-    console.warn('Warning: IMAGE is deprecated! Use image instead.');
-    this.image(...arguments);
+    console.warn('Warning: IMAGE is deprecated! Use imageDisplay instead.');
+    this.imageDisplay(...arguments);
   }
 
   /**
    * Image cell drawing.
    */
-  static image({
+  static imageDisplay({
     graphics,
     value,
     cellLength = this.CELL_LENGTH
@@ -1424,17 +1425,17 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `string` instead.
+   * @deprecated since version 2.0. Use `stringDisplay` instead.
    */
   static STRING() {
-    console.warn('Warning: STRING is deprecated! Use string instead.');
-    this.string(...arguments);
+    console.warn('Warning: STRING is deprecated! Use stringDisplay instead.');
+    this.stringDisplay(...arguments);
   }
 
   /**
    * String cell drawing.
    */
-  static string({
+  static stringDisplay({
     graphics,
     value,
     cellLength = this.CELL_LENGTH,
@@ -1449,17 +1450,17 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `tile` instead.
+   * @deprecated since version 2.0. Use `tileDisplay` instead.
    */
   static TILE() {
-    console.warn('Warning: TILE is deprecated! Use tile instead.');
-    this.tile(...arguments);
+    console.warn('Warning: TILE is deprecated! Use tileDisplay instead.');
+    this.tileDisplay(...arguments);
   }
 
   /**
    * Tesselation or tiling. Used by the drawQuadrille board property.
    */
-  static tile({
+  static tileDisplay({
     graphics,
     row = 0,
     col = 0,
@@ -1511,13 +1512,13 @@ class Quadrille {
     row,
     col,
     values,
-    imageDisplay = quadrille.constructor.image,
-    colorDisplay = quadrille.constructor.color,
-    stringDisplay = quadrille.constructor.string,
-    numberDisplay = quadrille.constructor.number,
-    tileDisplay = quadrille.constructor.tile,
-    arrayDisplay = quadrille.constructor.array,
-    objectDisplay = quadrille.constructor.object,
+    imageDisplay = quadrille.constructor.imageDisplay,
+    colorDisplay = quadrille.constructor.colorDisplay,
+    stringDisplay = quadrille.constructor.stringDisplay,
+    numberDisplay = quadrille.constructor.numberDisplay,
+    tileDisplay = quadrille.constructor.tileDisplay,
+    arrayDisplay = quadrille.constructor.arrayDisplay,
+    objectDisplay = quadrille.constructor.objectDisplay,
     cellLength = quadrille.constructor.CELL_LENGTH,
     outlineWeight = quadrille.constructor.OUTLINE_WEIGHT,
     outline = quadrille.constructor.OUTLINE,

@@ -79,9 +79,9 @@ function draw() {
   }
   let params = {
     cellLength: LENGTH,
-    tileDisplay: circled ? tileDisplay : Quadrille.tile,
-    colorDisplay: circled ? colorDisplay : Quadrille.color,
-    imageDisplay: circled ? imageDisplay : Quadrille.image,
+    tileDisplay: circled ? tileDisplay : Quadrille.tileDisplay,
+    colorDisplay: circled ? colorDisplay : Quadrille.colorDisplay,
+    imageDisplay: circled ? imageDisplay : Quadrille.imageDisplay,
     //stringDisplay: circled ? stringDisplay : Quadrille.string,
   }
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
