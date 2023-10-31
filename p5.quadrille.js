@@ -824,7 +824,7 @@ class Quadrille {
   }
 
   static _isObject(value) {
-    return typeof value === 'object';
+    return value !== null && typeof value === 'object';
   }
 
   static _isImage(value) {
@@ -1565,7 +1565,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.4',
+    VERSION: '2.0.5',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
