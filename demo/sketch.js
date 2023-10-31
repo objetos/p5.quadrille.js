@@ -27,8 +27,8 @@ function preload() {
 
 function setup() {
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  //Quadrille.CELL_LENGTH = LENGTH;
-  //Quadrille.TEXT_ZOOM = 1;
+  //Quadrille.cellLength = LENGTH;
+  //Quadrille.textZoom = 1;
   // patterns
   c1 = color(random(255), random(255), random(255));
   c2 = color(random(255), random(255), random(255));

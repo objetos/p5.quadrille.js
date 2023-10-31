@@ -10,46 +10,116 @@ class Quadrille {
   /**
    * Default text color.
    */
-  static TEXT_COLOR = 'DodgerBlue';
+  static textColor = 'DodgerBlue';
+
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.textColor} instead.
+   */
+  static get TEXT_COLOR() {
+    console.warn('Deprecation Warning: TEXT_COLOR is deprecated. Please use textColor instead.');
+    return Quadrille.textColor;
+  }
+
+  static set TEXT_COLOR(value) {
+    Quadrille.textColor = value;
+  }
 
   /**
    * Default text drawing zoom.
    */
-  static TEXT_ZOOM = 0.89;
+  static textZoom = 0.89;
+
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.textZoom} instead.
+   */
+  static get TEXT_ZOOM() {
+    console.warn('Deprecation Warning: TEXT_ZOOM is deprecated. Please use textZoom instead.');
+    return Quadrille.textZoom;
+  }
+
+  static set TEXT_ZOOM(value) {
+    Quadrille.textZoom = value;
+  }
 
   /**
    * Default drawing outline.
    */
-  static OUTLINE = 'OrangeRed';
+  static outline = 'OrangeRed';
+
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.outline} instead.
+   */
+  static get OUTLINE() {
+    console.warn('Deprecation Warning: OUTLINE is deprecated. Please use outline instead.');
+    return Quadrille.outline;
+  }
+
+  static set OUTLINE(value) {
+    Quadrille.outline = value;
+  }
 
   /**
    * Default drawing outline weight.
    */
-  static OUTLINE_WEIGHT = 2;
+  static outlineWeight = 2;
+
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.outlineWeight} instead.
+   */
+  static get OUTLINE_WEIGHT() {
+    console.warn('Deprecation Warning: OUTLINE_WEIGHT is deprecated. Please use outlineWeight instead.');
+    return Quadrille.outlineWeight;
+  }
+
+  static set OUTLINE_WEIGHT(value) {
+    Quadrille.outlineWeight = value;
+  }
 
   /**
    * Default drawing cell length.
    */
-  static CELL_LENGTH = 100;
+  static cellLength = 100;
 
-  // sort
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.cellLength} instead.
+   */
+  static get CELL_LENGTH() {
+    console.warn('Deprecation Warning: CELL_LENGTH is deprecated. Please use cellLength instead.');
+    return Quadrille.cellLength;
+  }
+
+  static set CELL_LENGTH(value) {
+    Quadrille.cellLength = value;
+  }
 
   /**
    * Default background used in sort.
    */
-  static BACKGROUND = 'white';
+  static background = 'white';
+
+  /**
+   * @deprecated Since version 2.0.0. Use {@link Quadrille.background} instead.
+   */
+  static get BACKGROUND() {
+    console.warn('Deprecation Warning: BACKGROUND is deprecated. Please use background instead.');
+    return Quadrille.background;
+  }
+
+  static set BACKGROUND(value) {
+    Quadrille.background = value;
+  }
 
   // chess specific stuff
 
   /**
    * Default chess black squares.
    */
-  static BLACK_SQUARE = '#D28C45'; // wikipedia; '#769656' // chess.com
+  static blackSquare = '#D28C45'; // wikipedia; '#769656' // chess.com
 
   /**
    * Default chess white squares.
    */
-  static WHITE_SQUARE = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
+  static whiteSquare = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
 
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
@@ -245,12 +315,12 @@ class Quadrille {
    * @see order
    */
   constructor(...args) {
-    this._cellLength = this.constructor.CELL_LENGTH;
+    this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.WHITE_SQUARE : this.constructor.BLACK_SQUARE));
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
     }
     if (args.length === 1) {
       this.memory2D = args[0];
@@ -615,12 +685,12 @@ class Quadrille {
     arrayDisplay,
     objectDisplay,
     cellLength,
-    outlineWeight = this.constructor.OUTLINE_WEIGHT,
-    outline = this.constructor.OUTLINE,
-    textColor = this.constructor.TEXT_COLOR,
-    textZoom = this.constructor.TEXT_ZOOM
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom
   } = {}) {
-    cellLength ??= this._cellLength ? this._cellLength : this.constructor.CELL_LENGTH;
+    cellLength ??= this._cellLength ? this._cellLength : this.constructor.cellLength;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
       graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
@@ -939,7 +1009,7 @@ class Quadrille {
   fill(...args) {
     if (args.length === 0) {
       visitQuadrille(this, (row, col) =>
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.WHITE_SQUARE : this.constructor.BLACK_SQUARE));
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
     }
     if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
@@ -1246,14 +1316,14 @@ class Quadrille {
    */
   sort({
     mode = 'LUMA',
-    target = this.OUTLINE,
+    target = this.outline,
     ascending = true,
-    textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM,
-    background = this.BACKGROUND,
+    textColor = this.textColor,
+    textZoom = this.textZoom,
+    background = this.background,
     cellLength = int(max(width / this.width, height / this.height) / 10),
-    outlineWeight = this.OUTLINE_WEIGHT,
-    outline = this.OUTLINE,
+    outlineWeight = this.outlineWeight,
+    outline = this.outline,
     imageDisplay = this.imageDisplay,
     colorDisplay = this.colorDisplay,
     stringDisplay = this.stringDisplay,
@@ -1317,12 +1387,12 @@ class Quadrille {
     arrayDisplay = this.arrayDisplay,
     objectDisplay = this.objectDisplay,
     tileDisplay = this.tileDisplay,
-    background = this.BACKGROUND,
-    cellLength = this.CELL_LENGTH,
-    outlineWeight = this.OUTLINE_WEIGHT,
-    outline = this.OUTLINE,
-    textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM
+    background = this.background,
+    cellLength = this.cellLength,
+    outlineWeight = this.outlineWeight,
+    outline = this.outline,
+    textColor = this.textColor,
+    textZoom = this.textZoom
   } = {}) {
     const graphics = createGraphics(cellLength, cellLength);
     graphics.background(background);
@@ -1378,7 +1448,7 @@ class Quadrille {
   static numberDisplay({
     graphics,
     value,
-    cellLength = this.CELL_LENGTH
+    cellLength = this.cellLength
   } = {}) {
     this.colorDisplay({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
@@ -1397,7 +1467,7 @@ class Quadrille {
   static colorDisplay({
     graphics,
     value,
-    cellLength = this.CELL_LENGTH
+    cellLength = this.cellLength
   } = {}) {
     graphics.noStroke();
     graphics.fill(value);
@@ -1418,7 +1488,7 @@ class Quadrille {
   static imageDisplay({
     graphics,
     value,
-    cellLength = this.CELL_LENGTH
+    cellLength = this.cellLength
   } = {}) {
     graphics.noStroke();
     graphics.image(value, 0, 0, cellLength, cellLength);
@@ -1438,9 +1508,9 @@ class Quadrille {
   static stringDisplay({
     graphics,
     value,
-    cellLength = this.CELL_LENGTH,
-    textColor = this.TEXT_COLOR,
-    textZoom = this.TEXT_ZOOM
+    cellLength = this.cellLength,
+    textColor = this.textColor,
+    textZoom = this.textZoom
   } = {}) {
     graphics.noStroke();
     graphics.fill(textColor);
@@ -1466,9 +1536,9 @@ class Quadrille {
     col = 0,
     width = 1,
     height = 1,
-    cellLength = this.CELL_LENGTH,
-    outline = this.OUTLINE,
-    outlineWeight = this.OUTLINE_WEIGHT
+    cellLength = this.cellLength,
+    outline = this.outline,
+    outlineWeight = this.outlineWeight
   } = {}) {
     if (outlineWeight !== 0) {
       // modes                _                    _                _                _
@@ -1495,7 +1565,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.3',
+    VERSION: '2.0.4',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1519,11 +1589,11 @@ class Quadrille {
     tileDisplay = quadrille.constructor.tileDisplay,
     arrayDisplay = quadrille.constructor.arrayDisplay,
     objectDisplay = quadrille.constructor.objectDisplay,
-    cellLength = quadrille.constructor.CELL_LENGTH,
-    outlineWeight = quadrille.constructor.OUTLINE_WEIGHT,
-    outline = quadrille.constructor.OUTLINE,
-    textColor = quadrille.constructor.TEXT_COLOR,
-    textZoom = quadrille.constructor.TEXT_ZOOM
+    cellLength = quadrille.constructor.cellLength,
+    outlineWeight = quadrille.constructor.outlineWeight,
+    outline = quadrille.constructor.outline,
+    textColor = quadrille.constructor.textColor,
+    textZoom = quadrille.constructor.textZoom
   } = {}) {
     quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
@@ -1550,7 +1620,6 @@ class Quadrille {
     values = new Set(values);
     for (let row = 0; row < quadrille.height; row++) {
       for (let col = 0; col < quadrille.width; col++) {
-        // TODO test new condition
         if (values.size === 0 || values.has(quadrille.read(row, col))) {
           fx(row, col);
         }
