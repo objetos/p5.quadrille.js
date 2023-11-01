@@ -611,7 +611,7 @@ class Quadrille {
    */
   screenRow(pixelY, y, cellLength) {
     y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     return floor((pixelY - y) / cellLength);
   }
 
@@ -624,7 +624,7 @@ class Quadrille {
    */
   screenCol(pixelX, x, cellLength) {
     x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     return floor((pixelX - x) / cellLength);
   }
 
@@ -690,7 +690,7 @@ class Quadrille {
     textColor = this.constructor.textColor,
     textZoom = this.constructor.textZoom
   } = {}) {
-    cellLength ??= this._cellLength ? this._cellLength : this.constructor.cellLength;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
       graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
@@ -796,50 +796,13 @@ class Quadrille {
 
   // TODO isPolyomino
 
-  // Static "protected" methods:
-  // TODO can they be made mutually exclusive ?
-
-  static _isEmpty(value) {
-    return value === null;
-  }
-
-  static _isFilled(value) {
-    return value !== null && value !== undefined;
-  }
-
-  static _isNumber(value) {
-    return typeof value === 'number';
-  }
-
-  static _isString(value) {
-    return typeof value === 'string';
-  }
-
-  static _isColor(value) {
-    return value instanceof p5.Color;
-  }
-
-  static _isArray(value) {
-    return Array.isArray(value);
-  }
-
-  static _isObject(value) {
-    return value !== null && typeof value === 'object';
-  }
-
-  static _isImage(value) {
-    return value instanceof p5.Image || value instanceof p5.Graphics;
-  }
-
-  // Instance methods:
-
   /**
    * @param {number} row 
    * @param {number} col 
    * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    return this.constructor._isEmpty(this.read(row, col));
+    return this.read(row, col) === null;
   }
 
   /**
@@ -848,7 +811,7 @@ class Quadrille {
    * @returns {boolean} true if cell is filled
    */
   isFilled(row, col) {
-    return this.constructor._isFilled(this.read(row, col));
+    return this.read(row, col) !== null && this.read(row, col) !== undefined;
   }
 
   /**
@@ -857,7 +820,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a number
    */
   isNumber(row, col) {
-    return this.constructor._isNumber(this.read(row, col));
+    return typeof this.read(row, col) === 'number';
   }
 
   /**
@@ -866,7 +829,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a string
    */
   isString(row, col) {
-    return this.constructor._isString(this.read(row, col));
+    return typeof this.read(row, col) === 'string';
   }
 
   /**
@@ -875,7 +838,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a color
    */
   isColor(row, col) {
-    return this.constructor._isColor(this.read(row, col));
+    return this.read(row, col) instanceof p5.Color;
   }
 
   /**
@@ -884,16 +847,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an array
    */
   isArray(row, col) {
-    return this.constructor._isArray(this.read(row, col));
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an object
-   */
-  isObject(row, col) {
-    return this.constructor._isObject(this.read(row, col));
+    return Array.isArray(this.read(row, col));
   }
 
   /**
@@ -902,7 +856,16 @@ class Quadrille {
    * @returns {boolean} true if cell has an image
    */
   isImage(row, col) {
-    return this.constructor._isImage(this.read(row, col));
+    return this.read(row, col) instanceof p5.Image || this.read(row, col) instanceof p5.Graphics;
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has an object
+   */
+  isObject(row, col) {
+    return this.isFilled(row, col) && !this.isColor(row, col) && !this.isArray(row, col) && !this.isImage(row, col) && typeof this.read(row, col) === 'object';
   }
 
   /**
@@ -1380,13 +1343,6 @@ class Quadrille {
    */
   static sample({
     value,
-    imageDisplay = this.imageDisplay,
-    colorDisplay = this.colorDisplay,
-    stringDisplay = this.stringDisplay,
-    numberDisplay = this.numberDisplay,
-    arrayDisplay = this.arrayDisplay,
-    objectDisplay = this.objectDisplay,
-    tileDisplay = this.tileDisplay,
     background = this.background,
     cellLength = this.cellLength,
     outlineWeight = this.outlineWeight,
@@ -1397,8 +1353,7 @@ class Quadrille {
     const graphics = createGraphics(cellLength, cellLength);
     graphics.background(background);
     const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength
     };
     this._display(params);
     graphics.loadPixels();
@@ -1414,6 +1369,27 @@ class Quadrille {
     return { r, g, b, a, total };
   }
 
+  _display(params) {
+    const handlers = [
+      { check: this.isImage, display: this.imageDisplay },
+      { check: this.isColor, display: this.colorDisplay },
+      { check: this.isNumber, display: this.numberDisplay },
+      { check: this.isString, display: this.stringDisplay },
+      { check: this.isArray, display: this.arrayDisplay },
+      { check: this.isObject, display: this.objectDisplay }
+    ];
+    for (const handler of handlers) {
+      if (handler.check.call(this, params.row, params.col) && handler.display) {
+        handler.display.call(this, params);
+        break;
+      }
+    }
+    if (this.tileDisplay) {
+      this.tileDisplay.call(this, params);
+    }
+  }
+
+  /*
   static _display(params) {
     const handlers = [
       { check: this._isImage, display: params.imageDisplay },
@@ -1433,13 +1409,10 @@ class Quadrille {
       params.tileDisplay.call(this, params);
     }
   }
+  */
 
-  /**
-   * @deprecated since version 2.0. Use `numberDisplay` instead.
-   */
-  static NUMBER() {
-    console.warn('Warning: NUMBER is deprecated! Use numberDisplay instead.');
-    this.numberDisplay(...arguments);
+  numberDisplay(...params) {
+    typeof Quadrille.numberDisplay === 'function' && Quadrille.numberDisplay(...params);
   }
 
   /**
@@ -1453,12 +1426,8 @@ class Quadrille {
     this.colorDisplay({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
   }
 
-  /**
-   * @deprecated since version 2.0. Use `colorDisplay` instead.
-   */
-  static COLOR() {
-    console.warn('Warning: COLOR is deprecated! Use colorDisplay instead.');
-    this.colorDisplay(...arguments);
+  colorDisplay(...params) {
+    typeof Quadrille.colorDisplay === 'function' && Quadrille.colorDisplay(...params);
   }
 
   /**
@@ -1474,12 +1443,8 @@ class Quadrille {
     graphics.rect(0, 0, cellLength, cellLength);
   }
 
-  /**
-   * @deprecated since version 2.0. Use `imageDisplay` instead.
-   */
-  static IMAGE() {
-    console.warn('Warning: IMAGE is deprecated! Use imageDisplay instead.');
-    this.imageDisplay(...arguments);
+  imageDisplay(...params) {
+    typeof Quadrille.imagerDisplay === 'function' && Quadrille.imageDisplay(...params);
   }
 
   /**
@@ -1494,12 +1459,8 @@ class Quadrille {
     graphics.image(value, 0, 0, cellLength, cellLength);
   }
 
-  /**
-   * @deprecated since version 2.0. Use `stringDisplay` instead.
-   */
-  static STRING() {
-    console.warn('Warning: STRING is deprecated! Use stringDisplay instead.');
-    this.stringDisplay(...arguments);
+  stringDisplay(...params) {
+    typeof Quadrille.stringDisplay === 'function' && Quadrille.stringDisplay(...params);
   }
 
   /**
@@ -1519,12 +1480,8 @@ class Quadrille {
     graphics.text(value, 0, 0, cellLength, cellLength);
   }
 
-  /**
-   * @deprecated since version 2.0. Use `tileDisplay` instead.
-   */
-  static TILE() {
-    console.warn('Warning: TILE is deprecated! Use tileDisplay instead.');
-    this.tileDisplay(...arguments);
+  tileDisplay(...params) {
+    typeof Quadrille.tileDisplay === 'function' && Quadrille.tileDisplay(...params);
   }
 
   /**
@@ -1565,7 +1522,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.5',
+    VERSION: '2.0.6',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1582,13 +1539,6 @@ class Quadrille {
     row,
     col,
     values,
-    imageDisplay = quadrille.constructor.imageDisplay,
-    colorDisplay = quadrille.constructor.colorDisplay,
-    stringDisplay = quadrille.constructor.stringDisplay,
-    numberDisplay = quadrille.constructor.numberDisplay,
-    tileDisplay = quadrille.constructor.tileDisplay,
-    arrayDisplay = quadrille.constructor.arrayDisplay,
-    objectDisplay = quadrille.constructor.objectDisplay,
     cellLength = quadrille.constructor.cellLength,
     outlineWeight = quadrille.constructor.outlineWeight,
     outline = quadrille.constructor.outline,
@@ -1605,12 +1555,7 @@ class Quadrille {
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
-      const params = {
-        quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom,
-        imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
-      };
-      quadrille.constructor._display(params);
+      quadrille._display({ value: quadrille.read(row, col), graphics, row, col, outline, outlineWeight, cellLength, textColor, textZoom });
       graphics.pop();
     }, values);
     graphics.pop();
