@@ -611,7 +611,7 @@ class Quadrille {
    */
   screenRow(pixelY, y, cellLength) {
     y ??= this._y ? this._y : 0;
-    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     return floor((pixelY - y) / cellLength);
   }
 
@@ -624,7 +624,7 @@ class Quadrille {
    */
   screenCol(pixelX, x, cellLength) {
     x ??= this._x ? this._x : 0;
-    cellLength ??= this._cellLength ? this._cellLength : this.constructorCELL_LENGTH;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     return floor((pixelX - x) / cellLength);
   }
 
@@ -690,7 +690,7 @@ class Quadrille {
     textColor = this.constructor.textColor,
     textZoom = this.constructor.textZoom
   } = {}) {
-    cellLength ??= this._cellLength ? this._cellLength : this.constructor.cellLength;
+    cellLength ??= this._cellLength || this.constructor.cellLength;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
       graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
@@ -1565,7 +1565,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.5',
+    VERSION: '2.0.6',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
