@@ -796,8 +796,7 @@ class Quadrille {
 
   // TODO isPolyomino
 
-  // Static "protected" methods:
-  // TODO can they be made mutually exclusive ?
+  // Static "protected" methods
 
   static _isEmpty(value) {
     return value === null;
@@ -819,16 +818,20 @@ class Quadrille {
     return value instanceof p5.Color;
   }
 
+  static _isImage(value) {
+    return value instanceof p5.Image || value instanceof p5.Graphics;
+  }
+
   static _isArray(value) {
     return Array.isArray(value);
   }
 
   static _isObject(value) {
-    return value !== null && typeof value === 'object';
-  }
-
-  static _isImage(value) {
-    return value instanceof p5.Image || value instanceof p5.Graphics;
+    return Quadrille._isFilled(value) &&
+      !Quadrille._isColor(value) &&
+      !Quadrille._isImage(value) &&
+      !Quadrille._isArray(value) &&
+      typeof value === 'object';
   }
 
   // Instance methods:
@@ -1565,7 +1568,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.6',
+    VERSION: '2.0.7',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
