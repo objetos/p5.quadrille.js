@@ -28,6 +28,3 @@
 [submodule "content/docs/constants"]
 	path = content/docs/style
 	url = git@github.com:objetos/q_constants.git
-[submodule "content/docs/cell_drawing"]
-	path = content/docs/cell_drawing
-	url = git@github.com:objetos/q_cell.git
