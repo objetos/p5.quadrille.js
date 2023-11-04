@@ -8,22 +8,22 @@
 	path = content/docs/properties
 	url = git@github.com:objetos/q_props.git
 [submodule "content/docs/boolean_operators"]
-	path = content/docs/boolean_operators
+	path = content/docs/algebra
 	url = git@github.com:objetos/q_bool.git
 [submodule "content/docs/geometry_transformations"]
-	path = content/docs/geometry_transformations
+	path = content/docs/transforms
 	url = git@github.com:objetos/q_geom.git
 [submodule "content/docs/immutable"]
-	path = content/docs/immutable_methods
+	path = content/docs/accessors
 	url = git@github.com:objetos/q_immutable.git
 [submodule "content/docs/mutable"]
-	path = content/docs/mutable_methods
+	path = content/docs/mutators
 	url = git@github.com:objetos/q_mutable.git
 [submodule "content/docs/visual_computing"]
-	path = content/docs/visual_computing
+	path = content/docs/visual_algorithms
 	url = git@github.com:objetos/q_visual.git
 [submodule "content/docs/conversion_methods"]
-	path = content/docs/conversion_methods
+	path = content/docs/reformatter
 	url = git@github.com:objetos/q_conversion.git
 [submodule "content/docs/constants"]
 	path = content/docs/style
