@@ -1420,9 +1420,9 @@ class Quadrille {
 
   static _display(params) {
     const graphics = params.graphics;
-    const displacement = params.cellLength / 2;
     const rotation = params.rotation;
     if (rotation) {
+      const displacement = params.cellLength / 2;
       graphics._rendererState = graphics.push();
       graphics.translate(displacement, displacement);
       graphics.angleMode('radians');
