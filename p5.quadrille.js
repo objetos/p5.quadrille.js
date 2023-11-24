@@ -1418,6 +1418,16 @@ class Quadrille {
   }
 
   static _display(params) {
+    const graphics = params.graphics;
+    const displacement = params.cellLength / 2;
+    const rotation = params.rotation;
+    if (rotation) {
+      graphics._rendererState = graphics.push();
+      graphics.translate(displacement, displacement);
+      graphics.angleMode('radians');
+      graphics.rotate(rotation);
+      graphics.translate(-displacement, -displacement);
+    }
     const handlers = [
       { check: this._isImage, display: params.imageDisplay },
       { check: this._isColor, display: params.colorDisplay },
@@ -1432,9 +1442,20 @@ class Quadrille {
         break;
       }
     }
+    // /*
+    // this works
+    if (rotation) {
+      graphics.pop(graphics._rendererState);
+    }
+    // */
     if (params.tileDisplay) {
       params.tileDisplay.call(this, params);
     }
+    /*
+    if (rotation) {
+      graphics.pop(graphics._rendererState);
+    }
+    // */
   }
 
   /**
@@ -1539,11 +1560,19 @@ class Quadrille {
     col = 0,
     width = 1,
     height = 1,
+    rotation,
     cellLength = this.cellLength,
     outline = this.outline,
     outlineWeight = this.outlineWeight
   } = {}) {
     if (outlineWeight !== 0) {
+      if (rotation) {
+        graphics.noFill();
+        graphics.stroke(outline);
+        graphics.strokeWeight(outlineWeight);
+        graphics.rect(0, 0, cellLength, cellLength);
+        return;
+      }
       // modes                _                    _                _                _
       // 0 (last row & col): |_| 1 (inner cells): |  2 (last row): |_ 3 (last col): | |
       const mode = row === height - 1 && col === width - 1 ? 0 :
@@ -1568,7 +1597,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.7',
+    VERSION: '2.0.8',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1585,6 +1614,7 @@ class Quadrille {
     row,
     col,
     values,
+    rotation,
     imageDisplay = quadrille.constructor.imageDisplay,
     colorDisplay = quadrille.constructor.colorDisplay,
     stringDisplay = quadrille.constructor.stringDisplay,
@@ -1610,7 +1640,7 @@ class Quadrille {
       graphics.translate(col * cellLength, row * cellLength);
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom,
+        row, col, rotation, outline, outlineWeight, cellLength, textColor, textZoom,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
       quadrille.constructor._display(params);
