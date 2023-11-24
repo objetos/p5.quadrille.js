@@ -677,6 +677,7 @@ class Quadrille {
    */
   toImage(filename, {
     values,
+    rotation,
     tileDisplay = this.constructor.tile,
     imageDisplay = this.constructor.image,
     colorDisplay = this.constructor.color,
@@ -693,7 +694,7 @@ class Quadrille {
     cellLength ??= this._cellLength || this.constructor.cellLength;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
     drawQuadrille(this, {
-      graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
+      graphics, values, rotation, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
     });
     save(graphics, filename);
