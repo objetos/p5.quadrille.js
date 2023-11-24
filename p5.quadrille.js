@@ -1321,6 +1321,7 @@ class Quadrille {
     mode = 'LUMA',
     target = this.outline,
     ascending = true,
+    rotation,
     textColor = this.textColor,
     textZoom = this.textZoom,
     background = this.background,
@@ -1333,12 +1334,11 @@ class Quadrille {
     numberDisplay = this.numberDisplay,
     arrayDisplay = this.arrayDisplay,
     objectDisplay = this.objectDisplay,
-    // TODO decide better (tile) params
-    tileDisplay = 0,
+    tileDisplay = this.tileDisplay,
   } = {}) {
     let memory1D = this.toArray();
     const params = {
-      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
+      background, cellLength, rotation, textColor, textZoom, imageDisplay, colorDisplay, outline,
       outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
     };
     switch (mode) {
@@ -1383,6 +1383,7 @@ class Quadrille {
    */
   static sample({
     value,
+    rotation,
     imageDisplay = this.imageDisplay,
     colorDisplay = this.colorDisplay,
     stringDisplay = this.stringDisplay,
@@ -1400,7 +1401,7 @@ class Quadrille {
     const graphics = createGraphics(cellLength, cellLength);
     graphics.background(background);
     const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
+      graphics, value, rotation, textColor, textZoom, outline, outlineWeight, cellLength,
       imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
     };
     this._display(params);
@@ -1442,20 +1443,12 @@ class Quadrille {
         break;
       }
     }
-    // /*
-    // this works
-    if (rotation) {
-      graphics.pop(graphics._rendererState);
-    }
-    // */
     if (params.tileDisplay) {
       params.tileDisplay.call(this, params);
     }
-    /*
     if (rotation) {
       graphics.pop(graphics._rendererState);
     }
-    // */
   }
 
   /**
