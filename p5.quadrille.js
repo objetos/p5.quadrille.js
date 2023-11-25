@@ -4,109 +4,96 @@ class Quadrille {
   // STYLE 
 
   // TODOs
-  // i. remove deprecated stuff
-  // ii. prefer Quadrille.CONSTANT over this.CONSTANT ?
+  // i. prefer Quadrille.CONSTANT over this.CONSTANT ?
 
   /**
    * Default text color.
    */
-  static textColor = 'DodgerBlue';
+  static _textColor = 'DodgerBlue';
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.textColor} instead.
-   */
-  static get TEXT_COLOR() {
-    console.warn('Deprecation Warning: TEXT_COLOR is deprecated. Please use textColor instead.');
-    return Quadrille.textColor;
+  // Getter for textColor
+  static get textColor() {
+    return Quadrille._textColor;
   }
 
-  static set TEXT_COLOR(value) {
-    Quadrille.textColor = value;
+  // Setter for textColor with simplified type checking
+  static set textColor(value) {
+    Quadrille._textColor = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._textColor;
   }
 
   /**
    * Default text drawing zoom.
    */
-  static textZoom = 0.89;
+  static _textZoom = 0.89;
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.textZoom} instead.
-   */
-  static get TEXT_ZOOM() {
-    console.warn('Deprecation Warning: TEXT_ZOOM is deprecated. Please use textZoom instead.');
-    return Quadrille.textZoom;
+  // Getter for textZoom
+  static get textZoom() {
+    return Quadrille._textZoom;
   }
 
-  static set TEXT_ZOOM(value) {
-    Quadrille.textZoom = value;
+  // Setter for textZoom with type checking
+  static set textZoom(value) {
+    Quadrille._textZoom = (typeof value === 'number' && value > 0) ? value : Quadrille._textZoom;
   }
 
   /**
    * Default drawing outline.
    */
-  static outline = 'OrangeRed';
+  static _outline = 'OrangeRed';
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.outline} instead.
-   */
-  static get OUTLINE() {
-    console.warn('Deprecation Warning: OUTLINE is deprecated. Please use outline instead.');
-    return Quadrille.outline;
+  // Getter for outline
+  static get outline() {
+    return Quadrille._outline;
   }
 
-  static set OUTLINE(value) {
-    Quadrille.outline = value;
+  // Setter for outline with type checking
+  static set outline(value) {
+    Quadrille._outline = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._outline;
   }
 
   /**
    * Default drawing outline weight.
    */
-  static outlineWeight = 2;
+  static _outlineWeight = 2;
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.outlineWeight} instead.
-   */
-  static get OUTLINE_WEIGHT() {
-    console.warn('Deprecation Warning: OUTLINE_WEIGHT is deprecated. Please use outlineWeight instead.');
-    return Quadrille.outlineWeight;
+  // Getter for outlineWeight
+  static get outlineWeight() {
+    return Quadrille._outlineWeight;
   }
 
-  static set OUTLINE_WEIGHT(value) {
-    Quadrille.outlineWeight = value;
+  // Setter for outlineWeight with type checking
+  static set outlineWeight(value) {
+    Quadrille._outlineWeight = (typeof value === 'number' && value >= 0) ? value : Quadrille._outlineWeight;
   }
 
   /**
    * Default drawing cell length.
    */
-  static cellLength = 100;
+  static _cellLength = 100;
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.cellLength} instead.
-   */
-  static get CELL_LENGTH() {
-    console.warn('Deprecation Warning: CELL_LENGTH is deprecated. Please use cellLength instead.');
-    return Quadrille.cellLength;
+  // Getter for cellLength
+  static get cellLength() {
+    return Quadrille._cellLength;
   }
 
-  static set CELL_LENGTH(value) {
-    Quadrille.cellLength = value;
+  // Setter for cellLength with type checking
+  static set cellLength(value) {
+    Quadrille._cellLength = (typeof value === 'number' && value > 0) ? value : Quadrille._cellLength;
   }
 
   /**
    * Default background used in sort.
    */
-  static background = 'white';
+  static _background = 'white';
 
-  /**
-   * @deprecated Since version 2.0.0. Use {@link Quadrille.background} instead.
-   */
-  static get BACKGROUND() {
-    console.warn('Deprecation Warning: BACKGROUND is deprecated. Please use background instead.');
-    return Quadrille.background;
+  // Getter for background
+  static get background() {
+    return Quadrille._background;
   }
 
-  static set BACKGROUND(value) {
-    Quadrille.background = value;
+  // Setter for background with type checking
+  static set background(value) {
+    Quadrille._background = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._background;
   }
 
   // chess specific stuff
@@ -114,12 +101,32 @@ class Quadrille {
   /**
    * Default chess black squares.
    */
-  static blackSquare = '#D28C45'; // wikipedia; '#769656' // chess.com
+  static _blackSquare = '#D28C45'; // wikipedia; '#769656' // chess.com
+
+  // Getter for blackSquare
+  static get blackSquare() {
+    return Quadrille._blackSquare;
+  }
+
+  // Setter for blackSquare with type checking
+  static set blackSquare(value) {
+    Quadrille._blackSquare = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._blackSquare;
+  }
 
   /**
    * Default chess white squares.
    */
-  static whiteSquare = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
+  static _whiteSquare = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
+
+  // Getter for whiteSquare
+  static get whiteSquare() {
+    return Quadrille._whiteSquare;
+  }
+
+  // Setter for whiteSquare with type checking
+  static set whiteSquare(value) {
+    Quadrille._whiteSquare = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._whiteSquare;
+  }
 
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
@@ -138,14 +145,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `and` instead.
-   */
-  static AND() {
-    console.warn('Warning: AND is deprecated! Use and instead.');
-    return this.and(...arguments);
-  }
-
-  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -160,14 +159,6 @@ class Quadrille {
         }
       },
       row, col);
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `or` instead.
-   */
-  static OR() {
-    console.warn('Warning: OR is deprecated! Use or instead.');
-    return this.or(...arguments);
   }
 
   /**
@@ -191,14 +182,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `xor` instead.
-   */
-  static XOR() {
-    console.warn('Warning: XOR is deprecated! Use xor instead.');
-    return this.xor(...arguments);
-  }
-
-  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -219,14 +202,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `diff` instead.
-   */
-  static DIFF() {
-    console.warn('Warning: DIFF is deprecated! Use diff instead.');
-    return this.diff(...arguments);
-  }
-
-  /**
    * @param {Quadrille} quadrille1 
    * @param {Quadrille} quadrille2 
    * @param {number} row respect to quadrille1 origin
@@ -244,14 +219,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `neg` instead.
-   */
-  static NEG() {
-    console.warn('Warning: NEG is deprecated! Use neg instead.');
-    return this.neg(...arguments);
-  }
-
-  /**
    * @param {Quadrille} quadrille 
    * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value used to fill the returned quadrille.
    * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
@@ -265,14 +232,6 @@ class Quadrille {
       }
     });
     return result;
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `merge` instead.
-   */
-  static OP() {
-    console.warn('Warning: OP is deprecated! Use merge instead.');
-    return this.merge(...arguments);
   }
 
   /**
@@ -634,14 +593,6 @@ class Quadrille {
 
   _toIndex(row, col, width = this.width) {
     return row * width + col;
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `toBigInt` instead.
-   */
-  toInt() {
-    console.warn('Warning: toInt is deprecated! Use toBigInt instead.');
-    return this.toBigInt(...arguments);
   }
 
   /**
@@ -1438,14 +1389,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `numberDisplay` instead.
-   */
-  static NUMBER() {
-    console.warn('Warning: NUMBER is deprecated! Use numberDisplay instead.');
-    this.numberDisplay(...arguments);
-  }
-
-  /**
    * Number cell drawing.
    */
   static numberDisplay({
@@ -1454,14 +1397,6 @@ class Quadrille {
     cellLength = this.cellLength
   } = {}) {
     this.colorDisplay({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `colorDisplay` instead.
-   */
-  static COLOR() {
-    console.warn('Warning: COLOR is deprecated! Use colorDisplay instead.');
-    this.colorDisplay(...arguments);
   }
 
   /**
@@ -1478,14 +1413,6 @@ class Quadrille {
   }
 
   /**
-   * @deprecated since version 2.0. Use `imageDisplay` instead.
-   */
-  static IMAGE() {
-    console.warn('Warning: IMAGE is deprecated! Use imageDisplay instead.');
-    this.imageDisplay(...arguments);
-  }
-
-  /**
    * Image cell drawing.
    */
   static imageDisplay({
@@ -1495,14 +1422,6 @@ class Quadrille {
   } = {}) {
     graphics.noStroke();
     graphics.image(value, 0, 0, cellLength, cellLength);
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `stringDisplay` instead.
-   */
-  static STRING() {
-    console.warn('Warning: STRING is deprecated! Use stringDisplay instead.');
-    this.stringDisplay(...arguments);
   }
 
   /**
@@ -1520,14 +1439,6 @@ class Quadrille {
     graphics.textSize(cellLength * textZoom / value.length);
     graphics.textAlign(CENTER, CENTER);
     graphics.text(value, 0, 0, cellLength, cellLength);
-  }
-
-  /**
-   * @deprecated since version 2.0. Use `tileDisplay` instead.
-   */
-  static TILE() {
-    console.warn('Warning: TILE is deprecated! Use tileDisplay instead.');
-    this.tileDisplay(...arguments);
   }
 
   /**
