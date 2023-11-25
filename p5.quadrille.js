@@ -677,7 +677,7 @@ class Quadrille {
    */
   toImage(filename, {
     values,
-    rotation,
+    rotation = this._rotation,
     tileDisplay = this.constructor.tile,
     imageDisplay = this.constructor.image,
     colorDisplay = this.constructor.color,
@@ -1147,7 +1147,11 @@ class Quadrille {
   /**
    * Horizontal reflection.
    */
-  reflect() {
+  reflect(cells) {
+    // rotation has nothing to do
+    //cells && (this._rotation = ((this._rotation ?? 0) + Math.PI) % (2 * Math.PI));
+    // TODO
+    // this._scaling = cells ? -1 : 1;
     this._memory2D.reverse();
     return this;
   }
@@ -1155,7 +1159,8 @@ class Quadrille {
   /**
    * Transpose the quadrille.
    */
-  transpose() {
+  transpose(cells) {
+    cells && (this._rotation = ((this._rotation ?? 0) + Math.PI) % (2 * Math.PI));
     // credit goes to Fawad Ghafoorwho wrote about it here:
     // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
@@ -1165,7 +1170,8 @@ class Quadrille {
   /**
    * π/2 clockwise rotation.
    */
-  rotate() {
+  rotate(cells) {
+    cells && (this._rotation = ((this._rotation ?? 0) + Math.PI / 2) % (2 * Math.PI));
     // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
     // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
     this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
@@ -1322,7 +1328,7 @@ class Quadrille {
     mode = 'LUMA',
     target = this.outline,
     ascending = true,
-    rotation,
+    rotation = this._rotation,
     textColor = this.textColor,
     textZoom = this.textZoom,
     background = this.background,
@@ -1422,8 +1428,8 @@ class Quadrille {
   static _display(params) {
     const graphics = params.graphics;
     const rotation = params.rotation;
+    const displacement = params.cellLength / 2;
     if (rotation) {
-      const displacement = params.cellLength / 2;
       graphics._rendererState = graphics.push();
       graphics.translate(displacement, displacement);
       graphics.angleMode('radians');
@@ -1448,6 +1454,7 @@ class Quadrille {
       params.tileDisplay.call(this, params);
     }
     if (rotation) {
+      //graphics.translate(-displacement, -displacement); // TODO weirdly breaks reflect
       graphics.pop(graphics._rendererState);
     }
   }
@@ -1608,7 +1615,7 @@ class Quadrille {
     row,
     col,
     values,
-    rotation,
+    rotation = quadrille._rotation,
     imageDisplay = quadrille.constructor.imageDisplay,
     colorDisplay = quadrille.constructor.colorDisplay,
     stringDisplay = quadrille.constructor.stringDisplay,
