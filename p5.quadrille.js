@@ -1187,9 +1187,10 @@ class Quadrille {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
       let half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
+        const source = this.clone();
         visitQuadrille(this, (i, j) => {
           if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
-            this._conv(mask, i, j, half_size)
+            this._conv(mask, i, j, half_size, source);
           }
         });
       }
@@ -1200,7 +1201,7 @@ class Quadrille {
     return this;
   }
 
-  _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2) {
+  _conv(mask, row, col, cache_half_size = (mask.width - 1) / 2, source = this) {
     let r = 0;
     let g = 0;
     let b = 0;
@@ -1209,7 +1210,7 @@ class Quadrille {
       for (let jmask = 0; jmask < mask.width; jmask++) {
         let i = row + imask - cache_half_size;
         let j = col + jmask - cache_half_size;
-        let neighbor = this.read(i, j);
+        let neighbor = source.read(i, j);
         let mask_value = mask.read(imask, jmask);
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           apply = true;
