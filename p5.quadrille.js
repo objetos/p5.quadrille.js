@@ -1333,8 +1333,7 @@ class Quadrille {
     numberDisplay = this.numberDisplay,
     arrayDisplay = this.arrayDisplay,
     objectDisplay = this.objectDisplay,
-    // TODO decide better (tile) params
-    tileDisplay = 0,
+    tileDisplay = this.tileDisplay
   } = {}) {
     let memory1D = this.toArray();
     const params = {
@@ -1568,7 +1567,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.7',
+    VERSION: '2.0.8',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
