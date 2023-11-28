@@ -225,7 +225,7 @@ class Quadrille {
    */
   static neg(quadrille, value) {
     if (value === undefined) return;
-    let result = new Quadrille(quadrille.width, quadrille.height);
+    const result = new Quadrille(quadrille.width, quadrille.height);
     visitQuadrille(quadrille, (row, col) => {
       if (quadrille.isEmpty(row, col)) {
         result.fill(row, col, value);
@@ -248,7 +248,7 @@ class Quadrille {
     col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
       quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._col - quadrille1._col : 0);
     // i. create resulted quadrille
-    let quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
+    const quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
     visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
@@ -321,11 +321,11 @@ class Quadrille {
   }
 
   _init1D(memory1D, width = memory1D.length) {
-    let height = Math.ceil(memory1D.length / width);
+    const height = Math.ceil(memory1D.length / width);
     this._memory2D = new Array(height);
     for (let i = 0; i < height; i++) {
-      let start = width * i;
-      let end = start + width;
+      const start = width * i;
+      const end = start + width;
       this._memory2D[i] = this._format(memory1D.slice(start, end), width);
     }
   }
@@ -344,8 +344,8 @@ class Quadrille {
 
   _fromBigInt(...args) {
     if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] !== undefined) {
-      let length = this.width * this.height;
-      let bigint = BigInt(args[0]);
+      const length = this.width * this.height;
+      const bigint = BigInt(args[0]);
       if (bigint < 0) {
         throw new Error('Value cannot be negative');
       }
@@ -367,7 +367,7 @@ class Quadrille {
         this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
         const rows = placement.split('/');
         for (let i = 0; i < 8; i++) {
-          let col = 0;
+          const col = 0;
           for (const char of rows[i]) {
             if (isNaN(char)) {
               this._memory2D[i][col] = this.constructor.chessSymbols[char];
@@ -383,7 +383,7 @@ class Quadrille {
 
   _fromImage(...args) {
     if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
-      let image = new p5.Image(args[0].width, args[0].height);
+      const image = new p5.Image(args[0].width, args[0].height);
       image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
@@ -393,26 +393,26 @@ class Quadrille {
     image.resize(this.width, this.height);
     image.loadPixels();
     for (let i = 0; i < image.pixels.length / 4; i++) {
-      let r = image.pixels[4 * i];
-      let g = image.pixels[4 * i + 1];
-      let b = image.pixels[4 * i + 2];
-      let a = image.pixels[4 * i + 3];
-      let _ = this._fromIndex(i);
+      const r = image.pixels[4 * i];
+      const g = image.pixels[4 * i + 1];
+      const b = image.pixels[4 * i + 2];
+      const a = image.pixels[4 * i + 3];
+      const _ = this._fromIndex(i);
       this.fill(_.row, _.col, color([r, g, b, a]));
     }
   }
 
   _pixelator2(image) {
     image.loadPixels();
-    let r = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let g = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let b = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let a = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    let t = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    const r = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    const g = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    const b = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    const a = Array(this.height).fill().map(() => Array(this.width).fill(null));
+    const t = Array(this.height).fill().map(() => Array(this.width).fill(null));
     for (let i = 0; i < image.pixels.length / 4; i++) {
-      let _ = this._fromIndex(i, image.width);
-      let _i = Math.floor(_.row * this.height / image.height);
-      let _j = Math.floor(_.col * this.width / image.width);
+      const _ = this._fromIndex(i, image.width);
+      const _i = Math.floor(_.row * this.height / image.height);
+      const _j = Math.floor(_.col * this.width / image.width);
       r[_i][_j] += image.pixels[4 * i];
       g[_i][_j] += image.pixels[4 * i + 1];
       b[_i][_j] += image.pixels[4 * i + 2];
@@ -443,7 +443,7 @@ class Quadrille {
         this._init1D(memory);
         return;
       }
-      let memory2D = memory.map(array => array.slice());
+      const memory2D = memory.map(array => array.slice());
       let width;
       for (const entry of memory2D) {
         if (!Array.isArray(entry)) {
@@ -490,7 +490,7 @@ class Quadrille {
    * Sets quadrille height (number of rows).
    */
   set height(height) {
-    let rows = height - this.height;
+    const rows = height - this.height;
     while (this.height !== height) {
       rows > 0 ? this.insert(this.height) : this.delete(this.height - 1);
     }
@@ -613,8 +613,8 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    let memory2D = this.clone(false)._memory2D;
-    let result = new Array();
+    const memory2D = this.clone(false)._memory2D;
+    const result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
     }
@@ -707,7 +707,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone(cache = true) {
-    let clone = new Quadrille(this._memory2D.map(array => array.slice()));
+    const clone = new Quadrille(this._memory2D.map(array => array.slice()));
     if (cache) {
       clone._cellLength = this._cellLength;
       clone._x = this._x;
@@ -725,7 +725,7 @@ class Quadrille {
    * @returns Quadrille ring of neighbor cells centered at (row, col).
    */
   ring(row, col, dimension = 1) {
-    let array1D = [];
+    const array1D = [];
     for (let i = row - dimension; i <= row + dimension; i++) {
       for (let j = col - dimension; j <= col + dimension; j++) {
         array1D.push(this.read(i, j));
@@ -1045,7 +1045,7 @@ class Quadrille {
     }
     let counter = 0;
     while (counter < times) {
-      let _ = this._fromIndex(Math.floor(Math.random() * this.size));
+      const _ = this._fromIndex(Math.floor(Math.random() * this.size));
       if (value === null ? this.isFilled(_.row, _.col) : this.isEmpty(_.row, _.col)) {
         value === null ? this.clear(_.row, _.col) : this.fill(_.row, _.col, value);
         counter++;
@@ -1058,7 +1058,7 @@ class Quadrille {
    * Randomly re-arranges cell entries.
    */
   randomize() {
-    let clone = this.clone(false);
+    const clone = this.clone(false);
     this.clear();
     visitQuadrille(clone, (row, col) => {
       if (clone.isFilled(row, col)) {
@@ -1136,7 +1136,7 @@ class Quadrille {
    */
   filter(mask, row, col) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
-      let half_size = (mask.width - 1) / 2;
+      const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
         visitQuadrille(this, (i, j) => {
@@ -1159,14 +1159,14 @@ class Quadrille {
     let apply;
     for (let imask = 0; imask < mask.height; imask++) {
       for (let jmask = 0; jmask < mask.width; jmask++) {
-        let i = row + imask - cache_half_size;
-        let j = col + jmask - cache_half_size;
-        let neighbor = source.read(i, j);
-        let mask_value = mask.read(imask, jmask);
+        const i = row + imask - cache_half_size;
+        const j = col + jmask - cache_half_size;
+        const neighbor = source.read(i, j);
+        const mask_value = mask.read(imask, jmask);
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           apply = true;
           // luma coefficients are: 0.299, 0.587, 0.114, 0
-          let weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
+          const weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
           r += red(neighbor) * weight;
           g += green(neighbor) * weight;
           b += blue(neighbor) * weight;
@@ -1211,11 +1211,11 @@ class Quadrille {
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
       visitQuadrille(this, (row, col) => {
-        let coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
+        const coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
         // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
-          let length = Math.max(array0.length, array1.length, array2.length);
-          let array = new Array(length);
+          const length = Math.max(array0.length, array1.length, array2.length);
+          const array = new Array(length);
           for (let k = 0; k < array.length; k++) {
             array[k] = (array0[k] ?? 0) * coords.w0 + (array1[k] ?? 0) * coords.w1 + (array2[k] ?? 0) * coords.w2;
           }
@@ -1242,8 +1242,8 @@ class Quadrille {
    * barycentric coordinates at (row, col) as the {w0, w1, w2} object literal.
    */
   _barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
-    let edges = this._edge_functions(row, col, row0, col0, row1, col1, row2, col2);
-    let area = this._parallelogram_area(row0, col0, row1, col1, row2, col2);
+    const edges = this._edge_functions(row, col, row0, col0, row1, col1, row2, col2);
+    const area = this._parallelogram_area(row0, col0, row1, col1, row2, col2);
     return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
   }
 
@@ -1260,9 +1260,9 @@ class Quadrille {
    * at (row, col) as the {e01, e12, e20} object literal.
    */
   _edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
-    let e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
-    let e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
-    let e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
+    const e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
+    const e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
+    const e20 = (row2 - row0) * col + (col0 - col2) * row + (col2 * row0 - row2 * col0);
     return { e01, e12, e20 };
   }
 
@@ -1287,7 +1287,7 @@ class Quadrille {
     objectDisplay = this.objectDisplay,
     tileDisplay = this.tileDisplay
   } = {}) {
-    let memory1D = this.toArray();
+    const memory1D = this.toArray();
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
       outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
@@ -1296,31 +1296,31 @@ class Quadrille {
       case 'DISTANCE':
         memory1D.sort((valueA, valueB) => {
           params.value = valueA;
-          let sa = this.constructor.sample({ ...params, value: valueA });
-          let sb = this.constructor.sample({ ...params, value: valueB });
-          let wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
+          const sa = this.constructor.sample({ ...params, value: valueA });
+          const sb = this.constructor.sample({ ...params, value: valueB });
+          const wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
             Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
-          let wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
+          const wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
             Math.pow((sb.b / sb.total) - blue(target), 2) + Math.pow((sb.a / sb.total) - alpha(target), 2));
           return wa - wb;
         });
         break;
       case 'AVG':
         memory1D.sort((valueA, valueB) => {
-          let sa = this.constructor.sample({ ...params, value: valueA });
-          let sb = this.constructor.sample({ ...params, value: valueB });
-          let wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
-          let wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
+          const sa = this.constructor.sample({ ...params, value: valueA });
+          const sb = this.constructor.sample({ ...params, value: valueB });
+          const wa = 0.333 * sa.r + 0.333 * sa.g + 0.333 * sa.b;
+          const wb = 0.333 * sb.r + 0.333 * sb.g + 0.333 * sb.b;
           return wa - wb;
         });
         break;
       case 'LUMA':
       default:
         memory1D.sort((valueA, valueB) => {
-          let sa = this.constructor.sample({ ...params, value: valueA });
-          let sb = this.constructor.sample({ ...params, value: valueB });
-          let wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
-          let wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
+          const sa = this.constructor.sample({ ...params, value: valueA });
+          const sb = this.constructor.sample({ ...params, value: valueB });
+          const wa = 0.299 * sa.r + 0.587 * sa.g + 0.114 * sa.b;
+          const wb = 0.299 * sb.r + 0.587 * sb.g + 0.114 * sb.b;
           return wa - wb;
         });
         break;
@@ -1357,7 +1357,7 @@ class Quadrille {
     this._display(params);
     graphics.loadPixels();
     let r = 0, g = 0, b = 0, a = 0;
-    let total = graphics.pixels.length / 4;
+    const total = graphics.pixels.length / 4;
     for (let i = 0; i < total; i++) {
       r += graphics.pixels[4 * i];
       g += graphics.pixels[4 * i + 1];
