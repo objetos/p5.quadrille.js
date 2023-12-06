@@ -367,7 +367,7 @@ class Quadrille {
         this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
         const rows = placement.split('/');
         for (let i = 0; i < 8; i++) {
-          const col = 0;
+          let col = 0;
           for (const char of rows[i]) {
             if (isNaN(char)) {
               this._memory2D[i][col] = this.constructor.chessSymbols[char];
@@ -614,7 +614,7 @@ class Quadrille {
    */
   toArray() {
     const memory2D = this.clone(false)._memory2D;
-    const result = new Array();
+    let result = new Array();
     for (let i = 0; i < memory2D.length; i++) {
       result = result.concat(memory2D[i]);
     }
@@ -1162,7 +1162,21 @@ class Quadrille {
         const i = row + imask - cache_half_size;
         const j = col + jmask - cache_half_size;
         const neighbor = source.read(i, j);
-        const mask_value = mask.read(imask, jmask);
+        let mask_value = mask.read(imask, jmask);
+        // /*
+        if (typeof mask_value === 'string') {
+          const parts = mask_value.trim().split(/\s*([\+\-\*\/])\s*/);
+          const num1 = parseFloat(parts[0]);
+          const num2 = parseFloat(parts[2]);
+          if (!isNaN(num1) && (parts.length === 1 || !isNaN(num2))) {
+            mask_value = parts.length === 1 ? num1 :
+              parts[1] === '+' ? num1 + num2 :
+                parts[1] === '-' ? num1 - num2 :
+                  parts[1] === '*' ? num1 * num2 :
+                    parts[1] === '/' ? num1 / num2 : mask_value;
+          }
+        }
+        // */
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           apply = true;
           // luma coefficients are: 0.299, 0.587, 0.114, 0
@@ -1287,7 +1301,7 @@ class Quadrille {
     objectDisplay = this.objectDisplay,
     tileDisplay = this.tileDisplay
   } = {}) {
-    const memory1D = this.toArray();
+    let memory1D = this.toArray();
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
       outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
