@@ -1163,20 +1163,6 @@ class Quadrille {
         const j = col + jmask - cache_half_size;
         const neighbor = source.read(i, j);
         let mask_value = mask.read(imask, jmask);
-        // /*
-        if (typeof mask_value === 'string') {
-          const parts = mask_value.trim().split(/\s*([\+\-\*\/])\s*/);
-          const num1 = parseFloat(parts[0]);
-          const num2 = parseFloat(parts[2]);
-          if (!isNaN(num1) && (parts.length === 1 || !isNaN(num2))) {
-            mask_value = parts.length === 1 ? num1 :
-              parts[1] === '+' ? num1 + num2 :
-                parts[1] === '-' ? num1 - num2 :
-                  parts[1] === '*' ? num1 * num2 :
-                    parts[1] === '/' ? num1 / num2 : mask_value;
-          }
-        }
-        // */
         if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
           apply = true;
           // luma coefficients are: 0.299, 0.587, 0.114, 0
