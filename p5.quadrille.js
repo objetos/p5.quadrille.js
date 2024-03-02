@@ -1348,23 +1348,46 @@ class Quadrille {
     textColor = this.textColor,
     textZoom = this.textZoom
   } = {}) {
-    const graphics = createGraphics(cellLength, cellLength);
-    graphics.background(background);
-    const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
-    };
-    this._display(params);
-    graphics.loadPixels();
-    let r = 0, g = 0, b = 0, a = 0;
-    const total = graphics.pixels.length / 4;
-    for (let i = 0; i < total; i++) {
-      r += graphics.pixels[4 * i];
-      g += graphics.pixels[4 * i + 1];
-      b += graphics.pixels[4 * i + 2];
-      a += graphics.pixels[4 * i + 3];
+    let r = 0, g = 0, b = 0, a = 0, total = 0;
+    if (webglVersion === 'p2d') {
+      const graphics = createGraphics(cellLength, cellLength);
+      graphics.background(background);
+      const params = {
+        graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
+        imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      };
+      this._display(params);
+      graphics.loadPixels();
+      total = graphics.pixels.length / 4;
+      for (let i = 0; i < total; i++) {
+        r += graphics.pixels[4 * i];
+        g += graphics.pixels[4 * i + 1];
+        b += graphics.pixels[4 * i + 2];
+        a += graphics.pixels[4 * i + 3];
+      }
+      graphics.updatePixels();
     }
-    graphics.updatePixels();
+    else {
+      const graphics = window;
+      const fbo = createFramebuffer();
+      fbo.begin();
+      graphics.background(background);
+      const params = {
+        graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
+        imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      };
+      this._display(params);
+      fbo.loadPixels();
+      total = fbo.pixels.length / 4;
+      for (let i = 0; i < total; i++) {
+        r += fbo.pixels[4 * i];
+        g += fbo.pixels[4 * i + 1];
+        b += fbo.pixels[4 * i + 2];
+        a += fbo.pixels[4 * i + 3];
+      }
+      fbo.updatePixels();
+      fbo.end();
+    }
     return { r, g, b, a, total };
   }
 
