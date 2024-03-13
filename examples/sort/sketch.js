@@ -35,8 +35,8 @@ function setup() {
   let c3 = color(random(255), random(255), random(255), 255);
   let e1 = '🗣';
   createCanvas(COLS * LENGTH, ROWS * LENGTH);
-  //Quadrille.CELL_LENGTH = 500;
-  graphics = createGraphics(Quadrille.CELL_LENGTH, Quadrille.CELL_LENGTH);
+  //Quadrille.cellLength = 500;
+  graphics = createGraphics(Quadrille.cellLength, Quadrille.cellLength);
   colorCells = createQuadrille([color('red'), color('green'), color('blue'), color('cyan'), color('magenta'), color('yellow')/*, color(int(random(255)), int(random(255)), int(random(255)))*/]);
   matrixCells = createQuadrille([[c1, 'g'],
   [null, 'o', al],
@@ -62,7 +62,7 @@ function draw() {
     //Quadrille.COLOR({ graphics: graphics, outline: 'blue', outlineWeight: 6/*, cellLength: Quadrille.CELL_LENGTH */});
     //Quadrille.IMAGE({ graphics: graphics, cell: al });
     //graphics.background('white');
-    Quadrille.STRING({ graphics: this, cell: 'g', outline: 'black', outlineWeight: 3 });
+    Quadrille.stringDisplay({ graphics: this, value: 'g', outline: 'black', outlineWeight: 3 });
     //Quadrille.NUMBER({ graphics: graphics, outlineWeight: 0, min: -1, max: 1 });
     //image(graphics, 0, 0);
     /*
