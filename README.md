@@ -2,6 +2,8 @@
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) open source library designed for implementing various [puzzle video games](https://en.wikipedia.org/wiki/Puzzle_video_game) and conducting visual computing experiments.
 
+![Quadrille cells sorted by their luminance levels.](p5.quadrille.js.png)
+
 In geometry, the square-tiling, square-tessellation or square-grid is a regular tiling of the Euclidean plane. [John Horton Conway](https://en.wikipedia.org/wiki/John_Horton_Conway) called it a quadrille.
 
 The internal angle of the square is π/2 so four squares at a point make a full 2π angle. It is one of three regular tilings of the plane. The other two are the [triangular-tiling](https://en.wikipedia.org/wiki/Triangular_tiling) and the [hexagonal-tiling](https://en.wikipedia.org/wiki/Hexagonal_tiling).
