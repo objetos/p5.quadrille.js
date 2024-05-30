@@ -1,18 +1,25 @@
 {{ $id := .Get `id` }}
-{{ $defver := `1.9.2` }}
+{{ $defver := `1.9.4` }}
+{{ $sound := default "false" (.Get "sound") | lower }}
+{{ $treegl := default "false" (.Get "treegl") | lower }}
+{{ $platonic := default "false" (.Get "platonic") | lower }}
+{{ $quadrille := default "false" (.Get "quadrille") | lower }}
 {{ $lib1 := .Get `lib1` }}
 {{ $lib2 := .Get `lib2` }}
 {{ $lib3 := .Get `lib3` }}
 {{ $lib4 := .Get `lib4` }}
 {{ $lib5 := .Get `lib5` }}
 
-<script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/p5.min.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/addons/p5.sound.min.js></script>
-{{ if isset .Params "lib1" }} <script src={{ $lib1 }}></script> {{ end }}
-{{ if isset .Params "lib2" }} <script src={{ $lib2 }}></script> {{ end }}
-{{ if isset .Params "lib3" }} <script src={{ $lib3 }}></script> {{ end }}
-{{ if isset .Params "lib4" }} <script src={{ $lib4 }}></script> {{ end }}
-{{ if isset .Params "lib5" }} <script src={{ $lib5 }}></script> {{ end }}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/p5.min.js'></script>
+{{ if eq $sound "true" }}<script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/{{ default $defver (.Get `ver`) }}/addons/p5.sound.min.js'></script>{{ end }}
+{{ if eq $treegl "true" }}<script src='https://cdn.jsdelivr.net/gh/VisualComputing/p5.treegl/p5.treegl.min.js'></script>{{ end }}
+{{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/gh/VisualComputing/p5.platonic/p5.platonic.min.js'></script>{{ end }}
+{{ if eq $quadrille "true" }}<script src='https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js'></script>{{ end }}
+{{ if isset .Params "lib1" }}<script src={{ $lib1 }}></script>{{ end }}
+{{ if isset .Params "lib2" }}<script src={{ $lib2 }}></script>{{ end }}
+{{ if isset .Params "lib3" }}<script src={{ $lib3 }}></script>{{ end }}
+{{ if isset .Params "lib4" }}<script src={{ $lib4 }}></script>{{ end }}
+{{ if isset .Params "lib5" }}<script src={{ $lib5 }}></script>{{ end }}
 
 <div id="{{ $id }}"></div>
 <script>
