@@ -769,8 +769,12 @@ class Quadrille {
     return value instanceof p5.Color;
   }
 
+  static _isFunction(value) {
+    return typeof value === 'function';
+  }
+
   static _isImage(value) {
-    return value instanceof p5.Image || value instanceof p5.Graphics;
+    return value instanceof p5.Image || value instanceof p5.Graphics || value instanceof p5.Framebuffer;
   }
 
   static _isArray(value) {
@@ -782,6 +786,7 @@ class Quadrille {
       !Quadrille._isColor(value) &&
       !Quadrille._isImage(value) &&
       !Quadrille._isArray(value) &&
+      !Quadrille._isFunction(value) &&
       typeof value === 'object';
   }
 
@@ -857,6 +862,15 @@ class Quadrille {
    */
   isImage(row, col) {
     return this.constructor._isImage(this.read(row, col));
+  }
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a function
+   */
+  isFunction(row, col) {
+    return this.constructor._isFunction(this.read(row, col));
   }
 
   /**
@@ -1332,6 +1346,11 @@ class Quadrille {
   /**
    * Sample cell using background as the {r, g, b, a, total} object literal.
    */
+  /*
+  TODO 2.1:
+  i. key: in webgl mode use fbo to seepd up sampling!
+  ii. add this.functionDisplay
+  */
   static sample({
     value,
     imageDisplay = this.imageDisplay,
@@ -1370,6 +1389,8 @@ class Quadrille {
 
   static _display(params) {
     const handlers = [
+      { check: this._isFunction, display: params.functionDisplay },
+      //{ check: this._isFunction, display: Quadrille.functionDisplay }, // good to bypass overriding
       { check: this._isImage, display: params.imageDisplay },
       { check: this._isColor, display: params.colorDisplay },
       { check: this._isNumber, display: params.numberDisplay },
@@ -1412,6 +1433,26 @@ class Quadrille {
     graphics.rect(0, 0, cellLength, cellLength);
   }
 
+  static functionDisplay({
+    graphics,
+    options,
+    value,
+    cellLength = this.cellLength
+  } = {}) {
+    value.fbo ||= createFramebuffer({ width: cellLength, height: cellLength });
+    value.fbo.begin();
+    //graphics.push();
+    graphics._rendererState = graphics.push();
+    graphics._renderer.GL !== undefined ?
+      (options?.mode === 'corner' && graphics.translate(-cellLength / 2, -cellLength / 2)) :
+      (options?.mode === 'center' && graphics.translate(cellLength / 2, cellLength / 2));
+    value.call(graphics, options);
+    //graphics.pop();
+    graphics.pop(graphics._rendererState)
+    value.fbo.end();
+    Quadrille.imageDisplay({ graphics, cellLength, value: value.fbo });
+  }
+
   /**
    * Image cell drawing.
    */
@@ -1430,10 +1471,12 @@ class Quadrille {
   static stringDisplay({
     graphics,
     value,
+    textFont,
     cellLength = this.cellLength,
     textColor = this.textColor,
     textZoom = this.textZoom
   } = {}) {
+    textFont && graphics.textFont(textFont)
     graphics.noStroke();
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / value.length);
@@ -1479,7 +1522,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.8',
+    VERSION: '2.1.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1496,6 +1539,10 @@ class Quadrille {
     row,
     col,
     values,
+    textFont,
+    mode = 'corner',
+    options = {},
+    functionDisplay = quadrille.constructor.functionDisplay,
     imageDisplay = quadrille.constructor.imageDisplay,
     colorDisplay = quadrille.constructor.colorDisplay,
     stringDisplay = quadrille.constructor.stringDisplay,
@@ -1515,13 +1562,16 @@ class Quadrille {
     quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
     quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
+    options.mode = options.mode || mode;
+    graphics._renderer.GL !== undefined ? (mode === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
+      (mode === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
     graphics.translate(quadrille._x, quadrille._y);
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom,
+        row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, mode, options, functionDisplay,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
       quadrille.constructor._display(params);
