@@ -926,16 +926,16 @@ class Quadrille {
    */
   clear(...args) {
     if (args.length === 0) {
-      this._memory2D = this._memory2D.map(x => x.map(y => y = null));
+      this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
     }
     if (args.length === 1 && typeof args[0] === 'number') {
       if (args[0] >= 0 && args[0] < this.height) {
-        this._memory2D[args[0]].fill(null);
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
       }
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
-        this._memory2D[args[0]][args[1]] = null;
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
@@ -1016,6 +1016,14 @@ class Quadrille {
       }
     }
     return this;
+  }
+
+  _clearCell(value) {
+    if (Quadrille._isFunction(value)) {
+      value.fbo?.remove();
+      value.fbo = undefined;
+    }
+    return null;
   }
 
   _flood(row, col, value1, value2, directions = 4, border = false) {
@@ -1522,7 +1530,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.90',
+    VERSION: '2.0.91',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
