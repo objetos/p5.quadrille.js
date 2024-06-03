@@ -976,24 +976,31 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      visitQuadrille(this, (row, col) =>
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
+      visitQuadrille(this, (row, col) => {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare);
+      });
     }
     if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
+          this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
         }
       });
     }
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height) {
-        this._memory2D[args[0]].fill(args[1]);
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
+          cell = this._clearCell(cell);
+          return args[1];
+        });
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       args[2] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
         this._memory2D[args[0]][args[1]] = args[2];
       }
     }
