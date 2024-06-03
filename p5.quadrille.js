@@ -1025,14 +1025,6 @@ class Quadrille {
     return this;
   }
 
-  _clearCell(value) {
-    if (Quadrille._isFunction(value)) {
-      value.fbo?.remove();
-      value.fbo = undefined;
-    }
-    return null;
-  }
-
   _flood(row, col, value1, value2, directions = 4, border = false) {
     if (directions !== 4 && directions !== 8) {
       console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
@@ -1040,6 +1032,7 @@ class Quadrille {
     }
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== value2) {
       if (this._memory2D[row][col] === value1) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
         this._flood(row, col - 1, value1, value2, directions, border);
         this._flood(row - 1, col, value1, value2, directions, border);
@@ -1053,9 +1046,18 @@ class Quadrille {
         }
       }
       if (border) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
       }
     }
+  }
+
+  _clearCell(value) {
+    if (Quadrille._isFunction(value)) {
+      value.fbo?.remove();
+      value.fbo = undefined;
+    }
+    return null;
   }
 
   // TODO perlin noise
