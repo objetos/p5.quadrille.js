@@ -382,9 +382,10 @@ class Quadrille {
   }
 
   _fromImage(...args) {
-    if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
-      const image = new p5.Image(args[0].width, args[0].height);
-      image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
+    if (Quadrille._isImage(args[0])) {
+      const src = args[0] instanceof p5.Framebuffer ? args[0].get() : args[0]; // convert fbo to p5.Image
+      const image = new p5.Image(src.width, src.height);
+      image.copy(src, 0, 0, src.width, src.height, 0, 0, src.width, src.height);
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
   }
@@ -628,11 +629,15 @@ class Quadrille {
    */
   toImage(filename, {
     values,
-    tileDisplay = this.constructor.tile,
-    imageDisplay = this.constructor.image,
-    colorDisplay = this.constructor.color,
-    stringDisplay = this.constructor.string,
-    numberDisplay = this.constructor.number,
+    textFont,
+    origin = 'corner',
+    options = {},
+    tileDisplay = this.constructor.tileDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
     arrayDisplay,
     objectDisplay,
     cellLength,
@@ -642,10 +647,11 @@ class Quadrille {
     textZoom = this.constructor.textZoom
   } = {}) {
     cellLength ??= this._cellLength || this.constructor.cellLength;
-    const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
+    const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._renderer);
     drawQuadrille(this, {
-      graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
-      arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
+      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
+      numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
+      textZoom, textFont, origin, options
     });
     save(graphics, filename);
   }
@@ -1302,26 +1308,33 @@ class Quadrille {
    */
   sort({
     mode = 'LUMA',
-    target = this.outline,
+    target = this.constructor.outline,
     ascending = true,
-    textColor = this.textColor,
-    textZoom = this.textZoom,
-    background = this.background,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom,
+    background = this.constructor.background,
     cellLength = int(max(width / this.width, height / this.height) / 10),
-    outlineWeight = this.outlineWeight,
-    outline = this.outline,
-    imageDisplay = this.imageDisplay,
-    colorDisplay = this.colorDisplay,
-    stringDisplay = this.stringDisplay,
-    numberDisplay = this.numberDisplay,
-    arrayDisplay = this.arrayDisplay,
-    objectDisplay = this.objectDisplay,
-    tileDisplay = this.tileDisplay
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textFont,
+    origin = 'corner',
+    options = {},
+    // TODO:  sample = this.constructor.imageDisplay, // causes trouble!
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
+    arrayDisplay = this.constructor.arrayDisplay,
+    objectDisplay = this.constructor.objectDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    tileDisplay = this.constructor.tileDisplay
   } = {}) {
     let memory1D = this.toArray();
     const params = {
-      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
-      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
+      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
+      renderer: 'p2d'
+      //renderer: this._renderer // TODO kills machine!
     };
     switch (mode) {
       case 'DISTANCE':
@@ -1370,25 +1383,30 @@ class Quadrille {
   */
   static sample({
     value,
-    imageDisplay = this.imageDisplay,
-    colorDisplay = this.colorDisplay,
-    stringDisplay = this.stringDisplay,
-    numberDisplay = this.numberDisplay,
-    arrayDisplay = this.arrayDisplay,
-    objectDisplay = this.objectDisplay,
-    tileDisplay = this.tileDisplay,
-    background = this.background,
-    cellLength = this.cellLength,
-    outlineWeight = this.outlineWeight,
-    outline = this.outline,
-    textColor = this.textColor,
-    textZoom = this.textZoom
+    textFont,
+    origin = 'corner',
+    options = {},
+    renderer = 'p2d',
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
+    arrayDisplay = this.constructor.arrayDisplay,
+    objectDisplay = this.constructor.objectDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    tileDisplay = this.constructor.tileDisplay,
+    background = this.constructor.background,
+    cellLength = this.constructor.cellLength,
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom
   } = {}) {
-    const graphics = createGraphics(cellLength, cellLength);
+    const graphics = createGraphics(cellLength, cellLength, renderer);
     graphics.background(background);
     const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength, textFont, origin, options,
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay
     };
     this._display(params);
     graphics.loadPixels();
@@ -1454,20 +1472,19 @@ class Quadrille {
     graphics,
     options,
     value,
-    cellLength = this.cellLength
+    cellLength = this.cellLength,
   } = {}) {
-    value.fbo ||= createFramebuffer({ width: cellLength, height: cellLength });
-    value.fbo.begin();
-    //graphics.push();
-    graphics._rendererState = graphics.push();
-    graphics._renderer.GL !== undefined ?
-      (options?.mode === 'corner' && graphics.translate(-cellLength / 2, -cellLength / 2)) :
-      (options?.mode === 'center' && graphics.translate(cellLength / 2, cellLength / 2));
-    value.call(graphics, options);
-    //graphics.pop();
-    graphics.pop(graphics._rendererState)
-    value.fbo.end();
-    Quadrille.imageDisplay({ graphics, cellLength, value: value.fbo });
+    const fbo = value.fbo ?? (value.fbo = graphics.createFramebuffer({ width: cellLength, height: cellLength }));
+    const pg = fbo.graphics ?? (fbo.graphics = graphics);
+    fbo.begin();
+    //pg.push();
+    pg._rendererState = pg.push();
+    (options?.origin === 'corner' && pg.translate(-cellLength / 2, -cellLength / 2));
+    value.call(pg, options);
+    //pg.pop();
+    pg.pop(pg._rendererState)
+    fbo.end();
+    Quadrille.imageDisplay({ graphics, cellLength, value: fbo });
   }
 
   /**
@@ -1478,8 +1495,13 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
+    const img = value instanceof p5.Framebuffer
+      ? (value.graphics ||= graphics) !== graphics
+        ? (console.debug('fbo reformat needed'), value.get())
+        : value
+      : value;
     graphics.noStroke();
-    graphics.image(value, 0, 0, cellLength, cellLength);
+    graphics.image(img, 0, 0, cellLength, cellLength);
   }
 
   /**
@@ -1539,7 +1561,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.91',
+    VERSION: '2.0.92',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1557,7 +1579,7 @@ class Quadrille {
     col,
     values,
     textFont,
-    mode = 'corner',
+    origin = 'corner',
     options = {},
     functionDisplay = quadrille.constructor.functionDisplay,
     imageDisplay = quadrille.constructor.imageDisplay,
@@ -1573,22 +1595,23 @@ class Quadrille {
     textColor = quadrille.constructor.textColor,
     textZoom = quadrille.constructor.textZoom
   } = {}) {
+    quadrille._renderer = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
     quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
     quadrille._y = y ? y : row ? row * cellLength : 0;
     quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
     quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
-    options.mode = options.mode || mode;
-    graphics._renderer.GL !== undefined ? (mode === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
-      (mode === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
+    options.origin = options.origin || origin;
+    quadrille._renderer === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
+      (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
     graphics.translate(quadrille._x, quadrille._y);
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, mode, options, functionDisplay,
+        row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
       quadrille.constructor._display(params);
