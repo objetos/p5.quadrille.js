@@ -647,7 +647,7 @@ class Quadrille {
     textZoom = this.constructor.textZoom
   } = {}) {
     cellLength ??= this._cellLength || this.constructor.cellLength;
-    const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._renderer);
+    const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     drawQuadrille(this, {
       graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
       numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
@@ -1333,8 +1333,7 @@ class Quadrille {
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
       outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
-      renderer: 'p2d'
-      //renderer: this._renderer // TODO kills machine!
+      renderer: 'p2d'// renderer: this._mode // TODO kills machine in webgl!
     };
     switch (mode) {
       case 'DISTANCE':
@@ -1561,7 +1560,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.92',
+    VERSION: '2.0.93',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1579,7 +1578,7 @@ class Quadrille {
     col,
     values,
     textFont,
-    origin = 'corner',
+    origin,
     options = {},
     functionDisplay = quadrille.constructor.functionDisplay,
     imageDisplay = quadrille.constructor.imageDisplay,
@@ -1595,20 +1594,26 @@ class Quadrille {
     textColor = quadrille.constructor.textColor,
     textZoom = quadrille.constructor.textZoom
   } = {}) {
-    quadrille._renderer = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
+    quadrille._renderer = graphics._renderer;
+    quadrille._mode = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
+    // Warn: here we align with p5 conventions
+    // https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html
+    origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner';
+    options.origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner'; // options.origin ??= origin; // other option
     quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
     quadrille._y = y ? y : row ? row * cellLength : 0;
     quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
     quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
-    options.origin = options.origin || origin;
-    quadrille._renderer === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
+    quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
       (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
     graphics.translate(quadrille._x, quadrille._y);
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
+      options.row = row;
+      options.col = col;
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
         row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
