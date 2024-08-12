@@ -3,6 +3,8 @@ title: Introduction
 type: docs
 ---
 
+[![Read the Paper](https://img.shields.io/badge/Read%20the%20Paper-ScienceDirect-blue)](https://www.sciencedirect.com/science/article/pii/S2352711024002097?ref=cra_js_challenge&fr=RR-1)
+
 # p5.quadrille.js
 
 [p5.quadrille.js](https://github.com/objetos/p5.quadrille.js) is an open-source [p5.js](https://p5js.org/) library tailored for students, visual artists, and game designers. It supports the creation of [puzzle](https://en.wikipedia.org/wiki/Puzzle_video_game) and board games and the exploration of visual algorithms.
