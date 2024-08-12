@@ -1,3 +1,5 @@
+[![Read the Paper](https://img.shields.io/badge/Read%20the%20Paper-ScienceDirect-blue)](https://www.sciencedirect.com/science/article/pii/S2352711024002097?ref=cra_js_challenge&fr=RR-1)
+
 # p5.quadrille.js
 
 [p5.js](https://p5js.org/) [quadrille](https://en.wikipedia.org/wiki/Square_tiling) open source library designed for implementing various [puzzle video games](https://en.wikipedia.org/wiki/Puzzle_video_game) and conducting visual computing experiments.
