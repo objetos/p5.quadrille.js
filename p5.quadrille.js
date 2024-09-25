@@ -1,10 +1,12 @@
 'use strict';
 
+// TODOs
+// i. isPolyomino()
+// ii. perlin / simplex noise
+// iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
+// iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
 class Quadrille {
-  // STYLE 
-
-  // TODOs
-  // i. prefer Quadrille.CONSTANT over this.CONSTANT ?
+  // STYLE
 
   /**
    * Default text color.
@@ -13,12 +15,12 @@ class Quadrille {
 
   // Getter for textColor
   static get textColor() {
-    return Quadrille._textColor;
+    return this._textColor;
   }
 
   // Setter for textColor with simplified type checking
   static set textColor(value) {
-    Quadrille._textColor = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._textColor;
+    this._textColor = typeof value === 'string' || this._isColor(value) ? value : this._textColor;
   }
 
   /**
@@ -28,12 +30,12 @@ class Quadrille {
 
   // Getter for textZoom
   static get textZoom() {
-    return Quadrille._textZoom;
+    return this._textZoom;
   }
 
   // Setter for textZoom with type checking
   static set textZoom(value) {
-    Quadrille._textZoom = (typeof value === 'number' && value > 0) ? value : Quadrille._textZoom;
+    this._textZoom = (typeof value === 'number' && value > 0) ? value : this._textZoom;
   }
 
   /**
@@ -43,12 +45,12 @@ class Quadrille {
 
   // Getter for outline
   static get outline() {
-    return Quadrille._outline;
+    return this._outline;
   }
 
   // Setter for outline with type checking
   static set outline(value) {
-    Quadrille._outline = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._outline;
+    this._outline = typeof value === 'string' || this._isColor(value) ? value : this._outline;
   }
 
   /**
@@ -58,12 +60,12 @@ class Quadrille {
 
   // Getter for outlineWeight
   static get outlineWeight() {
-    return Quadrille._outlineWeight;
+    return this._outlineWeight;
   }
 
   // Setter for outlineWeight with type checking
   static set outlineWeight(value) {
-    Quadrille._outlineWeight = (typeof value === 'number' && value >= 0) ? value : Quadrille._outlineWeight;
+    this._outlineWeight = (typeof value === 'number' && value >= 0) ? value : this._outlineWeight;
   }
 
   /**
@@ -73,12 +75,12 @@ class Quadrille {
 
   // Getter for cellLength
   static get cellLength() {
-    return Quadrille._cellLength;
+    return this._cellLength;
   }
 
   // Setter for cellLength with type checking
   static set cellLength(value) {
-    Quadrille._cellLength = (typeof value === 'number' && value > 0) ? value : Quadrille._cellLength;
+    this._cellLength = (typeof value === 'number' && value > 0) ? value : this._cellLength;
   }
 
   /**
@@ -88,12 +90,12 @@ class Quadrille {
 
   // Getter for background
   static get background() {
-    return Quadrille._background;
+    return this._background;
   }
 
   // Setter for background with type checking
   static set background(value) {
-    Quadrille._background = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._background;
+    this._background = typeof value === 'string' || this._isColor(value) ? value : this._background;
   }
 
   // chess specific stuff
@@ -105,12 +107,12 @@ class Quadrille {
 
   // Getter for blackSquare
   static get blackSquare() {
-    return Quadrille._blackSquare;
+    return this._blackSquare;
   }
 
   // Setter for blackSquare with type checking
   static set blackSquare(value) {
-    Quadrille._blackSquare = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._blackSquare;
+    this._blackSquare = typeof value === 'string' || this._isColor(value) ? value : this._blackSquare;
   }
 
   /**
@@ -120,12 +122,12 @@ class Quadrille {
 
   // Getter for whiteSquare
   static get whiteSquare() {
-    return Quadrille._whiteSquare;
+    return this._whiteSquare;
   }
 
   // Setter for whiteSquare with type checking
   static set whiteSquare(value) {
-    Quadrille._whiteSquare = typeof value === 'string' || Quadrille._isColor(value) ? value : Quadrille._whiteSquare;
+    this._whiteSquare = typeof value === 'string' || this._isColor(value) ? value : this._whiteSquare;
   }
 
   static chessSymbols = {
@@ -277,6 +279,7 @@ class Quadrille {
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
+    this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
       visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
@@ -382,9 +385,19 @@ class Quadrille {
   }
 
   _fromImage(...args) {
-    if (args[0] instanceof p5.Image || args[0] instanceof p5.Graphics) {
-      const image = new p5.Image(args[0].width, args[0].height);
-      image.copy(args[0], 0, 0, args[0].width, args[0].height, 0, 0, args[0].width, args[0].height);
+    if (this.constructor._isImage(args[0])) {
+      let src = args[0] instanceof p5.Framebuffer ? args[0].get() : args[0];
+      if (src instanceof p5.MediaElement && src.elt instanceof HTMLVideoElement) {
+        const video = src.elt;
+        if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+          video.addEventListener('loadeddata', () => this._fromImage(...args)); // Retry once the video is loaded
+          return;
+        }
+        src = new p5.Image(video.videoWidth, video.videoHeight);
+        src.drawingContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight); // Draw video frame to p5.Image
+      }
+      const image = new p5.Image(src.width, src.height);
+      image.copy(src, 0, 0, src.width, src.height, 0, 0, src.width, src.height);
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
   }
@@ -569,9 +582,9 @@ class Quadrille {
    * @returns quadrille row
    */
   screenRow(pixelY, y, cellLength) {
-    y ??= this._y ? this._y : 0;
+    y ??= this._y || 0;
     cellLength ??= this._cellLength || this.constructor.cellLength;
-    return floor((pixelY - y) / cellLength);
+    return floor((pixelY - (this._origin === 'center' ? height / 2 : y)) / cellLength);
   }
 
   /**
@@ -582,9 +595,9 @@ class Quadrille {
    * @returns quadrille col
    */
   screenCol(pixelX, x, cellLength) {
-    x ??= this._x ? this._x : 0;
+    x ??= this._x || 0;
     cellLength ??= this._cellLength || this.constructor.cellLength;
-    return floor((pixelX - x) / cellLength);
+    return floor((pixelX - (this._origin === 'center' ? width / 2 : x)) / cellLength);
   }
 
   _fromIndex(index, width = this.width) {
@@ -628,11 +641,15 @@ class Quadrille {
    */
   toImage(filename, {
     values,
-    tileDisplay = this.constructor.tile,
-    imageDisplay = this.constructor.image,
-    colorDisplay = this.constructor.color,
-    stringDisplay = this.constructor.string,
-    numberDisplay = this.constructor.number,
+    textFont,
+    origin = 'corner',
+    options = {},
+    tileDisplay = this.constructor.tileDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
     arrayDisplay,
     objectDisplay,
     cellLength,
@@ -642,10 +659,11 @@ class Quadrille {
     textZoom = this.constructor.textZoom
   } = {}) {
     cellLength ??= this._cellLength || this.constructor.cellLength;
-    const graphics = createGraphics(this.width * cellLength, this.height * cellLength);
+    const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     drawQuadrille(this, {
-      graphics, values, tileDisplay, imageDisplay, colorDisplay, stringDisplay, numberDisplay,
-      arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor, textZoom
+      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
+      numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
+      textZoom, textFont, origin, options
     });
     save(graphics, filename);
   }
@@ -745,8 +763,6 @@ class Quadrille {
     }
   }
 
-  // TODO isPolyomino
-
   // Static "protected" methods
 
   static _isEmpty(value) {
@@ -769,8 +785,12 @@ class Quadrille {
     return value instanceof p5.Color;
   }
 
+  static _isFunction(value) {
+    return typeof value === 'function';
+  }
+
   static _isImage(value) {
-    return value instanceof p5.Image || value instanceof p5.Graphics;
+    return value instanceof p5.Image || (value instanceof p5.MediaElement && value.elt instanceof HTMLVideoElement) || value instanceof p5.Graphics || value instanceof p5.Framebuffer;
   }
 
   static _isArray(value) {
@@ -778,10 +798,11 @@ class Quadrille {
   }
 
   static _isObject(value) {
-    return Quadrille._isFilled(value) &&
-      !Quadrille._isColor(value) &&
-      !Quadrille._isImage(value) &&
-      !Quadrille._isArray(value) &&
+    return this._isFilled(value) &&
+      !this._isColor(value) &&
+      !this._isImage(value) &&
+      !this._isArray(value) &&
+      !this._isFunction(value) &&
       typeof value === 'object';
   }
 
@@ -860,6 +881,15 @@ class Quadrille {
   }
 
   /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell has a function
+   */
+  isFunction(row, col) {
+    return this.constructor._isFunction(this.read(row, col));
+  }
+
+  /**
    * Pattern searching.
    * @param {Quadrille} pattern 
    * @param {boolean} strict tells whether the algorithm requires values to match (besides filled cells)
@@ -912,16 +942,16 @@ class Quadrille {
    */
   clear(...args) {
     if (args.length === 0) {
-      this._memory2D = this._memory2D.map(x => x.map(y => y = null));
+      this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
     }
     if (args.length === 1 && typeof args[0] === 'number') {
       if (args[0] >= 0 && args[0] < this.height) {
-        this._memory2D[args[0]].fill(null);
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
       }
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
-        this._memory2D[args[0]][args[1]] = null;
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
@@ -962,24 +992,31 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      visitQuadrille(this, (row, col) =>
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
+      visitQuadrille(this, (row, col) => {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare);
+      });
     }
     if (args.length === 1 && args[0] !== undefined) {
       visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
+          this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
         }
       });
     }
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height) {
-        this._memory2D[args[0]].fill(args[1]);
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
+          cell = this._clearCell(cell);
+          return args[1];
+        });
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       args[2] !== undefined) {
       if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
         this._memory2D[args[0]][args[1]] = args[2];
       }
     }
@@ -1011,6 +1048,7 @@ class Quadrille {
     }
     if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== value2) {
       if (this._memory2D[row][col] === value1) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
         this._flood(row, col - 1, value1, value2, directions, border);
         this._flood(row - 1, col, value1, value2, directions, border);
@@ -1024,12 +1062,19 @@ class Quadrille {
         }
       }
       if (border) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
       }
     }
   }
 
-  // TODO perlin noise
+  _clearCell(value) {
+    if (this.constructor._isFunction(value)) {
+      value.fbo?.remove();
+      value.fbo = undefined;
+    }
+    return null;
+  }
 
   /**
    * Randomly fills quadrille with value for the specified number of times.
@@ -1271,26 +1316,31 @@ class Quadrille {
    */
   sort({
     mode = 'LUMA',
-    target = this.outline,
+    target = this.constructor.outline,
     ascending = true,
-    textColor = this.textColor,
-    textZoom = this.textZoom,
-    background = this.background,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom,
+    background = this.constructor.background,
     cellLength = int(max(width / this.width, height / this.height) / 10),
-    outlineWeight = this.outlineWeight,
-    outline = this.outline,
-    imageDisplay = this.imageDisplay,
-    colorDisplay = this.colorDisplay,
-    stringDisplay = this.stringDisplay,
-    numberDisplay = this.numberDisplay,
-    arrayDisplay = this.arrayDisplay,
-    objectDisplay = this.objectDisplay,
-    tileDisplay = this.tileDisplay
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textFont,
+    origin = 'corner',
+    options = {},
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
+    arrayDisplay = this.constructor.arrayDisplay,
+    objectDisplay = this.constructor.objectDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    tileDisplay = this.constructor.tileDisplay
   } = {}) {
     let memory1D = this.toArray();
     const params = {
-      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline,
-      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
+      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
+      renderer: 'p2d'// renderer: this._mode // kills machine in webgl!
     };
     switch (mode) {
       case 'DISTANCE':
@@ -1334,25 +1384,30 @@ class Quadrille {
    */
   static sample({
     value,
-    imageDisplay = this.imageDisplay,
-    colorDisplay = this.colorDisplay,
-    stringDisplay = this.stringDisplay,
-    numberDisplay = this.numberDisplay,
-    arrayDisplay = this.arrayDisplay,
-    objectDisplay = this.objectDisplay,
-    tileDisplay = this.tileDisplay,
-    background = this.background,
-    cellLength = this.cellLength,
-    outlineWeight = this.outlineWeight,
-    outline = this.outline,
-    textColor = this.textColor,
-    textZoom = this.textZoom
+    textFont,
+    origin = 'corner',
+    options = {},
+    renderer = 'p2d',
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
+    arrayDisplay = this.constructor.arrayDisplay,
+    objectDisplay = this.constructor.objectDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    tileDisplay = this.constructor.tileDisplay,
+    background = this.constructor.background,
+    cellLength = this.constructor.cellLength,
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom
   } = {}) {
-    const graphics = createGraphics(cellLength, cellLength);
+    const graphics = createGraphics(cellLength, cellLength, renderer);
     graphics.background(background);
     const params = {
-      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+      graphics, value, textColor, textZoom, outline, outlineWeight, cellLength, textFont, origin, options,
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay
     };
     this._display(params);
     graphics.loadPixels();
@@ -1370,12 +1425,13 @@ class Quadrille {
 
   static _display(params) {
     const handlers = [
-      { check: this._isImage, display: params.imageDisplay },
-      { check: this._isColor, display: params.colorDisplay },
-      { check: this._isNumber, display: params.numberDisplay },
-      { check: this._isString, display: params.stringDisplay },
-      { check: this._isArray, display: params.arrayDisplay },
-      { check: this._isObject, display: params.objectDisplay }
+      { check: this._isFunction.bind(this), display: params.functionDisplay },
+      { check: this._isImage.bind(this), display: params.imageDisplay },
+      { check: this._isColor.bind(this), display: params.colorDisplay },
+      { check: this._isNumber.bind(this), display: params.numberDisplay },
+      { check: this._isString.bind(this), display: params.stringDisplay },
+      { check: this._isArray.bind(this), display: params.arrayDisplay },
+      { check: this._isObject.bind(this), display: params.objectDisplay }
     ];
     for (const handler of handlers) {
       if (handler.check(params.value) && handler.display) {
@@ -1412,6 +1468,23 @@ class Quadrille {
     graphics.rect(0, 0, cellLength, cellLength);
   }
 
+  static functionDisplay({
+    graphics,
+    options,
+    value,
+    cellLength = this.cellLength,
+  } = {}) {
+    const fbo = value.fbo ?? (value.fbo = graphics.createFramebuffer({ width: cellLength, height: cellLength }));
+    const pg = fbo.graphics ?? (fbo.graphics = graphics);
+    fbo.begin();
+    pg._rendererState = pg.push();
+    (options?.origin === 'corner' && pg.translate(-cellLength / 2, -cellLength / 2));
+    value.call(pg, options);
+    pg.pop(pg._rendererState);
+    fbo.end();
+    this.imageDisplay({ graphics, cellLength, value: fbo });
+  }
+
   /**
    * Image cell drawing.
    */
@@ -1420,8 +1493,13 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
+    const img = value instanceof p5.Framebuffer
+      ? (value.graphics ||= graphics) !== graphics
+        ? (console.debug('fbo reformat needed'), value.get())
+        : value
+      : value;
     graphics.noStroke();
-    graphics.image(value, 0, 0, cellLength, cellLength);
+    graphics.image(img, 0, 0, cellLength, cellLength);
   }
 
   /**
@@ -1430,10 +1508,12 @@ class Quadrille {
   static stringDisplay({
     graphics,
     value,
+    textFont,
     cellLength = this.cellLength,
     textColor = this.textColor,
     textZoom = this.textZoom
   } = {}) {
+    textFont && graphics.textFont(textFont)
     graphics.noStroke();
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / value.length);
@@ -1479,7 +1559,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.0.8',
+    VERSION: '2.1.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
@@ -1496,6 +1576,10 @@ class Quadrille {
     row,
     col,
     values,
+    textFont,
+    origin,
+    options = {},
+    functionDisplay = quadrille.constructor.functionDisplay,
     imageDisplay = quadrille.constructor.imageDisplay,
     colorDisplay = quadrille.constructor.colorDisplay,
     stringDisplay = quadrille.constructor.stringDisplay,
@@ -1509,19 +1593,29 @@ class Quadrille {
     textColor = quadrille.constructor.textColor,
     textZoom = quadrille.constructor.textZoom
   } = {}) {
+    quadrille._mode = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
+    // Warn: here we align with p5 conventions
+    // https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html
+    origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner';
+    quadrille._origin = origin;
+    options.origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner'; // options.origin ??= origin; // other option
     quadrille._cellLength = cellLength;
     quadrille._x = x ? x : col ? col * cellLength : 0;
     quadrille._y = y ? y : row ? row * cellLength : 0;
     quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
     quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
     graphics.push();
+    quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
+      (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
     graphics.translate(quadrille._x, quadrille._y);
     visitQuadrille(quadrille, (row, col) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
+      options.row = row;
+      options.col = col;
       const params = {
         quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom,
+        row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
         imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
       quadrille.constructor._display(params);
