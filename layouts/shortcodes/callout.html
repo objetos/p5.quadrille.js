@@ -1,4 +1,11 @@
 {{ $type := .Get "type" | default "info" }}
+
+{{ $isHugoBook := eq .Site.Params.theme "book" }}
+
+{{ if and $isHugoBook (eq $type "error") }}
+  {{ $type = "danger" }}
+{{ end }}
+
 <blockquote class="book-hint {{ $type }}">
   {{ .Inner | .Page.RenderString }}
 </blockquote>
