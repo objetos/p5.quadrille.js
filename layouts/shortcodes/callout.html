@@ -1,0 +1,4 @@
+{{ $type := .Get "type" | default "info" }}
+<blockquote class="book-hint {{ $type }}">
+  {{ .Inner | .Page.RenderString }}
+</blockquote>
