@@ -1,8 +1,6 @@
 {{ $type := .Get "type" | default "info" }}
 
-{{ $isHugoBook := eq .Site.Params.theme "book" }}
-
-{{ if and $isHugoBook (eq $type "error") }}
+{{ if eq $type "error" }}
   {{ $type = "danger" }}
 {{ end }}
 
