@@ -1522,33 +1522,19 @@ class Quadrille {
   }
 
   /**
-   * Tesselation or tiling. Used by the drawQuadrille board property.
+   * Tesselation or tiling.
    */
   static tileDisplay({
     graphics,
-    row = 0,
-    col = 0,
-    width = 1,
-    height = 1,
     cellLength = this.cellLength,
     outline = this.outline,
     outlineWeight = this.outlineWeight
   } = {}) {
     if (outlineWeight !== 0) {
-      // modes                _                    _                _                _
-      // 0 (last row & col): |_| 1 (inner cells): |  2 (last row): |_ 3 (last col): | |
-      const mode = row === height - 1 && col === width - 1 ? 0 :
-        row < height - 1 && col < width - 1 ? 1 : row === height - 1 && col < width - 1 ? 2 : 3;
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
-      graphics.beginShape();
-      if (mode === 2) graphics.vertex(cellLength, cellLength);
-      graphics.vertex(0, cellLength);
-      graphics.vertex(0, 0);
-      graphics.vertex(cellLength, 0);
-      if (mode === 0 || mode === 3) graphics.vertex(cellLength, cellLength);
-      mode === 0 ? graphics.endShape(CLOSE) : graphics.endShape();
+      graphics.quad(0, 0, cellLength, 0, cellLength, cellLength, 0, cellLength);
     }
   }
 }
@@ -1559,7 +1545,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.1.0',
+    VERSION: '2.1.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
