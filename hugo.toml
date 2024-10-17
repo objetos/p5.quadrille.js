@@ -3,6 +3,22 @@ languageCode = "en-us"
 title = "p5.quadrille.js"
 theme = 'book'
 
+# Multilingual configuration
+defaultContentLanguage = "en"
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    # languageCode = "en"
+    weight = 1
+    # title = "p5.quadrille.js"
+
+  [languages.es]
+    languageName = "Español"
+    languageCode = "es"
+    weight = 2
+    # title = "p5.quadrille.js"
+
 # Book configuration
 disablePathToLower = true
 enableGitInfo = true
