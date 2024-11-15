@@ -262,16 +262,18 @@ class Quadrille {
    * Constructs either an empty or a filled quadrille:
    * 1. Pass no params.
    * 2. Pass width and height to construct and empty quadrille (filled with null's).
-   * 3. Pass jagged array (of colors, images, graphics, arrays, objects, strings, numbers and null).
-   * 4. Pass array (of colors, images, graphics arrays, objects, strings, numbers and null).
-   * 5. Pass width and array (of colors, images, graphics arrays, objects, strings, numbers and null).
-   * 6. Pass fen.
-   * 7. Pass string.
-   * 8. Pass width and string.
-   * 9. Pass width and image, to construct a quadrille filled with image.
-   * 10. Pass width, image and boolean, to construct a quadrille from pixalated image.
-   * 11. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
-   * 12. Pass width, BigInt (or int) and value, to construct a quadrille filled with value from the given BigInt.
+   * 3. Pass two colors (either p5.Color instances or HTML color strings) to construct an 8x8 chessboard pattern
+   * using the specified colors for white and black squares.
+   * 4. Pass jagged array (of colors, images, graphics, arrays, objects, strings, numbers and null).
+   * 5. Pass array (of colors, images, graphics arrays, objects, strings, numbers and null).
+   * 6. Pass width and array (of colors, images, graphics arrays, objects, strings, numbers and null).
+   * 7. Pass fen.
+   * 8. Pass string.
+   * 9. Pass width and string.
+   * 10. Pass width and image, to construct a quadrille filled with image.
+   * 11. Pass width, image and boolean, to construct a quadrille from pixalated image.
+   * 12. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
+   * 13. Pass width, BigInt (or int) and value, to construct a quadrille filled with value from the given BigInt.
    * @see rand
    * @see order
    */
@@ -286,6 +288,14 @@ class Quadrille {
     }
     if (args.length === 1) {
       this.memory2D = args[0];
+    }
+    if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
+      (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
+      const color1 = color(args[0]);
+      const color2 = color(args[1]);
+      this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = (row + col) % 2 === 0 ? color1 : color2);
+      return;
     }
     if (args.length === 2 && typeof args[0] === 'number') {
       if (typeof args[1] === 'string') {
@@ -978,15 +988,17 @@ class Quadrille {
   /**
    * Fills quadrille cells with given value. Either:
    * 1. fill(), chess board pattern filling of all cells.
-   * 2. fill(value), fills current empty cells;
-   * 3. fill(row, value), fills row; or,
-   * 4. fill(row, col, value), fills cell.
-   * 5. fill(row, col, value, directions), flood filling without boder in the given number of directions,
+   * 2. fill(value), fills current empty cells.
+   * 3. fill(color1, color2), fills the entire quadrille with a chessboard pattern using the specified colors
+   * (either p5.Color instances or HTML color strings).
+   * 4. fill(row, value), fills row.
+   * 5. fill(row, col, value), fills cell.
+   * 6. fill(row, col, value, directions), flood filling without boder in the given number of directions,
    * using (row, col) cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
    * an object, a string or a number).
-   * 6. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
+   * 7. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
    * cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
-   * 7. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
+   * 8. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
    * using (row, col) cell value (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
    * a string or a number).
    */
@@ -1003,6 +1015,15 @@ class Quadrille {
           this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
         }
+      });
+    }
+    if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
+      (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
+      const color1 = color(args[0]);
+      const color2 = color(args[1]);
+      visitQuadrille(this, (row, col) => {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = (row + col) % 2 === 0 ? color1 : color2;
       });
     }
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
@@ -1545,7 +1566,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.1.1',
+    VERSION: '2.1.2',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
