@@ -101,33 +101,65 @@ class Quadrille {
   // chess specific stuff
 
   /**
-   * Default chess black squares.
-   */
-  static _blackSquare = '#D28C45'; // wikipedia; '#769656' // chess.com
+  * Default chess dark squares.
+  */
+  static _darkSquare = '#D28C45'; // Wikipedia; '#769555' // chess.com
 
-  // Getter for blackSquare
-  static get blackSquare() {
-    return this._blackSquare;
+  // Getter for darkSquare
+  static get darkSquare() {
+    return this._darkSquare;
   }
 
-  // Setter for blackSquare with type checking
-  static set blackSquare(value) {
-    this._blackSquare = typeof value === 'string' || this._isColor(value) ? value : this._blackSquare;
+  // Setter for darkSquare with type checking
+  static set darkSquare(value) {
+    this._darkSquare = typeof value === 'string' || this._isColor(value) ? value : this._darkSquare;
   }
 
   /**
-   * Default chess white squares.
+   * Default chess light squares.
    */
-  static _whiteSquare = '#FDCDAA'; // wikipedia; '#EEEED2' //chess.com
+  static _lightSquare = '#FDCDAA'; // Wikipedia; '#EBECCF' // chess.com
 
-  // Getter for whiteSquare
-  static get whiteSquare() {
-    return this._whiteSquare;
+  // Getter for lightSquare
+  static get lightSquare() {
+    return this._lightSquare;
   }
 
-  // Setter for whiteSquare with type checking
+  // Setter for lightSquare with type checking
+  static set lightSquare(value) {
+    this._lightSquare = typeof value === 'string' || this._isColor(value) ? value : this._lightSquare;
+  }
+
+  /**
+   * Deprecated: Getter for blackSquare (use darkSquare instead)
+   */
+  static get blackSquare() {
+    console.warn('Warning: blackSquare is deprecated and will be removed in a future release. Use darkSquare instead.');
+    return this._darkSquare;
+  }
+
+  /**
+   * Deprecated: Setter for blackSquare (use darkSquare instead)
+   */
+  static set blackSquare(value) {
+    console.warn('Warning: blackSquare is deprecated and will be removed in a future release. Use darkSquare instead.');
+    this.darkSquare = value;
+  }
+
+  /**
+   * Deprecated: Getter for whiteSquare (use lightSquare instead)
+   */
+  static get whiteSquare() {
+    console.warn('Warning: whiteSquare is deprecated and will be removed in a future release. Use lightSquare instead.');
+    return this._lightSquare;
+  }
+
+  /**
+   * Deprecated: Setter for whiteSquare (use lightSquare instead)
+   */
   static set whiteSquare(value) {
-    this._whiteSquare = typeof value === 'string' || this._isColor(value) ? value : this._whiteSquare;
+    console.warn('Warning: whiteSquare is deprecated and will be removed in a future release. Use lightSquare instead.');
+    this.lightSquare = value;
   }
 
   static chessSymbols = {
@@ -263,7 +295,7 @@ class Quadrille {
    * 1. Pass no params.
    * 2. Pass width and height to construct and empty quadrille (filled with null's).
    * 3. Pass two colors (either p5.Color instances or HTML color strings) to construct an 8x8 chessboard pattern
-   * using the specified colors for white and black squares.
+   * using the specified colors for light and dark squares.
    * 4. Pass jagged array (of colors, images, graphics, arrays, objects, strings, numbers and null).
    * 5. Pass array (of colors, images, graphics arrays, objects, strings, numbers and null).
    * 6. Pass width and array (of colors, images, graphics arrays, objects, strings, numbers and null).
@@ -284,17 +316,15 @@ class Quadrille {
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare));
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare));
     }
     if (args.length === 1) {
       this.memory2D = args[0];
     }
     if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
-      const color1 = color(args[0]);
-      const color2 = color(args[1]);
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = (row + col) % 2 === 0 ? color1 : color2);
+      visitQuadrille(this, (row, col) => this._memory2D[row][col] = (row + col) % 2 === 0 ? color(args[0]) : color(args[1]));
       return;
     }
     if (args.length === 2 && typeof args[0] === 'number') {
@@ -1006,7 +1036,7 @@ class Quadrille {
     if (args.length === 0) {
       visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.whiteSquare : this.constructor.blackSquare);
+        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] !== undefined) {
@@ -1019,11 +1049,9 @@ class Quadrille {
     }
     if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
-      const color1 = color(args[0]);
-      const color2 = color(args[1]);
       visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = (row + col) % 2 === 0 ? color1 : color2;
+        this._memory2D[row][col] = (row + col) % 2 === 0 ? color(args[0]) : color(args[1]);
       });
     }
     if (args.length === 2 && typeof args[0] === 'number' && args[1] !== undefined) {
@@ -1566,7 +1594,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.1.2',
+    VERSION: '2.1.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
