@@ -130,38 +130,6 @@ class Quadrille {
     this._lightSquare = typeof value === 'string' || this._isColor(value) ? value : this._lightSquare;
   }
 
-  /**
-   * Deprecated: Getter for blackSquare (use darkSquare instead)
-   */
-  static get blackSquare() {
-    console.warn('Warning: blackSquare is deprecated and will be removed in a future release. Use darkSquare instead.');
-    return this._darkSquare;
-  }
-
-  /**
-   * Deprecated: Setter for blackSquare (use darkSquare instead)
-   */
-  static set blackSquare(value) {
-    console.warn('Warning: blackSquare is deprecated and will be removed in a future release. Use darkSquare instead.');
-    this.darkSquare = value;
-  }
-
-  /**
-   * Deprecated: Getter for whiteSquare (use lightSquare instead)
-   */
-  static get whiteSquare() {
-    console.warn('Warning: whiteSquare is deprecated and will be removed in a future release. Use lightSquare instead.');
-    return this._lightSquare;
-  }
-
-  /**
-   * Deprecated: Setter for whiteSquare (use lightSquare instead)
-   */
-  static set whiteSquare(value) {
-    console.warn('Warning: whiteSquare is deprecated and will be removed in a future release. Use lightSquare instead.');
-    this.lightSquare = value;
-  }
-
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
     k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟'
@@ -1189,6 +1157,48 @@ class Quadrille {
   }
 
   /**
+   * Swaps two rows or two cells in the Quadrille.
+   *
+   * - If called with two arguments, it swaps two rows.
+   * - If called with four arguments, it swaps two cells.
+   * - Invalid inputs are ignored gracefully.
+   *
+   * @param {...number} args - The arguments defining the swap operation:
+   *   - `swap(row1, row2)`:
+   *     - `row1` {number} The index of the first row to swap.
+   *     - `row2` {number} The index of the second row to swap.
+   *   - `swap(row1, col1, row2, col2)`:
+   *     - `row1` {number} The row index of the first cell.
+   *     - `col1` {number} The column index of the first cell.
+   *     - `row2` {number} The row index of the second cell.
+   *     - `col2` {number} The column index of the second cell.
+   *
+   * @returns {Quadrille} The current Quadrille instance for method chaining.
+   */
+  swap(...args) {
+    const isInteger = (n) => Number.isInteger(n);
+    if (args.length === 2) {
+      const [row1, row2] = args;
+      if (isInteger(row1) && isInteger(row2) &&
+        row1 >= 0 && row1 < this.height && row2 >= 0 && row2 < this.height) {
+        const tempRow = this._memory2D[row1];
+        this._memory2D[row1] = this._memory2D[row2];
+        this._memory2D[row2] = tempRow;
+      }
+    } else if (args.length === 4) {
+      const [row1, col1, row2, col2] = args;
+      if (isInteger(row1) && isInteger(col1) && isInteger(row2) && isInteger(col2) &&
+        row1 >= 0 && row1 < this.height && col1 >= 0 && col1 < this.width &&
+        row2 >= 0 && row2 < this.height && col2 >= 0 && col2 < this.width) {
+        const tempCell = this._memory2D[row1][col1];
+        this._memory2D[row1][col1] = this._memory2D[row2][col2];
+        this._memory2D[row2][col2] = tempCell;
+      }
+    }
+    return this;
+  }
+
+  /**
    * Horizontal reflection.
    */
   reflect() {
@@ -1594,7 +1604,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.1.3',
+    VERSION: '2.2.0',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
