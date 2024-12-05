@@ -156,7 +156,7 @@ class Quadrille {
   static and(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (q1 && q2) {
+        if (this._isFilled(q1) && this._isFilled(q2)) {
           return q1;
         }
       },
@@ -173,10 +173,10 @@ class Quadrille {
   static or(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (q1) {
+        if (this._isFilled(q1)) {
           return q1;
         }
-        if (q2) {
+        if (this._isFilled(q2)) {
           return q2;
         }
       },
@@ -193,10 +193,10 @@ class Quadrille {
   static xor(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (q1 && !q2) {
+        if (this._isFilled(q1) && this._isEmpty(q2)) {
           return q1;
         }
-        if (!q1 && q2) {
+        if (this._isEmpty(q1) && this._isFilled(q2)) {
           return q2;
         }
       },
@@ -213,7 +213,7 @@ class Quadrille {
   static diff(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (q1 && !q2) {
+        if (this._isFilled(q1) && this._isEmpty(q2)) {
           return q1;
         }
       },
@@ -226,13 +226,14 @@ class Quadrille {
    * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
    */
   static neg(quadrille, value) {
-    if (value === undefined) return;
     const result = new Quadrille(quadrille.width, quadrille.height);
-    visitQuadrille(quadrille, (row, col) => {
-      if (quadrille.isEmpty(row, col)) {
-        result.fill(row, col, value);
-      }
-    });
+    if (this._isFilled(value)) {
+      visitQuadrille(quadrille, (row, col) => {
+        if (quadrille.isEmpty(row, col)) {
+          result.fill(row, col, value);
+        }
+      });
+    }
     return result;
   }
 
@@ -773,8 +774,11 @@ class Quadrille {
 
   // Static "protected" methods
 
+  // Although undefined is disallowed, isEmpty and isFilled use it for querying cells outside
+  // quadrille bounds, also isFilled is logically equivalent to !isEmpty for consistency.
+
   static _isEmpty(value) {
-    return value === null;
+    return value === null || value === undefined;
   }
 
   static _isFilled(value) {
@@ -907,7 +911,7 @@ class Quadrille {
     const hits = [];
     visitQuadrille(this, (row, col) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
-        if (q1 && (strict ? q2 !== q1 : !q2)) {
+        if (this.constructor._isFilled(q1) && (strict ? q2 !== q1 : this.constructor._isEmpty(q2))) {
           return q1;
         }
       }, -row, -col).order === 0 && hits.push({ row, col }));
@@ -1604,7 +1608,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.2.0',
+    VERSION: '2.2.1',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
