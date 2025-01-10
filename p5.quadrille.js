@@ -512,6 +512,7 @@ class Quadrille {
    * Sets quadrille height (number of rows).
    */
   set height(height) {
+    height = Math.max(1, Math.abs(height));
     const rows = height - this.height;
     while (this.height !== height) {
       rows > 0 ? this.insert(this.height) : this.delete(this.height - 1);
@@ -1604,7 +1605,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.2.2',
+    VERSION: '2.2.3',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
