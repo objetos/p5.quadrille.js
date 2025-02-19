@@ -13,10 +13,10 @@ defaultContentLanguage = "en"
     weight = 1
     # title = "p5.quadrille.js"
 
-  [languages.es]
-    languageName = "Español"
-    languageCode = "es"
-    weight = 2
+  # [languages.es]
+  #   languageName = "Español"
+  #   languageCode = "es"
+  #   weight = 2
     # title = "p5.quadrille.js"
 
 # Book configuration

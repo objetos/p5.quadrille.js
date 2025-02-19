@@ -25,6 +25,3 @@
 [submodule "content/docs/conversion_methods"]
 	path = content/docs/reformatter
 	url = git@github.com:objetos/q_conversion.git
-[submodule "content/docs/constants"]
-	path = content/docs/style
-	url = git@github.com:objetos/q_constants.git
