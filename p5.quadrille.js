@@ -5,6 +5,7 @@
 // ii. perlin / simplex noise
 // iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
 // iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
+// v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
 class Quadrille {
   // STYLE
 
@@ -554,6 +555,46 @@ class Quadrille {
     return this.screenCol(mouseX);
   }
 
+  /*
+  get mouseCornerX() {
+    return this.screenCornerX(mouseX);
+  }
+
+  get mouseCornerY() {
+    return this.screenCornerY(mouseY);
+  }
+
+  screenCornerX(pixelX, x = this._x || 0, cellLength = this._cellLength || this.constructor.cellLength) {
+    return this.screenCol(pixelX, x, cellLength) * cellLength + (this._origin === 'center' ? width / 2 : x);
+  }
+  
+  screenCornerY(pixelY, y = this._y || 0, cellLength = this._cellLength || this.constructor.cellLength) {
+    return this.screenRow(pixelY, y, cellLength) * cellLength + (this._origin === 'center' ? height / 2 : y);
+  }
+  */
+
+  /**
+   * Converts a pixel Y coordinate to a quadrille row index.
+   * @param {number} pixelY - The screen Y-coordinate in pixels.
+   * @param {number} [y=this._y || 0] - The quadrille's Y-coordinate origin.
+   * @param {number} [cellLength=this._cellLength || this.constructor.cellLength] - Length of each cell.
+   * @returns {number} The row index corresponding to the pixel Y-coordinate.
+   */
+  screenRow(pixelY, y = this._y || 0, cellLength = this._cellLength || this.constructor.cellLength) {
+    return floor((pixelY - (this._origin === 'center' ? height / 2 : y)) / cellLength);
+  }
+
+  /**
+   * Converts a screen X-coordinate to a quadrille column index.
+   * @param {number} pixelX - The screen X-coordinate in pixels.
+   * @param {number} [x=this._x || 0] - The quadrille's X-coordinate origin.
+   * @param {number} [cellLength=this._cellLength || this.constructor.cellLength] - Length of each cell.
+   * @returns {number} - The corresponding quadrille column.
+   */
+  screenCol(pixelX, x = this._x || 0, cellLength = this._cellLength || this.constructor.cellLength) {
+    return floor((pixelX - (this._origin === 'center' ? width / 2 : x)) / cellLength);
+  }
+
   [Symbol.iterator]() {
     let row = 0;
     let col = 0;
@@ -582,32 +623,6 @@ class Quadrille {
     if (row >= 0 && row < this.height) {
       return new Quadrille(this._memory2D[row]);
     }
-  }
-
-  /**
-   * Screen y coordinate to quadrille row
-   * @param {number} pixelY 
-   * @param {number} y quadrille y coordinate origin
-   * @param {number} cellLength 
-   * @returns quadrille row
-   */
-  screenRow(pixelY, y, cellLength) {
-    y ??= this._y || 0;
-    cellLength ??= this._cellLength || this.constructor.cellLength;
-    return floor((pixelY - (this._origin === 'center' ? height / 2 : y)) / cellLength);
-  }
-
-  /**
-   * Screen x coordinate to quadrille col
-   * @param {number} pixelX 
-   * @param {number} x quadrille x coordinate origin
-   * @param {number} cellLength 
-   * @returns quadrille col
-   */
-  screenCol(pixelX, x, cellLength) {
-    x ??= this._x || 0;
-    cellLength ??= this._cellLength || this.constructor.cellLength;
-    return floor((pixelX - (this._origin === 'center' ? width / 2 : x)) / cellLength);
   }
 
   _fromIndex(index, width = this.width) {
@@ -662,13 +677,12 @@ class Quadrille {
     numberDisplay = this.constructor.numberDisplay,
     arrayDisplay,
     objectDisplay,
-    cellLength,
+    cellLength = this._cellLength || this.constructor.cellLength,
     outlineWeight = this.constructor.outlineWeight,
     outline = this.constructor.outline,
     textColor = this.constructor.textColor,
     textZoom = this.constructor.textZoom
   } = {}) {
-    cellLength ??= this._cellLength || this.constructor.cellLength;
     const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     drawQuadrille(this, {
       graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
@@ -777,6 +791,15 @@ class Quadrille {
 
   // Although undefined is disallowed, isEmpty and isFilled use it for querying cells outside
   // quadrille bounds, also isFilled is logically equivalent to !isEmpty for consistency.
+
+  /**
+   * @param {number} row 
+   * @param {number} col 
+   * @returns {boolean} true if cell is within bounds
+   */
+  isValid(row, col) {
+    return row >= 0 && row < this.height && col >= 0 && col < this.width;
+  }
 
   static _isEmpty(value) {
     return value == null;
@@ -1605,7 +1628,7 @@ class Quadrille {
   const INFO =
   {
     LIBRARY: 'p5.quadrille.js',
-    VERSION: '2.2.3',
+    VERSION: '2.2.4',
     HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
   };
 
