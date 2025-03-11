@@ -9,7 +9,7 @@ defaultContentLanguage = "en"
 [languages]
   [languages.en]
     languageName = "English"
-    # languageCode = "en"
+    languageCode = "en"
     weight = 1
     # title = "p5.quadrille.js"
 
