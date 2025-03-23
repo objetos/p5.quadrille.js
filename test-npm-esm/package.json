@@ -1,0 +1,15 @@
+{
+  "name": "test-p5-quadrille",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "p5": "^2.0.0-beta.5",
+    "p5.quadrille": "file:../dist/p5.quadrille.esm.js"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

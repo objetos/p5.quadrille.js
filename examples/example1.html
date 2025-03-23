@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Example 1: Using IIFE</title>
+  <!-- Reference local p5 files -->
+  <script src="../p5/p5.min.js"></script>
+  <script src="../p5/addons/p5.sound.js"></script>
+  <!-- Reference the IIFE version of your library -->
+  <script src="../dist/p5.quadrille.iife.js"></script>
+</head>
+<body>
+  <script>
+    Quadrille.cellLength = 50;
+    let q;
+
+    function setup() {
+      createCanvas(400, 400);
+      q = createQuadrille();
+      console.log(q); // Test if Quadrille is available
+    }
+
+    function draw() {
+      background('red');
+      drawQuadrille(q); // Draw the Quadrille
+    }
+  </script>
+</body>
+</html>
