@@ -1,0 +1,23 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+
+# IDE/editor folders
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test and coverage
+coverage/
+.nyc_output/
+
+# OS metadata files
+.DS_Store
+
+# REPL / temp
+.node_repl_history
