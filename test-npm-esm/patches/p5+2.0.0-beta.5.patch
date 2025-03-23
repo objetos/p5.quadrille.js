@@ -1,0 +1,13 @@
+diff --git a/node_modules/p5/lib/p5.esm.js b/node_modules/p5/lib/p5.esm.js
+index 5a6f19a..294c670 100644
+--- a/node_modules/p5/lib/p5.esm.js
++++ b/node_modules/p5/lib/p5.esm.js
+@@ -74375,7 +74375,7 @@ if (typeof IS_MINIFIED === 'undefined') {
+     // When the library is built in development mode ( using npm run dev )
+     // we want to use the current translation files on the disk, which may have
+     // been updated but not yet pushed to the CDN.
+-    let completeResources = require('../../translations/dev');
++    let completeResources = {};
+     for (const language of Object.keys(completeResources)) {
+       // In es_translation, language is es and namespace is translation
+       // In es_MX_translation, language is es-MX and namespace is translation

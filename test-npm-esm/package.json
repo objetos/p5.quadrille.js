@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "p5": "^2.0.0-beta.5",
-    "p5.quadrille": "file:../dist/p5.quadrille.esm.js"
+    "p5": "^2.0.0-beta.5"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "patch-package": "^8.0.0"
   }
 }
