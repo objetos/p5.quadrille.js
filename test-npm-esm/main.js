@@ -1,6 +1,7 @@
 import p5 from 'p5'
 import Quadrille from 'p5.quadrille'
 
+Quadrille.cellLength = 100
 let q
 
 const sketch = (p) => {
