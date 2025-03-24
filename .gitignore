@@ -5,3 +5,9 @@
 # Logs
 *.log
 .hugo_build.lock
+# Node dependencies
+package-lock.json
+# Build output
+dist/
+# Dependency directories
+node_modules/
