@@ -19,6 +19,13 @@ The library reference which illustrates most of its functionality is found along
 
 Contributions are welcome at the [GitHub library site](https://github.com/objetos/p5.quadrille.js).
 
+# p5.js Web Editor
+
+(short intro and hacking instructions to hands-on coding right-away are missed here)
+
+(mouse presses to `randomize` the `quadrille` [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key presses resets it)  
+<iframe src="https://editor.p5js.org/nakednous/full/FTG5xADBA" width="600" height="642"></iframe>
+
 # Releases
 
 - [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
