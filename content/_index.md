@@ -21,8 +21,12 @@ At the heart of the library lies the `Quadrille` class, couple with some [p5.js 
 
 To start coding right away, right-click the sketch title (`quadrille-api-intro`) and choose “Open Link in New Tab” to edit it directly in the [p5.js Web Editor](https://editor.p5js.org).  
 
-(mouse press randomizes the `quadrille` named [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it)  
+(mouse press randomizes the `quadrille` [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it)  
 <iframe src="https://editor.p5js.org/nakednous/full/FHb4aijva" width="400" height="442"></iframe>
+
+{{< callout type="info" >}}
+Why not take it further? Try building a simple puzzle game after using the randomizer—start by experimenting with [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}).
+{{< /callout >}}
 
 Once inside, check the HTML tab—your `index.html` should include the following:
 
