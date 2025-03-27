@@ -42,6 +42,10 @@ Once inside, check the HTML tab—your `index.html` should include the following
 
 Refer to the [Releases](#releases) section below for the latest versions.
 
+{{< callout type="warning" >}}
+Note that with **p5.js**, there’s no “installation” in the traditional sense. You simply set up your environment by including the necessary scripts. See the [official guide](https://p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local development tips.
+{{< /callout >}}
+
 # Releases
 
 - [p5.quadrille.js (raw)](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)  
