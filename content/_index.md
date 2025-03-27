@@ -19,7 +19,10 @@ At the heart of the library lies the `Quadrille` class, couple with some [p5.js 
 
 # p5.js Web Editor
 
-To start coding right away, right-click the sketch title (`quadrille-intro`) and choose “Open Link in New Tab” to edit it directly in the [p5.js Web Editor](https://editor.p5js.org).  
+To start coding right away, right-click the sketch title (`quadrille-api-intro`) and choose “Open Link in New Tab” to edit it directly in the [p5.js Web Editor](https://editor.p5js.org).  
+
+(mouse press randomizes the `quadrille` named [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it)  
+<iframe src="https://editor.p5js.org/nakednous/full/FHb4aijva" width="400" height="442"></iframe>
 
 Once inside, check the HTML tab—your `index.html` should include the following:
 
@@ -34,10 +37,6 @@ Once inside, check the HTML tab—your `index.html` should include the following
   3. In `draw()`, use `drawQuadrille()` to visualize it.  
 
 Refer to the [Releases](#releases) section below for the latest versions.
-
-**Example**  
-(mouse press randomizes the `quadrille` named [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it)  
-<iframe src="https://editor.p5js.org/nakednous/full/FTG5xADBA" width="600" height="642"></iframe>
 
 # Releases
 
