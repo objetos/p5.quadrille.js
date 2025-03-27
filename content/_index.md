@@ -43,21 +43,21 @@ Once inside, check the HTML tab—your `index.html` should include the following
 Refer to the [Releases](#releases) section below for the latest versions.
 
 {{< callout type="warning" >}}
-Note that with **p5.js**, there’s no “installation” in the traditional sense. You simply set up your environment by including the necessary scripts. See the [official guide](https://p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local development tips.
+Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply set up your environment by including the necessary scripts. See the [official guide](https://p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local development tips.
 {{< /callout >}}
 
 # Releases
 
 - [p5.quadrille.js (raw)](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)  
-- CDN:  
+- Content Delivery Network (CDN):  
   – [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js)  
   – [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)  
 - [All Releases on GitHub](https://github.com/objetos/p5.quadrille.js/releases)
 
 # System Requirements
 
-- **Hardware:** Any modern device—PC, phone, or tablet—with a recent web browser.  
-- **Software:** Just like any p5.js sketch—include **p5.js** (v1.0+) plus **p5.quadrille.js** ([local file or CDN link](#releases)).
+- **Hardware:** Any modern device—PC, phone, or tablet—with a recent web browser that supports [ES6](https://www.w3schools.com/JS/js_es6.asp) (Firefox 54+, Chrome 51+, Opera 38+ Safari 10+, Edge 15+).
+- **Software:** Just like any p5.js sketch—include **p5.js** (v1+ stable or the upcoming v2 currently in beta), along with **p5.quadrille.js** (via [local file or CDN](#releases)).
 
 # Further Reading
 
