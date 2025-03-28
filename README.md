@@ -6,7 +6,7 @@
 
 # p5.quadrille.js
 
-Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://p5js.org/) library provides a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are illustrated with interactive sketches to help you explore their use.
+Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://p5js.org/) library offers a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are demonstrated with interactive sketches for hands-on exploration.
 
 ![Quadrille cells sorted by luminance](p5.quadrille.js.png)
 
@@ -43,6 +43,8 @@ function mousePressed() {
 }
 ```
 
+That’s it—you’re ready to create, display, and manipulate grid-based content.
+
 # Algorithms & Performance
 
 Let `n` be the total number of cells in the quadrille.
@@ -72,12 +74,12 @@ Let `n` be the total number of cells in the quadrille.
 - Content Delivery Network (CDN):  
   – [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js)  
   – [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)  
-- [All Releases on GitHub](https://github.com/objetos/p5.quadrille.js/releases)
+- [All releases on GitHub](https://github.com/objetos/p5.quadrille.js/releases)
 
 # System Requirements
 
-- **Hardware:** Any modern device—PC, phone, or tablet—with a recent web browser that supports [ES6](https://www.w3schools.com/JS/js_es6.asp) (Firefox 54+, Chrome 51+, Opera 38+ Safari 10+, Edge 15+).
-- **Software:** Just like any p5.js sketch—include **p5.js** (v1+ stable or the upcoming v2 currently in beta), along with **p5.quadrille.js** (via [local file or CDN](#releases)).
+- **Hardware:** Any modern device—PC, phone, or tablet—with a browser supporting [ES6](https://www.w3schools.com/JS/js_es6.asp) (Firefox 54+, Chrome 51+, Safari 10+, Edge 15+, Opera 38+).  
+- **Software:** Like any p5.js sketch—just include **p5.js** (v1+ or v2 beta) and **p5.quadrille.js** via [local file or CDN](#releases).
 
 **Observation**: The library leverages [p5.js](https://p5js.org/) for rendering and modern browser APIs for performance. [WebGL](https://en.wikipedia.org/wiki/WebGL) enhances 3D/GPU examples but is optional.
 
@@ -102,7 +104,7 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
 
 - [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)  
   The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://p5js.org/reference/), [examples](https://p5js.org/examples/), [tutorials](https://p5js.org/learn/), and [libraries](https://p5js.org/libraries/).
-- [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/api)
+- [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/api)  
   Browse the full API reference, including all methods, usage patterns, and detailed explanations—each with interactive examples. Start with `createQuadrille()` and `drawQuadrille()`, then explore shape manipulation, color handling, I/O, WebGL rendering, and more.
 - [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)  
   An evolving educational resource covering:  
@@ -118,4 +120,4 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
   – Fork the repo and contribute via pull requests ([GitHub Guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects))  
   – Use the [bug report](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/bug_report.md) or [feature request](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) templates for support
 - [![Blog](https://img.shields.io/badge/Blog-0A0A0A?logo=dev.to&logoColor=white)](https://jpcharalambosh.co/tags/p5.quadrille.js/)  
-Experimental features, new ideas, and early previews shaping future versions of the library.
+  Experimental features, new ideas, and early previews shaping future versions of the library.
