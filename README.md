@@ -1,77 +1,121 @@
-[![Read the Paper](https://img.shields.io/badge/Read%20the%20Paper-ScienceDirect-blue)](https://www.sciencedirect.com/science/article/pii/S2352711024002097?ref=cra_js_challenge&fr=RR-1)
-[![User Manual](https://img.shields.io/badge/User%20Manual-Online%20Book-blue)](https://objetos.github.io/docs/)
-[![API Documentation](https://img.shields.io/badge/API%20Documentation-Interactive%20Reference-blue)](https://objetos.github.io/p5.quadrille.js/)
+[![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)
+[![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/api)
+[![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)
+[![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)
+[![Blog](https://img.shields.io/badge/Blog-0A0A0A?logo=dev.to&logoColor=white)](https://jpcharalambosh.co/tags/p5.quadrille.js/)
 
 # p5.quadrille.js
 
-[p5.quadrille.js](https://github.com/objetos/p5.quadrille.js) is an open-source [p5.js](https://p5js.org/) library that provides a simple yet powerful API for grid-based creative coding, game design, and visual computing.
+Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://p5js.org/) library provides a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are illustrated with interactive sketches to help you explore their use.
 
 ![Quadrille cells sorted by luminance](p5.quadrille.js.png)
 
-## Table of Contents
-
-- [p5.quadrille.js](#p5quadrillejs)
-  - [Table of Contents](#table-of-contents)
-  - [Requirements](#requirements)
-    - [Hardware](#hardware)
-    - [Software](#software)
-  - [Features](#features)
-  - [Documentation](#documentation)
-  - [Technical Support](#technical-support)
-  - [Impact \& Adoption](#impact--adoption)
-  - [Installation](#installation)
-  - [Contributing](#contributing)
+- [Usage](#usage)
+- [Algorithms \& Performance](#algorithms--performance)
+- [Adoption](#adoption)
 - [Releases](#releases)
+- [System Requirements](#system-requirements)
+- [Contribute](#contribute)
+- [Further Reading](#further-reading)
 
-## Requirements
+# Usage
 
-### Hardware
-- **Minimum**: Modern web browser (Chrome, Firefox, Safari, Edge) with JavaScript support.
-- **Recommended**: GPU for WebGL-based examples (common in most devices, including smartphones).
+At its core, using **p5.quadrille.js** can be as minimal or as interactive as you need:
 
-### Software
-- [p5.js](https://p5js.org/) (current stable v1+, upcoming v2 currently in beta).
-- Modern browser with ES6 support (Chrome 60+, Firefox 54+, Safari 10+).
+- **2 steps** — storage only: declare and create the quadrille.  
+- **3 steps** — add rendering: use `drawQuadrille()` in `draw()`.  
+- **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`.
 
-**Observation**: The library leverages p5.js for rendering and modern browser APIs for performance. WebGL enhances 3D/GPU examples but is optional.
+```js
+let q; // Step 1: Declare
 
-## Features
-- **Grid Manipulation**: Centered around the [Quadrille class](https://github.com/objetos/p5.quadrille.js/blob/19b7bf11f64fb5a5e400187bc3b2e29fb1bf71fe/p5.quadrille.js#L9), the library allows you to create, transform, and visualize 2D grids with cells holding colors, images, or arbitrary objects.  
-It supports both [mutable](https://objetos.github.io/p5.quadrille.js/docs/mutable_methods/) and [immutable](https://objetos.github.io/p5.quadrille.js/docs/immutable_methods/) methods.
-- **Integrated p5 Functions**: Includes [p5.js functions](https://objetos.github.io/p5.quadrille.js/docs/p5_functions/) to manipulate `Quadrille` instances, including utilities to [customize tiling and rendering](https://objetos.github.io/p5.quadrille.js/docs/p5_functions/draw_quadrille/display_fns/).
-- **Game Design Tools**: Built-in support for board games, including [Game of Life](https://objetos.github.io/p5.quadrille.js/) and chess through conversion to and from [bitboards](https://en.wikipedia.org/wiki/Bitboard) and [Forsyth–Edwards Notation (FEN)](https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation).
-- **Visual Computing**: Offers [geometry transformations](https://objetos.github.io/p5.quadrille.js/docs/geometry_transformations/), [boolean operators](https://objetos.github.io/p5.quadrille.js/docs/boolean_operators/) inspired by [constructive solid geometry](https://en.wikipedia.org/wiki/Constructive_solid_geometry), and [visual computing methods](https://objetos.github.io/p5.quadrille.js/docs/visual_computing/) such as image [convolution filtering](https://en.wikipedia.org/wiki/Kernel_%28image_processing%29) and [triangle rasterization](https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/).
-- **Adaptability**: Easily integrates with [arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), [p5.Image](https://p5js.org/reference/#/p5.Image), and other data representations. Supports custom rendering and shader integration.
+function setup() {
+  createCanvas(600, 400);
+  q = createQuadrille(6, 4); // Step 2: Create
+}
 
-## Documentation
-- **User Manual**: [Interactive Book](https://objetos.github.io/docs/) with tutorials and design patterns.
-- **API Reference**: [Fully Documented Methods](https://objetos.github.io/p5.quadrille.js/) with live code examples.
-- **Technical Paper**: [SoftwareX Publication](https://www.sciencedirect.com/science/article/pii/S2352711024002097) detailing algorithms and educational impact.
-- **Algorithms**: Well-documented O(n) methods for grid operations, image processing, and game logic.
+function draw() {
+  drawQuadrille(q); // Step 3: Render
+}
 
-## Technical Support
-- **Issue Tracking**: [Report Bugs](https://github.com/objetos/p5.quadrille.js/issues) using pre-defined templates ([Bug Report](.github/ISSUE_TEMPLATE/bug_report.md), [Feature Request](.github/ISSUE_TEMPLATE/feature_request.md)).
-- **Community**: Used in courses at [Universidad Nacional de Colombia](https://unal.edu.co) and global game jams (e.g., [UNGames](https://ungames.github.io)).
-
-## Impact & Adoption
-- **Academic Use**: Integrated into university curricula for object-oriented programming and game design.
-- **Scientific Contribution**: Cited in [SoftwareX](https://doi.org/10.1016/j.softx.2024.101838) for bridging game-based learning and computational thinking.
-- **State of the Art**: Implements novel techniques for grid-based visual computing, influencing tools like [p5.js](https://p5js.org/) and [OpenProcessing](https://openprocessing.org).
-- **Community Reach**: Deployed in 15+ institutions globally; featured in student showcases and [chess thesis projects](https://objetos.github.io/chess-thesis-website/).
-
-## Installation
-Include via CDN:
-```html
-<script src="https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js"></script>
+function mousePressed() {
+  q.randomize(); // Step 4: Interact
+}
 ```
-Or download:
-- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
-- [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
 
-## Contributing
-Contribute via [GitHub](https://github.com/objetos/p5.quadrille.js) and use [issue templates](.github/ISSUE_TEMPLATE/) for submissions.
+# Algorithms & Performance
+
+Let `n` be the total number of cells in the quadrille.
+
+- **Grid Operations:** `O(n)` — Applies to transformations and cell iteration via `visitQuadrille()`.  
+- **Image Filtering:** `O(n × k²)` — Where `k` is the kernel width/height (assumed square).  
+- **Pattern Search & Merging:** `O(n × m)` — Where `m` is the number of cells in the pattern or quadrille being searched/merged.  
+- **Drawing:** `O(n)` — Efficient rendering using the p5.js canvas.
+
+**Observations:**
+
+- Optimized for grid-based games and interactive applications, including WebGL-heavy scenarios. Supports rendering JavaScript functions via [`p5.Framebuffer`](https://p5js.org/reference/p5/p5.Framebuffer/) for advanced effects.  
+- Produces deterministic results—identical inputs always yield the same outputs.  
+- Maintains a clear distinction between mutable and immutable methods, promoting API integrity and predictable behavior.
+
+# Adoption
+
+- Tested in real-world scenarios:  
+  – Object-Oriented Programming courses at UNAL.  
+  – National and international game jams with the UNGames group.  
+- Fosters creativity and problem-solving in both classroom and jam settings.  
+- Publicly showcased at [objetos.github.io/docs/showcase](https://objetos.github.io/docs/showcase/), featuring student projects, games, and demos.
 
 # Releases
-- [p5.quadrille.js](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
-- [CDN: p5.quadrille.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js) and [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)
-- [All Releases](https://github.com/objetos/p5.quadrille.js/releases)
+
+- [p5.quadrille.js (raw)](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)  
+- Content Delivery Network (CDN):  
+  – [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js)  
+  – [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)  
+- [All Releases on GitHub](https://github.com/objetos/p5.quadrille.js/releases)
+
+# System Requirements
+
+- **Hardware:** Any modern device—PC, phone, or tablet—with a recent web browser that supports [ES6](https://www.w3schools.com/JS/js_es6.asp) (Firefox 54+, Chrome 51+, Opera 38+ Safari 10+, Edge 15+).
+- **Software:** Just like any p5.js sketch—include **p5.js** (v1+ stable or the upcoming v2 currently in beta), along with **p5.quadrille.js** (via [local file or CDN](#releases)).
+
+**Observation**: The library leverages [p5.js](https://p5js.org/) for rendering and modern browser APIs for performance. [WebGL](https://en.wikipedia.org/wiki/WebGL) enhances 3D/GPU examples but is optional.
+
+# Contribute
+
+Your contributions are welcome!
+
+## Support  
+
+Use the [bug report](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/bug_report.md) or [feature request](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) templates to report issues or suggest new features.
+
+## Open TODOs  
+
+Fork the repo and submit a pull request to help with any of the following ([GitHub Guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects)):
+
+1. Implement `isPolyomino()`  
+2. Add `perlin()` and `simplex()` noise-based utilities  
+3. Extend `sort()` to support `'webgl'` mode — requires `Framebuffer` support for `sample()` (currently limited to the `P2D` renderer)  
+4. Add `WEBGL` support for `screenRow()` and `screenCol()` — may depend on features from [p5.treegl](https://github.com/VisualComputing/p5.treegl/)
+
+# Further Reading
+
+- [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)  
+  The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://p5js.org/reference/), [examples](https://p5js.org/examples/), [tutorials](https://p5js.org/learn/), and [libraries](https://p5js.org/libraries/).
+- [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/api)
+  Browse the full API reference, including all methods, usage patterns, and detailed explanations—each with interactive examples. Start with `createQuadrille()` and `drawQuadrille()`, then explore shape manipulation, color handling, I/O, WebGL rendering, and more.
+- [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)  
+  An evolving educational resource covering:  
+  – Object-Oriented and Functional Programming essentials  
+  – Game design principles  
+  – Tutorials & step-by-step guides  
+  – Real-world projects by students and jam participants  
+  – Advanced demos by the author
+- [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)  
+  Published in *SoftwareX*. Goes beyond technical documentation—explains the motivation, research hypothesis, design rationale, and internal architecture of **p5.quadrille.js**.
+- [![Source Code](https://img.shields.io/badge/Source_Code-181717?logo=github)](https://github.com/objetos/p5.quadrille.js)  
+  Official GitHub repository.  
+  – Fork the repo and contribute via pull requests ([GitHub Guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects))  
+  – Use the [bug report](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/bug_report.md) or [feature request](https://github.com/objetos/p5.quadrille.js/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) templates for support
+- [![Blog](https://img.shields.io/badge/Blog-0A0A0A?logo=dev.to&logoColor=white)](https://jpcharalambosh.co/tags/p5.quadrille.js/)  
+Experimental features, new ideas, and early previews shaping future versions of the library.
