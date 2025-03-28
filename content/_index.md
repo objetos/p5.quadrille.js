@@ -19,31 +19,34 @@ At the heart of the library lies the `Quadrille` class, couple with some [p5.js 
 
 # p5.js Web Editor
 
-To start coding right away, right-click the sketch title (`quadrille-api-intro`) and choose “Open Link in New Tab” to edit it directly in the [p5.js Web Editor](https://editor.p5js.org).  
+To start coding right away, right-click the sketch title (`quadrille-api-intro`) and choose “Open Link in New Tab” to edit it directly in the [p5.js Web Editor](https://editor.p5js.org).
 
-(mouse press randomizes the `quadrille` [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it)  
+(Mouse press randomizes the `quadrille` [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it.)  
 <iframe src="https://editor.p5js.org/nakednous/full/FHb4aijva" width="400" height="442"></iframe>
 
 {{< callout type="info" >}}
-Why not take it further? Try building a simple puzzle game after using the randomizer—start by experimenting with [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}).
+Why not take it further? After using the randomizer, try building a simple puzzle game—start by experimenting with [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}) to implement the core mechanic for solving it.
 {{< /callout >}}
 
-Once inside, check the HTML tab—your `index.html` should include the following:
+This sketch demonstrates the complete [4-step `p5.quadrille.js` usage workflow](https://github.com/objetos/p5.quadrille.js?tab=readme-ov-file#usage):
 
-- **Steps:**  
-  1. Include **p5.js**, **p5.sound.js**, and **p5.quadrille.js**:  
-     ```html
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js"></script>
-     ```
-  2. In `setup()`, create a `Quadrille`.  
-  3. In `draw()`, use `drawQuadrille()` to visualize it.  
+1. **Declare** a `Quadrille` variable.  
+2. **Create** it in `setup()`.  
+3. **Render** it in `draw()` using [drawQuadrille]({{< relref "create_quadrille_noargs" >}}).  
+4. **Interact** through events like `mousePressed()`, calling mutator methods such as [randomize()]({{< relref "randomize" >}}).
+
+To replicate this locally or in the Web Editor, make sure your `index.html` includes:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js"></script>
+```
 
 Refer to the [Releases](#releases) section below for the latest versions.
 
 {{< callout type="warning" >}}
-Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply set up your environment by including the necessary scripts. See the [official guide](https://p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local development tips.
+Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply include the necessary scripts to get started. See the [official guide](https://p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local setup instructions.
 {{< /callout >}}
 
 # Releases
