@@ -1,6 +1,8 @@
 ---
 title: Introduction
 type: docs
+aliases:
+  - /p5.quadrille.js/api
 ---
 
 [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)
