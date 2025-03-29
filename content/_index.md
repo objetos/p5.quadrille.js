@@ -25,7 +25,7 @@ To start coding right away, right-click the sketch title (`quadrille-api-intro`)
 <iframe src="https://editor.p5js.org/nakednous/full/FHb4aijva" width="400" height="442"></iframe>
 
 {{< callout type="info" >}}
-Why not take it further? After using the randomizer, try building a simple puzzle game—start by experimenting with [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}) to implement the core mechanic for solving it.
+Why not take it further? Try implementing a simple puzzle game where the player swaps cells using [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}) to restore the original image after it has been randomized.
 {{< /callout >}}
 
 This sketch demonstrates the complete [4-step `p5.quadrille.js` usage workflow](https://github.com/objetos/p5.quadrille.js?tab=readme-ov-file#usage):
