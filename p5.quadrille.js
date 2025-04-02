@@ -231,7 +231,7 @@ class Quadrille {
   static neg(quadrille, value) {
     const result = new Quadrille(quadrille._p, quadrille.width, quadrille.height);
     if (this._isFilled(value)) {
-      p5.prototype.visitQuadrille(quadrille, (row, col) => {
+      quadrille.visit((row, col) => {
         if (quadrille.isEmpty(row, col)) {
           result.fill(row, col, value);
         }
@@ -260,7 +260,7 @@ class Quadrille {
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row)
     );
     // ii. fill result with passed quadrilles
-    p5.prototype.visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j,
+    quadrille.visit((i, j) => quadrille.fill(i, j,
       operator(
         quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j),
         quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j)
@@ -297,7 +297,7 @@ class Quadrille {
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         const fill = (row + col) % 2 === 0
           ? this.constructor.lightSquare
           : this.constructor.darkSquare;
@@ -313,7 +313,7 @@ class Quadrille {
       (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         const fill = (row + col) % 2 === 0 ? args[0] : args[1];
         this._memory2D[row][col] = this._p.color(fill);
       });
@@ -472,7 +472,7 @@ class Quadrille {
       a[_i][_j] += image.pixels[4 * i + 3];
       t[_i][_j] += 1;
     }
-    p5.prototype.visitQuadrille(this, (row, col) =>
+    this.visit((row, col) =>
       this.fill(row, col, this._p.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
     );
   }
@@ -526,7 +526,7 @@ class Quadrille {
       a[_i][_j] += image.pixels[4 * i + 3];
       t[_i][_j] += 1;
     }
-    p5.prototype.visitQuadrille(this, (row, col) => {
+    this.visit((row, col) => {
       this.fill(row, col, this._p.color([
         r[row][col] / t[row][col],
         g[row][col] / t[row][col],
@@ -539,7 +539,7 @@ class Quadrille {
   _images(image) {
     const cellWidth = image.width / this.width;
     const cellHeight = image.height / this.height;
-    p5.prototype.visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+    this.visit((row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   /**
@@ -628,7 +628,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    p5.prototype.visitQuadrille(this, (row, col) => {
+    this.visit((row, col) => {
       if (this.isFilled(row, col)) {
         result++;
       }
@@ -730,7 +730,7 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    p5.prototype.visitQuadrille(this, (row, col) => {
+    this.visit((row, col) => {
       if (this.isFilled(row, col)) {
         result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
       }
@@ -1024,7 +1024,7 @@ class Quadrille {
    */
   search(pattern, strict = false) {
     const hits = [];
-    p5.prototype.visitQuadrille(this, (row, col) =>
+    this.visit((row, col) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
         if (this.constructor._isFilled(q1) && (strict ? q2 !== q1 : this.constructor._isEmpty(q2))) {
           return q1;
@@ -1042,14 +1042,14 @@ class Quadrille {
    */
   replace(...args) {
     if (args.length === 1) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         if (this.isFilled(row, col)) {
           this.fill(row, col, args[0]);
         }
       });
     }
     if (args.length === 2) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         if (this.read(row, col) === args[0]) {
           this.fill(row, col, args[1]);
         }
@@ -1121,13 +1121,13 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] != null) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         if (this.isEmpty(row, col)) {
           this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
@@ -1136,7 +1136,7 @@ class Quadrille {
     }
     if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
       });
@@ -1237,7 +1237,7 @@ class Quadrille {
   randomize() {
     const clone = this.clone(false);
     this.clear();
-    p5.prototype.visitQuadrille(clone, (row, col) => {
+    clone.visit((row, col) => {
       if (clone.isFilled(row, col)) {
         let _row, _col;
         do {
@@ -1358,7 +1358,7 @@ class Quadrille {
       const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
-        p5.prototype.visitQuadrille(this, (i, j) => {
+        this.visit((i, j) => {
           if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
             this._conv(mask, i, j, half_size, source);
           }
@@ -1430,7 +1430,7 @@ class Quadrille {
    */
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
-      p5.prototype.visitQuadrille(this, (row, col) => {
+      this.visit((row, col) => {
         const coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
         // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
@@ -1701,8 +1701,8 @@ class Quadrille {
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / value.length);
     // TODO p5v2 decide how to go here:
-    //graphics.textAlign(graphics.CENTER, graphics.CENTER);
-    graphics.textAlign(p5.prototype.CENTER, p5.prototype.CENTER);
+    graphics.textAlign(graphics.CENTER, graphics.CENTER);
+    //graphics.textAlign(p5.prototype.CENTER, p5.prototype.CENTER);
     graphics.text(value, 0, 0, cellLength, cellLength);
   }
 
@@ -1782,7 +1782,7 @@ p5.prototype.drawQuadrille = function (quadrille, {
     (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
   graphics.translate(quadrille._x, quadrille._y);
   // TODO p5v2 decide how to go here: (b4 nothing, tested also with this)
-  p5.prototype.visitQuadrille(quadrille, (row, col) => {
+  quadrille.visit((row, col) => {
     graphics.push();
     graphics.translate(col * cellLength, row * cellLength);
     options.row = row;
