@@ -423,7 +423,6 @@ class Quadrille {
     }
   }
 
-  /*
   _fromImage(...args) {
     if (this.constructor._isImage(args[0])) {
       let src = args[0] instanceof p5.Framebuffer ? args[0].get() : args[0];
@@ -437,60 +436,6 @@ class Quadrille {
         src.drawingContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight); // Draw video frame to p5.Image
       }
       const image = new p5.Image(src.width, src.height);
-      image.copy(src, 0, 0, src.width, src.height, 0, 0, src.width, src.height);
-      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
-    }
-  }
-
-  _pixelator1(image) {
-    image.resize(this.width, this.height);
-    image.loadPixels();
-    for (let i = 0; i < image.pixels.length / 4; i++) {
-      const r = image.pixels[4 * i];
-      const g = image.pixels[4 * i + 1];
-      const b = image.pixels[4 * i + 2];
-      const a = image.pixels[4 * i + 3];
-      const _ = this._fromIndex(i);
-      this.fill(_.row, _.col, this._p.color([r, g, b, a]));
-    }
-  }
-
-  _pixelator2(image) {
-    image.loadPixels();
-    const r = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    const g = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    const b = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    const a = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    const t = Array(this.height).fill().map(() => Array(this.width).fill(null));
-    for (let i = 0; i < image.pixels.length / 4; i++) {
-      const _ = this._fromIndex(i, image.width);
-      const _i = Math.floor(_.row * this.height / image.height);
-      const _j = Math.floor(_.col * this.width / image.width);
-      r[_i][_j] += image.pixels[4 * i];
-      g[_i][_j] += image.pixels[4 * i + 1];
-      b[_i][_j] += image.pixels[4 * i + 2];
-      a[_i][_j] += image.pixels[4 * i + 3];
-      t[_i][_j] += 1;
-    }
-    this.visit((row, col) =>
-      this.fill(row, col, this._p.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
-    );
-  }
-  */
-
-  _fromImage(...args) {
-    if (this.constructor._isImage(args[0])) {
-      let src = args[0] instanceof this._p.Framebuffer ? args[0].get() : args[0];
-      if (src instanceof this._p.MediaElement && src.elt instanceof HTMLVideoElement) {
-        const video = src.elt;
-        if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-          video.addEventListener('loadeddata', () => this._fromImage(...args));
-          return;
-        }
-        src = new this._p.Image(video.videoWidth, video.videoHeight);
-        src.drawingContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-      }
-      const image = new this._p.Image(src.width, src.height);
       image.copy(src, 0, 0, src.width, src.height, 0, 0, src.width, src.height);
       args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
     }
