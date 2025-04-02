@@ -21,3 +21,10 @@ coverage/
 
 # REPL / temp
 .node_repl_history
+
+# hugo
+content/
+public/
+resources/
+themes/
+.hugo*
