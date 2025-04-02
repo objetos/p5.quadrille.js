@@ -231,7 +231,7 @@ class Quadrille {
   static neg(quadrille, value) {
     const result = new Quadrille(quadrille.width, quadrille.height);
     if (this._isFilled(value)) {
-      visitQuadrille(quadrille, (row, col) => {
+      p5.prototype.visitQuadrille(quadrille, (row, col) => {
         if (quadrille.isEmpty(row, col)) {
           result.fill(row, col, value);
         }
@@ -257,7 +257,7 @@ class Quadrille {
     const quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
     // ii. fill result with passed quadrilles
-    visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
+    p5.prototype.visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
     // iii. return resulted quadrille
     return quadrille;
   }
@@ -463,15 +463,15 @@ class Quadrille {
       a[_i][_j] += image.pixels[4 * i + 3];
       t[_i][_j] += 1;
     }
-    visitQuadrille(this, (row, col) =>
-      this.fill(row, col, color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
+    p5.prototype.visitQuadrille(this, (row, col) =>
+      this.fill(row, col, p5.prototype.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
     );
   }
 
   _images(image) {
     const cellWidth = image.width / this.width;
     const cellHeight = image.height / this.height;
-    visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+    p5.prototype.visitQuadrille(this, (row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   /**
@@ -560,7 +560,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    visitQuadrille(this, (row, col) => {
+    p5.prototype.visitQuadrille(this, (row, col) => {
       if (this.isFilled(row, col)) {
         result++;
       }
@@ -660,7 +660,7 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    visitQuadrille(this, (row, col) => {
+    p5.prototype.visitQuadrille(this, (row, col) => {
       if (this.isFilled(row, col)) {
         result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
       }
@@ -954,7 +954,7 @@ class Quadrille {
    */
   search(pattern, strict = false) {
     const hits = [];
-    visitQuadrille(this, (row, col) =>
+    p5.prototype.visitQuadrille(this, (row, col) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
         if (this.constructor._isFilled(q1) && (strict ? q2 !== q1 : this.constructor._isEmpty(q2))) {
           return q1;
@@ -972,14 +972,14 @@ class Quadrille {
    */
   replace(...args) {
     if (args.length === 1) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         if (this.isFilled(row, col)) {
           this.fill(row, col, args[0]);
         }
       });
     }
     if (args.length === 2) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         if (this.read(row, col) === args[0]) {
           this.fill(row, col, args[1]);
         }
@@ -1051,13 +1051,13 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] != null) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         if (this.isEmpty(row, col)) {
           this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
@@ -1066,7 +1066,7 @@ class Quadrille {
     }
     if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = (row + col) % 2 === 0 ? color(args[0]) : color(args[1]);
       });
@@ -1167,7 +1167,7 @@ class Quadrille {
   randomize() {
     const clone = this.clone(false);
     this.clear();
-    visitQuadrille(clone, (row, col) => {
+    p5.prototype.visitQuadrille(clone, (row, col) => {
       if (clone.isFilled(row, col)) {
         let _row, _col;
         do {
@@ -1288,7 +1288,7 @@ class Quadrille {
       const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
-        visitQuadrille(this, (i, j) => {
+        p5.prototype.visitQuadrille(this, (i, j) => {
           if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
             this._conv(mask, i, j, half_size, source);
           }
@@ -1359,7 +1359,7 @@ class Quadrille {
    */
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
-      visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         const coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
         // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
