@@ -281,22 +281,34 @@ class Quadrille {
    * @see rand
    * @see order
    */
-  constructor(...args) {
+  constructor(p, ...args) {
+    this._p = p;
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare));
+      this._p.visitQuadrille(this, (row, col) => {
+        const fill = (row + col) % 2 === 0
+          ? this.constructor.lightSquare
+          : this.constructor.darkSquare;
+        this._memory2D[row][col] = this._p.color(fill);
+      });
+      return;
     }
     if (args.length === 1) {
       this.memory2D = args[0];
+      return;
     }
-    if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
+    if (args.length === 2 &&
+      (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      visitQuadrille(this, (row, col) => this._memory2D[row][col] = (row + col) % 2 === 0 ? color(args[0]) : color(args[1]));
+      this._p.visitQuadrille(this, (row, col) => {
+        const fill = (row + col) % 2 === 0 ? args[0] : args[1];
+        this._memory2D[row][col] = this._p.color(fill);
+      });
       return;
     }
     if (args.length === 2 && typeof args[0] === 'number') {
@@ -314,21 +326,28 @@ class Quadrille {
       return;
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] !== 'number') {
-      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
+      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width))
+        .fill().map(() => Array(args[0]).fill(null));
       this._fromImage(args[1]);
       return;
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] !== 'number' && typeof args[2] === 'boolean') {
-      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width)).fill().map(() => Array(args[0]).fill(null));
+      this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width))
+        .fill().map(() => Array(args[0]).fill(null));
       this._fromImage(args[1], args[2]);
       return;
     }
-    if (args.length === 3 && typeof args[0] === 'number' && (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
-      this._memory2D = Array(Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]))).fill().map(() => Array(args[0]).fill(null));
+    if (args.length === 3 && typeof args[0] === 'number' &&
+      (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
+      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
+      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
       this._fromBigInt(args[1], args[2]);
       return;
     }
-    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'number') {
+    if (args.length === 4 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'number' &&
+      typeof args[2] === 'number') {
       this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
       this.rand(args[2], args[3]);
       return;
@@ -1634,14 +1653,14 @@ export default Quadrille;
 const INFO =
 {
   LIBRARY: 'p5.quadrille.js',
-  VERSION: '2.2.5',
+  VERSION: '3.0.0',
   HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
 };
 
 console.log(INFO);
 
 p5.prototype.createQuadrille = function (...args) {
-  return new Quadrille(...args);
+  return new Quadrille(this, ...args);
 }
 
 p5.prototype.drawQuadrille = function (quadrille, {
