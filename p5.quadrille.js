@@ -291,6 +291,8 @@ class Quadrille {
    */
   constructor(p, ...args) {
     this._p = p;
+    // TODO decide hack (doesn't work for mouseRow and mouseCol properties in inheritance classes)
+    // this._p = p || p5.prototype; // defaults to p5.prototype if p is not passed
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
