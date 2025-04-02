@@ -423,6 +423,7 @@ class Quadrille {
     }
   }
 
+  /*
   _fromImage(...args) {
     if (this.constructor._isImage(args[0])) {
       let src = args[0] instanceof p5.Framebuffer ? args[0].get() : args[0];
@@ -474,6 +475,65 @@ class Quadrille {
     p5.prototype.visitQuadrille(this, (row, col) =>
       this.fill(row, col, this._p.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
     );
+  }
+  */
+
+  _fromImage(...args) {
+    if (this.constructor._isImage(args[0])) {
+      let src = args[0] instanceof this._p.Framebuffer ? args[0].get() : args[0];
+      if (src instanceof this._p.MediaElement && src.elt instanceof HTMLVideoElement) {
+        const video = src.elt;
+        if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+          video.addEventListener('loadeddata', () => this._fromImage(...args));
+          return;
+        }
+        src = new this._p.Image(video.videoWidth, video.videoHeight);
+        src.drawingContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+      }
+      const image = new this._p.Image(src.width, src.height);
+      image.copy(src, 0, 0, src.width, src.height, 0, 0, src.width, src.height);
+      args.length === 1 ? this._images(image) : args[1] ? this._pixelator1(image) : this._pixelator2(image);
+    }
+  }
+
+  _pixelator1(image) {
+    image.resize(this.width, this.height);
+    image.loadPixels();
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      const r = image.pixels[4 * i];
+      const g = image.pixels[4 * i + 1];
+      const b = image.pixels[4 * i + 2];
+      const a = image.pixels[4 * i + 3];
+      const _ = this._fromIndex(i);
+      this.fill(_.row, _.col, this._p.color([r, g, b, a]));
+    }
+  }
+
+  _pixelator2(image) {
+    image.loadPixels();
+    const r = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    const g = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    const b = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    const a = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    const t = Array(this.height).fill().map(() => Array(this.width).fill(0));
+    for (let i = 0; i < image.pixels.length / 4; i++) {
+      const _ = this._fromIndex(i, image.width);
+      const _i = Math.floor(_.row * this.height / image.height);
+      const _j = Math.floor(_.col * this.width / image.width);
+      r[_i][_j] += image.pixels[4 * i];
+      g[_i][_j] += image.pixels[4 * i + 1];
+      b[_i][_j] += image.pixels[4 * i + 2];
+      a[_i][_j] += image.pixels[4 * i + 3];
+      t[_i][_j] += 1;
+    }
+    p5.prototype.visitQuadrille(this, (row, col) => {
+      this.fill(row, col, this._p.color([
+        r[row][col] / t[row][col],
+        g[row][col] / t[row][col],
+        b[row][col] / t[row][col],
+        a[row][col] / t[row][col]
+      ]));
+    });
   }
 
   _images(image) {
@@ -577,30 +637,30 @@ class Quadrille {
   }
 
   get mouseRow() {
-    return this.screenRow(mouseY);
+    return this.screenRow(this._p.mouseY);
   }
 
   get mouseCol() {
-    return this.screenCol(mouseX);
+    return this.screenCol(this._p.mouseX);
   }
 
   /*
   get mouseCornerX() {
-    return this.screenCornerX(mouseX);
+    return this.screenCornerX(this._p.mouseX);
   }
 
   get mouseCornerY() {
-    return this.screenCornerY(mouseY);
+    return this.screenCornerY(this._p.mouseY);
   }
 
   screenCornerX(pixelX, x = this._x || 0, cellLength = this._cellLength || this.constructor.cellLength) {
-    return this.screenCol(pixelX, x, cellLength) * cellLength + (this._origin === 'center' ? width / 2 : x);
+    return this.screenCol(pixelX, x, cellLength) * cellLength + (this._origin === 'center' ? this._p.width / 2 : x);
   }
-  
+
   screenCornerY(pixelY, y = this._y || 0, cellLength = this._cellLength || this.constructor.cellLength) {
-    return this.screenRow(pixelY, y, cellLength) * cellLength + (this._origin === 'center' ? height / 2 : y);
+    return this.screenRow(pixelY, y, cellLength) * cellLength + (this._origin === 'center' ? this._p.height / 2 : y);
   }
-  */
+  // */
 
   /**
    * Converts a pixel Y coordinate to a quadrille row index.
@@ -610,7 +670,7 @@ class Quadrille {
    * @returns {number} The row index corresponding to the pixel Y-coordinate.
    */
   screenRow(pixelY, y = this._y || 0, cellLength = this._cellLength || this.constructor.cellLength) {
-    return floor((pixelY - (this._origin === 'center' ? height / 2 : y)) / cellLength);
+    return this._p.floor((pixelY - (this._origin === 'center' ? this._p.height / 2 : y)) / cellLength);
   }
 
   /**
@@ -621,27 +681,29 @@ class Quadrille {
    * @returns {number} - The corresponding quadrille column.
    */
   screenCol(pixelX, x = this._x || 0, cellLength = this._cellLength || this.constructor.cellLength) {
-    return floor((pixelX - (this._origin === 'center' ? width / 2 : x)) / cellLength);
+    return this._p.floor((pixelX - (this._origin === 'center' ? this._p.width / 2 : x)) / cellLength);
   }
 
   [Symbol.iterator]() {
-    let row = 0;
-    let col = 0;
-    const memory2D = this._memory2D;
-    return {
-      next() {
-        if (row < memory2D.length) {
-          if (col < memory2D[row].length) {
-            return { value: { value: memory2D[row][col], row, col: col++ }, done: false };
-          } else {
-            row++;
-            col = 0;
-            return this.next();
-          }
+    return this.entries()[Symbol.iterator]();
+  }
+
+  entries(values) {
+    const set = new Set(values);
+    const result = [];
+    for (let row = 0; row < this.height; row++) {
+      for (let col = 0; col < this.width; col++) {
+        const value = this.read(row, col);
+        if (set.size === 0 || set.has(value)) {
+          result.push({ value, row, col });
         }
-        return { done: true };
       }
-    };
+    }
+    return result;
+  }
+
+  visit(fx, values) {
+    this.entries(values).forEach(({ row, col }) => fx(row, col));
   }
 
   /**
@@ -712,13 +774,13 @@ class Quadrille {
     textColor = this.constructor.textColor,
     textZoom = this.constructor.textZoom
   } = {}) {
-    const graphics = createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
-    drawQuadrille(this, {
+    const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
+    this._p.drawQuadrille(this, {
       graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
       numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
       textZoom, textFont, origin, options
     });
-    save(graphics, filename);
+    this._p.save(graphics, filename);
   }
 
   /**
@@ -778,7 +840,7 @@ class Quadrille {
    * {@link reflect} and {@link rotate} to create different quadrille instances.
    */
   clone(cache = true) {
-    const clone = new Quadrille(this._memory2D.map(array => array.slice()));
+    const clone = new Quadrille(this._p, this._memory2D.map(array => array.slice()));
     if (cache) {
       clone._cellLength = this._cellLength;
       clone._x = this._x;
@@ -1320,20 +1382,21 @@ class Quadrille {
         const j = col + jmask - cache_half_size;
         const neighbor = source.read(i, j);
         let mask_value = mask.read(imask, jmask);
-        if ((neighbor instanceof p5.Color) && (typeof mask_value === 'number' || mask_value instanceof p5.Color)) {
+        if ((neighbor instanceof this._p.Color) && (typeof mask_value === 'number' || mask_value instanceof this._p.Color)) {
           apply = true;
-          // luma coefficients are: 0.299, 0.587, 0.114, 0
-          const weight = typeof mask_value === 'number' ? mask_value : 0.299 * red(mask_value) + 0.587 * green(mask_value) + 0.114 * blue(mask_value);
-          r += red(neighbor) * weight;
-          g += green(neighbor) * weight;
-          b += blue(neighbor) * weight;
+          const weight = typeof mask_value === 'number'
+            ? mask_value
+            : 0.299 * this._p.red(mask_value) + 0.587 * this._p.green(mask_value) + 0.114 * this._p.blue(mask_value);
+          r += this._p.red(neighbor) * weight;
+          g += this._p.green(neighbor) * weight;
+          b += this._p.blue(neighbor) * weight;
         }
       }
     }
     if (apply) {
-      r = constrain(r, 0, 255);
-      g = constrain(g, 0, 255);
-      b = constrain(b, 0, 255);
+      r = this._p.constrain(r, 0, 255);
+      g = this._p.constrain(g, 0, 255);
+      b = this._p.constrain(b, 0, 255);
       this.fill(row, col, this._p.color(r, g, b));
     }
   }
@@ -1344,11 +1407,11 @@ class Quadrille {
    */
   colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
     this.rasterizeTriangle(row0, col0, row1, col1, row2, col2,
-      // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
-      // array0.xyza, array1.xyza and array2.xyza interpolated color vertex arrays, respectively.
-      ({ array: xyza }) => this._p.color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
-      [red(color1), green(color1), blue(color1), alpha(color1)],
-      [red(color2), green(color2), blue(color2), alpha(color2)]);
+      ({ array: xyza }) => this._p.color(xyza),
+      [this._p.red(color0), this._p.green(color0), this._p.blue(color0), this._p.alpha(color0)],
+      [this._p.red(color1), this._p.green(color1), this._p.blue(color1), this._p.alpha(color1)],
+      [this._p.red(color2), this._p.green(color2), this._p.blue(color2), this._p.alpha(color2)]
+    );
   }
 
   /**
@@ -1460,10 +1523,18 @@ class Quadrille {
           params.value = valueA;
           const sa = this.constructor.sample({ ...params, value: valueA });
           const sb = this.constructor.sample({ ...params, value: valueB });
-          const wa = Math.sqrt(Math.pow((sa.r / sa.total) - red(target), 2) + Math.pow((sa.g / sa.total) - green(target), 2) +
-            Math.pow((sa.b / sa.total) - blue(target), 2) + Math.pow((sa.a / sa.total) - alpha(target), 2));
-          const wb = Math.sqrt(Math.pow((sb.r / sb.total) - red(target), 2) + Math.pow((sb.g / sb.total) - green(target), 2) +
-            Math.pow((sb.b / sb.total) - blue(target), 2) + Math.pow((sb.a / sb.total) - alpha(target), 2));
+          const wa = Math.sqrt(
+            Math.pow((sa.r / sa.total) - this._p.red(target), 2) +
+            Math.pow((sa.g / sa.total) - this._p.green(target), 2) +
+            Math.pow((sa.b / sa.total) - this._p.blue(target), 2) +
+            Math.pow((sa.a / sa.total) - this._p.alpha(target), 2)
+          )
+          const wb = Math.sqrt(
+            Math.pow((sb.r / sb.total) - this._p.red(target), 2) +
+            Math.pow((sb.g / sb.total) - this._p.green(target), 2) +
+            Math.pow((sb.b / sb.total) - this._p.blue(target), 2) +
+            Math.pow((sb.a / sb.total) - this._p.alpha(target), 2)
+          )
           return wa - wb;
         });
         break;
@@ -1728,12 +1799,5 @@ p5.prototype.drawQuadrille = function (quadrille, {
 }
 
 p5.prototype.visitQuadrille = function (quadrille, fx, values) {
-  values = new Set(values);
-  for (let row = 0; row < quadrille.height; row++) {
-    for (let col = 0; col < quadrille.width; col++) {
-      if (values.size === 0 || values.has(quadrille.read(row, col))) {
-        fx(row, col);
-      }
-    }
-  }
+  quadrille.visit(fx, values);
 }
