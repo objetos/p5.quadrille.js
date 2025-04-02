@@ -229,7 +229,7 @@ class Quadrille {
    * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
    */
   static neg(quadrille, value) {
-    const result = new Quadrille(quadrille.width, quadrille.height);
+    const result = new Quadrille(quadrille._p, quadrille.width, quadrille.height);
     if (this._isFilled(value)) {
       p5.prototype.visitQuadrille(quadrille, (row, col) => {
         if (quadrille.isEmpty(row, col)) {
@@ -254,10 +254,18 @@ class Quadrille {
     col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
       quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._col - quadrille1._col : 0);
     // i. create resulted quadrille
-    const quadrille = new Quadrille(col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
-      row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row));
+    const quadrille = new Quadrille(
+      quadrille1._p,
+      col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
+      row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row)
+    );
     // ii. fill result with passed quadrilles
-    p5.prototype.visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j, operator(quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j), quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j))));
+    p5.prototype.visitQuadrille(quadrille, (i, j) => quadrille.fill(i, j,
+      operator(
+        quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j),
+        quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j)
+      )
+    ));
     // iii. return resulted quadrille
     return quadrille;
   }
