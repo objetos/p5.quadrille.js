@@ -73,6 +73,39 @@ new p5(sketch)
 
 ---
 
+## Build & Test
+
+To build the library and run example tests using Vite:
+
+### 🔧 Build the library
+
+Generates `iife` and `esm` builds in the `dist/` directory.
+
+```bash
+npm run build
+```
+
+### 🚀 Run ESM test example (Vite)
+
+Inside the `test-npm-esm/` directory:
+
+```bash
+cd test-npm-esm
+npm install       # installs p5, vite, and applies patch for beta.5
+npm run dev       # launches local dev server at http://localhost:5173/
+```
+
+You can then import the library as:
+
+```js
+import p5 from 'p5'
+import Quadrille from 'p5.quadrille'
+```
+
+✅ Works with [Vite](https://vitejs.dev) and will be compatible with the upcoming [p5.js v2](https://github.com/processing/p5.js/pull/5746) release.
+
+---
+
 ## Releases
 
 - [p5.quadrille.js (main build)](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)
