@@ -18,6 +18,16 @@ const sketch = (p) => {
     p.background('blue')
     p.drawQuadrille(q, { outline: 'grey' /*, outlineWeight: 0 */ })
   }
+
+  p.mousePressed = () => {
+    const row = q.mouseRow;
+    const col = q.mouseCol;
+    q.fill(row, col, p.color('yellow'));
+  }
+
+  p.keyPressed = () => {
+    q.randomize();
+  }
 }
 
 new p5(sketch)

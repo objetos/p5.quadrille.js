@@ -1188,10 +1188,9 @@ class Quadrille {
       if (clone.isFilled(row, col)) {
         let _row, _col;
         do {
-          _row = int(random(this.height));
-          _col = int(random(this.width));
-        }
-        while (this.isFilled(_row, _col));
+          _row = this._p.int(this._p.random(this.height));
+          _col = this._p.int(this._p.random(this.width));
+        } while (this.isFilled(_row, _col));
         this.fill(_row, _col, clone.read(row, col));
       }
     });
@@ -1443,7 +1442,7 @@ class Quadrille {
     textColor = this.constructor.textColor,
     textZoom = this.constructor.textZoom,
     background = this.constructor.background,
-    cellLength = int(max(width / this.width, height / this.height) / 10),
+    cellLength = this._p.int(this._p.max(this._p.width / this.width, this._p.height / this.height) / 10),
     outlineWeight = this.constructor.outlineWeight,
     outline = this.constructor.outline,
     textFont,
@@ -1462,7 +1461,7 @@ class Quadrille {
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
       outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
-      renderer: 'p2d'// renderer: this._mode // kills machine in webgl!
+      renderer: 'p2d' // renderer: this._mode // kills machine in webgl!
     };
     switch (mode) {
       case 'DISTANCE':
@@ -1475,13 +1474,13 @@ class Quadrille {
             Math.pow((sa.g / sa.total) - this._p.green(target), 2) +
             Math.pow((sa.b / sa.total) - this._p.blue(target), 2) +
             Math.pow((sa.a / sa.total) - this._p.alpha(target), 2)
-          )
+          );
           const wb = Math.sqrt(
             Math.pow((sb.r / sb.total) - this._p.red(target), 2) +
             Math.pow((sb.g / sb.total) - this._p.green(target), 2) +
             Math.pow((sb.b / sb.total) - this._p.blue(target), 2) +
             Math.pow((sb.a / sb.total) - this._p.alpha(target), 2)
-          )
+          );
           return wa - wb;
         });
         break;
