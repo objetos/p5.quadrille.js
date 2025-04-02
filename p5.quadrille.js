@@ -289,7 +289,7 @@ class Quadrille {
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this._p.visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         const fill = (row + col) % 2 === 0
           ? this.constructor.lightSquare
           : this.constructor.darkSquare;
@@ -305,7 +305,7 @@ class Quadrille {
       (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this._p.visitQuadrille(this, (row, col) => {
+      p5.prototype.visitQuadrille(this, (row, col) => {
         const fill = (row + col) % 2 === 0 ? args[0] : args[1];
         this._memory2D[row][col] = this._p.color(fill);
       });
@@ -442,7 +442,7 @@ class Quadrille {
       const b = image.pixels[4 * i + 2];
       const a = image.pixels[4 * i + 3];
       const _ = this._fromIndex(i);
-      this.fill(_.row, _.col, color([r, g, b, a]));
+      this.fill(_.row, _.col, this._p.color([r, g, b, a]));
     }
   }
 
@@ -464,7 +464,7 @@ class Quadrille {
       t[_i][_j] += 1;
     }
     p5.prototype.visitQuadrille(this, (row, col) =>
-      this.fill(row, col, p5.prototype.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
+      this.fill(row, col, this._p.color([r[row][col] / t[row][col], g[row][col] / t[row][col], b[row][col] / t[row][col], a[row][col] / t[row][col]]))
     );
   }
 
@@ -1053,7 +1053,7 @@ class Quadrille {
     if (args.length === 0) {
       p5.prototype.visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
+        this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] != null) {
@@ -1068,7 +1068,7 @@ class Quadrille {
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
       p5.prototype.visitQuadrille(this, (row, col) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = (row + col) % 2 === 0 ? color(args[0]) : color(args[1]);
+        this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
       });
     }
     if (args.length === 2 && typeof args[0] === 'number') {
@@ -1326,7 +1326,7 @@ class Quadrille {
       r = constrain(r, 0, 255);
       g = constrain(g, 0, 255);
       b = constrain(b, 0, 255);
-      this.fill(row, col, color(r, g, b));
+      this.fill(row, col, this._p.color(r, g, b));
     }
   }
 
@@ -1338,7 +1338,7 @@ class Quadrille {
     this.rasterizeTriangle(row0, col0, row1, col1, row2, col2,
       // Shader which colorizes the (row0, col0), (row1, col1), (row2, col2) triangle, according to the
       // array0.xyza, array1.xyza and array2.xyza interpolated color vertex arrays, respectively.
-      ({ array: xyza }) => color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
+      ({ array: xyza }) => this._p.color(xyza), [red(color0), green(color0), blue(color0), alpha(color0)],
       [red(color1), green(color1), blue(color1), alpha(color1)],
       [red(color2), green(color2), blue(color2), alpha(color2)]);
   }
