@@ -366,24 +366,17 @@ class Quadrille {
 
   _init1D(memory1D, width = memory1D.length) {
     const height = Math.ceil(memory1D.length / width);
-    this._memory2D = new Array(height);
-    for (let i = 0; i < height; i++) {
-      const start = width * i;
-      const end = start + width;
-      this._memory2D[i] = this._format(memory1D.slice(start, end), width);
-    }
+    this._memory2D = Array.from({ length: height }, (_, i) => {
+      const start = i * width;
+      return this._format(memory1D.slice(start, start + width), width);
+    });
   }
 
   _format(memory1D, size) {
-    for (let i = 0; i < memory1D.length; i++) {
-      if (memory1D[i] === undefined) {
-        memory1D[i] = null;
-      }
-    }
-    if (memory1D.length < size) {
-      return memory1D.concat(new Array(size - memory1D.length).fill(null));
-    }
-    return memory1D;
+    const cleaned = memory1D.map(v => v === undefined ? null : v);
+    return cleaned.length < size
+      ? cleaned.concat(new Array(size - cleaned.length).fill(null))
+      : cleaned;
   }
 
   _fromBigInt(...args) {
@@ -493,32 +486,27 @@ class Quadrille {
    * Sets quadrille from 2D memory internal array representation.
    */
   set memory2D(memory) {
+    // Case: FEN or flat string
     if (typeof memory === 'string') {
-      memory.split('/').length - 1 === 7 ? this._fromFEN(memory) : this._init1D([...memory]);
+      const isFEN = memory.split('/').length - 1 === 7;
+      isFEN ? this._fromFEN(memory) : this._init1D([...memory]);
       return;
     }
+    // Case: 1D array
+    if (Array.isArray(memory) && !Array.isArray(memory[0])) {
+      this._init1D(memory);
+      return;
+    }
+    // Case: 2D array
     if (Array.isArray(memory)) {
-      if (!Array.isArray(memory[0])) {
-        this._init1D(memory);
-        return;
-      }
-      const memory2D = memory.map(array => array.slice());
-      let width;
-      for (const entry of memory2D) {
-        if (!Array.isArray(entry)) {
-          throw new Error('Not 2D Array');
-        }
-        if (!width) {
-          width = entry.length;
-        }
-        else if (width < entry.length) {
-          width = entry.length;
-        }
-      }
-      for (let i = 0; i < memory2D.length; i++) {
-        memory2D[i] = this._format(memory2D[i], width);
-      }
-      this._memory2D = memory2D;
+      const memory2D = memory.map(row => {
+        if (!Array.isArray(row)) throw new Error('Not 2D Array');
+        return row.slice(); // shallow copy
+      });
+      // Compute max row length
+      const width = Math.max(...memory2D.map(row => row.length));
+      // Normalize all rows
+      this._memory2D = memory2D.map(row => this._format(row, width));
     }
   }
 
@@ -689,7 +677,9 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    return this.cells().map(({ value }) => value);
+    return this._memory2D.flat(); // requires ES2019
+    // TODO need to verify which ES version will p5-v2 support
+    // return this.cells().map(({ value }) => value);
   }
 
   /**
