@@ -628,14 +628,14 @@ class Quadrille {
     }
   }
 
+  *[Symbol.iterator]() {
+    yield* this.cells();
+  }
+
   visit(fx, values) {
     for (const { row, col } of this.cells(values)) {
       fx(row, col);
     }
-  }
-
-  [Symbol.iterator]() {
-    return this.cells()[Symbol.iterator]();
   }
 
   /**
