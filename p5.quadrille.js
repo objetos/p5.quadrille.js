@@ -563,11 +563,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    this.visit((row, col) => {
-      if (this.isFilled(row, col)) {
-        result++;
-      }
-    });
+    this.visit((row, col) => this.isFilled(row, col) && result++);
     return result;
   }
 
@@ -619,26 +615,27 @@ class Quadrille {
     return this._p.floor((pixelX - (this._origin === 'center' ? this._p.width / 2 : x)) / cellLength);
   }
 
-  [Symbol.iterator]() {
-    return this.cells()[Symbol.iterator]();
-  }
-
-  cells(values) {
+  *cells(values) {
     const set = new Set(values);
-    const result = [];
-    for (let row = 0; row < this.height; row++) {
-      for (let col = 0; col < this.width; col++) {
-        const value = this.read(row, col);
+    for (let row = 0; row < this._memory2D.length; row++) {
+      const rowData = this._memory2D[row];
+      for (let col = 0; col < rowData.length; col++) {
+        const value = rowData[col];
         if (set.size === 0 || set.has(value)) {
-          result.push({ value, row, col });
+          yield { value, row, col };
         }
       }
     }
-    return result;
   }
 
   visit(fx, values) {
-    this.cells(values).forEach(({ row, col }) => fx(row, col));
+    for (const { row, col } of this.cells(values)) {
+      fx(row, col);
+    }
+  }
+
+  [Symbol.iterator]() {
+    return this.cells()[Symbol.iterator]();
   }
 
   /**
@@ -665,11 +662,8 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    this.visit((row, col) => {
-      if (this.isFilled(row, col)) {
-        result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
-      }
-    });
+    this.visit((row, col) =>
+      this.isFilled(row, col) && (result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n))));
     return result;
   }
 
@@ -760,9 +754,7 @@ class Quadrille {
   magnitude(row) {
     let result = 0;
     for (let j = 0; j < this.width; j++) {
-      if (this.read(row, j)) {
-        result++;
-      }
+      this.isFilled(row, j) && result++;
     }
     return result;
   }
@@ -791,9 +783,9 @@ class Quadrille {
    */
   ring(row, col, dimension = 1) {
     const array1D = [];
-    for (let i = row - dimension; i <= row + dimension; i++) {
-      for (let j = col - dimension; j <= col + dimension; j++) {
-        array1D.push(this.read(i, j));
+    for (let i = -dimension; i <= dimension; i++) {
+      for (let j = -dimension; j <= dimension; j++) {
+        array1D.push(this.read(row + i, col + j));
       }
     }
     return new Quadrille(2 * dimension + 1, array1D);
@@ -968,25 +960,11 @@ class Quadrille {
   /**
    * Searches and replace values. Either:
    * 1. replace(value), replaces non empty cells with value.
-   * 2. replace(value1, value2), searches value1 and replaces with value2,
-   * value1 and value2 may be either a p5.Image, p5.Graphics, p5.Color,
-   * a 4-length color array, a string or a number.
+   * 2. replace(value1, value2), searches value1 and replaces with value2
    */
   replace(...args) {
-    if (args.length === 1) {
-      this.visit((row, col) => {
-        if (this.isFilled(row, col)) {
-          this.fill(row, col, args[0]);
-        }
-      });
-    }
-    if (args.length === 2) {
-      this.visit((row, col) => {
-        if (this.read(row, col) === args[0]) {
-          this.fill(row, col, args[1]);
-        }
-      });
-    }
+    args.length === 1 && this.visit((row, col) => this.isFilled(row, col) && this.fill(row, col, args[0]));
+    args.length === 2 && this.visit((row, col) => this.read(row, col) === args[0] && this.fill(row, col, args[1]));
     return this;
   }
 
