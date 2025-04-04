@@ -9,9 +9,19 @@ const sketch = (p) => {
     p.createCanvas(400, 400)
     //q = p.createQuadrille()
     q = p.createQuadrille(8, 8)
-    q.fill(1, 1, p.color('red'))
+    //q.fill(1, 1, p.color('red'))
     //q.fill(2, 2, 'white')
     //q.fill()
+    // /*
+    for (const { row, col } of q) {
+      q.fill(row, col, p.color(p.random(255), p.random(255), p.random(255)));
+    }
+    // */
+    /*
+    for (const cell of q) {
+      q.fill(cell.row, cell.col, p.color(p.random(255), p.random(255), p.random(255)));
+    }
+    // */
   }
 
   p.draw = () => {

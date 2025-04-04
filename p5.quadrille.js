@@ -632,10 +632,10 @@ class Quadrille {
   }
 
   [Symbol.iterator]() {
-    return this.entries()[Symbol.iterator]();
+    return this.cells()[Symbol.iterator]();
   }
 
-  entries(values) {
+  cells(values) {
     const set = new Set(values);
     const result = [];
     for (let row = 0; row < this.height; row++) {
@@ -650,7 +650,7 @@ class Quadrille {
   }
 
   visit(fx, values) {
-    this.entries(values).forEach(({ row, col }) => fx(row, col));
+    this.cells(values).forEach(({ row, col }) => fx(row, col));
   }
 
   /**
@@ -673,7 +673,7 @@ class Quadrille {
 
   /**
    * @returns {bigint} integer representation using big-endian and row-major ordering
-   * of the quadrille entries.
+   * of the quadrille cells.
    */
   toBigInt() {
     let result = 0n;
@@ -689,12 +689,7 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    const memory2D = this.clone(false)._memory2D;
-    let result = new Array();
-    for (let i = 0; i < memory2D.length; i++) {
-      result = result.concat(memory2D[i]);
-    }
-    return result;
+    return this.cells().map(({ value }) => value);
   }
 
   /**
@@ -1179,7 +1174,7 @@ class Quadrille {
   }
 
   /**
-   * Randomly re-arranges cell entries.
+   * Randomly re-arranges cells.
    */
   randomize() {
     const clone = this.clone(false);
