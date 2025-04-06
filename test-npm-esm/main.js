@@ -45,6 +45,7 @@ const sketch = (p) => {
     p.key === '4' && console.log([...q.cells({ col: c => c % 2, value: v => v === '#000' })]);
     p.key === '5' && console.log([...q.cells({ value: v => Quadrille.isEmpty(v) })]);
     p.key === '6' && console.log([...q.cells({ value: Quadrille.isEmpty })]);
+    p.key === 'o' && console.log(q.order);
   }
 }
 
