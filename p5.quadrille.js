@@ -183,11 +183,8 @@ class Quadrille {
    */
   static xor(q1, q2, row, col) {
     return this.merge(q1, q2,
-      (a, b) =>
-        this.isFilled(a) && this.isEmpty(b) && a ||
-        this.isEmpty(a) && this.isFilled(b) && b,
-      row, col
-    );
+      (a, b) => this.isFilled(a) && this.isEmpty(b) && a || this.isEmpty(a) && this.isFilled(b) && b,
+      row, col);
   }
 
   /**
@@ -224,23 +221,22 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2
    */
   static merge(q1, q2, operator, row, col) {
-    row = row ?? ((q1._row !== undefined && q2._row !== undefined && q1._cellLength !== undefined &&
-      q1._cellLength === q2._cellLength) ? q2._row - q1._row : 0);
-    col = col ?? ((q1._col !== undefined && q2._col !== undefined && q1._cellLength !== undefined &&
-      q1._cellLength === q2._cellLength) ? q2._col - q1._col : 0);
-    // i. create resulted quadrille
-    const quadrille = new Quadrille(
-      q1._p,
-      col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col),
-      row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row)
-    );
-    // ii. fill result with passed quadrilles
+    const sameOrigin = q1._row !== undefined && q2._row !== undefined &&
+      q1._cellLength !== undefined && q1._cellLength === q2._cellLength;
+    row ??= sameOrigin ? q2._row - q1._row : 0;
+    col ??= sameOrigin ? q2._col - q1._col : 0;
+    const width = col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col);
+    const height = row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row);
+    const quadrille = new Quadrille(q1._p, width, height);
     quadrille.visit(({ row: i, col: j }) => {
-      const value1 = q1.read(row < 0 ? i + row : i, col < 0 ? j + col : j);
-      const value2 = q2.read(row > 0 ? i - row : i, col > 0 ? j - col : j);
+      const i1 = row < 0 ? i + row : i;
+      const j1 = col < 0 ? j + col : j;
+      const i2 = row > 0 ? i - row : i;
+      const j2 = col > 0 ? j - col : j;
+      const value1 = q1.read(i1, j1);
+      const value2 = q2.read(i2, j2);
       quadrille.fill(i, j, operator(value1, value2));
     });
-    // iii. return resulted quadrille
     return quadrille;
   }
 
@@ -810,7 +806,7 @@ class Quadrille {
   /**
    * @param {number} row 
    * @param {number} col 
-   * @returns {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} quadrille entry or undefined id (row, col) is out of bounds
+   * @returns {*} quadrille entry or undefined id (row, col) is out of bounds
    */
   read(row, col) {
     if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
@@ -1137,7 +1133,7 @@ class Quadrille {
   /**
    * Randomly fills quadrille with value for the specified number of times.
    * @param {number} times 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value 
+   * @param {*} value 
    */
   rand(times, value = null) {
     value === undefined && (value = null);
