@@ -1696,7 +1696,7 @@ p5.prototype.drawQuadrille = function (quadrille, {
   y,
   row,
   col,
-  values,
+  filter,
   textFont,
   origin,
   options = {},
@@ -1741,7 +1741,7 @@ p5.prototype.drawQuadrille = function (quadrille, {
     };
     quadrille.constructor._display(params);
     graphics.pop();
-  }, values);
+  }, filter);
   graphics.pop();
 }
 
