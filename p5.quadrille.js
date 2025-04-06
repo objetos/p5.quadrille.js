@@ -150,119 +150,94 @@ class Quadrille {
   }
 
   /**
-   * @param {Quadrille} quadrille1 
-   * @param {Quadrille} quadrille2 
-   * @param {number} row respect to quadrille1 origin
-   * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic and operation on the two given quadrilles.
+   * Logical AND between two quadrilles.
+   * @param {Quadrille} q1 First quadrille
+   * @param {Quadrille} q2 Second quadrille
+   * @param {number} row Relative row offset from q1
+   * @param {number} col Relative column offset from q1
+   * @returns {Quadrille} A new quadrille containing only cells filled in both q1 and q2
    */
-  static and(quadrille1, quadrille2, row, col) {
-    return this.merge(quadrille1, quadrille2,
-      (q1, q2) => {
-        if (this.isFilled(q1) && this.isFilled(q2)) {
-          return q1;
-        }
-      },
-      row, col);
+  static and(q1, q2, row, col) {
+    return this.merge(q1, q2, (a, b) => this.isFilled(a) && this.isFilled(b) && a, row, col);
   }
 
   /**
-   * @param {Quadrille} quadrille1 
-   * @param {Quadrille} quadrille2 
-   * @param {number} row respect to quadrille1 origin
-   * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic or operation on the two given quadrilles.
+   * Logical OR between two quadrilles.
+   * @param {Quadrille} q1 First quadrille
+   * @param {Quadrille} q2 Second quadrille
+   * @param {number} row Relative row offset from q1
+   * @param {number} col Relative column offset from q1
+   * @returns {Quadrille} A new quadrille containing cells filled in either q1 or q2
    */
-  static or(quadrille1, quadrille2, row, col) {
-    return this.merge(quadrille1, quadrille2,
-      (q1, q2) => {
-        if (this.isFilled(q1)) {
-          return q1;
-        }
-        if (this.isFilled(q2)) {
-          return q2;
-        }
-      },
-      row, col);
+  static or(q1, q2, row, col) {
+    return this.merge(q1, q2, (a, b) => this.isFilled(a) ? a : this.isFilled(b) && b, row, col);
   }
 
   /**
-   * @param {Quadrille} quadrille1 
-   * @param {Quadrille} quadrille2 
-   * @param {number} row respect to quadrille1 origin
-   * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic xor operation on the two given quadrilles.
+   * Logical XOR between two quadrilles.
+   * @param {Quadrille} q1 First quadrille
+   * @param {Quadrille} q2 Second quadrille
+   * @param {number} row Relative row offset from q1
+   * @param {number} col Relative column offset from q1
+   * @returns {Quadrille} A new quadrille containing cells filled in one, but not both, of q1 and q2
    */
-  static xor(quadrille1, quadrille2, row, col) {
-    return this.merge(quadrille1, quadrille2,
-      (q1, q2) => {
-        if (this.isFilled(q1) && this.isEmpty(q2)) {
-          return q1;
-        }
-        if (this.isEmpty(q1) && this.isFilled(q2)) {
-          return q2;
-        }
-      },
-      row, col);
+  static xor(q1, q2, row, col) {
+    return this.merge(q1, q2,
+      (a, b) =>
+        this.isFilled(a) && this.isEmpty(b) && a ||
+        this.isEmpty(a) && this.isFilled(b) && b,
+      row, col
+    );
   }
 
   /**
-   * @param {Quadrille} quadrille1 
-   * @param {Quadrille} quadrille2 
-   * @param {number} row respect to quadrille1 origin
-   * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying a logic diff operation on the two given quadrilles.
+   * Logical difference (q1 minus q2) between two quadrilles.
+   * @param {Quadrille} q1 First quadrille
+   * @param {Quadrille} q2 Second quadrille
+   * @param {number} row Relative row offset from q1
+   * @param {number} col Relative column offset from q1
+   * @returns {Quadrille} A new quadrille with cells filled in q1 but not in q2
    */
-  static diff(quadrille1, quadrille2, row, col) {
-    return this.merge(quadrille1, quadrille2,
-      (q1, q2) => {
-        if (this.isFilled(q1) && this.isEmpty(q2)) {
-          return q1;
-        }
-      },
-      row, col);
+  static diff(q1, q2, row, col) {
+    return this.merge(q1, q2, (a, b) => this.isFilled(a) && this.isEmpty(b) && a, row, col);
   }
 
   /**
-   * @param {Quadrille} quadrille 
-   * @param {p5.Image | p5.Graphics | p5.Color | Array | object | string | number} value used to fill the returned quadrille.
-   * @returns {Quadrille} the Quadrille obtained after applying a logic neg operation on the given quadrille.
+   * Logical NEG of a quadrille: fills empty cells with a target value.
+   * @param {Quadrille} q Input quadrille
+   * @param {*} target Value to fill where the quadrille is empty
+   * @returns {Quadrille} A new quadrille with empty cells filled and filled cells untouched
    */
-  static neg(quadrille, value) {
-    const result = new Quadrille(quadrille._p, quadrille.width, quadrille.height);
-    if (this.isFilled(value)) {
-      quadrille.forEach(({ row, col }) => {
-        if (quadrille.isEmpty(row, col)) {
-          result.fill(row, col, value);
-        }
-      });
-    }
+  static neg(q, target) {
+    const result = new Quadrille(q._p, q.width, q.height);
+    this.isFilled(target) && q.forEach(({ row, col, value }) => this.isEmpty(value) && result.fill(row, col, target));
     return result;
   }
 
   /**
-   * @param {Quadrille} quadrille1 
-   * @param {Quadrille} quadrille2 
-   * @param {Function} operator function implementing the logic operator.
-   * @param {number} row respect to quadrille1 origin
-   * @param {number} col respect to quadrille1 origin
-   * @returns {Quadrille} the smallest Quadrille obtained after applying the logic operator on the two given quadrilles.
+   * Merges two quadrilles by applying a binary logic operator to their overlapping cells.
+   * @param {Quadrille} q1 First quadrille
+   * @param {Quadrille} q2 Second quadrille
+   * @param {Function} operator Function receiving two cell values and returning a result value
+   * @param {number} row Relative row offset from q1 to q2
+   * @param {number} col Relative column offset from q1 to q2
+   * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2
    */
-  static merge(quadrille1, quadrille2, operator, row, col) {
-    row = row ?? ((quadrille1._row !== undefined && quadrille2._row !== undefined && quadrille1._cellLength !== undefined &&
-      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._row - quadrille1._row : 0);
-    col = col ?? ((quadrille1._col !== undefined && quadrille2._col !== undefined && quadrille1._cellLength !== undefined &&
-      quadrille1._cellLength === quadrille2._cellLength) ? quadrille2._col - quadrille1._col : 0);
+  static merge(q1, q2, operator, row, col) {
+    row = row ?? ((q1._row !== undefined && q2._row !== undefined && q1._cellLength !== undefined &&
+      q1._cellLength === q2._cellLength) ? q2._row - q1._row : 0);
+    col = col ?? ((q1._col !== undefined && q2._col !== undefined && q1._cellLength !== undefined &&
+      q1._cellLength === q2._cellLength) ? q2._col - q1._col : 0);
     // i. create resulted quadrille
     const quadrille = new Quadrille(
-      quadrille1._p,
-      col < 0 ? Math.max(quadrille2.width, quadrille1.width - col) : Math.max(quadrille1.width, quadrille2.width + col),
-      row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row)
+      q1._p,
+      col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col),
+      row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row)
     );
     // ii. fill result with passed quadrilles
     quadrille.forEach(({ row: i, col: j }) => {
-      const value1 = quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j);
-      const value2 = quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j);
+      const value1 = q1.read(row < 0 ? i + row : i, col < 0 ? j + col : j);
+      const value2 = q2.read(row > 0 ? i - row : i, col > 0 ? j - col : j);
       quadrille.fill(i, j, operator(value1, value2));
     });
     // iii. return resulted quadrille
