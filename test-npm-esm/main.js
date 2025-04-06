@@ -1,10 +1,10 @@
 import p5 from 'p5'
 import Quadrille from 'p5.quadrille'
 
-Quadrille.cellLength = 50
-let q
-
 const sketch = (p) => {
+  Quadrille.cellLength = 50
+  let q
+
   p.setup = () => {
     p.createCanvas(400, 400)
     //q = p.createQuadrille()
@@ -32,11 +32,17 @@ const sketch = (p) => {
   p.mousePressed = () => {
     const row = q.mouseRow;
     const col = q.mouseCol;
-    q.fill(row, col, p.color('yellow'));
+    //q.fill(row, col, p.color('yellow'));
+    q.clear(row, col);
   }
 
   p.keyPressed = () => {
-    q.randomize();
+    p.key === 'r' && q.randomize();
+    //p.key === '1' && console.log([...q.cells(value => value != null)]);
+    p.key === '1' && console.log([...q.cells(_ => _ != null)]);
+    p.key === '2' && console.log([...q.cells({ value: v => v == null })]);
+    p.key === '3' && console.log([...q.cells({ row: r => r === 1 })]);
+    p.key === '4' && console.log([...q.cells({ col: c => c % 2, value: v => v === '#000' })]);
   }
 }
 

@@ -615,15 +615,23 @@ class Quadrille {
     return this._p.floor((pixelX - (this._origin === 'center' ? this._p.width / 2 : x)) / cellLength);
   }
 
-  *cells(values) {
-    const set = new Set(values);
+  *cells(filter = null) {
+    const isFn = typeof filter === 'function';
+    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
+    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
+    const set = isSet ? new Set(filter) : null;
     for (let row = 0; row < this._memory2D.length; row++) {
       const rowData = this._memory2D[row];
       for (let col = 0; col < rowData.length; col++) {
         const value = rowData[col];
-        if (set.size === 0 || set.has(value)) {
-          yield { value, row, col };
-        }
+        const match = !filter
+          || (isFn && filter(value))
+          || (isSet && set.has(value))
+          || (isObj &&
+            (!filter.value || filter.value(value)) &&
+            (!filter.row || filter.row(row)) &&
+            (!filter.col || filter.col(col)));
+        if (match) yield { row, col, value };
       }
     }
   }
@@ -632,9 +640,9 @@ class Quadrille {
     yield* this.cells();
   }
 
-  visit(fx, values) {
-    for (const { row, col } of this.cells(values)) {
-      fx(row, col);
+  visit(fx, filter) {
+    for (const { row, col, value } of this.cells(filter)) {
+      fx(row, col, value);
     }
   }
 
@@ -1707,6 +1715,6 @@ p5.prototype.drawQuadrille = function (quadrille, {
   graphics.pop();
 }
 
-p5.prototype.visitQuadrille = function (quadrille, fx, values) {
-  quadrille.visit(fx, values);
+p5.prototype.visitQuadrille = function (quadrille, fx, filter) {
+  quadrille.visit(fx, filter);
 }
