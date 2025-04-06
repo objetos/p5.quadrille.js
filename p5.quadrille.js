@@ -1723,5 +1723,5 @@ p5.prototype.drawQuadrille = function (quadrille, {
 }
 
 p5.prototype.visitQuadrille = function (quadrille, fx, filter) {
-  quadrille.walk(fx, filter);
+  quadrille.walk(({ row, col }) => fx(row, col), filter);
 }
