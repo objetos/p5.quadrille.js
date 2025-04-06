@@ -23,7 +23,7 @@ class Quadrille {
 
   // Setter for textColor with simplified type checking
   static set textColor(value) {
-    this._textColor = typeof value === 'string' || this._isColor(value) ? value : this._textColor;
+    this._textColor = typeof value === 'string' || this.isColor(value) ? value : this._textColor;
   }
 
   /**
@@ -53,7 +53,7 @@ class Quadrille {
 
   // Setter for outline with type checking
   static set outline(value) {
-    this._outline = typeof value === 'string' || this._isColor(value) ? value : this._outline;
+    this._outline = typeof value === 'string' || this.isColor(value) ? value : this._outline;
   }
 
   /**
@@ -98,7 +98,7 @@ class Quadrille {
 
   // Setter for background with type checking
   static set background(value) {
-    this._background = typeof value === 'string' || this._isColor(value) ? value : this._background;
+    this._background = typeof value === 'string' || this.isColor(value) ? value : this._background;
   }
 
   // chess specific stuff
@@ -115,7 +115,7 @@ class Quadrille {
 
   // Setter for darkSquare with type checking
   static set darkSquare(value) {
-    this._darkSquare = typeof value === 'string' || this._isColor(value) ? value : this._darkSquare;
+    this._darkSquare = typeof value === 'string' || this.isColor(value) ? value : this._darkSquare;
   }
 
   /**
@@ -130,7 +130,7 @@ class Quadrille {
 
   // Setter for lightSquare with type checking
   static set lightSquare(value) {
-    this._lightSquare = typeof value === 'string' || this._isColor(value) ? value : this._lightSquare;
+    this._lightSquare = typeof value === 'string' || this.isColor(value) ? value : this._lightSquare;
   }
 
   static chessSymbols = {
@@ -159,7 +159,7 @@ class Quadrille {
   static and(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (this._isFilled(q1) && this._isFilled(q2)) {
+        if (this.isFilled(q1) && this.isFilled(q2)) {
           return q1;
         }
       },
@@ -176,10 +176,10 @@ class Quadrille {
   static or(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (this._isFilled(q1)) {
+        if (this.isFilled(q1)) {
           return q1;
         }
-        if (this._isFilled(q2)) {
+        if (this.isFilled(q2)) {
           return q2;
         }
       },
@@ -196,10 +196,10 @@ class Quadrille {
   static xor(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (this._isFilled(q1) && this._isEmpty(q2)) {
+        if (this.isFilled(q1) && this.isEmpty(q2)) {
           return q1;
         }
-        if (this._isEmpty(q1) && this._isFilled(q2)) {
+        if (this.isEmpty(q1) && this.isFilled(q2)) {
           return q2;
         }
       },
@@ -216,7 +216,7 @@ class Quadrille {
   static diff(quadrille1, quadrille2, row, col) {
     return this.merge(quadrille1, quadrille2,
       (q1, q2) => {
-        if (this._isFilled(q1) && this._isEmpty(q2)) {
+        if (this.isFilled(q1) && this.isEmpty(q2)) {
           return q1;
         }
       },
@@ -230,7 +230,7 @@ class Quadrille {
    */
   static neg(quadrille, value) {
     const result = new Quadrille(quadrille._p, quadrille.width, quadrille.height);
-    if (this._isFilled(value)) {
+    if (this.isFilled(value)) {
       quadrille.forEach(({ row, col }) => {
         if (quadrille.isEmpty(row, col)) {
           result.fill(row, col, value);
@@ -311,8 +311,8 @@ class Quadrille {
       return;
     }
     if (args.length === 2 &&
-      (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
-      (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
+      (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
+      (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
       this.forEach(({ row, col }) => {
         const fill = (row + col) % 2 === 0 ? args[0] : args[1];
@@ -418,7 +418,7 @@ class Quadrille {
   }
 
   _fromImage(...args) {
-    if (this.constructor._isImage(args[0])) {
+    if (this.constructor.isImage(args[0])) {
       let src = args[0] instanceof p5.Framebuffer ? args[0].get() : args[0];
       if (src instanceof p5.MediaElement && src.elt instanceof HTMLVideoElement) {
         const video = src.elt;
@@ -855,44 +855,44 @@ class Quadrille {
     return row >= 0 && row < this.height && col >= 0 && col < this.width;
   }
 
-  static _isEmpty(value) {
+  static isEmpty(value) {
     return value == null;
   }
 
-  static _isFilled(value) {
+  static isFilled(value) {
     return value != null;
   }
 
-  static _isNumber(value) {
+  static isNumber(value) {
     return typeof value === 'number';
   }
 
-  static _isString(value) {
+  static isString(value) {
     return typeof value === 'string';
   }
 
-  static _isColor(value) {
+  static isColor(value) {
     return value instanceof p5.Color;
   }
 
-  static _isFunction(value) {
+  static isFunction(value) {
     return typeof value === 'function';
   }
 
-  static _isImage(value) {
+  static isImage(value) {
     return value instanceof p5.Image || (value instanceof p5.MediaElement && value.elt instanceof HTMLVideoElement) || value instanceof p5.Graphics || value instanceof p5.Framebuffer;
   }
 
-  static _isArray(value) {
+  static isArray(value) {
     return Array.isArray(value);
   }
 
-  static _isObject(value) {
-    return this._isFilled(value) &&
-      !this._isColor(value) &&
-      !this._isImage(value) &&
-      !this._isArray(value) &&
-      !this._isFunction(value) &&
+  static isObject(value) {
+    return this.isFilled(value) &&
+      !this.isColor(value) &&
+      !this.isImage(value) &&
+      !this.isArray(value) &&
+      !this.isFunction(value) &&
       typeof value === 'object';
   }
 
@@ -904,7 +904,7 @@ class Quadrille {
    * @returns {boolean} true if cell is empty
    */
   isEmpty(row, col) {
-    return this.constructor._isEmpty(this.read(row, col));
+    return this.constructor.isEmpty(this.read(row, col));
   }
 
   /**
@@ -913,7 +913,7 @@ class Quadrille {
    * @returns {boolean} true if cell is filled
    */
   isFilled(row, col) {
-    return this.constructor._isFilled(this.read(row, col));
+    return this.constructor.isFilled(this.read(row, col));
   }
 
   /**
@@ -922,7 +922,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a number
    */
   isNumber(row, col) {
-    return this.constructor._isNumber(this.read(row, col));
+    return this.constructor.isNumber(this.read(row, col));
   }
 
   /**
@@ -931,7 +931,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a string
    */
   isString(row, col) {
-    return this.constructor._isString(this.read(row, col));
+    return this.constructor.isString(this.read(row, col));
   }
 
   /**
@@ -940,7 +940,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a color
    */
   isColor(row, col) {
-    return this.constructor._isColor(this.read(row, col));
+    return this.constructor.isColor(this.read(row, col));
   }
 
   /**
@@ -949,7 +949,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an array
    */
   isArray(row, col) {
-    return this.constructor._isArray(this.read(row, col));
+    return this.constructor.isArray(this.read(row, col));
   }
 
   /**
@@ -958,7 +958,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an object
    */
   isObject(row, col) {
-    return this.constructor._isObject(this.read(row, col));
+    return this.constructor.isObject(this.read(row, col));
   }
 
   /**
@@ -967,7 +967,7 @@ class Quadrille {
    * @returns {boolean} true if cell has an image
    */
   isImage(row, col) {
-    return this.constructor._isImage(this.read(row, col));
+    return this.constructor.isImage(this.read(row, col));
   }
 
   /**
@@ -976,7 +976,7 @@ class Quadrille {
    * @returns {boolean} true if cell has a function
    */
   isFunction(row, col) {
-    return this.constructor._isFunction(this.read(row, col));
+    return this.constructor.isFunction(this.read(row, col));
   }
 
   /**
@@ -989,7 +989,7 @@ class Quadrille {
     const hits = [];
     this.forEach(({ row, col }) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
-        if (this.constructor._isFilled(q1) && (strict ? q2 !== q1 : this.constructor._isEmpty(q2))) {
+        if (this.constructor.isFilled(q1) && (strict ? q2 !== q1 : this.constructor.isEmpty(q2))) {
           return q1;
         }
       }, -row, -col).order === 0 && hits.push({ row, col }));
@@ -1083,8 +1083,8 @@ class Quadrille {
         }
       });
     }
-    if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
-      (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
+    if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
+      (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
       this.forEach(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
@@ -1150,7 +1150,7 @@ class Quadrille {
   }
 
   _clearCell(value) {
-    if (this.constructor._isFunction(value)) {
+    if (this.constructor.isFunction(value)) {
       value.fbo?.remove();
       value.fbo = undefined;
     }
@@ -1556,13 +1556,13 @@ class Quadrille {
 
   static _display(params) {
     const handlers = [
-      { check: this._isFunction.bind(this), display: params.functionDisplay },
-      { check: this._isImage.bind(this), display: params.imageDisplay },
-      { check: this._isColor.bind(this), display: params.colorDisplay },
-      { check: this._isNumber.bind(this), display: params.numberDisplay },
-      { check: this._isString.bind(this), display: params.stringDisplay },
-      { check: this._isArray.bind(this), display: params.arrayDisplay },
-      { check: this._isObject.bind(this), display: params.objectDisplay }
+      { check: this.isFunction.bind(this), display: params.functionDisplay },
+      { check: this.isImage.bind(this), display: params.imageDisplay },
+      { check: this.isColor.bind(this), display: params.colorDisplay },
+      { check: this.isNumber.bind(this), display: params.numberDisplay },
+      { check: this.isString.bind(this), display: params.stringDisplay },
+      { check: this.isArray.bind(this), display: params.arrayDisplay },
+      { check: this.isObject.bind(this), display: params.objectDisplay }
     ];
     for (const handler of handlers) {
       if (handler.check(params.value) && handler.display) {

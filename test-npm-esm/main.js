@@ -43,6 +43,8 @@ const sketch = (p) => {
     p.key === '2' && console.log([...q.cells({ value: v => v == null })]);
     p.key === '3' && console.log([...q.cells({ row: r => r === 1 })]);
     p.key === '4' && console.log([...q.cells({ col: c => c % 2, value: v => v === '#000' })]);
+    p.key === '5' && console.log([...q.cells({ value: v => Quadrille.isEmpty(v) })]);
+    p.key === '6' && console.log([...q.cells({ value: Quadrille.isEmpty })]);
   }
 }
 
