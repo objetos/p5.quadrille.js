@@ -231,7 +231,7 @@ class Quadrille {
   static neg(quadrille, value) {
     const result = new Quadrille(quadrille._p, quadrille.width, quadrille.height);
     if (this._isFilled(value)) {
-      quadrille.visit((row, col) => {
+      quadrille.forEach(({ row, col }) => {
         if (quadrille.isEmpty(row, col)) {
           result.fill(row, col, value);
         }
@@ -260,12 +260,11 @@ class Quadrille {
       row < 0 ? Math.max(quadrille2.height, quadrille1.height - row) : Math.max(quadrille1.height, quadrille2.height + row)
     );
     // ii. fill result with passed quadrilles
-    quadrille.visit((i, j) => quadrille.fill(i, j,
-      operator(
-        quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j),
-        quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j)
-      )
-    ));
+    quadrille.forEach(({ row: i, col: j }) => {
+      const value1 = quadrille1.read(row < 0 ? i + row : i, col < 0 ? j + col : j);
+      const value2 = quadrille2.read(row > 0 ? i - row : i, col > 0 ? j - col : j);
+      quadrille.fill(i, j, operator(value1, value2));
+    });
     // iii. return resulted quadrille
     return quadrille;
   }
@@ -299,7 +298,7 @@ class Quadrille {
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         const fill = (row + col) % 2 === 0
           ? this.constructor.lightSquare
           : this.constructor.darkSquare;
@@ -315,7 +314,7 @@ class Quadrille {
       (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         const fill = (row + col) % 2 === 0 ? args[0] : args[1];
         this._memory2D[row][col] = this._p.color(fill);
       });
@@ -466,7 +465,7 @@ class Quadrille {
       a[_i][_j] += image.pixels[4 * i + 3];
       t[_i][_j] += 1;
     }
-    this.visit((row, col) => {
+    this.forEach(({ row, col }) => {
       this.fill(row, col, this._p.color([
         r[row][col] / t[row][col],
         g[row][col] / t[row][col],
@@ -479,7 +478,7 @@ class Quadrille {
   _images(image) {
     const cellWidth = image.width / this.width;
     const cellHeight = image.height / this.height;
-    this.visit((row, col) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+    this.forEach(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   /**
@@ -563,7 +562,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    this.visit((row, col) => this.isFilled(row, col) && result++);
+    this.forEach(({ row, col }) => this.isFilled(row, col) && result++);
     return result;
   }
 
@@ -615,6 +614,24 @@ class Quadrille {
     return this._p.floor((pixelX - (this._origin === 'center' ? this._p.width / 2 : x)) / cellLength);
   }
 
+  /**
+   * Lazily iterates over all matching cells in the quadrille.
+   *
+   * The optional `filter` can be:
+   * - `null` or omitted → yield all cells
+   * - A `function(value)` → yield cells where the function returns `true`
+   * - An `Array` or `Set` of values → yield cells whose value is in the set
+   * - An object with optional `value`, `row`, and/or `col` predicates:
+   *    {
+   *      value: v => v === 1,
+   *      row: r => r % 2 === 0,
+   *      col: c => c < 4
+   *    }
+   *
+   * @generator
+   * @param {Array|Set|function|object|null} [filter=null] Filter for selecting cells
+   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value
+   */
   *cells(filter = null) {
     const isFn = typeof filter === 'function';
     const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
@@ -636,13 +653,27 @@ class Quadrille {
     }
   }
 
+  /**
+   * Default iterator for the quadrille.
+   *
+   * Allows iteration over all cells using `for...of`.
+   * Equivalent to `this.cells()` with no filter.
+   *
+   * @generator
+   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
+   */
   *[Symbol.iterator]() {
     yield* this.cells();
   }
 
-  visit(fx, filter) {
-    for (const { row, col, value } of this.cells(filter)) {
-      fx(row, col, value);
+  /**
+   * Iterates over cells using `for...of`, calling the given function with each cell object.
+   * @param {function({row:number, col:number, value:any}):void} callback
+   * @param {Array|Set|function|object} [filter] Optional filter for selecting cells
+   */
+  forEach(callback, filter) {
+    for (const cell of this.cells(filter)) {
+      callback(cell);
     }
   }
 
@@ -670,7 +701,7 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    this.visit((row, col) =>
+    this.forEach(({ row, col }) =>
       this.isFilled(row, col) && (result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n))));
     return result;
   }
@@ -956,7 +987,7 @@ class Quadrille {
    */
   search(pattern, strict = false) {
     const hits = [];
-    this.visit((row, col) =>
+    this.forEach(({ row, col }) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
         if (this.constructor._isFilled(q1) && (strict ? q2 !== q1 : this.constructor._isEmpty(q2))) {
           return q1;
@@ -971,8 +1002,8 @@ class Quadrille {
    * 2. replace(value1, value2), searches value1 and replaces with value2
    */
   replace(...args) {
-    args.length === 1 && this.visit((row, col) => this.isFilled(row, col) && this.fill(row, col, args[0]));
-    args.length === 2 && this.visit((row, col) => this.read(row, col) === args[0] && this.fill(row, col, args[1]));
+    args.length === 1 && this.forEach(({ row, col }) => this.isFilled(row, col) && this.fill(row, col, args[0]));
+    args.length === 2 && this.forEach(({ row, col, value }) => value === args[0] && this.fill(row, col, args[1]));
     return this;
   }
 
@@ -1039,13 +1070,13 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] != null) {
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         if (this.isEmpty(row, col)) {
           this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
@@ -1054,7 +1085,7 @@ class Quadrille {
     }
     if (args.length === 2 && (this.constructor._isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor._isColor(args[1]) || typeof args[1] === 'string')) {
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
       });
@@ -1155,7 +1186,7 @@ class Quadrille {
   randomize() {
     const clone = this.clone(false);
     this.clear();
-    clone.visit((row, col) => {
+    clone.forEach(({ row, col }) => {
       if (clone.isFilled(row, col)) {
         let _row, _col;
         do {
@@ -1275,7 +1306,7 @@ class Quadrille {
       const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
-        this.visit((i, j) => {
+        this.forEach(({ row: i, col: j }) => {
           if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
             this._conv(mask, i, j, half_size, source);
           }
@@ -1347,7 +1378,7 @@ class Quadrille {
    */
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
-      this.visit((row, col) => {
+      this.forEach(({ row, col }) => {
         const coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
         // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
@@ -1698,14 +1729,13 @@ p5.prototype.drawQuadrille = function (quadrille, {
   quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
     (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
   graphics.translate(quadrille._x, quadrille._y);
-  // TODO p5v2 decide how to go here: (b4 nothing, tested also with this)
-  quadrille.visit((row, col) => {
+  quadrille.forEach(({ row, col, value }) => {
     graphics.push();
     graphics.translate(col * cellLength, row * cellLength);
     options.row = row;
     options.col = col;
     const params = {
-      quadrille, graphics, value: quadrille.read(row, col), width: quadrille.width, height: quadrille.height,
+      quadrille, graphics, value, width: quadrille.width, height: quadrille.height,
       row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
       imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
     };
@@ -1716,5 +1746,5 @@ p5.prototype.drawQuadrille = function (quadrille, {
 }
 
 p5.prototype.visitQuadrille = function (quadrille, fx, filter) {
-  quadrille.visit(fx, filter);
+  quadrille.forEach(fx, filter);
 }
