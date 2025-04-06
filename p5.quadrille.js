@@ -210,7 +210,7 @@ class Quadrille {
    */
   static neg(q, target) {
     const result = new Quadrille(q._p, q.width, q.height);
-    this.isFilled(target) && q.walk(({ row, col, value }) => this.isEmpty(value) && result.fill(row, col, target));
+    this.isFilled(target) && q.visit(({ row, col, value }) => this.isEmpty(value) && result.fill(row, col, target));
     return result;
   }
 
@@ -235,7 +235,7 @@ class Quadrille {
       row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row)
     );
     // ii. fill result with passed quadrilles
-    quadrille.walk(({ row: i, col: j }) => {
+    quadrille.visit(({ row: i, col: j }) => {
       const value1 = q1.read(row < 0 ? i + row : i, col < 0 ? j + col : j);
       const value2 = q2.read(row > 0 ? i - row : i, col > 0 ? j - col : j);
       quadrille.fill(i, j, operator(value1, value2));
@@ -273,7 +273,7 @@ class Quadrille {
     this._origin = 'corner';
     if (args.length === 0) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         const fill = (row + col) % 2 === 0
           ? this.constructor.lightSquare
           : this.constructor.darkSquare;
@@ -289,7 +289,7 @@ class Quadrille {
       (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
       this._memory2D = Array(8).fill().map(() => Array(8).fill(null));
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         const fill = (row + col) % 2 === 0 ? args[0] : args[1];
         this._memory2D[row][col] = this._p.color(fill);
       });
@@ -440,7 +440,7 @@ class Quadrille {
       a[_i][_j] += image.pixels[4 * i + 3];
       t[_i][_j] += 1;
     }
-    this.walk(({ row, col }) => {
+    this.visit(({ row, col }) => {
       this.fill(row, col, this._p.color([
         r[row][col] / t[row][col],
         g[row][col] / t[row][col],
@@ -453,7 +453,7 @@ class Quadrille {
   _images(image) {
     const cellWidth = image.width / this.width;
     const cellHeight = image.height / this.height;
-    this.walk(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
+    this.visit(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
   /**
@@ -537,7 +537,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    this.walk(({ value }) => this.constructor.isFilled(value) && result++);
+    this.visit(({ value }) => this.constructor.isFilled(value) && result++);
     return result;
     // also possible
     // return [...this.cells({ value: Quadrille.isFilled })].length;
@@ -648,7 +648,7 @@ class Quadrille {
    * @param {function({row:number, col:number, value:any}):void} callback
    * @param {Array|Set|function|object} [filter] Optional filter for selecting cells
    */
-  walk(callback, filter) {
+  visit(callback, filter) {
     for (const cell of this.cells(filter)) {
       callback(cell);
     }
@@ -678,7 +678,7 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    this.walk(({ row, col, value }) =>
+    this.visit(({ row, col, value }) =>
       this.constructor.isFilled(value) && (result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n))));
     return result;
   }
@@ -964,7 +964,7 @@ class Quadrille {
    */
   search(pattern, strict = false) {
     const hits = [];
-    this.walk(({ row, col }) =>
+    this.visit(({ row, col }) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
         if (this.constructor.isFilled(q1) && (strict ? q2 !== q1 : this.constructor.isEmpty(q2))) {
           return q1;
@@ -979,8 +979,8 @@ class Quadrille {
    * 2. replace(value1, value2), searches value1 and replaces with value2
    */
   replace(...args) {
-    args.length === 1 && this.walk(({ row, col, value }) => this.constructor.isFilled(value) && this.fill(row, col, args[0]));
-    args.length === 2 && this.walk(({ row, col, value }) => value === args[0] && this.fill(row, col, args[1]));
+    args.length === 1 && this.visit(({ row, col, value }) => this.constructor.isFilled(value) && this.fill(row, col, args[0]));
+    args.length === 2 && this.visit(({ row, col, value }) => value === args[0] && this.fill(row, col, args[1]));
     return this;
   }
 
@@ -1047,13 +1047,13 @@ class Quadrille {
    */
   fill(...args) {
     if (args.length === 0) {
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && args[0] != null) {
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         if (this.isEmpty(row, col)) {
           this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
           this._memory2D[row][col] = args[0];
@@ -1062,7 +1062,7 @@ class Quadrille {
     }
     if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
       });
@@ -1163,7 +1163,7 @@ class Quadrille {
   randomize() {
     const clone = this.clone(false);
     this.clear();
-    clone.walk(({ value }) => {
+    clone.visit(({ value }) => {
       if (this.constructor.isFilled(value)) {
         let _row, _col;
         do {
@@ -1283,7 +1283,7 @@ class Quadrille {
       const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
-        this.walk(({ row: i, col: j }) => {
+        this.visit(({ row: i, col: j }) => {
           if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
             this._conv(mask, i, j, half_size, source);
           }
@@ -1355,7 +1355,7 @@ class Quadrille {
    */
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
-      this.walk(({ row, col }) => {
+      this.visit(({ row, col }) => {
         const coords = this._barycentric_coords(row, col, row0, col0, row1, col1, row2, col2);
         // interpolate all array attributes for the current cell only if it is inside the triangle
         if (coords.w0 >= 0 && coords.w1 >= 0 && coords.w2 >= 0) {
@@ -1706,7 +1706,7 @@ p5.prototype.drawQuadrille = function (quadrille, {
   quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
     (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2))
   graphics.translate(quadrille._x, quadrille._y);
-  quadrille.walk(({ row, col, value }) => {
+  quadrille.visit(({ row, col, value }) => {
     graphics.push();
     graphics.translate(col * cellLength, row * cellLength);
     options.row = row;
@@ -1723,5 +1723,5 @@ p5.prototype.drawQuadrille = function (quadrille, {
 }
 
 p5.prototype.visitQuadrille = function (quadrille, fx, filter) {
-  quadrille.walk(({ row, col }) => fx(row, col), filter);
+  quadrille.visit(({ row, col }) => fx(row, col), filter);
 }
