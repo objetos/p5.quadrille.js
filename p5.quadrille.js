@@ -765,8 +765,10 @@ class Quadrille {
    */
   magnitude(row) {
     let result = 0;
-    for (let j = 0; j < this.width; j++) {
-      this.isFilled(row, j) && result++;
+    if (this.isValid(row, 0)) {
+      for (let j = 0; j < this.width; j++) {
+        this.isFilled(row, j) && result++;
+      }
     }
     return result;
   }
@@ -809,7 +811,7 @@ class Quadrille {
    * @returns {*} quadrille entry or undefined id (row, col) is out of bounds
    */
   read(row, col) {
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width) {
+    if (this.isValid(row, col)) {
       return this._memory2D[row][col];
     }
   }
@@ -994,30 +996,30 @@ class Quadrille {
       this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
     }
     if (args.length === 1 && typeof args[0] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height) {
+      if (this.isValid(args[0], 0)) {
         this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
       }
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       typeof args[2] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2]);
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       typeof args[2] === 'boolean') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, 4, args[2]);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       typeof args[2] === 'number' && typeof args[3] === 'boolean') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2], args[3]);
       }
     }
@@ -1064,7 +1066,7 @@ class Quadrille {
       });
     }
     if (args.length === 2 && typeof args[0] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height) {
+      if (this.isValid(args[0], 0)) {
         this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
           cell = this._clearCell(cell);
           return args[1] === undefined ? null : args[1];
@@ -1072,23 +1074,23 @@ class Quadrille {
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
         this._memory2D[args[0]][args[1]] = args[2] === undefined ? null : args[2];
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3]);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'boolean') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], 4, args[3]);
       }
     }
     if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
-      if (args[0] >= 0 && args[0] < this.height && args[1] >= 0 && args[1] < this.width) {
+      if (this.isValid(args[0], args[1])) {
         this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3], args[4]);
       }
     }
@@ -1100,7 +1102,7 @@ class Quadrille {
       console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
     }
-    if (row >= 0 && row < this.height && col >= 0 && col < this.width && this._memory2D[row][col] !== value2) {
+    if (this.isValid(row, col) && this._memory2D[row][col] !== value2) {
       if (this._memory2D[row][col] === value1) {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
@@ -1205,42 +1207,27 @@ class Quadrille {
   }
 
   /**
-   * Swaps two rows or two cells in the Quadrille.
+   * Swaps two rows or two cells in the quadrille.
    *
-   * - If called with two arguments, it swaps two rows.
-   * - If called with four arguments, it swaps two cells.
-   * - Invalid inputs are ignored gracefully.
+   * - `swap(row1, row2)` swaps two rows.
+   * - `swap(row1, col1, row2, col2)` swaps two individual cells.
    *
-   * @param {...number} args - The arguments defining the swap operation:
-   *   - `swap(row1, row2)`:
-   *     - `row1` {number} The index of the first row to swap.
-   *     - `row2` {number} The index of the second row to swap.
-   *   - `swap(row1, col1, row2, col2)`:
-   *     - `row1` {number} The row index of the first cell.
-   *     - `col1` {number} The column index of the first cell.
-   *     - `row2` {number} The row index of the second cell.
-   *     - `col2` {number} The column index of the second cell.
-   *
-   * @returns {Quadrille} The current Quadrille instance for method chaining.
+   * @param  {...number} args - Either 2 or 4 integers.
+   * @returns {Quadrille} The quadrille (for chaining).
    */
   swap(...args) {
-    const isInteger = (n) => Number.isInteger(n);
+    const isInteger = Number.isInteger;
     if (args.length === 2) {
-      const [row1, row2] = args;
-      if (isInteger(row1) && isInteger(row2) &&
-        row1 >= 0 && row1 < this.height && row2 >= 0 && row2 < this.height) {
-        const tempRow = this._memory2D[row1];
-        this._memory2D[row1] = this._memory2D[row2];
-        this._memory2D[row2] = tempRow;
+      if (args.every(isInteger) && this.isValid(args[0], 0) && this.isValid(args[1], 0)) {
+        const temp = this._memory2D[args[0]];
+        this._memory2D[args[0]] = this._memory2D[args[1]];
+        this._memory2D[args[1]] = temp;
       }
     } else if (args.length === 4) {
-      const [row1, col1, row2, col2] = args;
-      if (isInteger(row1) && isInteger(col1) && isInteger(row2) && isInteger(col2) &&
-        row1 >= 0 && row1 < this.height && col1 >= 0 && col1 < this.width &&
-        row2 >= 0 && row2 < this.height && col2 >= 0 && col2 < this.width) {
-        const tempCell = this._memory2D[row1][col1];
-        this._memory2D[row1][col1] = this._memory2D[row2][col2];
-        this._memory2D[row2][col2] = tempCell;
+      if (args.every(isInteger) && this.isValid(args[0], args[1]) && this.isValid(args[2], args[3])) {
+        const temp = this._memory2D[args[0]][args[1]];
+        this._memory2D[args[0]][args[1]] = this._memory2D[args[2]][args[3]];
+        this._memory2D[args[2]][args[3]] = temp;
       }
     }
     return this;
