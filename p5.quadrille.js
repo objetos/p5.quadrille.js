@@ -207,7 +207,7 @@ class Quadrille {
    */
   static neg(q, target) {
     const result = new Quadrille(q._p, q.width, q.height);
-    this.isFilled(target) && q.visit(({ row, col, value }) => this.isEmpty(value) && result.fill(row, col, target));
+    this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), this.isEmpty);
     return result;
   }
 
@@ -533,7 +533,7 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    this.visit(({ value }) => this.constructor.isFilled(value) && result++);
+    this.visit(() => result++, this.constructor.isFilled);
     return result;
     // also possible
     // return [...this.cells({ value: Quadrille.isFilled })].length;
@@ -674,8 +674,9 @@ class Quadrille {
    */
   toBigInt() {
     let result = 0n;
-    this.visit(({ row, col, value }) =>
-      this.constructor.isFilled(value) && (result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n))));
+    this.visit(({ row, col }) => {
+      result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
+    }, this.constructor.isFilled);
     return result;
   }
 
@@ -977,10 +978,11 @@ class Quadrille {
    * 2. replace(value1, value2), searches value1 and replaces with value2
    */
   replace(...args) {
-    args.length === 1 && this.visit(({ row, col, value }) => this.constructor.isFilled(value) && this.fill(row, col, args[0]));
-    args.length === 2 && this.visit(({ row, col, value }) => value === args[0] && this.fill(row, col, args[1]));
+    args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), this.constructor.isFilled);
+    args.length === 2 && this.visit(({ row, col }) => this.fill(row, col, args[1]), v => v === args[0]);
     return this;
   }
+
 
   /**
    * Clear quadrille cells (fill them with null's). Either:
@@ -1174,15 +1176,13 @@ class Quadrille {
     const clone = this.clone(false);
     this.clear();
     clone.visit(({ value }) => {
-      if (this.constructor.isFilled(value)) {
-        let _row, _col;
-        do {
-          _row = this._p.int(this._p.random(this.height));
-          _col = this._p.int(this._p.random(this.width));
-        } while (this.isFilled(_row, _col));
-        this.fill(_row, _col, value);
-      }
-    });
+      let _row, _col;
+      do {
+        _row = this._p.int(this._p.random(this.height));
+        _col = this._p.int(this._p.random(this.width));
+      } while (this.isFilled(_row, _col));
+      this.fill(_row, _col, value);
+    }, this.constructor.isFilled);
     return this;
   }
 
