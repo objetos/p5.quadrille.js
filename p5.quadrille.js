@@ -655,7 +655,7 @@ class Quadrille {
    * @returns row as a new quadrille
    */
   row(row) {
-    if (row >= 0 && row < this.height) {
+    if (this.isValid(row, 0)) {
       return new Quadrille(this._memory2D[row]);
     }
   }
@@ -1200,7 +1200,7 @@ class Quadrille {
    * @param {number} row 
    */
   delete(row) {
-    if (this.height > 1 && row >= 0 && row < this.height) {
+    if (this.height > 1 && this.isValid(row, 0)) {
       this._memory2D.splice(row, 1);
     }
     return this;
