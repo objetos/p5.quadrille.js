@@ -9,7 +9,9 @@ node_modules/
 package-lock.json
 
 # Build output
-dist/
+# dist/
+# p5.quadrille.js
+# p5.quadrille.js.map
 
 # IDE/editor folders
 .vscode/

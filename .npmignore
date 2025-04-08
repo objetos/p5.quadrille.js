@@ -1,0 +1,5 @@
+# Ignore IIFE and dev-related files for npm
+p5.quadrille.js
+rollup.config.js
+test-npm-esm/
+*.md
