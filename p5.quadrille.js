@@ -983,7 +983,6 @@ class Quadrille {
     return this;
   }
 
-
   /**
    * Clear quadrille cells (fill them with null's). Either:
    * 1. clear(), clears current filled cells;

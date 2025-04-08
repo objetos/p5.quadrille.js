@@ -1,3 +1,9 @@
+# looks like hugo stuff
+public/
+resources/
+themes/
+content/
+
 # Node dependencies
 node_modules/
 package-lock.json
