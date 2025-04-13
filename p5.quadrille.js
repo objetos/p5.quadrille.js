@@ -1170,12 +1170,12 @@ var Quadrille = (function (p5) {
       const clone = this.clone(false);
       this.clear();
       clone.visit(({ value }) => {
-        let _row, _col;
+        let row, col;
         do {
-          _row = this._p.int(this._p.random(this.height));
-          _col = this._p.int(this._p.random(this.width));
-        } while (this.isFilled(_row, _col));
-        this.fill(_row, _col, value);
+          const index = this._p.int(this._p.random(this.size));
+          ({ row, col } = this._fromIndex(index));
+        } while (this.isFilled(row, col));
+        this.fill(row, col, value);
       }, this.constructor.isFilled);
       return this;
     }
