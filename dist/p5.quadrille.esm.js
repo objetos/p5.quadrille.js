@@ -1136,19 +1136,17 @@ class Quadrille {
    *
    * - If `value` is `null`, clears `times` filled cells.
    * - If `value` is not `null`, fills `times` empty cells with `value`.
-   * - If `seed` is provided, uses `p5.js` seeded randomness.
+   *
+   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
    *
    * @param {number} times - Number of cells to modify.
    * @param {*} [value=null] - Value to fill, or `null` to clear cells.
-   * @param {number} [seed=null] - Optional seed for deterministic randomness (uses `p5.randomSeed`).
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
-  rand(times, value = null, seed = null) {
-    value === undefined && (value = null);
+  rand(times, value = null) {
     times = this._p.abs(times);
     const max = value === null ? this.order : this.size - this.order;
     times = this._p.min(times, max);
-    seed != null && this._p.randomSeed(seed);
     let count = 0;
     while (count < times) {
       const index = this._p.int(this._p.random(this.size));
@@ -1163,13 +1161,13 @@ class Quadrille {
   }
 
   /**
-   * Randomly re-arranges filled cells in the quadrille.
+   * Randomly rearranges filled cells in the quadrille.
    *
-   * @param {number} [seed=null] - Optional seed for deterministic randomness (uses `p5.randomSeed`).
+   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
+   *
    * @returns {Quadrille} The modified quadrille (for chaining).
-  */
-  randomize(seed = null) {
-    seed != null && this._p.randomSeed(seed);
+   */
+  randomize() {
     const clone = this.clone(false);
     this.clear();
     clone.visit(({ value }) => {
