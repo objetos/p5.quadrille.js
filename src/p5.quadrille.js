@@ -350,19 +350,20 @@ class Quadrille {
   }
 
   _fromBigInt(...args) {
-    if (args.length === 2 && (typeof args[0] === 'number' || typeof args[0] === 'bigint') && args[1] != null) {
-      const length = this.width * this.height;
-      const bigint = BigInt(args[0]);
-      if (bigint < 0) {
+    const [input, value] = args;
+    const length = this.width * this.height;
+    if ((typeof input === 'number' || typeof input === 'bigint') && this.constructor.isFilled(value)) {
+      const bigint = BigInt(input);
+      if (bigint < 0n) {
         throw new Error('Value cannot be negative');
       }
       if (bigint.toString(2).length > length) {
         throw new Error('Value is too high to fill quadrille');
       }
-      for (let i = 0; i <= length - 1; i++) {
-        if ((bigint & (1n << BigInt(length) - 1n - BigInt(i)))) {
-          this.fill(this._fromIndex(i).row, this._fromIndex(i).col, args[1]);
-        }
+      let index = 0;
+      for (const { row, col } of this) {
+        (bigint & (1n << BigInt(length - 1 - index))) && this.fill(row, col, value);
+        index++;
       }
     }
   }
@@ -588,7 +589,7 @@ class Quadrille {
   }
 
   /**
-   * Lazily iterates over all matching cells in the quadrille.
+   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
    *
    * The optional `filter` can be:
    * - `null` or omitted → yield all cells
@@ -734,16 +735,17 @@ class Quadrille {
     for (let i = 0; i < 8; i++) {
       let emptySquares = 0;
       for (let j = 0; j < 8; j++) {
-        if (this._memory2D[i][j] === null) {
+        const value = this._memory2D[i][j];
+        if (this.constructor.isEmpty(value)) {
           emptySquares++;
         } else {
           if (emptySquares > 0) {
             fen += emptySquares.toString();
             emptySquares = 0;
           }
-          const fenKey = this.constructor.chessKeys[this._memory2D[i][j]];
+          const fenKey = this.constructor.chessKeys[value];
           if (!fenKey) {
-            console.warn(`Unrecognized piece ${this._memory2D[i][j]} at position ${i}, ${j}. FEN output may be incorrect.`);
+            console.warn(`Unrecognized piece ${value} at position ${i}, ${j}. FEN output may be incorrect.`);
             fen += '?'; // Placeholder for unrecognized pieces
           } else {
             fen += fenKey;
@@ -1051,13 +1053,8 @@ class Quadrille {
         this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
       });
     }
-    if (args.length === 1 && args[0] != null) {
-      this.visit(({ row, col }) => {
-        if (this.isEmpty(row, col)) {
-          this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-          this._memory2D[row][col] = args[0];
-        }
-      });
+    if (args.length === 1 && this.constructor.isFilled(args[0])) {
+      this.visit(({ row, col }) => this._memory2D[row][col] = args[0], this.constructor.isEmpty);
     }
     if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
@@ -1147,15 +1144,16 @@ class Quadrille {
    */
   rand(times, value = null) {
     times = this._p.abs(times);
-    const max = value === null ? this.order : this.size - this.order;
+    const isFilling = this.constructor.isFilled(value);
+    const max = isFilling ? this.size - this.order : this.order;
     times = this._p.min(times, max);
     let count = 0;
     while (count < times) {
       const index = this._p.int(this._p.random(this.size));
       const { row, col } = this._fromIndex(index);
-      const shouldChange = value === null ? this.isFilled(row, col) : this.isEmpty(row, col);
+      const shouldChange = isFilling ? this.isEmpty(row, col) : this.isFilled(row, col);
       if (shouldChange) {
-        value === null ? this.clear(row, col) : this.fill(row, col, value);
+        isFilling ? this.fill(row, col, value) : this.clear(row, col);
         count++;
       }
     }
@@ -1275,11 +1273,13 @@ class Quadrille {
       const half_size = (mask.width - 1) / 2;
       if (row === undefined || col === undefined) {
         const source = this.clone();
-        this.visit(({ row: i, col: j }) => {
-          if (i >= half_size && i < this.height - half_size && j >= half_size && j < this.width - half_size) {
-            this._conv(mask, i, j, half_size, source);
+        this.visit(
+          ({ row, col }) => this._conv(mask, row, col, half_size, source),
+          {
+            row: r => r >= half_size && r < this.height - half_size,
+            col: c => c >= half_size && c < this.width - half_size
           }
-        });
+        );
       }
       else if (row >= half_size && row < this.height - half_size && col >= half_size && col < this.width - half_size) {
         this._conv(mask, row, col, half_size);
