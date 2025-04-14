@@ -1318,7 +1318,7 @@ var Quadrille = (function (p5) {
           const j = col + jmask - cache_half_size;
           const neighbor = source.read(i, j);
           let mask_value = mask.read(imask, jmask);
-          if ((neighbor instanceof this._p.Color) && (typeof mask_value === 'number' || mask_value instanceof this._p.Color)) {
+          if (this.constructor.isColor(neighbor) && (typeof mask_value === 'number' || this.constructor.isColor(mask_value))) {
             apply = true;
             const weight = typeof mask_value === 'number'
               ? mask_value
