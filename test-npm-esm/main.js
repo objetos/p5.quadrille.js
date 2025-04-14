@@ -2,50 +2,34 @@ import p5 from 'p5'
 import Quadrille from 'p5.quadrille'
 
 const sketch = (p) => {
-  Quadrille.cellLength = 50
-  let q
+  Quadrille.cellLength = 20
+  let game, next, pattern;
+  let life;
 
-  p.setup = () => {
-    p.createCanvas(400, 400)
-    //q = p.createQuadrille()
-    q = p.createQuadrille(8, 8)
-    //q.fill(1, 1, p.color('red'))
-    //q.fill(2, 2, 'white')
-    //q.fill()
-    // /*
-    for (const { row, col } of q) {
-      q.fill(row, col, p.color(p.random(255), p.random(255), p.random(255)));
+  p.setup = function () {
+    game = p.createQuadrille(20, 20);
+    life = p.color('lime');
+    pattern = p.createQuadrille(3, 16252911n, life);
+    game = Quadrille.or(game, pattern, 6, 8);
+    p.createCanvas(game.width * Quadrille.cellLength, game.height * Quadrille.cellLength);
+    p.frameRate(2);
+  };
+
+  p.draw = function () {
+    p.background('blue');
+    next = game.clone();
+    p.visitQuadrille(game, updateCell);
+    game = next;
+    p.drawQuadrille(game, { outline: p.color('magenta') });
+  };
+
+  function updateCell(row, col) {
+    const order = game.ring(row, col).order;
+    if (game.isFilled(row, col)) {
+      if (order - 1 < 2 || order - 1 > 3) next.clear(row, col);
+    } else {
+      if (order === 3) next.fill(row, col, life);
     }
-    // */
-    /*
-    for (const cell of q) {
-      q.fill(cell.row, cell.col, p.color(p.random(255), p.random(255), p.random(255)));
-    }
-    // */
-  }
-
-  p.draw = () => {
-    p.background('blue')
-    p.drawQuadrille(q, { outline: 'grey' /*, outlineWeight: 0 */ })
-  }
-
-  p.mousePressed = () => {
-    const row = q.mouseRow;
-    const col = q.mouseCol;
-    //q.fill(row, col, p.color('yellow'));
-    q.clear(row, col);
-  }
-
-  p.keyPressed = () => {
-    p.key === 'r' && q.randomize();
-    //p.key === '1' && console.log([...q.cells(value => value != null)]);
-    p.key === '1' && console.log([...q.cells(_ => _ != null)]);
-    p.key === '2' && console.log([...q.cells({ value: v => v == null })]);
-    p.key === '3' && console.log([...q.cells({ row: r => r === 1 })]);
-    p.key === '4' && console.log([...q.cells({ col: c => c % 2, value: v => v === '#000' })]);
-    p.key === '5' && console.log([...q.cells({ value: v => Quadrille.isEmpty(v) })]);
-    p.key === '6' && console.log([...q.cells({ value: Quadrille.isEmpty })]);
-    p.key === 'o' && console.log(q.order);
   }
 }
 

@@ -157,7 +157,11 @@ var Quadrille = (function (p5) {
      * @returns {Quadrille} A new quadrille containing only cells filled in both q1 and q2
      */
     static and(q1, q2, row, col) {
-      return this.merge(q1, q2, (a, b) => this.isFilled(a) && this.isFilled(b) && a, row, col);
+      return this.merge(q1, q2, (a, b) => {
+        if (this.isFilled(a) && this.isFilled(b)) {
+          return a;
+        }
+      }, row, col);
     }
 
     /**
@@ -169,7 +173,14 @@ var Quadrille = (function (p5) {
      * @returns {Quadrille} A new quadrille containing cells filled in either q1 or q2
      */
     static or(q1, q2, row, col) {
-      return this.merge(q1, q2, (a, b) => this.isFilled(a) ? a : this.isFilled(b) && b, row, col);
+      return this.merge(q1, q2, (a, b) => {
+        if (this.isFilled(a)) {
+          return a;
+        }
+        if (this.isFilled(b)) {
+          return b;
+        }
+      }, row, col);
     }
 
     /**
@@ -181,9 +192,14 @@ var Quadrille = (function (p5) {
      * @returns {Quadrille} A new quadrille containing cells filled in one, but not both, of q1 and q2
      */
     static xor(q1, q2, row, col) {
-      return this.merge(q1, q2,
-        (a, b) => this.isFilled(a) && this.isEmpty(b) && a || this.isEmpty(a) && this.isFilled(b) && b,
-        row, col);
+      return this.merge(q1, q2, (a, b) => {
+        if (this.isFilled(a) && this.isEmpty(b)) {
+          return a;
+        }
+        if (this.isEmpty(a) && this.isFilled(b)) {
+          return b;
+        }
+      }, row, col);
     }
 
     /**
@@ -195,7 +211,11 @@ var Quadrille = (function (p5) {
      * @returns {Quadrille} A new quadrille with cells filled in q1 but not in q2
      */
     static diff(q1, q2, row, col) {
-      return this.merge(q1, q2, (a, b) => this.isFilled(a) && this.isEmpty(b) && a, row, col);
+      return this.merge(q1, q2, (a, b) => {
+        if (this.isFilled(a) && this.isEmpty(b)) {
+          return a;
+        }
+      }, row, col);
     }
 
     /**
@@ -656,7 +676,7 @@ var Quadrille = (function (p5) {
      */
     row(row) {
       if (this.isValid(row, 0)) {
-        return new Quadrille(this._memory2D[row]);
+        return new Quadrille(this._p, this._memory2D[row]);
       }
     }
 
@@ -804,7 +824,7 @@ var Quadrille = (function (p5) {
           array1D.push(this.read(row + i, col + j));
         }
       }
-      return new Quadrille(2 * dimension + 1, array1D);
+      return new Quadrille(this._p, 2 * dimension + 1, array1D);
     }
 
     /**
