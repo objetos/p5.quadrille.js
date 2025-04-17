@@ -27,7 +27,7 @@ class Quadrille {
   /**
    * Default text drawing zoom.
    */
-  static _textZoom = 0.89;
+  static _textZoom = 0.78; // TODO decide was 0.89 in p5-v1+
 
   // Getter for textZoom
   static get textZoom() {
