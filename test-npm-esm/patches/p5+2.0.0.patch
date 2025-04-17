@@ -1,8 +1,8 @@
 diff --git a/node_modules/p5/lib/p5.esm.js b/node_modules/p5/lib/p5.esm.js
-index 5339ca1..95e9d3f 100644
+index 36bdb9b..8f1b9ae 100644
 --- a/node_modules/p5/lib/p5.esm.js
 +++ b/node_modules/p5/lib/p5.esm.js
-@@ -75941,7 +75941,7 @@ if (typeof IS_MINIFIED === 'undefined') {
+@@ -76117,7 +76117,7 @@ if (typeof IS_MINIFIED === 'undefined') {
      // When the library is built in development mode ( using npm run dev )
      // we want to use the current translation files on the disk, which may have
      // been updated but not yet pushed to the CDN.
