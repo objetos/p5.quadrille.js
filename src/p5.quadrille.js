@@ -282,9 +282,8 @@ class Quadrille {
    * @see order
    */
   constructor(p, ...args) {
+    // TODO v3 experimental: needed for instance mode to work
     this._p = p;
-      // TODO decide hack (doesn't work for mouseRow and mouseCol properties in inheritance classes)
-      // this._p = p || p5.prototype; // defaults to p5.prototype if p is not passed
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
@@ -1574,7 +1573,8 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
-    this.colorDisplay({ graphics, value: graphics.color(graphics.constrain(value, 0, 255)), cellLength });
+    // TODO p5v2 hack graphics.constrain failed (constrain may be statically implement)
+    this.colorDisplay({ graphics, value: graphics.color(p5.prototype.constrain(value, 0, 255)), cellLength });
   }
 
   /**
@@ -1639,9 +1639,7 @@ class Quadrille {
     graphics.noStroke();
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / value.length);
-    // TODO p5v2 decide how to go here:
-    graphics.textAlign(graphics.CENTER, graphics.CENTER);
-    //graphics.textAlign(p5.prototype.CENTER, p5.prototype.CENTER);
+    graphics.textAlign('center', 'center');
     graphics.text(value, 0, 0, cellLength, cellLength);
   }
 
