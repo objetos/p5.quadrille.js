@@ -13,6 +13,7 @@ const sketch = (p) => {
     game = Quadrille.or(game, pattern, 6, 8);
     p.createCanvas(game.width * Quadrille.cellLength, game.height * Quadrille.cellLength);
     p.frameRate(2);
+    console.log(Quadrille.VERSION);
   }
 
   p.draw = function () {
