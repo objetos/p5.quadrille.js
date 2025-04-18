@@ -1,31 +1,32 @@
+// rollup.config.js
 import resolve from '@rollup/plugin-node-resolve'
 
 const external = ['p5']
 
 export default [
-  // ✅ ESM build
+  // — ESM build for npm / Vite —
   {
-    input: 'src/p5.quadrille.js',
+    input: 'src/addon.js',
     external,
     output: {
       file: 'dist/p5.quadrille.esm.js',
       format: 'es',
-      sourcemap: true
+      sourcemap: true,
+      // no `exports` here
     },
     plugins: [resolve()]
   },
 
-  // ✅ IIFE build (global mode for CDN)
+  // — IIFE build for <script> / CDN —
   {
-    input: 'src/p5.quadrille.js',
+    input: 'src/addon.js',
     external,
     output: {
-      file: 'p5.quadrille.js',
+      file: 'p5.quadrille.js',   // root for auto‑CDN
       format: 'iife',
-      // name: 'p5',        // ✅ Would expose as p5.Quadrille (attach to global p5)
-      name: 'Quadrille',    // ✅ Exposes directly as global Quadrille
+      name: 'Quadrille',         // exposes default as global `Quadrille`
       globals: { p5: 'p5' },
-      exports: 'default', // ✅ exposes as p5.Quadrille = default export
+      exports: 'default',           // only allowed here
       sourcemap: true
     },
     plugins: [resolve()]

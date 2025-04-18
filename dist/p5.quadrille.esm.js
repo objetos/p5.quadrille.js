@@ -7,6 +7,8 @@ import p5 from 'p5';
 // iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
 // v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
 class Quadrille {
+  static VERSION = '3.0.0-beta.1';
+
   // STYLE
 
   /**
@@ -224,7 +226,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille with empty cells filled and filled cells untouched
    */
   static neg(q, target) {
-    const result = new Quadrille(q._p, q.width, q.height);
+    const result = new Quadrille(this._p, q.width, q.height);
     this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), this.isEmpty);
     return result;
   }
@@ -245,7 +247,7 @@ class Quadrille {
     col ??= sameOrigin ? q2._col - q1._col : 0;
     const width = col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col);
     const height = row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row);
-    const quadrille = new Quadrille(q1._p, width, height);
+    const quadrille = new Quadrille(this._p, width, height);
     quadrille.visit(({ row: i, col: j }) => {
       const i1 = row < 0 ? i + row : i;
       const j1 = col < 0 ? j + col : j;
@@ -279,8 +281,8 @@ class Quadrille {
    */
   constructor(p, ...args) {
     this._p = p;
-    // TODO decide hack (doesn't work for mouseRow and mouseCol properties in inheritance classes)
-    // this._p = p || p5.prototype; // defaults to p5.prototype if p is not passed
+      // TODO decide hack (doesn't work for mouseRow and mouseCol properties in inheritance classes)
+      // this._p = p || p5.prototype; // defaults to p5.prototype if p is not passed
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
     this._y = 0;
@@ -1659,79 +1661,89 @@ class Quadrille {
   }
 }
 
-// p5-specific functions (not wrapped in an IIFE in the common source)
+// src/addon.js
 
-const INFO =
-{
-  LIBRARY: 'p5.quadrille.js',
-  VERSION: '3.0.0-beta.1',
-  HOMEPAGE: 'https://github.com/objetos/p5.quadrille.js'
-};
+p5.registerAddon((p5, fn) => {
+  // factory: pass the p5 instance into your Quadrille constructor
+  fn.createQuadrille = function(...args) {
+    return new Quadrille(this, ...args)
+  };
 
-console.log(INFO);
-
-p5.prototype.createQuadrille = function (...args) {
-  return new Quadrille(this, ...args);
-};
-
-p5.prototype.drawQuadrille = function (quadrille, {
-  graphics = this,
-  x,
-  y,
-  row,
-  col,
-  filter,
-  textFont,
-  origin,
-  options = {},
-  functionDisplay = quadrille.constructor.functionDisplay,
-  imageDisplay = quadrille.constructor.imageDisplay,
-  colorDisplay = quadrille.constructor.colorDisplay,
-  stringDisplay = quadrille.constructor.stringDisplay,
-  numberDisplay = quadrille.constructor.numberDisplay,
-  tileDisplay = quadrille.constructor.tileDisplay,
-  arrayDisplay = quadrille.constructor.arrayDisplay,
-  objectDisplay = quadrille.constructor.objectDisplay,
-  cellLength = quadrille.constructor.cellLength,
-  outlineWeight = quadrille.constructor.outlineWeight,
-  outline = quadrille.constructor.outline,
-  textColor = quadrille.constructor.textColor,
-  textZoom = quadrille.constructor.textZoom
-} = {}) {
-  quadrille._mode = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
-  // Warn: here we align with p5 conventions
-  // https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html
-  origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner';
-  quadrille._origin = origin;
-  options.origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner'; // options.origin ??= origin; // other option
-  quadrille._cellLength = cellLength;
-  quadrille._x = x ? x : col ? col * cellLength : 0;
-  quadrille._y = y ? y : row ? row * cellLength : 0;
-  quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
-  quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
-  graphics.push();
-  quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
-    (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2));
-  graphics.translate(quadrille._x, quadrille._y);
-  quadrille.visit(({ row, col, value }) => {
+  // drawQuadrille: use `this` (the p5 instance) for all graphics calls
+  fn.drawQuadrille = function(quadrille, {
+    graphics = this,
+    x,
+    y,
+    row,
+    col,
+    filter,
+    textFont,
+    origin,
+    options = {},
+    functionDisplay = quadrille.constructor.functionDisplay,
+    imageDisplay    = quadrille.constructor.imageDisplay,
+    colorDisplay    = quadrille.constructor.colorDisplay,
+    stringDisplay   = quadrille.constructor.stringDisplay,
+    numberDisplay   = quadrille.constructor.numberDisplay,
+    tileDisplay     = quadrille.constructor.tileDisplay,
+    arrayDisplay    = quadrille.constructor.arrayDisplay,
+    objectDisplay   = quadrille.constructor.objectDisplay,
+    cellLength      = quadrille.constructor.cellLength,
+    outlineWeight   = quadrille.constructor.outlineWeight,
+    outline         = quadrille.constructor.outline,
+    textColor       = quadrille.constructor.textColor,
+    textZoom        = quadrille.constructor.textZoom
+  } = {}) {
+    // determine mode and origin
+    quadrille._mode   = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
+    origin            ??= (quadrille._mode === 'webgl' ? 'center' : 'corner');
+    quadrille._origin = origin;
+    options.origin    ??= origin;
+    // positioning
+    quadrille._cellLength = cellLength;
+    quadrille._x          = x ?? (col != null ? col * cellLength : 0);
+    quadrille._y          = y ?? (row != null ? row * cellLength : 0);
+    quadrille._col        = Number.isInteger(col)
+      ? col
+      : Number.isInteger(quadrille._x / cellLength)
+        ? quadrille._x / cellLength
+        : undefined;
+    quadrille._row        = Number.isInteger(row)
+      ? row
+      : Number.isInteger(quadrille._y / cellLength)
+        ? quadrille._y / cellLength
+        : undefined;
+    // draw
     graphics.push();
-    graphics.translate(col * cellLength, row * cellLength);
-    options.row = row;
-    options.col = col;
-    const params = {
-      quadrille, graphics, value, width: quadrille.width, height: quadrille.height,
-      row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
-    };
-    quadrille.constructor._display(params);
+    if (quadrille._mode === 'webgl') {
+      if (origin === 'corner') graphics.translate(-graphics.width / 2, -graphics.height / 2);
+    } else {
+      if (origin === 'center') graphics.translate(graphics.width / 2, graphics.height / 2);
+    }
+    graphics.translate(quadrille._x, quadrille._y);
+    quadrille.visit(({ row, col, value }) => {
+      graphics.push();
+      graphics.translate(col * cellLength, row * cellLength);
+      options.row = row;
+      options.col = col;
+      const params = {
+        quadrille,    graphics,    value,
+        width:        quadrille.width, height: quadrille.height,
+        row,          col,          outline,      outlineWeight,
+        cellLength,   textColor,    textZoom,     textFont,
+        origin,       options,      functionDisplay,
+        imageDisplay, colorDisplay, stringDisplay,
+        numberDisplay, arrayDisplay, objectDisplay,
+        tileDisplay
+      };
+      quadrille.constructor._display(params);
+      graphics.pop();
+    }, filter);
     graphics.pop();
-  }, filter);
-  graphics.pop();
-};
-
-p5.prototype.visitQuadrille = function (quadrille, fx, filter) {
-  quadrille.visit(({ row, col }) => fx(row, col), filter);
-};
+    return quadrille
+  };
+});
+// export { Quadrille } // requires a src/iife-entry.js
 
 export { Quadrille as default };
 //# sourceMappingURL=p5.quadrille.esm.js.map
