@@ -1661,7 +1661,6 @@ class Quadrille {
   }
 }
 
-// Register Quadrille as a p5 addon, wiring create & draw helpers
 p5.registerAddon((p5, fn) => {
   // TODO pass the p5 instance into Quadrille constructor hack
   fn.createQuadrille = function(...args) {
@@ -1707,7 +1706,6 @@ p5.registerAddon((p5, fn) => {
     quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
       (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2));
     graphics.translate(quadrille._x, quadrille._y);
-    // render each cell
     quadrille.visit(({ row, col, value }) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
@@ -1724,6 +1722,10 @@ p5.registerAddon((p5, fn) => {
 
     graphics.pop();
     return quadrille;
+  };
+
+  fn.visitQuadrille = function (quadrille, callback, filter) {
+    quadrille.visit(({ row, col }) => callback(row, col), filter);
   };
 });
 // export { Quadrille } // requires a src/iife-entry.js
