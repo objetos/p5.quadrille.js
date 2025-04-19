@@ -1573,8 +1573,11 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
-    // TODO p5v2 hack graphics.constrain failed (constrain may be statically implement)
-    this.colorDisplay({ graphics, value: graphics.color(p5.prototype.constrain(value, 0, 255)), cellLength });
+    this.colorDisplay({
+      graphics,
+      value: graphics.color(value < 0 ? 0 : value > 255 ? 255 : value),
+      cellLength
+    })
   }
 
   /**

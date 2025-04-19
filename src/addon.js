@@ -2,7 +2,6 @@ import p5 from 'p5';
 import Quadrille from './p5.quadrille.js';
 
 p5.registerAddon((p5, fn) => {
-  // TODO pass the p5 instance into Quadrille constructor hack
   fn.createQuadrille = function(...args) {
     return new Quadrille(this, ...args);
   }
