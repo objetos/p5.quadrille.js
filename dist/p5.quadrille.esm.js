@@ -1571,11 +1571,7 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
-    this.colorDisplay({
-      graphics,
-      value: graphics.color(value < 0 ? 0 : value > 255 ? 255 : value),
-      cellLength
-    });
+    this.colorDisplay({ graphics, value: graphics.color(value), cellLength });
   }
 
   /**
