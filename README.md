@@ -22,25 +22,65 @@ Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.
 
 At its core, using **p5.quadrille.js** can be as minimal or as interactive as you need:
 
-- **2 steps** — storage only: declare and create the quadrille.  
-- **3 steps** — add rendering: use `drawQuadrille()` in `draw()`.  
-- **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`.
+- **2 steps** — storage only: declare and create the quadrille  
+- **3 steps** — add rendering: use `drawQuadrille()` in `draw()`  
+- **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`
+
+You can use the library either by including it via a CDN in the browser, or by installing it from npm in a modern project using Vite or another bundler.
+
+## CDN (IIFE)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/p5/lib/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js"></script>
+<script>
+  let q; // Step 1: Declare
+
+  function setup() {
+    createCanvas(600, 400)
+    q = createQuadrille(6, 4).rand(24, '🐲') // Step 2: Create
+  }
+
+  function draw() {
+    drawQuadrille(q) // Step 3: Render
+  }
+
+  function mousePressed() {
+    q.randomize() // Step 4: Interact
+  }
+
+  new p5()
+</script>
+```
+
+## npm + Vite (ESM)
+
+```bash
+npm install p5 p5.quadrille
+```
 
 ```js
-let q; // Step 1: Declare
+import p5 from 'p5'
+import Quadrille from 'p5.quadrille'
 
-function setup() {
-  createCanvas(600, 400);
-  q = createQuadrille(6, 4); // Step 2: Create
+let q // Step 1: Declare
+
+const sketch = (p) => {
+  p.setup = () => {
+    p.createCanvas(600, 400)
+    q = p.createQuadrille(6, 4).rand(24, '🐲') // Step 2: Create
+  }
+
+  p.draw = () => {
+    p.drawQuadrille(q) // Step 3: Render
+  }
+
+  p.mousePressed = () => {
+    q.randomize() // Step 4: Interact
+  }
 }
 
-function draw() {
-  drawQuadrille(q); // Step 3: Render
-}
-
-function mousePressed() {
-  q.randomize(); // Step 4: Interact
-}
+new p5(sketch)
 ```
 
 That’s it—you’re ready to create, display, and manipulate grid-based content.
@@ -70,11 +110,22 @@ Let `n` be the total number of cells in the quadrille.
 
 # Releases
 
-- [p5.quadrille.js (raw)](https://raw.githubusercontent.com/objetos/p5.quadrille.js/main/p5.quadrille.js)  
-- Content Delivery Network (CDN):  
-  – [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js)  
-  – [p5.quadrille.min.js](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.min.js)  
-- [All releases on GitHub](https://github.com/objetos/p5.quadrille.js/releases)
+- **Latest (v3.0.0):**  
+  These links always point to the latest stable version on npm.
+  - [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.js)
+  - [p5.quadrille.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js)
+  - [npm package](https://www.npmjs.com/package/p5.quadrille)
+
+- **Current tagged version (v3.0.0):**  
+  Use these if you want to lock to a specific version.
+  - [p5.quadrille@3.0.0.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.0.0/dist/p5.quadrille.js)
+  - [p5.quadrille@3.0.0.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.0.0/dist/p5.quadrille.min.js)
+  - [npm package (v3.0.0)](https://www.npmjs.com/package/p5.quadrille/v/3.0.0)
+
+- **Legacy (v2.x):**  
+  GitHub CDN links compatible with p5 v1.
+  - [p5.quadrille.js (GitHub CDN)](https://cdn.jsdelivr.net/gh/objetos/p5.quadrille.js/p5.quadrille.js)
+  - [All GitHub releases](https://github.com/objetos/p5.quadrille.js/releases)
 
 # System Requirements
 
