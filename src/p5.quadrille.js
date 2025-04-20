@@ -9,7 +9,7 @@ import p5 from 'p5';
 // iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
 // v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
 class Quadrille {
-  static VERSION = '3.0.0-beta.1';
+  static VERSION = '3.0.0';
 
   // STYLE
 
@@ -31,7 +31,7 @@ class Quadrille {
   /**
    * Default text drawing zoom.
    */
-  static _textZoom = 0.78; // TODO decide was 0.89 in p5-v1+
+  static _textZoom = 0.78;
 
   // Getter for textZoom
   static get textZoom() {
@@ -282,7 +282,6 @@ class Quadrille {
    * @see order
    */
   constructor(p, ...args) {
-    // TODO v3 experimental: needed for instance mode to work
     this._p = p;
     this._cellLength = this.constructor.cellLength;
     this._x = 0;
@@ -706,9 +705,7 @@ class Quadrille {
    * @returns {Array} Quadrille representation.
    */
   toArray() {
-    return this._memory2D.flat(); // requires ES2019
-    // TODO need to verify which ES version will p5-v2 support
-    // return this.cells().map(({ value }) => value);
+    return this._memory2D.flat();
   }
 
   /**
