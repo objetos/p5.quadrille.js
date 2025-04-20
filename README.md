@@ -1,4 +1,4 @@
-[![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)
+[![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)
 [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)
 [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)
 [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)
@@ -6,7 +6,7 @@
 
 # p5.quadrille.js
 
-Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://p5js.org/) library offers a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are demonstrated with interactive sketches for hands-on exploration.
+Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://beta.p5js.org/) addon library offers a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are demonstrated with interactive sketches for hands-on exploration.
 
 ![Quadrille cells sorted by luminance](p5.quadrille.js.png)
 
@@ -26,12 +26,14 @@ At its core, using **p5.quadrille.js** can be as minimal or as interactive as yo
 - **3 steps** — add rendering: use `drawQuadrille()` in `draw()`  
 - **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`
 
-You can use the library either by including it via a CDN in the browser, or by installing it from npm in a modern project using Vite or another bundler.
+You can use the library either by including it via a CDN in the browser—alongside [p5.js](https://beta.p5js.org/), which it depends on—or by installing both from npm in a modern project using Vite or another bundler.
 
 ## CDN (IIFE)
 
 ```html
+<!-- Load p5.js first (required by p5.quadrille.js, latest version) -->
 <script src="https://cdn.jsdelivr.net/npm/p5/lib/p5.min.js"></script>
+<!-- p5.quadrille.js (latest stable version) -->
 <script src="https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js"></script>
 <script>
   let q; // Step 1: Declare
@@ -96,7 +98,7 @@ Let `n` be the total number of cells in the quadrille.
 
 **Observations:**
 
-- Optimized for grid-based games and interactive applications, including WebGL-heavy scenarios. Supports rendering JavaScript functions via [`p5.Framebuffer`](https://p5js.org/reference/p5/p5.Framebuffer/) for advanced effects.  
+- Optimized for grid-based games and interactive applications, including WebGL-heavy scenarios. Supports rendering JavaScript functions via [`p5.Framebuffer`](https://beta.p5js.org/reference/p5/p5.Framebuffer/) for advanced effects.  
 - Produces deterministic results—identical inputs always yield the same outputs.  
 - Maintains a clear distinction between mutable and immutable methods, promoting API integrity and predictable behavior.
 
@@ -130,9 +132,9 @@ Let `n` be the total number of cells in the quadrille.
 # System Requirements
 
 - **Hardware:** Any modern device—PC, phone, or tablet—with a browser supporting [ES6](https://www.w3schools.com/JS/js_es6.asp) (Firefox 54+, Chrome 51+, Safari 10+, Edge 15+, Opera 38+).  
-- **Software:** Like any p5.js sketch—just include **p5.js** (v1+ or v2 beta) and **p5.quadrille.js** via [local file or CDN](#releases).
+- **Software:** Like any p5.js sketch—just include **p5.js** and **p5.quadrille.js** via [local file or CDN](#releases).
 
-**Observation**: The library leverages [p5.js](https://p5js.org/) for rendering and modern browser APIs for performance. [WebGL](https://en.wikipedia.org/wiki/WebGL) enhances 3D/GPU examples but is optional.
+**Observation**: The library leverages [p5.js](https://beta.p5js.org/) for rendering and modern browser APIs for performance. [WebGL](https://en.wikipedia.org/wiki/WebGL) enhances 3D/GPU examples but is optional.
 
 # Contribute
 
@@ -153,8 +155,8 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
 
 # Further Reading
 
-- [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://p5js.org/)  
-  The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://p5js.org/reference/), [examples](https://p5js.org/examples/), [tutorials](https://p5js.org/learn/), and [libraries](https://p5js.org/libraries/).
+- [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)  
+  The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://beta.p5js.org/reference/), [examples](https://beta.p5js.org/examples/), [tutorials](https://beta.p5js.org/learn/), and [libraries](https://beta.p5js.org/libraries/).
 - [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)  
   Browse the full API reference, including all methods, usage patterns, and detailed explanations—each with interactive examples. Start with `createQuadrille()` and `drawQuadrille()`, then explore shape manipulation, color handling, I/O, WebGL rendering, and more.
 - [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)  
