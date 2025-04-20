@@ -11,13 +11,10 @@
     }
   },
   "files": [
-    "dist",
-    "p5.quadrille.js"
+    "dist/"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "vite",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
   "keywords": [
     "p5",
@@ -38,12 +35,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "p5": "^2.0.0"
+  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
     "rollup": "^4.36.0",
-    "p5": "^2.0.0"
-  },
-  "peerDependencies": {
     "p5": "^2.0.0"
   }
 }
