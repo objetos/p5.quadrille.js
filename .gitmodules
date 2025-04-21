@@ -25,3 +25,6 @@
 [submodule "content/docs/conversion_methods"]
 	path = content/docs/reformatter
 	url = git@github.com:objetos/q_conversion.git
+[submodule "content/docs/api/iterators"]
+	path = content/docs/api/iterators
+	url = git@github.com:objetos/q_iterators.git
