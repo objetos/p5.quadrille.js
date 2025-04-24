@@ -563,10 +563,10 @@ class Quadrille {
     this.visit(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
-  // PROPERTIES
-
   /**
    * Sets quadrille from 2D memory internal array representation.
+   * Accepts either a 2D array, 1D array, FEN string, or flat string.
+   * @param {Array|String} memory - Array or string used to set the internal memory.
    */
   set memory2D(memory) {
     // Case: FEN or flat string
@@ -594,7 +594,8 @@ class Quadrille {
   }
 
   /**
-   * @returns {Array} Quadrille matrix (Array2D) representation.
+   * Gets the internal 2D array representation of the quadrille.
+   * @returns {Array<Array<*>>}
    */
   get memory2D() {
     return this.clone(false)._memory2D;
@@ -602,6 +603,8 @@ class Quadrille {
 
   /**
    * Sets quadrille width (number of columns).
+   * Triggers transposition hack to simulate column resizing.
+   * @param {number} width
    */
   set width(width) {
     this.transpose();
@@ -610,7 +613,8 @@ class Quadrille {
   }
 
   /**
-   * @returns {number} quadrille width, i.e., number of columns.
+   * Gets quadrille width.
+   * @returns {number} Number of columns.
    */
   get width() {
     return this._memory2D[0].length;
@@ -618,6 +622,8 @@ class Quadrille {
 
   /**
    * Sets quadrille height (number of rows).
+   * Resizes by inserting or deleting rows.
+   * @param {number} height
    */
   set height(height) {
     height = Math.max(1, Math.abs(height));
@@ -628,21 +634,24 @@ class Quadrille {
   }
 
   /**
-   * @returns {number} quadrille height, i.e., number of rows.
+   * Gets quadrille height.
+   * @returns {number} Number of rows.
    */
   get height() {
     return this._memory2D.length;
   }
 
   /**
-   * @returns {number} width * height.
+   * Gets total number of cells (width × height).
+   * @returns {number}
    */
   get size() {
     return this.width * this.height;
   }
 
   /**
-   * @returns {number} Number of non-empty quadrille cells.
+   * Gets number of filled cells in the quadrille.
+   * @returns {number}
    */
   get order() {
     let result = 0;
@@ -652,10 +661,18 @@ class Quadrille {
     // return [...this.cells({ value: Quadrille.isFilled })].length;
   }
 
+  /**
+   * Gets the row index under the mouse.
+   * @returns {number}
+   */
   get mouseRow() {
     return this.screenRow(this._p.mouseY);
   }
 
+  /**
+   * Gets the column index under the mouse.
+   * @returns {number}
+   */
   get mouseCol() {
     return this.screenCol(this._p.mouseX);
   }
