@@ -69,8 +69,8 @@ Then, in your [Vite](https://vitejs.dev/)-based frontend project:
 import p5 from 'p5'
 import Quadrille from 'p5.quadrille'
 
-new p5(p => {
-  let q  // Step 1: Declare
+const sketch = p => {
+  let q // Step 1: Declare
   
   p.setup = () => {
     p.createCanvas(600, 400)
@@ -84,7 +84,9 @@ new p5(p => {
   p.mousePressed = () => {
     q.randomize() // Step 4: Interact
   }
-})
+}
+
+new p5(sketch) // Symmetric bootstrap
 ```
 
 That’s it—you’re ready to create, display, and manipulate grid-based content.
