@@ -26,9 +26,9 @@ At its core, using **p5.quadrille.js** can be as minimal or as interactive as yo
 - **3 steps** — add rendering: use `drawQuadrille()` in `draw()`  
 - **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`
 
-You can use the library either by including it via a CDN in the browser—alongside [p5.js](https://beta.p5js.org/), which it depends on—or by installing both from npm in a modern project using Vite or another bundler.
+You can use the library either by including it via a [Content Delivery Network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network) in the browser—using the [Immediately Invoked Function Expression (IIFE)](https://en.wikipedia.org/wiki/Immediately_invoked_function_expression) format alongside [p5.js](https://beta.p5js.org/), which it depends on—or by installing both from [npm](https://www.npmjs.com/) in a modern project using [Vite](https://vitejs.dev/) or another bundler that supports [ECMAScript Modules (ESM)](https://en.wikipedia.org/wiki/ECMAScript#ES6_modules).
 
-## CDN (IIFE)
+## CDN
 
 ```html
 <!-- Load p5.js first (required by p5.quadrille.js, latest version) -->
@@ -55,19 +55,23 @@ You can use the library either by including it via a CDN in the browser—alongs
 </script>
 ```
 
-## npm + Vite (ESM)
+## npm (ESM)
+
+Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille) as dependencies:
 
 ```bash
 npm install p5 p5.quadrille
 ```
 
+Then, in your [Vite](https://vitejs.dev/)-based frontend project:
+
 ```js
 import p5 from 'p5'
 import Quadrille from 'p5.quadrille'
 
-let q // Step 1: Declare
-
-const sketch = (p) => {
+new p5(p => {
+  let q  // Step 1: Declare
+  
   p.setup = () => {
     p.createCanvas(600, 400)
     q = p.createQuadrille(6, 4).rand(24, '🐲') // Step 2: Create
@@ -80,9 +84,7 @@ const sketch = (p) => {
   p.mousePressed = () => {
     q.randomize() // Step 4: Interact
   }
-}
-
-new p5(sketch)
+})
 ```
 
 That’s it—you’re ready to create, display, and manipulate grid-based content.

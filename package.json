@@ -36,11 +36,11 @@
     "access": "public"
   },
   "peerDependencies": {
-    "p5": "^2.0.0"
+    "p5": "^2.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
     "rollup": "^4.36.0",
-    "p5": "^2.0.0"
+    "p5": "^2.0.1"
   }
 }
