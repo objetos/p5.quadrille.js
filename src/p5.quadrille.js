@@ -8,148 +8,237 @@ import p5 from 'p5';
 // iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
 // iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
 // v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
+
+/**
+ * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
+ * @version 3.0.1
+ * @author JP Charalambos
+ * @license GPL-3.0-only
+ *
+ * @description
+ * Grid-based teaching and rendering utility for p5.js.
+ * This module defines the Quadrille class for cell storage and manipulation.
+ * See https://objetos.github.io/docs/api/ for full usage and examples.
+ */
 class Quadrille {
-  static VERSION = '3.0.0';
+  /**
+   * Library version identifier.
+   * @type {string}
+   */
+  static VERSION = '3.0.1';
 
   // STYLE
 
   /**
    * Default text color.
+   * @type {string}
    */
   static _textColor = 'DodgerBlue';
 
-  // Getter for textColor
+  /**
+   * Gets the current text color.
+   * @returns {string}
+   */
   static get textColor() {
     return this._textColor;
   }
 
-  // Setter for textColor with simplified type checking
+  /**
+   * Sets the text color used when rendering values.
+   * Accepts any valid CSS string or p5 color.
+   * @param {string|*} value
+   */
   static set textColor(value) {
     this._textColor = typeof value === 'string' || this.isColor(value) ? value : this._textColor;
   }
 
   /**
    * Default text drawing zoom.
+   * @type {number}
    */
   static _textZoom = 0.78;
 
-  // Getter for textZoom
+  /**
+   * Gets the current text zoom scale.
+   * @returns {number}
+   */
   static get textZoom() {
     return this._textZoom;
   }
 
-  // Setter for textZoom with type checking
+  /**
+   * Sets the text zoom scale. Must be a positive number.
+   * @param {number} value
+   */
   static set textZoom(value) {
     this._textZoom = (typeof value === 'number' && value > 0) ? value : this._textZoom;
   }
 
   /**
    * Default drawing outline.
+   * @type {string}
    */
   static _outline = 'OrangeRed';
 
-  // Getter for outline
+  /**
+   * Gets the current outline color.
+   * @returns {string}
+   */
   static get outline() {
     return this._outline;
   }
 
-  // Setter for outline with type checking
+  /**
+   * Sets the outline color used to draw cells.
+   * Accepts any valid CSS string or p5 color.
+   * @param {string|*} value
+   */
   static set outline(value) {
     this._outline = typeof value === 'string' || this.isColor(value) ? value : this._outline;
   }
 
   /**
    * Default drawing outline weight.
+   * @type {number}
    */
   static _outlineWeight = 2;
 
-  // Getter for outlineWeight
+  /**
+   * Gets the current outline stroke weight.
+   * @returns {number}
+   */
   static get outlineWeight() {
     return this._outlineWeight;
   }
 
-  // Setter for outlineWeight with type checking
+  /**
+   * Sets the outline stroke weight. Must be a non-negative number.
+   * @param {number} value
+   */
   static set outlineWeight(value) {
     this._outlineWeight = (typeof value === 'number' && value >= 0) ? value : this._outlineWeight;
   }
 
   /**
    * Default drawing cell length.
+   * @type {number}
    */
   static _cellLength = 100;
 
-  // Getter for cellLength
+  /**
+   * Gets the current cell size in pixels.
+   * @returns {number}
+   */
   static get cellLength() {
     return this._cellLength;
   }
 
-  // Setter for cellLength with type checking
+  /**
+   * Sets the cell size in pixels. Must be a positive number.
+   * @param {number} value
+   */
   static set cellLength(value) {
     this._cellLength = (typeof value === 'number' && value > 0) ? value : this._cellLength;
   }
 
   /**
    * Default background used in sort.
+   * @type {string}
    */
   static _background = 'white';
 
-  // Getter for background
+  /**
+   * Gets the background color used in sort().
+   * @returns {string}
+   */
   static get background() {
     return this._background;
   }
 
-  // Setter for background with type checking
+  /**
+   * Sets the background color used in sort().
+   * Accepts any valid CSS string or p5 color.
+   * @param {string|*} value
+   */
   static set background(value) {
     this._background = typeof value === 'string' || this.isColor(value) ? value : this._background;
   }
 
-  // chess specific stuff
+  // CHESS
 
   /**
-  * Default chess dark squares.
-  */
+   * Default chess dark squares.
+   * @type {string}
+   */
   static _darkSquare = '#D28C45'; // Wikipedia; '#769555' // chess.com
 
-  // Getter for darkSquare
+  /**
+   * Gets the color for dark chessboard squares.
+   * @returns {string}
+   */
   static get darkSquare() {
     return this._darkSquare;
   }
 
-  // Setter for darkSquare with type checking
+  /**
+   * Sets the color for dark chessboard squares.
+   * @param {string|*} value
+   */
   static set darkSquare(value) {
     this._darkSquare = typeof value === 'string' || this.isColor(value) ? value : this._darkSquare;
   }
 
   /**
    * Default chess light squares.
+   * @type {string}
    */
   static _lightSquare = '#FDCDAA'; // Wikipedia; '#EBECCF' // chess.com
 
-  // Getter for lightSquare
+  /**
+   * Gets the color for light chessboard squares.
+   * @returns {string}
+   */
   static get lightSquare() {
     return this._lightSquare;
   }
 
-  // Setter for lightSquare with type checking
+  /**
+   * Sets the color for light chessboard squares.
+   * @param {string|*} value
+   */
   static set lightSquare(value) {
     this._lightSquare = typeof value === 'string' || this.isColor(value) ? value : this._lightSquare;
   }
 
+  /**
+   * Unicode chess symbols.
+   * @type {Object<string, string>}
+   */
   static chessSymbols = {
     K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
     k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟'
   };
 
+  /**
+   * Reverse lookup map for chess symbols.
+   * @type {Object<string, string>}
+   */
   static chessKeys = Object.fromEntries(
     Object.entries(this.chessSymbols).map(([k, v]) => [v, k])
   );
 
+  /**
+   * Updates the chess symbol mapping and rebuilds the reverse lookup map.
+   * @param {Object<string, string>} chessSymbols - Map from piece keys to Unicode symbols.
+   */
   static setChessSymbols(chessSymbols) {
     this.chessSymbols = chessSymbols;
     this.chessKeys = Object.fromEntries(
       Object.entries(chessSymbols).map(([k, v]) => [v, k])
     );
   }
+
+  // ALGEBRA
 
   /**
    * Logical AND between two quadrilles.
@@ -234,13 +323,13 @@ class Quadrille {
   }
 
   /**
-   * Merges two quadrilles by applying a binary logic operator to their overlapping cells.
-   * @param {Quadrille} q1 First quadrille
-   * @param {Quadrille} q2 Second quadrille
-   * @param {Function} operator Function receiving two cell values and returning a result value
-   * @param {number} row Relative row offset from q1 to q2
-   * @param {number} col Relative column offset from q1 to q2
-   * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2
+   * Merges two quadrilles by applying a binary operator to their overlapping cells. 
+   * @param {Quadrille} q1 - First quadrille.
+   * @param {Quadrille} q2 - Second quadrille.
+   * @param {(a: *, b: *) => *} operator - Function receiving two cell values and returning the merged result.
+   * @param {number} [row] - Optional relative row offset from q1 to q2.
+   * @param {number} [col] - Optional relative column offset from q1 to q2.
+   * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2.
    */
   static merge(q1, q2, operator, row, col) {
     const sameOrigin = q1._row !== undefined && q2._row !== undefined &&
@@ -263,23 +352,24 @@ class Quadrille {
   }
 
   /**
-   * Constructs either an empty or a filled quadrille:
-   * 1. Pass no params.
-   * 2. Pass width and height to construct and empty quadrille (filled with null's).
-   * 3. Pass two colors (either p5.Color instances or HTML color strings) to construct an 8x8 chessboard pattern
-   * using the specified colors for light and dark squares.
-   * 4. Pass jagged array (of colors, images, graphics, arrays, objects, strings, numbers and null).
-   * 5. Pass array (of colors, images, graphics arrays, objects, strings, numbers and null).
-   * 6. Pass width and array (of colors, images, graphics arrays, objects, strings, numbers and null).
-   * 7. Pass fen.
-   * 8. Pass string.
-   * 9. Pass width and string.
-   * 10. Pass width and image, to construct a quadrille filled with image.
-   * 11. Pass width, image and boolean, to construct a quadrille from pixalated image.
-   * 12. Pass width, height, order and value, to construct a quadrille filled with value of the given order.
-   * 13. Pass width, BigInt (or int) and value, to construct a quadrille filled with value from the given BigInt.
-   * @see rand
-   * @see order
+   * Constructs a new Quadrille instance with multiple supported initialization modes:
+   *
+   * 1. No arguments → 8×8 chessboard with default colors.
+   * 2. width, height → empty quadrille of given dimensions.
+   * 3. two colors → 8×8 chessboard with custom light/dark colors.
+   * 4. jagged or flat array → quadrille from array contents.
+   * 5. width + array → reshaped array by row into given width.
+   * 6. string → single-row quadrille from characters.
+   * 7. width + string → reshaped string.
+   * 8. width + image → visual content from image.
+   * 9. width + image + boolean → image pixelation.
+   * 10. width + bigint + value → binary-encoded pattern.
+   * 11. width + height + order + value → filled by order.
+   *
+   * Used internally by `p5.prototype.createQuadrille`.
+   *
+   * @param {p5} p - The p5 instance.
+   * @param {...any} args - Arguments to select construction mode.
    */
   constructor(p, ...args) {
     this._p = p;
@@ -472,6 +562,8 @@ class Quadrille {
     const cellHeight = image.height / this.height;
     this.visit(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
+
+  // PROPERTIES
 
   /**
    * Sets quadrille from 2D memory internal array representation.
