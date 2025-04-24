@@ -40,10 +40,11 @@ You can use the library either by including it via a [Content Delivery Network (
 
   function setup() {
     createCanvas(600, 400)
-    q = createQuadrille(6, 4).rand(24, '🐲') // Step 2: Create
+    q = createQuadrille(6, 4).rand(10, '🐲') // Step 2: Create
   }
 
   function draw() {
+    background(0)
     drawQuadrille(q) // Step 3: Render
   }
 
@@ -74,10 +75,11 @@ const sketch = p => {
   
   p.setup = () => {
     p.createCanvas(600, 400)
-    q = p.createQuadrille(6, 4).rand(24, '🐲') // Step 2: Create
+    q = p.createQuadrille(6, 4).rand(10, '🐲') // Step 2: Create
   }
 
   p.draw = () => {
+    p.background(0)
     p.drawQuadrille(q) // Step 3: Render
   }
 
@@ -86,7 +88,7 @@ const sketch = p => {
   }
 }
 
-new p5(sketch) // Symmetric bootstrap
+new p5(sketch)
 ```
 
 That’s it—you’re ready to create, display, and manipulate grid-based content.
