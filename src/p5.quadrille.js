@@ -563,6 +563,16 @@ class Quadrille {
     this.visit(({ row, col }) => this.fill(row, col, image.get(col * cellWidth, row * cellHeight, cellWidth, cellHeight)));
   }
 
+  _fromIndex(index, width = this.width) {
+    return { row: (index / width) | 0, col: index % width };
+  }
+
+  _toIndex(row, col, width = this.width) {
+    return row * width + col;
+  }
+
+  // PROPERTIES
+
   /**
    * Sets quadrille from 2D memory internal array representation.
    * Accepts either a 2D array, 1D array, FEN string, or flat string.
@@ -695,6 +705,40 @@ class Quadrille {
   }
   // */
 
+  // QUERIES
+
+  /**
+   * Counts the number of non-empty cells in the specified row.
+   * @param {number} row - Row index.
+   * @returns {number} Number of filled cells in the row.
+   */
+  magnitude(row) {
+    let result = 0;
+    if (this.isValid(row, 0)) {
+      for (let j = 0; j < this.width; j++) {
+        this.isFilled(row, j) && result++;
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Searches the quadrille for matches to a given pattern quadrille.
+   * @param {Quadrille} pattern - The pattern to search for.
+   * @param {boolean} [strict=false] - Whether values must match exactly, not just be filled.
+   * @returns {Array<{ row: number, col: number }>} An array of match locations. Empty if no match.
+   */
+  search(pattern, strict = false) {
+    const hits = [];
+    this.visit(({ row, col }) =>
+      this.constructor.merge(pattern, this, (q1, q2) => {
+        if (this.constructor.isFilled(q1) && (strict ? q2 !== q1 : this.constructor.isEmpty(q2))) {
+          return q1;
+        }
+      }, -row, -col).order === 0 && hits.push({ row, col }));
+    return hits;
+  }
+
   /**
    * Converts a pixel Y coordinate to a quadrille row index.
    * @param {number} pixelY - The screen Y-coordinate in pixels.
@@ -717,223 +761,7 @@ class Quadrille {
     return this._p.floor((pixelX - (this._origin === 'center' ? this._p.width / 2 : x)) / cellLength);
   }
 
-  /**
-   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
-   *
-   * The optional `filter` can be:
-   * - `null` or omitted → yield all cells
-   * - A `function(value)` → yield cells where the function returns `true`
-   * - An `Array` or `Set` of values → yield cells whose value is in the set
-   * - An object with optional `value`, `row`, and/or `col` predicates:
-   *    {
-   *      value: v => v === 1,
-   *      row: r => r % 2 === 0,
-   *      col: c => c < 4
-   *    }
-   *
-   * @generator
-   * @param {Array|Set|function|object|null} [filter=null] Filter for selecting cells
-   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value
-   */
-  *cells(filter = null) {
-    const isFn = typeof filter === 'function';
-    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
-    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
-    const set = isSet ? new Set(filter) : null;
-    for (let row = 0; row < this._memory2D.length; row++) {
-      const rowData = this._memory2D[row];
-      for (let col = 0; col < rowData.length; col++) {
-        const value = rowData[col];
-        const match = !filter
-          || (isFn && filter(value))
-          || (isSet && set.has(value))
-          || (isObj &&
-            (!filter.value || filter.value(value)) &&
-            (!filter.row || filter.row(row)) &&
-            (!filter.col || filter.col(col)));
-        if (match) yield { row, col, value };
-      }
-    }
-  }
-
-  /**
-   * Default iterator for the quadrille.
-   *
-   * Allows iteration over all cells using `for...of`.
-   * Equivalent to `this.cells()` with no filter.
-   *
-   * @generator
-   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
-   */
-  *[Symbol.iterator]() {
-    yield* this.cells();
-  }
-
-  /**
-   * Iterates over cells using `for...of`, calling the given function with each cell object.
-   * @param {function({row:number, col:number, value:any}):void} callback
-   * @param {Array|Set|function|object} [filter] Optional filter for selecting cells
-   */
-  visit(callback, filter) {
-    for (const cell of this.cells(filter)) {
-      callback(cell);
-    }
-  }
-
-  /**
-   * @param {number} row 
-   * @returns row as a new quadrille
-   */
-  row(row) {
-    if (this.isValid(row, 0)) {
-      return new Quadrille(this._p, this._memory2D[row]);
-    }
-  }
-
-  _fromIndex(index, width = this.width) {
-    return { row: (index / width) | 0, col: index % width };
-  }
-
-  _toIndex(row, col, width = this.width) {
-    return row * width + col;
-  }
-
-  /**
-   * @returns {bigint} integer representation using big-endian and row-major ordering
-   * of the quadrille cells.
-   */
-  toBigInt() {
-    let result = 0n;
-    this.visit(({ row, col }) => {
-      result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
-    }, this.constructor.isFilled);
-    return result;
-  }
-
-  /**
-   * @returns {Array} Quadrille representation.
-   */
-  toArray() {
-    return this._memory2D.flat();
-  }
-
-  /**
-   * Convert this quadrille to an image.
-   * @param {String} filename png or jpg
-   * @param {Object} params drawing params
-   */
-  toImage(filename, {
-    values,
-    textFont,
-    origin = 'corner',
-    options = {},
-    tileDisplay = this.constructor.tileDisplay,
-    functionDisplay = this.constructor.functionDisplay,
-    imageDisplay = this.constructor.imageDisplay,
-    colorDisplay = this.constructor.colorDisplay,
-    stringDisplay = this.constructor.stringDisplay,
-    numberDisplay = this.constructor.numberDisplay,
-    arrayDisplay,
-    objectDisplay,
-    cellLength = this._cellLength || this.constructor.cellLength,
-    outlineWeight = this.constructor.outlineWeight,
-    outline = this.constructor.outline,
-    textColor = this.constructor.textColor,
-    textZoom = this.constructor.textZoom
-  } = {}) {
-    const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
-    this._p.drawQuadrille(this, {
-      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
-      numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
-      textZoom, textFont, origin, options
-    });
-    this._p.save(graphics, filename);
-  }
-
-  /**
-   * @returns quadrille chess board position in FEN notation
-   */
-  toFEN() {
-    if (this.width !== 8 || this.height !== 8) {
-      console.warn('toFEN() only works on 8x8 chess boards');
-      return;
-    }
-    let fen = '';
-    for (let i = 0; i < 8; i++) {
-      let emptySquares = 0;
-      for (let j = 0; j < 8; j++) {
-        const value = this._memory2D[i][j];
-        if (this.constructor.isEmpty(value)) {
-          emptySquares++;
-        } else {
-          if (emptySquares > 0) {
-            fen += emptySquares.toString();
-            emptySquares = 0;
-          }
-          const fenKey = this.constructor.chessKeys[value];
-          if (!fenKey) {
-            console.warn(`Unrecognized piece ${value} at position ${i}, ${j}. FEN output may be incorrect.`);
-            fen += '?'; // Placeholder for unrecognized pieces
-          } else {
-            fen += fenKey;
-          }
-        }
-      }
-      if (emptySquares > 0) {
-        fen += emptySquares.toString();
-      }
-      if (i < 7) {
-        fen += '/';
-      }
-    }
-    return fen;
-  }
-
-  /**
-   * @param {number} row.
-   * @returns {number} Number of non-empty quadrille cells at row.
-   */
-  magnitude(row) {
-    let result = 0;
-    if (this.isValid(row, 0)) {
-      for (let j = 0; j < this.width; j++) {
-        this.isFilled(row, j) && result++;
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Returns a shallow copy of this quadrille. May be used in conjunction with
-   * {@link reflect} and {@link rotate} to create different quadrille instances.
-   */
-  clone(cache = true) {
-    const clone = new Quadrille(this._p, this._memory2D.map(array => array.slice()));
-    if (cache) {
-      clone._cellLength = this._cellLength;
-      clone._x = this._x;
-      clone._y = this._y;
-      clone._col = this._col;
-      clone._row = this._row;
-    }
-    return clone;
-  }
-
-  /**
-   * @param {number} row 
-   * @param {number} col 
-   * @param {number} dimension of ring
-   * @returns Quadrille ring of neighbor cells centered at (row, col).
-   */
-  ring(row, col, dimension = 1) {
-    const array1D = [];
-    for (let i = -dimension; i <= dimension; i++) {
-      for (let j = -dimension; j <= dimension; j++) {
-        array1D.push(this.read(row + i, col + j));
-      }
-    }
-    return new Quadrille(this._p, 2 * dimension + 1, array1D);
-  }
+  // CELL CONTENTS
 
   /**
    * @param {number} row 
@@ -1001,7 +829,7 @@ class Quadrille {
       typeof value === 'object';
   }
 
-  // Instance methods:
+  // Instance methods
 
   /**
    * @param {number} row 
@@ -1084,21 +912,226 @@ class Quadrille {
     return this.constructor.isFunction(this.read(row, col));
   }
 
+  // ITERATORS
+
   /**
-   * Pattern searching.
-   * @param {Quadrille} pattern 
-   * @param {boolean} strict tells whether the algorithm requires values to match (besides filled cells)
-   * @returns an array of { row, col } object literals hits whose length may be 0 (no hits found).
+   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
+   * The optional `filter` can be:
+   * - `null` or omitted → yield all cells
+   * - A `Function(value)` → yield cells where the function returns `true`
+   * - An `Array` or `Set` of values → yield cells whose value is in the set
+   * - An object with optional `value`, `row`, and/or `col` predicates:
+   *    {
+   *      value: v => v === 1,
+   *      row: r => r % 2 === 0,
+   *      col: c => c < 4
+   *    }
+   * @generator
+   * @param {Array|Set|Function|Object|null} [filter=null] - Optional filter for selecting cells.
+   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
    */
-  search(pattern, strict = false) {
-    const hits = [];
-    this.visit(({ row, col }) =>
-      this.constructor.merge(pattern, this, (q1, q2) => {
-        if (this.constructor.isFilled(q1) && (strict ? q2 !== q1 : this.constructor.isEmpty(q2))) {
-          return q1;
+  *cells(filter = null) {
+    const isFn = typeof filter === 'function';
+    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
+    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
+    const set = isSet ? new Set(filter) : null;
+    for (let row = 0; row < this._memory2D.length; row++) {
+      const rowData = this._memory2D[row];
+      for (let col = 0; col < rowData.length; col++) {
+        const value = rowData[col];
+        const match = !filter
+          || (isFn && filter(value))
+          || (isSet && set.has(value))
+          || (isObj &&
+            (!filter.value || filter.value(value)) &&
+            (!filter.row || filter.row(row)) &&
+            (!filter.col || filter.col(col)));
+        if (match) yield { row, col, value };
+      }
+    }
+  }
+
+  /**
+   * Default iterator for the quadrille.
+   * Allows iteration over all cells using `for...of`.
+   * Equivalent to `this.cells()` with no filter.
+   * @generator
+   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
+   */
+  *[Symbol.iterator]() {
+    yield* this.cells();
+  }
+
+  /**
+   * Iterates over cells using `for...of`, calling the given function with each cell object.
+   * @param {(cell: { row: number, col: number, value: any }) => void} callback - Function to apply to each cell.
+   * @param {Array|Set|Function|Object} [filter] - Optional filter for selecting cells.
+   */
+  visit(callback, filter) {
+    for (const cell of this.cells(filter)) {
+      callback(cell);
+    }
+  }
+
+  // REFORMATTER
+
+  /**
+   * Returns an integer representation using big-endian and row-major ordering.
+   * Only filled cells are considered.
+   * @returns {bigint}
+   */
+  toBigInt() {
+    let result = 0n;
+    this.visit(({ row, col }) => {
+      result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
+    }, this.constructor.isFilled);
+    return result;
+  }
+
+  /**
+   * Returns a flattened array representation of the quadrille.
+   * @returns {Array<*>}
+   */
+  toArray() {
+    return this._memory2D.flat();
+  }
+
+  /**
+   * Saves a rendered image of the quadrille using the specified drawing parameters.
+   * @param {string} filename - The output filename (PNG or JPG).
+   * @param {Object} [params={}] - Rendering parameters.
+   * @param {Array} [params.values] - Optional value set to control rendering.
+   * @param {p5.Font} [params.textFont] - Font used for text rendering.
+   * @param {string} [params.origin='corner'] - Origin mode: `'corner'` or `'center'`.
+   * @param {Object} [params.options={}] - Additional display options.
+   * @param {Function} [params.tileDisplay] - Function to draw tile-based values.
+   * @param {Function} [params.functionDisplay] - Function to draw function-based values.
+   * @param {Function} [params.imageDisplay] - Function to draw image-based values.
+   * @param {Function} [params.colorDisplay] - Function to draw color values.
+   * @param {Function} [params.stringDisplay] - Function to draw string values.
+   * @param {Function} [params.numberDisplay] - Function to draw number values.
+   * @param {Function} [params.arrayDisplay] - Function to draw array values.
+   * @param {Function} [params.objectDisplay] - Function to draw object values.
+   * @param {number} [params.cellLength=this._cellLength] - Cell size in pixels.
+   * @param {number} [params.outlineWeight] - Outline stroke weight.
+   * @param {string|*} [params.outline] - Outline color.
+   * @param {string|*} [params.textColor] - Text fill color.
+   * @param {number} [params.textZoom] - Scale factor for text rendering.
+   */
+  toImage(filename, {
+    values,
+    textFont,
+    origin = 'corner',
+    options = {},
+    tileDisplay = this.constructor.tileDisplay,
+    functionDisplay = this.constructor.functionDisplay,
+    imageDisplay = this.constructor.imageDisplay,
+    colorDisplay = this.constructor.colorDisplay,
+    stringDisplay = this.constructor.stringDisplay,
+    numberDisplay = this.constructor.numberDisplay,
+    arrayDisplay,
+    objectDisplay,
+    cellLength = this._cellLength || this.constructor.cellLength,
+    outlineWeight = this.constructor.outlineWeight,
+    outline = this.constructor.outline,
+    textColor = this.constructor.textColor,
+    textZoom = this.constructor.textZoom
+  } = {}) {
+    const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
+    this._p.drawQuadrille(this, {
+      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
+      numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
+      textZoom, textFont, origin, options
+    });
+    this._p.save(graphics, filename);
+  }
+
+  /**
+   * Returns a FEN (Forsyth–Edwards Notation) string of the quadrille.
+   * Only works on 8×8 chess boards.
+   * @returns {string|undefined}
+   */
+  toFEN() {
+    if (this.width !== 8 || this.height !== 8) {
+      console.warn('toFEN() only works on 8x8 chess boards');
+      return;
+    }
+    let fen = '';
+    for (let i = 0; i < 8; i++) {
+      let emptySquares = 0;
+      for (let j = 0; j < 8; j++) {
+        const value = this._memory2D[i][j];
+        if (this.constructor.isEmpty(value)) {
+          emptySquares++;
+        } else {
+          if (emptySquares > 0) {
+            fen += emptySquares.toString();
+            emptySquares = 0;
+          }
+          const fenKey = this.constructor.chessKeys[value];
+          if (!fenKey) {
+            console.warn(`Unrecognized piece ${value} at position ${i}, ${j}. FEN output may be incorrect.`);
+            fen += '?'; // Placeholder for unrecognized pieces
+          } else {
+            fen += fenKey;
+          }
         }
-      }, -row, -col).order === 0 && hits.push({ row, col }));
-    return hits;
+      }
+      if (emptySquares > 0) {
+        fen += emptySquares.toString();
+      }
+      if (i < 7) {
+        fen += '/';
+      }
+    }
+    return fen;
+  }
+
+  // INSTANCE CREATORS
+
+  /**
+   * Returns a shallow copy of this quadrille.
+   * @param {boolean} [cache=true] - Whether to copy positional and layout metadata.
+   * @returns {Quadrille} A new Quadrille with the same content.
+   */
+  clone(cache = true) {
+    const clone = new Quadrille(this._p, this._memory2D.map(array => array.slice()));
+    if (cache) {
+      clone._cellLength = this._cellLength;
+      clone._x = this._x;
+      clone._y = this._y;
+      clone._col = this._col;
+      clone._row = this._row;
+    }
+    return clone;
+  }
+
+  /**
+   * Creates a new quadrille from a square ring of neighbors centered at (row, col).
+   * @param {number} row - Center row index.
+   * @param {number} col - Center column index.
+   * @param {number} [dimension=1] - Radius of the ring (half the side length minus one).
+   * @returns {Quadrille} A new Quadrille containing the neighbor cells.
+   */
+  ring(row, col, dimension = 1) {
+    const array1D = [];
+    for (let i = -dimension; i <= dimension; i++) {
+      for (let j = -dimension; j <= dimension; j++) {
+        array1D.push(this.read(row + i, col + j));
+      }
+    }
+    return new Quadrille(this._p, 2 * dimension + 1, array1D);
+  }
+
+  /**
+   * Returns a new quadrille containing the contents of the given row.
+   * @param {number} row - The row index to extract.
+   * @returns {Quadrille|undefined} A new Quadrille with the specified row, or `undefined` if invalid.
+   */
+  row(row) {
+    if (this.isValid(row, 0)) {
+      return new Quadrille(this._p, this._memory2D[row]);
+    }
   }
 
   /**
