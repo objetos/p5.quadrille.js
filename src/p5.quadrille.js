@@ -571,6 +571,67 @@ class Quadrille {
     return row * width + col;
   }
 
+  // ITERATORS
+
+  /**
+   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
+   * The optional `filter` can be:
+   * - `null` or omitted → yield all cells
+   * - A `Function(value)` → yield cells where the function returns `true`
+   * - An `Array` or `Set` of values → yield cells whose value is in the set
+   * - An object with optional `value`, `row`, and/or `col` predicates:
+   *    {
+   *      value: v => v === 1,
+   *      row: r => r % 2 === 0,
+   *      col: c => c < 4
+   *    }
+   * @generator
+   * @param {Array|Set|Function|Object|null} [filter=null] - Optional filter for selecting cells.
+   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
+   */
+  *cells(filter = null) {
+    const isFn = typeof filter === 'function';
+    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
+    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
+    const set = isSet ? new Set(filter) : null;
+    for (let row = 0; row < this._memory2D.length; row++) {
+      const rowData = this._memory2D[row];
+      for (let col = 0; col < rowData.length; col++) {
+        const value = rowData[col];
+        const match = !filter
+          || (isFn && filter(value))
+          || (isSet && set.has(value))
+          || (isObj &&
+            (!filter.value || filter.value(value)) &&
+            (!filter.row || filter.row(row)) &&
+            (!filter.col || filter.col(col)));
+        if (match) yield { row, col, value };
+      }
+    }
+  }
+
+  /**
+   * Default iterator for the quadrille.
+   * Allows iteration over all cells using `for...of`.
+   * Equivalent to `this.cells()` with no filter.
+   * @generator
+   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
+   */
+  *[Symbol.iterator]() {
+    yield* this.cells();
+  }
+
+  /**
+   * Iterates over cells using `for...of`, calling the given function with each cell object.
+   * @param {(cell: { row: number, col: number, value: any }) => void} callback - Function to apply to each cell.
+   * @param {Array|Set|Function|Object} [filter] - Optional filter for selecting cells.
+   */
+  visit(callback, filter) {
+    for (const cell of this.cells(filter)) {
+      callback(cell);
+    }
+  }
+
   // PROPERTIES
 
   /**
@@ -764,10 +825,11 @@ class Quadrille {
   // CELL CONTENTS
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {*} quadrille entry or undefined id (row, col) is out of bounds
-   */
+ * Reads the value at the specified row and column.
+ * @param {number} row
+ * @param {number} col
+ * @returns {*} Quadrille entry at (row, col), or `undefined` if out of bounds.
+ */
   read(row, col) {
     if (this.isValid(row, col)) {
       return this._memory2D[row][col];
@@ -780,46 +842,92 @@ class Quadrille {
   // quadrille bounds, also isFilled is logically equivalent to !isEmpty for consistency.
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is within bounds
+   * Checks if a given cell position is valid.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean} True if the cell is within bounds.
    */
   isValid(row, col) {
     return row >= 0 && row < this.height && col >= 0 && col < this.width;
   }
 
+  /**
+   * Determines whether a value is considered empty.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isEmpty(value) {
     return value == null;
   }
 
+  /**
+   * Determines whether a value is considered filled.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isFilled(value) {
     return value != null;
   }
 
+  /**
+   * Checks whether the given value is a number.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isNumber(value) {
     return typeof value === 'number';
   }
 
+  /**
+   * Checks whether the given value is a string.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isString(value) {
     return typeof value === 'string';
   }
 
+  /**
+   * Checks whether the given value is a p5.Color instance.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isColor(value) {
     return value instanceof p5.Color;
   }
 
+  /**
+   * Checks whether the given value is a function.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isFunction(value) {
     return typeof value === 'function';
   }
 
+  /**
+   * Checks whether the given value is a p5.Image, p5.Graphics, MediaElement (video), or Framebuffer.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isImage(value) {
     return value instanceof p5.Image || (value instanceof p5.MediaElement && value.elt instanceof HTMLVideoElement) || value instanceof p5.Graphics || value instanceof p5.Framebuffer;
   }
 
+  /**
+   * Checks whether the given value is an array.
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isArray(value) {
     return Array.isArray(value);
   }
 
+  /**
+   * Checks whether the given value is a generic object (not a color, image, function, or array).
+   * @param {*} value
+   * @returns {boolean}
+   */
   static isObject(value) {
     return this.isFilled(value) &&
       !this.isColor(value) &&
@@ -832,146 +940,96 @@ class Quadrille {
   // Instance methods
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is empty
+   * Checks whether the cell at (row, col) is empty.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isEmpty(row, col) {
     return this.constructor.isEmpty(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell is filled
+   * Checks whether the cell at (row, col) is filled.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isFilled(row, col) {
     return this.constructor.isFilled(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a number
+   * Checks whether the cell at (row, col) contains a number.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isNumber(row, col) {
     return this.constructor.isNumber(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a string
+   * Checks whether the cell at (row, col) contains a string.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isString(row, col) {
     return this.constructor.isString(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a color
+   * Checks whether the cell at (row, col) contains a color.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isColor(row, col) {
     return this.constructor.isColor(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an array
+   * Checks whether the cell at (row, col) contains an array.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isArray(row, col) {
     return this.constructor.isArray(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an object
+   * Checks whether the cell at (row, col) contains an object.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isObject(row, col) {
     return this.constructor.isObject(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has an image
+   * Checks whether the cell at (row, col) contains an image or graphics object.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isImage(row, col) {
     return this.constructor.isImage(this.read(row, col));
   }
 
   /**
-   * @param {number} row 
-   * @param {number} col 
-   * @returns {boolean} true if cell has a function
+   * Checks whether the cell at (row, col) contains a function.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
    */
   isFunction(row, col) {
     return this.constructor.isFunction(this.read(row, col));
   }
 
-  // ITERATORS
-
-  /**
-   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
-   * The optional `filter` can be:
-   * - `null` or omitted → yield all cells
-   * - A `Function(value)` → yield cells where the function returns `true`
-   * - An `Array` or `Set` of values → yield cells whose value is in the set
-   * - An object with optional `value`, `row`, and/or `col` predicates:
-   *    {
-   *      value: v => v === 1,
-   *      row: r => r % 2 === 0,
-   *      col: c => c < 4
-   *    }
-   * @generator
-   * @param {Array|Set|Function|Object|null} [filter=null] - Optional filter for selecting cells.
-   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
-   */
-  *cells(filter = null) {
-    const isFn = typeof filter === 'function';
-    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
-    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
-    const set = isSet ? new Set(filter) : null;
-    for (let row = 0; row < this._memory2D.length; row++) {
-      const rowData = this._memory2D[row];
-      for (let col = 0; col < rowData.length; col++) {
-        const value = rowData[col];
-        const match = !filter
-          || (isFn && filter(value))
-          || (isSet && set.has(value))
-          || (isObj &&
-            (!filter.value || filter.value(value)) &&
-            (!filter.row || filter.row(row)) &&
-            (!filter.col || filter.col(col)));
-        if (match) yield { row, col, value };
-      }
-    }
-  }
-
-  /**
-   * Default iterator for the quadrille.
-   * Allows iteration over all cells using `for...of`.
-   * Equivalent to `this.cells()` with no filter.
-   * @generator
-   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
-   */
-  *[Symbol.iterator]() {
-    yield* this.cells();
-  }
-
-  /**
-   * Iterates over cells using `for...of`, calling the given function with each cell object.
-   * @param {(cell: { row: number, col: number, value: any }) => void} callback - Function to apply to each cell.
-   * @param {Array|Set|Function|Object} [filter] - Optional filter for selecting cells.
-   */
-  visit(callback, filter) {
-    for (const cell of this.cells(filter)) {
-      callback(cell);
-    }
-  }
+  // MUTATORS
 
   // REFORMATTER
 
