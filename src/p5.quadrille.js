@@ -353,7 +353,6 @@ class Quadrille {
 
   /**
    * Constructs a new Quadrille instance with multiple supported initialization modes:
-   *
    * 1. No arguments → 8×8 chessboard with default colors.
    * 2. width, height → empty quadrille of given dimensions.
    * 3. two colors → 8×8 chessboard with custom light/dark colors.
@@ -365,9 +364,7 @@ class Quadrille {
    * 9. width + image + boolean → image pixelation.
    * 10. width + bigint + value → binary-encoded pattern.
    * 11. width + height + order + value → filled by order.
-   *
    * Used internally by `p5.prototype.createQuadrille`.
-   *
    * @param {p5} p - The p5 instance.
    * @param {...any} args - Arguments to select construction mode.
    */
@@ -825,11 +822,11 @@ class Quadrille {
   // CELL CONTENTS
 
   /**
- * Reads the value at the specified row and column.
- * @param {number} row
- * @param {number} col
- * @returns {*} Quadrille entry at (row, col), or `undefined` if out of bounds.
- */
+   * Reads the value at the specified row and column.
+   * @param {number} row
+   * @param {number} col
+   * @returns {*} Quadrille entry at (row, col), or `undefined` if out of bounds.
+   */
   read(row, col) {
     if (this.isValid(row, col)) {
       return this._memory2D[row][col];

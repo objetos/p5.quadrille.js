@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/p5.quadrille.js"
+  ]
+}

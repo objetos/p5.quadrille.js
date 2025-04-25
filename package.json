@@ -5,16 +5,19 @@
   "type": "module",
   "main": "dist/p5.quadrille.esm.js",
   "module": "dist/p5.quadrille.esm.js",
+  "types": "dist/p5.quadrille.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/p5.quadrille.esm.js"
+      "import": "./dist/p5.quadrille.esm.js",
+      "types": "./dist/p5.quadrille.d.ts"
     }
   },
   "files": [
     "dist/"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "types": "tsc"
   },
   "keywords": [
     "p5",
@@ -41,6 +44,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
     "rollup": "^4.36.0",
-    "p5": "^2.0.1"
+    "p5": "^2.0.1",
+    "typescript": "^5.3.3"
   }
 }
