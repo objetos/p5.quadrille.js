@@ -1,11 +1,68 @@
+/**
+ * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
+ * @version 3.0.1
+ * @author JP Charalambos
+ * @license GPL-3.0-only
+ *
+ * @description
+ * Prototype extensions for p5.js that support creating and rendering Quadrille instances.
+ * Part of the p5.quadrille.js library.
+ * See https://objetos.github.io/docs/api/ for full usage and examples.
+ */
+
+'use strict';
+
 import p5 from 'p5';
 import Quadrille from './p5.quadrille.js';
 
 p5.registerAddon((p5, fn) => {
-  fn.createQuadrille = function(...args) {
+  /**
+   * Creates a new Quadrille instance.
+   * Supports all constructor forms documented in the API.
+   * @function
+   * @memberof p5
+   * @name createQuadrille
+   * @instance
+   * @param {...*} args - Arguments forwarded to the Quadrille constructor.
+   * @returns {Quadrille} The new Quadrille instance.
+   */
+  fn.createQuadrille = function (...args) {
     return new Quadrille(this, ...args);
   }
 
+  /**
+   * Draws the given Quadrille to the canvas or a p5.Graphics context.
+   * Supports 2D and WEBGL modes, honoring origin conventions.
+   * @function
+   * @memberof p5
+   * @name drawQuadrille
+   * @instance
+   * @param {Quadrille} quadrille - The Quadrille instance to render.
+   * @param {Object} [params={}] - Optional rendering parameters.
+   * @param {p5.Graphics} [params.graphics=this] - Target graphics buffer.
+   * @param {number} [params.x] - Absolute X offset (pixels).
+   * @param {number} [params.y] - Absolute Y offset (pixels).
+   * @param {number} [params.row] - Starting row index.
+   * @param {number} [params.col] - Starting column index.
+   * @param {Function|Object|Set|Array|null} [params.filter] - Cell filter.
+   * @param {p5.Font} [params.textFont] - Optional text font.
+   * @param {string} [params.origin='corner'] - `'corner'` or `'center'`.
+   * @param {Object} [params.options={}] - Optional config forwarded to shader/functions.
+   * @param {Function} [params.functionDisplay]
+   * @param {Function} [params.imageDisplay]
+   * @param {Function} [params.colorDisplay]
+   * @param {Function} [params.stringDisplay]
+   * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.tileDisplay]
+   * @param {Function} [params.arrayDisplay]
+   * @param {Function} [params.objectDisplay]
+   * @param {number} [params.cellLength]
+   * @param {number} [params.outlineWeight]
+   * @param {*} [params.outline]
+   * @param {*} [params.textColor]
+   * @param {number} [params.textZoom]
+   * @returns {Quadrille} The rendered quadrille.
+   */
   fn.drawQuadrille = function (quadrille, {
     graphics = this,
     x,

@@ -1,14 +1,3 @@
-'use strict';
-
-import p5 from 'p5';
-
-// TODOs
-// i. isPolyomino()
-// ii. perlin / simplex noise
-// iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
-// iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
-// v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
-
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
  * @version 3.0.1
@@ -20,6 +9,17 @@ import p5 from 'p5';
  * This module defines the Quadrille class for cell storage and manipulation.
  * See https://objetos.github.io/docs/api/ for full usage and examples.
  */
+
+'use strict';
+
+import p5 from 'p5';
+
+// TODOs
+// i. isPolyomino()
+// ii. perlin / simplex noise
+// iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
+// iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
+// v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
 class Quadrille {
   /**
    * Library version identifier.
@@ -1824,7 +1824,11 @@ class Quadrille {
   }
 
   /**
-   * Number cell drawing.
+   * Renders a number value using its color equivalent.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {number} params.value - Numeric value to draw.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static numberDisplay({
     graphics,
@@ -1835,7 +1839,11 @@ class Quadrille {
   }
 
   /**
-   * Color cell drawing.
+   * Renders a color value by filling the cell.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {*} params.value - Fill color.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static colorDisplay({
     graphics,
@@ -1847,6 +1855,14 @@ class Quadrille {
     graphics.rect(0, 0, cellLength, cellLength);
   }
 
+  /**
+   * Renders a function-based cell using an internal framebuffer.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {Object} params.options - Display options (e.g. origin).
+   * @param {Function} params.value - Function that draws into the framebuffer.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   */
   static functionDisplay({
     graphics,
     options,
@@ -1865,7 +1881,11 @@ class Quadrille {
   }
 
   /**
-   * Image cell drawing.
+   * Renders an image or framebuffer value.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {*} params.value - Image, p5.Graphics, or Framebuffer.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static imageDisplay({
     graphics,
@@ -1882,7 +1902,14 @@ class Quadrille {
   }
 
   /**
-   * String cell drawing.
+   * Renders a string value centered in the cell.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {string} params.value - Text to render.
+   * @param {p5.Font} [params.textFont] - Optional font.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   * @param {*} [params.textColor=this.textColor] - Fill color for text.
+   * @param {number} [params.textZoom=this.textZoom] - Text size scaling factor.
    */
   static stringDisplay({
     graphics,
@@ -1901,7 +1928,12 @@ class Quadrille {
   }
 
   /**
-   * Tesselation or tiling.
+   * Draws the outline (tile) for a cell.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   * @param {*} [params.outline=this.outline] - Outline color.
+   * @param {number} [params.outlineWeight=this.outlineWeight] - Stroke weight.
    */
   static tileDisplay({
     graphics,
