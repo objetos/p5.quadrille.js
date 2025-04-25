@@ -1031,6 +1031,289 @@ class Quadrille {
 
   // MUTATORS
 
+  /**
+   * Replaces cell values.
+   * 1. `replace(value)` — replaces all filled cells with `value`.
+   * 2. `replace(value1, value2)` — replaces occurrences of `value1` with `value2`.
+   * @param {...*} args
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  replace(...args) {
+    args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), this.constructor.isFilled);
+    args.length === 2 && this.visit(({ row, col }) => this.fill(row, col, args[1]), v => v === args[0]);
+    return this;
+  }
+
+  /**
+   * Clears cell values in various ways:
+   * 1. `clear()` — clears all filled cells.
+   * 2. `clear(row)` — clears a specific row.
+   * 3. `clear(row, col)` — clears a specific cell.
+   * 4. `clear(row, col, directions)` — flood clears from a cell.
+   * 5. `clear(row, col, border)` — flood clears from a cell with optional border clearing.
+   * 6. `clear(row, col, directions, border)` — flood clears from a cell using given directions and border.
+   * @param {...*} args
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  clear(...args) {
+    if (args.length === 0) {
+      this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
+    }
+    if (args.length === 1 && typeof args[0] === 'number') {
+      if (this.isValid(args[0], 0)) {
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
+      }
+    }
+    if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+      if (this.isValid(args[0], args[1])) {
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
+      }
+    }
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'number') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2]);
+      }
+    }
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'boolean') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, 4, args[2]);
+      }
+    }
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[2] === 'number' && typeof args[3] === 'boolean') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2], args[3]);
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Fills the quadrille using a variety of modes:
+   * 1. `fill()` — fills all cells in chessboard pattern using default colors.
+   * 2. `fill(value)` — fills all empty cells with `value`.
+   * 3. `fill(color1, color2)` — fills all cells with a chessboard pattern using the specified colors.
+   * 4. `fill(row, value)` — fills a specific row.
+   * 5. `fill(row, col, value)` — fills a specific cell.
+   * 6. `fill(row, col, value, directions)` — flood fill from a cell in given directions.
+   * 7. `fill(row, col, value, border)` — flood fill with/without border in 4 directions.
+   * 8. `fill(row, col, value, directions, border)` — flood fill in custom directions with/without border.
+   * @param {...*} args
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  fill(...args) {
+    if (args.length === 0) {
+      this.visit(({ row, col }) => {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
+      });
+    }
+    if (args.length === 1 && this.constructor.isFilled(args[0])) {
+      this.visit(({ row, col }) => this._memory2D[row][col] = args[0], this.constructor.isEmpty);
+    }
+    if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
+      (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
+      this.visit(({ row, col }) => {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
+      });
+    }
+    if (args.length === 2 && typeof args[0] === 'number') {
+      if (this.isValid(args[0], 0)) {
+        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
+          cell = this._clearCell(cell);
+          return args[1] === undefined ? null : args[1];
+        });
+      }
+    }
+    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+      if (this.isValid(args[0], args[1])) {
+        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
+        this._memory2D[args[0]][args[1]] = args[2] === undefined ? null : args[2];
+      }
+    }
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3]);
+      }
+    }
+    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'boolean') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], 4, args[3]);
+      }
+    }
+    if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
+      if (this.isValid(args[0], args[1])) {
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3], args[4]);
+      }
+    }
+    return this;
+  }
+
+  _flood(row, col, value1, value2, directions = 4, border = false) {
+    if (directions !== 4 && directions !== 8) {
+      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
+      directions = 4;
+    }
+    if (this.isValid(row, col) && this._memory2D[row][col] !== value2) {
+      if (this._memory2D[row][col] === value1) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = value2;
+        this._flood(row, col - 1, value1, value2, directions, border);
+        this._flood(row - 1, col, value1, value2, directions, border);
+        this._flood(row, col + 1, value1, value2, directions, border);
+        this._flood(row + 1, col, value1, value2, directions, border);
+        if (directions === 8) {
+          this._flood(row - 1, col - 1, value1, value2, directions, border);
+          this._flood(row - 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col - 1, value1, value2, directions, border);
+        }
+      }
+      if (border) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = value2;
+      }
+    }
+  }
+
+  _clearCell(value) {
+    if (this.constructor.isFunction(value)) {
+      value.fbo?.remove();
+      value.fbo = undefined;
+    }
+    return null;
+  }
+
+  /**
+   * Randomly clears or fills cells in the quadrille.
+   * - If `value` is `null`, clears `times` filled cells.
+   * - If `value` is not `null`, fills `times` empty cells with `value`.
+   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
+   * @param {number} times - Number of cells to modify.
+   * @param {*} [value=null] - Value to fill, or `null` to clear cells.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  rand(times, value = null) {
+    times = this._p.abs(times);
+    const isFilling = this.constructor.isFilled(value);
+    const max = isFilling ? this.size - this.order : this.order;
+    times = this._p.min(times, max);
+    let count = 0;
+    while (count < times) {
+      const index = this._p.int(this._p.random(this.size));
+      const { row, col } = this._fromIndex(index);
+      const shouldChange = isFilling ? this.isEmpty(row, col) : this.isFilled(row, col);
+      if (shouldChange) {
+        isFilling ? this.fill(row, col, value) : this.clear(row, col);
+        count++;
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Randomly rearranges filled cells in the quadrille.
+   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  randomize() {
+    const clone = this.clone(false);
+    this.clear();
+    clone.visit(({ value }) => {
+      let row, col;
+      do {
+        const index = this._p.int(this._p.random(this.size));
+        ({ row, col } = this._fromIndex(index));
+      } while (this.isFilled(row, col));
+      this.fill(row, col, value);
+    }, this.constructor.isFilled);
+    return this;
+  }
+
+  /**
+   * Inserts an empty row at the given index.
+   * @param {number} row - Index to insert the new row.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  insert(row) {
+    this._memory2D.splice(row, 0, Array(this.width).fill(null));
+    return this;
+  }
+
+  /**
+   * Deletes the row at the given index.
+   * @param {number} row - Index of the row to delete.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  delete(row) {
+    if (this.height > 1 && this.isValid(row, 0)) {
+      this._memory2D.splice(row, 1);
+    }
+    return this;
+  }
+
+  /**
+   * Swaps two rows or two cells in the quadrille.
+   * - `swap(row1, row2)` — swaps two rows.
+   * - `swap(row1, col1, row2, col2)` — swaps two individual cells.
+   * @param {...number} args - Either 2 or 4 integers.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  swap(...args) {
+    const isInteger = Number.isInteger;
+    if (args.length === 2) {
+      if (args.every(isInteger) && this.isValid(args[0], 0) && this.isValid(args[1], 0)) {
+        const temp = this._memory2D[args[0]];
+        this._memory2D[args[0]] = this._memory2D[args[1]];
+        this._memory2D[args[1]] = temp;
+      }
+    } else if (args.length === 4) {
+      if (args.every(isInteger) && this.isValid(args[0], args[1]) && this.isValid(args[2], args[3])) {
+        const temp = this._memory2D[args[0]][args[1]];
+        this._memory2D[args[0]][args[1]] = this._memory2D[args[2]][args[3]];
+        this._memory2D[args[2]][args[3]] = temp;
+      }
+    }
+    return this;
+  }
+
+  // TRANSFORMS
+
+  /**
+   * Horizontal reflection.
+   * Reverses the order of the rows.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  reflect() {
+    this._memory2D.reverse();
+    return this;
+  }
+
+  /**
+   * Transposes the quadrille matrix (rows become columns).
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  transpose() {
+    // credit goes to Fawad Ghafoorwho wrote about it here:
+    // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
+    return this;
+  }
+
+  /**
+   * Rotates the quadrille 90 degrees clockwise.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  rotate() {
+    // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
+    // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
+    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
+    return this;
+  }
+
   // REFORMATTER
 
   /**
@@ -1192,299 +1475,17 @@ class Quadrille {
     }
   }
 
-  /**
-   * Searches and replace values. Either:
-   * 1. replace(value), replaces non empty cells with value.
-   * 2. replace(value1, value2), searches value1 and replaces with value2
-   */
-  replace(...args) {
-    args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), this.constructor.isFilled);
-    args.length === 2 && this.visit(({ row, col }) => this.fill(row, col, args[1]), v => v === args[0]);
-    return this;
-  }
+  // VISUAL ALGORITHMS
 
   /**
-   * Clear quadrille cells (fill them with null's). Either:
-   * 1. clear(), clears current filled cells;
-   * 2. clear(row), clears row; or,
-   * 3. clear(row, col), clears cell.
-   * 4. clear(row, col, directions), flood clearing using (row, col) cell value.
-   * 5. clear(row, col, border), flood clearing (including borders) using (row, col) cell value.
-   * 6. clear(row, col, directions, border), flood clearing (including borders) using (row, col) cell value.
-   */
-  clear(...args) {
-    if (args.length === 0) {
-      this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
-    }
-    if (args.length === 1 && typeof args[0] === 'number') {
-      if (this.isValid(args[0], 0)) {
-        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
-      }
-    }
-    if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
-      if (this.isValid(args[0], args[1])) {
-        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
-      }
-    }
-    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      typeof args[2] === 'number') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2]);
-      }
-    }
-    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      typeof args[2] === 'boolean') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, 4, args[2]);
-      }
-    }
-    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
-      typeof args[2] === 'number' && typeof args[3] === 'boolean') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], null, args[2], args[3]);
-      }
-    }
-    return this;
-  }
-
-  /**
-   * Fills quadrille cells with given value. Either:
-   * 1. fill(), chess board pattern filling of all cells.
-   * 2. fill(value), fills current empty cells.
-   * 3. fill(color1, color2), fills the entire quadrille with a chessboard pattern using the specified colors
-   * (either p5.Color instances or HTML color strings).
-   * 4. fill(row, value), fills row.
-   * 5. fill(row, col, value), fills cell.
-   * 6. fill(row, col, value, directions), flood filling without boder in the given number of directions,
-   * using (row, col) cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array,
-   * an object, a string or a number).
-   * 7. fill(row, col, value, border), flood filling with (without) border in 4 directions using (row, col)
-   * cell value (either a p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object, a string or a number).
-   * 8. fill(row, col, value, directions, border), flood filling with (without) border in the given number of directions
-   * using (row, col) cell value (either a  p5.Image, a p5.Graphics, a p5.Color, a 4-length color array, an object,
-   * a string or a number).
-   */
-  fill(...args) {
-    if (args.length === 0) {
-      this.visit(({ row, col }) => {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
-      });
-    }
-    if (args.length === 1 && this.constructor.isFilled(args[0])) {
-      this.visit(({ row, col }) => this._memory2D[row][col] = args[0], this.constructor.isEmpty);
-    }
-    if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
-      (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
-      this.visit(({ row, col }) => {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
-      });
-    }
-    if (args.length === 2 && typeof args[0] === 'number') {
-      if (this.isValid(args[0], 0)) {
-        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
-          cell = this._clearCell(cell);
-          return args[1] === undefined ? null : args[1];
-        });
-      }
-    }
-    if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
-      if (this.isValid(args[0], args[1])) {
-        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
-        this._memory2D[args[0]][args[1]] = args[2] === undefined ? null : args[2];
-      }
-    }
-    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3]);
-      }
-    }
-    if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'boolean') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], 4, args[3]);
-      }
-    }
-    if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
-      if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3], args[4]);
-      }
-    }
-    return this;
-  }
-
-  _flood(row, col, value1, value2, directions = 4, border = false) {
-    if (directions !== 4 && directions !== 8) {
-      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
-      directions = 4;
-    }
-    if (this.isValid(row, col) && this._memory2D[row][col] !== value2) {
-      if (this._memory2D[row][col] === value1) {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = value2;
-        this._flood(row, col - 1, value1, value2, directions, border);
-        this._flood(row - 1, col, value1, value2, directions, border);
-        this._flood(row, col + 1, value1, value2, directions, border);
-        this._flood(row + 1, col, value1, value2, directions, border);
-        if (directions === 8) {
-          this._flood(row - 1, col - 1, value1, value2, directions, border);
-          this._flood(row - 1, col + 1, value1, value2, directions, border);
-          this._flood(row + 1, col + 1, value1, value2, directions, border);
-          this._flood(row + 1, col - 1, value1, value2, directions, border);
-        }
-      }
-      if (border) {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = value2;
-      }
-    }
-  }
-
-  _clearCell(value) {
-    if (this.constructor.isFunction(value)) {
-      value.fbo?.remove();
-      value.fbo = undefined;
-    }
-    return null;
-  }
-
-  /**
-   * Randomly clears or fills cells in the quadrille.
-   *
-   * - If `value` is `null`, clears `times` filled cells.
-   * - If `value` is not `null`, fills `times` empty cells with `value`.
-   *
-   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
-   *
-   * @param {number} times - Number of cells to modify.
-   * @param {*} [value=null] - Value to fill, or `null` to clear cells.
+   * Applies convolution using a quadrille kernel mask.
+   * 1. `filter(mask)` — convolves entire quadrille.
+   * 2. `filter(mask, row, col)` — convolves only at (row, col).
+   * Kernel weights can be numeric or color-based (luma is used to convert colors).
+   * @param {Quadrille} mask - An odd-sized square kernel quadrille.
+   * @param {number} [row] - Row index to apply convolution.
+   * @param {number} [col] - Column index to apply convolution.
    * @returns {Quadrille} The modified quadrille (for chaining).
-   */
-  rand(times, value = null) {
-    times = this._p.abs(times);
-    const isFilling = this.constructor.isFilled(value);
-    const max = isFilling ? this.size - this.order : this.order;
-    times = this._p.min(times, max);
-    let count = 0;
-    while (count < times) {
-      const index = this._p.int(this._p.random(this.size));
-      const { row, col } = this._fromIndex(index);
-      const shouldChange = isFilling ? this.isEmpty(row, col) : this.isFilled(row, col);
-      if (shouldChange) {
-        isFilling ? this.fill(row, col, value) : this.clear(row, col);
-        count++;
-      }
-    }
-    return this;
-  }
-
-  /**
-   * Randomly rearranges filled cells in the quadrille.
-   *
-   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
-   *
-   * @returns {Quadrille} The modified quadrille (for chaining).
-   */
-  randomize() {
-    const clone = this.clone(false);
-    this.clear();
-    clone.visit(({ value }) => {
-      let row, col;
-      do {
-        const index = this._p.int(this._p.random(this.size));
-        ({ row, col } = this._fromIndex(index));
-      } while (this.isFilled(row, col));
-      this.fill(row, col, value);
-    }, this.constructor.isFilled);
-    return this;
-  }
-
-  /**
-   * Inserts an empty row.
-   * @param {number} row 
-   */
-  insert(row) {
-    this._memory2D.splice(row, 0, Array(this.width).fill(null));
-    return this;
-  }
-
-  /**
-   * Deletes the given row.
-   * @param {number} row 
-   */
-  delete(row) {
-    if (this.height > 1 && this.isValid(row, 0)) {
-      this._memory2D.splice(row, 1);
-    }
-    return this;
-  }
-
-  /**
-   * Swaps two rows or two cells in the quadrille.
-   *
-   * - `swap(row1, row2)` swaps two rows.
-   * - `swap(row1, col1, row2, col2)` swaps two individual cells.
-   *
-   * @param  {...number} args - Either 2 or 4 integers.
-   * @returns {Quadrille} The quadrille (for chaining).
-   */
-  swap(...args) {
-    const isInteger = Number.isInteger;
-    if (args.length === 2) {
-      if (args.every(isInteger) && this.isValid(args[0], 0) && this.isValid(args[1], 0)) {
-        const temp = this._memory2D[args[0]];
-        this._memory2D[args[0]] = this._memory2D[args[1]];
-        this._memory2D[args[1]] = temp;
-      }
-    } else if (args.length === 4) {
-      if (args.every(isInteger) && this.isValid(args[0], args[1]) && this.isValid(args[2], args[3])) {
-        const temp = this._memory2D[args[0]][args[1]];
-        this._memory2D[args[0]][args[1]] = this._memory2D[args[2]][args[3]];
-        this._memory2D[args[2]][args[3]] = temp;
-      }
-    }
-    return this;
-  }
-
-  /**
-   * Horizontal reflection.
-   */
-  reflect() {
-    this._memory2D.reverse();
-    return this;
-  }
-
-  /**
-   * Transpose the quadrille.
-   */
-  transpose() {
-    // credit goes to Fawad Ghafoorwho wrote about it here:
-    // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
-    return this;
-  }
-
-  /**
-   * π/2 clockwise rotation.
-   */
-  rotate() {
-    // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
-    // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
-    return this;
-  }
-
-  /**
-   * Convolutes this quadrille against the quadrille kernel mask. kernel weights
-   * may be encoded within the quadrille mask, both numerically or using colors.
-   * Luma is used in the latter case to convert colors to weights. Forms:
-   * 1. filter(mask) convolutes the whole quadrille or,
-   * 2. filter(mask, i, j) convolutes the whole quadrille at i, j. Both i and j
-   * should be greater or equal than the mask half_size which is computed as:
-   * (mask.width - 1) / 2).
-   * @params {Quadrille} nxn (n is odd) quadrille convolution kernel mask.
-   * @param {number} row if undefined convolutes the whole quadrille
-   * @param {number} col if undefined convolutes the whole quadrille
    */
   filter(mask, row, col) {
     if (mask.size % 2 === 1 && mask.width === mask.height && this.size >= mask.size) {
@@ -1537,8 +1538,16 @@ class Quadrille {
   }
 
   /**
-   * Colorize the (row0, col0), (row1, col1), (row2, col2) triangle, according to
-   * color0, color1 and color2 colors (either p5.Color, arrays or strings), respectively.
+   * Colorizes a triangle defined by three corners using barycentric interpolation.
+   * @param {number} row0
+   * @param {number} col0
+   * @param {number} row1
+   * @param {number} col1
+   * @param {number} row2
+   * @param {number} col2
+   * @param {*} color0 - Color for vertex 0 (p5.Color, array, or string).
+   * @param {*} [color1=color0] - Color for vertex 1.
+   * @param {*} [color2=color0] - Color for vertex 2.
    */
   colorizeTriangle(row0, col0, row1, col1, row2, col2, color0, color1 = color0, color2 = color0) {
     this.rasterizeTriangle(row0, col0, row1, col1, row2, col2,
@@ -1550,8 +1559,11 @@ class Quadrille {
   }
 
   /**
-   * Colorize quadrille according to upper-left corner color0, bottom-left corner color1,
-   * upper-right corner color2, and bottom-right corner color3 colors.
+   * Colorizes the quadrille using four corner colors, interpolated over two triangles.
+   * @param {*} color0 - Upper-left corner color.
+   * @param {*} [color1=color0] - Bottom-left corner color.
+   * @param {*} [color2=color0] - Upper-right corner color.
+   * @param {*} [color3=color0] - Bottom-right corner color.
    */
   colorize(color0, color1 = color0, color2 = color0, color3 = color0) {
     this.colorizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, color0, color1, color2);
@@ -1559,9 +1571,18 @@ class Quadrille {
   }
 
   /**
-   * Rasterize the (row0, col0), (row1, col1), (row2, col2) triangle
-   * according to array0, array1 and array2 object vertex data (resp),
-   * using (fragment) shader.
+   * Rasterizes a triangle using attribute interpolation and a fragment shader function.
+   * @param {number} row0
+   * @param {number} col0
+   * @param {number} row1
+   * @param {number} col1
+   * @param {number} row2
+   * @param {number} col2
+   * @param {Function} shader - Function to apply per-cell, receives interpolated attributes.
+   * @param {Array<number>} array0 - Attribute data for vertex 0.
+   * @param {Array<number>} [array1=array0] - Attribute data for vertex 1.
+   * @param {Array<number>} [array2=array0] - Attribute data for vertex 2.
+   * @returns {Quadrille} The modified quadrille (for chaining).
    */
   rasterizeTriangle(row0, col0, row1, col1, row2, col2, shader, array0, array1 = array0, array2 = array0) {
     if (Array.isArray(array0) && Array.isArray(array1) && Array.isArray(array2)) {
@@ -1583,37 +1604,28 @@ class Quadrille {
   }
 
   /**
-   * Rasterize quadrille according to upper-left corner vertex array0,
-   * bottom-left corner vertex array1, upper-right corner vertex array2,
-   * and bottom-right corner vertex array3, using (fragment) shader.
+   * Rasterizes the quadrille using four corner attribute arrays and a shader function.
+   * @param {Function} shader - Function to apply per-cell.
+   * @param {Array<number>} array0 - Upper-left corner attributes.
+   * @param {Array<number>} [array1=array0] - Bottom-left corner attributes.
+   * @param {Array<number>} [array2=array0] - Upper-right corner attributes.
+   * @param {Array<number>} [array3=array0] - Bottom-right corner attributes.
    */
   rasterize(shader, array0, array1 = array0, array2 = array0, array3 = array0) {
     this.rasterizeTriangle(0, 0, this.height - 1, 0, 0, this.width - 1, shader, array0, array1, array2);
     this.rasterizeTriangle(this.height - 1, 0, 0, this.width - 1, this.height - 1, this.width - 1, shader, array1, array2, array3);
   }
 
-  /**
-   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle
-   * barycentric coordinates at (row, col) as the {w0, w1, w2} object literal.
-   */
   _barycentric_coords(row, col, row0, col0, row1, col1, row2, col2) {
     const edges = this._edge_functions(row, col, row0, col0, row1, col1, row2, col2);
     const area = this._parallelogram_area(row0, col0, row1, col1, row2, col2);
     return { w0: edges.e12 / area, w1: edges.e20 / area, w2: edges.e01 / area };
   }
 
-  /**
-   * Returns the parallelogram signed area spawn by the
-   * (row0, col0), (row1, col1), (row2, col2) triangle.
-   */
   _parallelogram_area(row0, col0, row1, col1, row2, col2) {
     return (col1 - col0) * (row2 - row0) - (col2 - col0) * (row1 - row0);
   }
 
-  /**
-   * Returns the (row0, col0), (row1, col1), (row2, col2) triangle edge_functions
-   * at (row, col) as the {e01, e12, e20} object literal.
-   */
   _edge_functions(row, col, row0, col0, row1, col1, row2, col2) {
     const e01 = (row0 - row1) * col + (col1 - col0) * row + (col0 * row1 - row0 * col1);
     const e12 = (row1 - row2) * col + (col2 - col1) * row + (col1 * row2 - row1 * col2);
@@ -1622,7 +1634,33 @@ class Quadrille {
   }
 
   /**
-   * Sort cells according to their coloring. Modes are: 'LUMA', 'AVG' and 'DISTANCE' (to a given target).
+   * Sorts cells by color values.
+   * Sorting `mode` options are:
+   * - `'LUMA'` — weighted grayscale value (default).
+   * - `'AVG'` — average of red, green, and blue channels.
+   * - `'DISTANCE'` — Euclidean distance to a target color in RGBA space.
+   * @param {Object} [params={}] - Sorting parameters.
+   * @param {'LUMA'|'AVG'|'DISTANCE'} [params.mode='LUMA'] - Sorting strategy.
+   * @param {*} [params.target] - Target color (for `'DISTANCE'` mode).
+   * @param {boolean} [params.ascending=true] - Sort order.
+   * @param {string|*} [params.textColor] - Text color.
+   * @param {number} [params.textZoom] - Text scaling factor.
+   * @param {string|*} [params.background] - Background color.
+   * @param {number} [params.cellLength] - Cell size in pixels.
+   * @param {number} [params.outlineWeight] - Stroke weight for cell outlines.
+   * @param {string|*} [params.outline] - Outline color.
+   * @param {p5.Font} [params.textFont] - Optional text font.
+   * @param {string} [params.origin='corner'] - Origin mode.
+   * @param {Object} [params.options={}] - Optional render config.
+   * @param {Function} [params.imageDisplay]
+   * @param {Function} [params.colorDisplay]
+   * @param {Function} [params.stringDisplay]
+   * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.arrayDisplay]
+   * @param {Function} [params.objectDisplay]
+   * @param {Function} [params.functionDisplay]
+   * @param {Function} [params.tileDisplay]
+   * @returns {Quadrille} The sorted quadrille (for chaining).
    */
   sort({
     mode = 'LUMA',
@@ -1698,7 +1736,28 @@ class Quadrille {
   }
 
   /**
-   * Sample cell using background as the {r, g, b, a, total} object literal.
+   * Renders a cell and returns its average RGBA values as a literal object.
+   * @param {Object} [params={}] - Sampling parameters.
+   * @param {*} params.value - Cell content to sample.
+   * @param {p5.Font} [params.textFont]
+   * @param {string} [params.origin='corner']
+   * @param {Object} [params.options={}]
+   * @param {'p2d'|'webgl'} [params.renderer='p2d']
+   * @param {Function} [params.imageDisplay]
+   * @param {Function} [params.colorDisplay]
+   * @param {Function} [params.stringDisplay]
+   * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.arrayDisplay]
+   * @param {Function} [params.objectDisplay]
+   * @param {Function} [params.functionDisplay]
+   * @param {Function} [params.tileDisplay]
+   * @param {string|*} [params.background]
+   * @param {number} [params.cellLength]
+   * @param {number} [params.outlineWeight]
+   * @param {string|*} [params.outline]
+   * @param {string|*} [params.textColor]
+   * @param {number} [params.textZoom]
+   * @returns {{ r: number, g: number, b: number, a: number, total: number }} Average color channels and sample size.
    */
   static sample({
     value,
@@ -1740,6 +1799,8 @@ class Quadrille {
     graphics.updatePixels();
     return { r, g, b, a, total };
   }
+
+  // HELPER RENDER FUNCTIONS
 
   static _display(params) {
     const handlers = [
