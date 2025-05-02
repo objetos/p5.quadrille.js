@@ -20,27 +20,32 @@ Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.
 
 # Usage
 
-At its core, using **p5.quadrille.js** can be as minimal or as interactive as you need:
+Using **p5.quadrille.js** can be as minimal or as interactive as you need:
 
-- **2 steps** — storage only: declare and create the quadrille  
-- **3 steps** — add rendering: use `drawQuadrille()` in `draw()`  
-- **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`
+* **2 steps** — storage only: declare and create the quadrille.
+* **3 steps** — add rendering: use `drawQuadrille()` in `draw()`.
+* **4 steps** — add interactivity: call a mutator method (e.g. `fill()`, `clear()`, `replace()`) inside an event like `keyPressed()` or `mousePressed()`.
 
-You can use the library either by including it via a [Content Delivery Network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network) in the browser—using the [Immediately Invoked Function Expression (IIFE)](https://en.wikipedia.org/wiki/Immediately_invoked_function_expression) format alongside [p5.js](https://beta.p5js.org/), which it depends on—or by installing both from [npm](https://www.npmjs.com/) in a modern project using [Vite](https://vitejs.dev/) or another bundler that supports [ECMAScript Modules (ESM)](https://en.wikipedia.org/wiki/ECMAScript#ES6_modules).
+The library works in two setups:
+
+- **[CDN](#cdn)**: Use the [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE) (Immediately Invoked Function Expression) format with `<script>` tags directly in the browser, along with [p5.js](https://beta.p5js.org/).
+- **[npm](#npm-esm)**: Use the [ES module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) version in modern projects with [Vite](https://vitejs.dev/) or another bundler.
 
 ## CDN
+
+Include both libraries using `<script>` tags:
 
 ```html
 <!-- Load p5.js first (required by p5.quadrille.js, latest version) -->
 <script src="https://cdn.jsdelivr.net/npm/p5/lib/p5.min.js"></script>
-<!-- p5.quadrille.js (latest stable version) -->
+<!-- Load p5.quadrille.js (latest stable version) -->
 <script src="https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js"></script>
 <script>
-  let q; // Step 1: Declare
+  let q // Step 1: Declare
 
   function setup() {
     createCanvas(600, 400)
-    q = createQuadrille(6, 4).rand(10, '🐲') // Step 2: Create
+    q = createQuadrille(6, 4, 10, '🐲') // Step 2: Create
   }
 
   function draw() {
@@ -56,15 +61,17 @@ You can use the library either by including it via a [Content Delivery Network (
 </script>
 ```
 
+You can run the example by opening the HTML file in a browser, or by using [VSCodium](https://vscodium.com/) (recommended) or [Visual Studio Code](https://code.visualstudio.com/) with the [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).
+
 ## npm (ESM)
 
-Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille) as dependencies:
+Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille):
 
 ```bash
 npm install p5 p5.quadrille
 ```
 
-Then, in your [Vite](https://vitejs.dev/)-based frontend project:
+Then use them in your `main.js` or `sketch.js`:
 
 ```js
 import p5 from 'p5'
@@ -75,7 +82,7 @@ const sketch = p => {
   
   p.setup = () => {
     p.createCanvas(600, 400)
-    q = p.createQuadrille(6, 4).rand(10, '🐲') // Step 2: Create
+    q = p.createQuadrille(6, 4, 10, '🐲') // Step 2: Create
   }
 
   p.draw = () => {
@@ -91,7 +98,7 @@ const sketch = p => {
 new p5(sketch)
 ```
 
-That’s it—you’re ready to create, display, and manipulate grid-based content.
+You're ready to create, display, and manipulate grid-based visuals.
 
 # Algorithms & Performance
 
