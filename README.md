@@ -11,11 +11,15 @@ Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.
 ![Quadrille cells sorted by luminance](p5.quadrille.js.png)
 
 - [Usage](#usage)
+  - [CDN](#cdn)
+  - [npm (ESM)](#npm-esm)
 - [Algorithms \& Performance](#algorithms--performance)
 - [Adoption](#adoption)
 - [Releases](#releases)
 - [System Requirements](#system-requirements)
 - [Contribute](#contribute)
+  - [Support](#support)
+  - [Open TODOs](#open-todos)
 - [Further Reading](#further-reading)
 
 # Usage
