@@ -69,13 +69,13 @@ You can run the example by opening the HTML file in a browser, or by using [VSCo
 
 ## npm (ESM)
 
-Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille):
+Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille) as dependencies:
 
 ```bash
 npm install p5 p5.quadrille
 ```
 
-Then use them in your `main.js` or `sketch.js`:
+Then import them in your project's entry file (e.g., `main.js` or `sketch.js`) within a modern frontend project using [Vite](https://vitejs.dev/) (or another bundler):
 
 ```js
 import p5 from 'p5'
@@ -102,7 +102,7 @@ const sketch = p => {
 new p5(sketch)
 ```
 
-You're ready to create, display, and manipulate grid-based visuals.
+You’re now ready to build and run grid-based sketches using modules and a bundler like Vite.
 
 # Algorithms & Performance
 
