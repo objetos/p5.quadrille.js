@@ -9,6 +9,7 @@
 Welcome to the **p5.quadrille.js** source code repository. This open-source [p5.js](https://beta.p5js.org/) addon library offers a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are demonstrated with interactive sketches for hands-on exploration.
 
 ![Quadrille cells sorted by luminance](p5.quadrille.js.png)
+***Paintings sorted according to their [luma](https://en.wikipedia.org/wiki/Luma_(video)) using quadrille [sort](https://objetos.github.io/p5.quadrille.js/docs/visual_algorithms/sort/)***
 
 - [Usage](#usage)
   - [CDN](#cdn)
