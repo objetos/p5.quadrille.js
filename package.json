@@ -17,7 +17,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "types": "tsc"
+    "types": "tsc",
+    "release": "semantic-release"
   },
   "keywords": [
     "p5",
@@ -43,9 +44,15 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.2",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/estree": "^1.0.7",
     "p5": "^2.0.1",
     "rollup": "^4.36.0",
+    "semantic-release": "^24.2.3",
     "typescript": "^5.3.3"
   }
 }
