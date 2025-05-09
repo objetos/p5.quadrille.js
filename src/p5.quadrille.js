@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.0.2
+ * @version 3.0.3
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.0.2';
+  static VERSION = '3.0.3';
 
   // STYLE
 
@@ -238,13 +238,14 @@ class Quadrille {
   }
 
   /**
-   * Sets the FEN → symbol mapping and updates reverse mapping.
-   * Promotes chessKeys to a Map if any value is not a string.
-   * @param {Object<string, *>} symbols
+   * Updates one or more entries in the FEN → symbol mapping.
+   * Accepts only plain object input. Merges with the current map to support partial updates.
+   * Automatically regenerates `chessKeys`, switching to a Map if any symbol is non-string.
+   * @param {Object<string, *>} symbols - Partial or full mapping of FEN keys to values (e.g., emoji, p5.Image, etc.)
    */
   static set chessSymbols(symbols) {
-    this._chessSymbols = symbols;
-    const entries = Object.entries(symbols);
+    Object.assign(this._chessSymbols, symbols);
+    const entries = Object.entries(this._chessSymbols);
     const useMap = entries.some(([, v]) => typeof v !== 'string');
     this.chessKeys = useMap
       ? new Map(entries.map(([k, v]) => [v, k]))
