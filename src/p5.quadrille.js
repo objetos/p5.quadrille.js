@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.0.3
+ * @version 3.0.4
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.0.3';
+  static VERSION = '3.0.4';
 
   // STYLE
 
@@ -212,44 +212,41 @@ class Quadrille {
 
   /**
    * Internal FEN → symbol map (Unicode, emoji, image, etc.).
-   * @type {Object<string, *>}
+   * @type {Map<string, *>}
    * @private
    */
-  static _chessSymbols = {
-    K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
-    k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟'
-  };
+  static _chessSymbols = new Map([
+    ['K', '♔'], ['Q', '♕'], ['R', '♖'], ['B', '♗'], ['N', '♘'], ['P', '♙'],
+    ['k', '♚'], ['q', '♛'], ['r', '♜'], ['b', '♝'], ['n', '♞'], ['p', '♟']
+  ]);
 
   /**
-   * Reverse symbol → FEN key map.
-   * Defaults to object, updated by chessSymbols setter as needed.
-   * @type {Object<string, string>|Map<*, string>}
-   */
-  static chessKeys = Object.fromEntries(
-    Object.entries(this._chessSymbols).map(([k, v]) => [v, k])
-  );
-
-  /**
-   * Gets the FEN → symbol mapping.
-   * @returns {Object<string, *>}
+   * Gets a copy of the FEN → symbol map.
+   * @returns {Map<string, *>} Copy of internal chessSymbols map.
    */
   static get chessSymbols() {
-    return this._chessSymbols;
+    return new Map(this._chessSymbols);
   }
 
   /**
-   * Updates one or more entries in the FEN → symbol mapping.
-   * Accepts only plain object input. Merges with the current map to support partial updates.
-   * Automatically regenerates `chessKeys`, switching to a Map if any symbol is non-string.
-   * @param {Object<string, *>} symbols - Partial or full mapping of FEN keys to values (e.g., emoji, p5.Image, etc.)
+   * Updates entries in the FEN → symbol mapping.
+   * Accepts either a plain object or a Map. Merges into the current map to support partial updates.
+   * @param {Object<string, *>|Map<string, *>} symbols - Entries to merge into the FEN → symbol map.
    */
   static set chessSymbols(symbols) {
-    Object.assign(this._chessSymbols, symbols);
-    const entries = Object.entries(this._chessSymbols);
-    const useMap = entries.some(([, v]) => typeof v !== 'string');
-    this.chessKeys = useMap
-      ? new Map(entries.map(([k, v]) => [v, k]))
-      : Object.fromEntries(entries.map(([k, v]) => [v, k]));
+    if (symbols instanceof Map) {
+      for (const [k, v] of symbols) this._chessSymbols.set(k, v);
+    } else {
+      for (const [k, v] of Object.entries(symbols)) this._chessSymbols.set(k, v);
+    }
+  }
+
+  /**
+   * Gets a reverse map from symbol to FEN key.
+   * @returns {Map<*, string>} New reverse map (symbol → FEN)
+   */
+  static get chessKeys() {
+    return new Map([...this._chessSymbols].map(([k, v]) => [v, k]));
   }
 
   // ALGEBRA
@@ -499,7 +496,7 @@ class Quadrille {
           let col = 0;
           for (const char of rows[i]) {
             if (isNaN(char)) {
-              this._memory2D[i][col] = this.constructor.chessSymbols[char];
+              this._memory2D[i][col] = this.constructor._chessSymbols.get(char);
               col++;
             } else {
               col += parseInt(char);
@@ -1401,7 +1398,7 @@ class Quadrille {
   /**
    * Returns a FEN (Forsyth–Edwards Notation) string of the quadrille.
    * Only works on 8×8 boards.
-   * Symbols not found in chessKeys are replaced with '?'.
+   * Symbols not found in the chess map are replaced with '?'.
    * @returns {string|undefined}
    */
   toFEN() {
@@ -1409,34 +1406,22 @@ class Quadrille {
       console.warn('toFEN() only works on 8x8 chess boards');
       return;
     }
+    const reverse = this.constructor.chessKeys;
     let fen = '';
     for (let i = 0; i < 8; i++) {
-      let emptySquares = 0;
+      let empty = 0;
       for (let j = 0; j < 8; j++) {
         const value = this._memory2D[i][j];
         if (this.constructor.isEmpty(value)) {
-          emptySquares++;
+          empty++;
         } else {
-          if (emptySquares > 0) {
-            fen += emptySquares.toString();
-            emptySquares = 0;
-          }
-          const keys = this.constructor.chessKeys;
-          const fenKey = keys instanceof Map ? keys.get(value) : keys[value];
-          if (!fenKey) {
-            console.warn(`Unrecognized piece ${value} at position ${i}, ${j}. FEN output may be incorrect.`);
-            fen += '?'; // Placeholder for unrecognized pieces
-          } else {
-            fen += fenKey;
-          }
+          empty > 0 && (fen += empty, empty = 0);
+          const key = reverse.get(value);
+          fen += key ?? (console.warn(`Unrecognized piece ${value} at ${i}, ${j}`), '?');
         }
       }
-      if (emptySquares > 0) {
-        fen += emptySquares.toString();
-      }
-      if (i < 7) {
-        fen += '/';
-      }
+      empty > 0 && (fen += empty);
+      i < 7 && (fen += '/');
     }
     return fen;
   }

@@ -1,6 +1,6 @@
 {
   "name": "p5.quadrille",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "[![Read the Paper](https://img.shields.io/badge/Read%20the%20Paper-ScienceDirect-blue)](https://www.sciencedirect.com/science/article/pii/S2352711024002097?ref=cra_js_challenge&fr=RR-1) A grid-based teaching and rendering library for p5.js.",
   "type": "module",
   "main": "dist/p5.quadrille.esm.js",
@@ -40,7 +40,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "p5": "^2.0.1"
+    "p5": "^2.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
@@ -50,7 +50,9 @@
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/estree": "^1.0.7",
-    "p5": "^2.0.1",
+    "@types/normalize-package-data": "^2.4.4",
+    "@types/resolve": "^1.20.6",
+    "p5": "^2.0.2",
     "rollup": "^4.36.0",
     "semantic-release": "^24.2.3",
     "typescript": "^5.3.3"
