@@ -34,7 +34,7 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/objetos/p5.quadrille.js"
+    "url": "git+https://github.com/objetos/p5.quadrille.js.git"
   },
   "publishConfig": {
     "access": "public"
