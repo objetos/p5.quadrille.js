@@ -11,6 +11,6 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/p5.quadrille.js"
+    "src/quadrille.js"
   ]
 }

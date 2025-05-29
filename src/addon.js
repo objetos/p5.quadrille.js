@@ -1,6 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.0.4
+ * @version 3.0.5
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -13,7 +13,7 @@
 'use strict';
 
 import p5 from 'p5';
-import Quadrille from './p5.quadrille.js';
+import Quadrille from './quadrille.js';
 
 p5.registerAddon((p5, fn) => {
   /**
@@ -115,13 +115,8 @@ p5.registerAddon((p5, fn) => {
       quadrille.constructor._display(params);
       graphics.pop();
     }, filter);
-
     graphics.pop();
     return quadrille;
-  }
-
-  fn.visitQuadrille = function (quadrille, callback, filter) {
-    quadrille.visit(({ row, col }) => callback(row, col), filter);
   }
 });
 
