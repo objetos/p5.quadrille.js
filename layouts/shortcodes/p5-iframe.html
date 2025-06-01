@@ -1,4 +1,4 @@
-{{ $defver := `2.0.2` }}
+{{ $defver := `2.0.3` }}
 {{ $ver := default $defver (.Get "ver") }}
 {{ $defsoundver := `0.2.0` }}
 {{ $sketch := .Get `sketch` }}
@@ -24,7 +24,7 @@
               <script src='https://cdn.jsdelivr.net/npm/p5.sound@{{ $defsoundver }}/dist/p5.sound.min.js'></script>
             {{ end }}
             {{ if eq $treegl "true" }}<script src='https://cdn.jsdelivr.net/gh/VisualComputing/p5.treegl/p5.treegl.min.js'></script>{{ end }}
-            {{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/gh/VisualComputing/p5.platonic/p5.platonic.min.js'></script>{{ end }}
+            {{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.platonic/dist/p5.platonic.min.js'></script>{{ end }}
             {{ if eq $quadrille "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js'></script>{{ end }}
             {{ if isset .Params "lib1" }}<script src={{ $lib1 }}></script>{{ end }}
             {{ if isset .Params "lib2" }}<script src={{ $lib2 }}></script>{{ end }}
