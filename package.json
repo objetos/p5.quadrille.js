@@ -50,7 +50,7 @@
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/estree": "^1.0.7",
-    "p5": "^2.0.2",
+    "p5": "^2.0.3",
     "rollup": "^4.41.1",
     "semantic-release": "^24.2.5",
     "typescript": "^5.8.3"
