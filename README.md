@@ -174,6 +174,9 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
 
 # Further Reading
 
+- [![npm version](https://img.shields.io/npm/v/p5.quadrille.svg)](https://www.npmjs.com/package/p5.quadrille)  
+  Always use the latest version of **p5.quadrille.js** from npm. Supports modern p5.js v2 and includes ESM and IIFE builds.  
+  Install with `npm i p5.quadrille`.
 - [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)  
   The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://beta.p5js.org/reference/), [examples](https://beta.p5js.org/examples/), [tutorials](https://beta.p5js.org/learn/), and [libraries](https://beta.p5js.org/libraries/).
 - [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)  
