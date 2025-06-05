@@ -73,7 +73,7 @@ You can run the example, which uses global mode, by opening the `index.html` fil
 Install both [`p5`](https://www.npmjs.com/package/p5) and [`p5.quadrille`](https://www.npmjs.com/package/p5.quadrille) as dependencies:
 
 ```bash
-npm install p5 p5.quadrille
+npm i p5 p5.quadrille
 ```
 
 Then import them in your project's entry file (e.g., `main.js`) using a modern bundler like [Vite](https://vitejs.dev/), which runs in [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) only:
