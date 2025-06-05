@@ -110,7 +110,7 @@ This approach gives you full modularity and clean instance isolation using moder
 
 Let `n` be the total number of cells in the quadrille.
 
-- **Grid Operations:** `O(n)` — Applies to transformations and cell iteration via `visitQuadrille()`.  
+* **Grid Operations:** `O(n)` — Covers transformations and cell iteration performed with `for...of` loops.  
 - **Image Filtering:** `O(n × k²)` — Where `k` is the kernel width/height (assumed square).  
 - **Pattern Search & Merging:** `O(n × m)` — Where `m` is the number of cells in the pattern or quadrille being searched/merged.  
 - **Drawing:** `O(n)` — Efficient rendering using the p5.js canvas.
