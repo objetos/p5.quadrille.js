@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.0.5
+ * @version 3.0.6
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.0.5';
+  static VERSION = '3.0.6';
 
   // STYLE
 
@@ -373,8 +373,9 @@ class Quadrille {
    * 7. width + string → reshaped string.
    * 8. width + image → visual content from image.
    * 9. width + image + boolean → image pixelation.
-   * 10. width + bigint + value → binary-encoded pattern.
-   * 11. width + height + order + value → filled by order.
+   * 10. width + bigint + value → binary-encoded pattern (inferred height).
+   * 11. width + height + bigint + value → binary-encoded pattern with explicit dimensions.
+   * 12. width + height + order + value → filled by order.
    * Used internally by `p5.prototype.createQuadrille`.
    * @param {p5} p - The p5 instance.
    * @param {...any} args - Arguments to select construction mode.
@@ -440,6 +441,14 @@ class Quadrille {
       const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
       this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
       this._fromBigInt(args[1], args[2]);
+      return;
+    }
+    if (args.length === 4 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'number' &&
+      typeof args[2] === 'bigint') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
+      this._fromBigInt(args[2], args[3]);
       return;
     }
     if (args.length === 4 &&
