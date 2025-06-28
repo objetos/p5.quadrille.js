@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.1.0
+ * @version 3.1.1
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.1.0';
+  static VERSION = '3.1.1';
 
   // STYLE
 
@@ -249,6 +249,17 @@ class Quadrille {
     return new Map([...this._chessSymbols].map(([k, v]) => [v, k]));
   }
 
+  /**
+   * Returns the bit index for a cell in row-major order.
+   * Optionally supports little-endian (default: false) layout.
+   * If the cell is out of bounds, logs a warning with suggestions.
+   * @param {number} row - Row index of the cell.
+   * @param {number} col - Column index of the cell.
+   * @param {number} [width=8] - Number of columns in the quadrille.
+   * @param {number} [height=8] - Number of rows in the quadrille.
+   * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
+   * @returns {bigint|undefined} The bit index, or undefined if out of bounds.
+   */
   static bitIndex(row, col, width = 8, height = 8, littleEndian = false) {
     if (row < 0 || row >= height || col < 0 || col >= width) {
       const suggestions = [];
@@ -266,6 +277,16 @@ class Quadrille {
     return littleEndian ? BigInt(index) : BigInt(width * height - 1 - index);
   }
 
+  /**
+   * Returns the cell position corresponding to a bit index.
+   * Optionally supports little-endian (default: false) layout.
+   * If the bit index is out of bounds, logs a warning.
+   * @param {bigint|number} bitIndex - Bit index to convert.
+   * @param {number} [width=8] - Number of columns in the quadrille.
+   * @param {number} [height=8] - Number of rows in the quadrille.
+   * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
+   * @returns {{row: number, col: number}|undefined} The cell position, or undefined if out of bounds.
+   */
   static bitCell(bitIndex, width = 8, height = 8, littleEndian = false) {
     const maxIndex = width * height - 1;
     const raw = Number(bitIndex);
@@ -621,10 +642,25 @@ class Quadrille {
     return row * width + col;
   }
 
+  /**
+   * Returns the bit index of the given cell using the instance’s width and height.
+   * Delegates to the static version.
+   * @param {number} row - Row index of the cell.
+   * @param {number} col - Column index of the cell.
+   * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
+   * @returns {bigint|undefined} The bit index, or undefined if out of bounds.
+   */
   bitIndex(row, col, littleEndian = false) {
     return this.constructor.bitIndex(row, col, this.width, this.height, littleEndian);
   }
 
+  /**
+   * Returns the cell position for a given bit index using the instance’s dimensions.
+   * Delegates to the static version.
+   * @param {bigint|number} bitIndex - Bit index to convert.
+   * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
+   * @returns {{row: number, col: number}|undefined} The cell position, or undefined if out of bounds.
+   */
   bitCell(bitIndex, littleEndian = false) {
     return this.constructor.bitCell(bitIndex, this.width, this.height, littleEndian);
   }
