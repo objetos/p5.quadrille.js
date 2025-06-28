@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.0.6
+ * @version 3.1.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.0.6';
+  static VERSION = '3.1.0';
 
   // STYLE
 
@@ -249,6 +249,37 @@ class Quadrille {
     return new Map([...this._chessSymbols].map(([k, v]) => [v, k]));
   }
 
+  static bitIndex(row, col, width = 8, height = 8, littleEndian = false) {
+    if (row < 0 || row >= height || col < 0 || col >= width) {
+      const suggestions = [];
+      (row < 0) && suggestions.push(`height ≥ ${height - row}`);
+      (row >= height) && suggestions.push(`height ≥ ${row + 1}`);
+      (col < 0) && suggestions.push(`width ≥ ${width - col}`);
+      (col >= width) && suggestions.push(`width ≥ ${col + 1}`);
+      console.warn(
+        `Ignored out-of-bounds cell (${row}, ${col}) for quadrille size ${width}×${height}.` +
+        (suggestions.length ? ` Suggested: ${suggestions.join(', ')}.` : '')
+      );
+      return;
+    }
+    const index = row * width + col;
+    return littleEndian ? BigInt(index) : BigInt(width * height - 1 - index);
+  }
+
+  static bitCell(bitIndex, width = 8, height = 8, littleEndian = false) {
+    const maxIndex = width * height - 1;
+    const raw = Number(bitIndex);
+    if (raw < 0 || raw > maxIndex) {
+      console.warn(`Ignored out-of-bounds bit index ${bitIndex} for quadrille size ${width}×${height}. Expected range: 0–${maxIndex}.`);
+      return;
+    }
+    const index = littleEndian ? raw : maxIndex - raw;
+    return {
+      row: Math.floor(index / width),
+      col: index % width
+    };
+  }
+
   // ALGEBRA
 
   /**
@@ -373,9 +404,9 @@ class Quadrille {
    * 7. width + string → reshaped string.
    * 8. width + image → visual content from image.
    * 9. width + image + boolean → image pixelation.
-   * 10. width + bigint + value → binary-encoded pattern (inferred height).
-   * 11. width + height + bigint + value → binary-encoded pattern with explicit dimensions.
-   * 12. width + height + order + value → filled by order.
+   * 10. width + height + order + value → filled by order.
+   * 11. width + bitboard + value [+ littleEndian] → binary-encoded pattern (inferred height).
+   * 12. width + height + bitboard + value [+ littleEndian] → binary-encoded pattern with explicit dimensions.
    * Used internally by `p5.prototype.createQuadrille`.
    * @param {p5} p - The p5 instance.
    * @param {...any} args - Arguments to select construction mode.
@@ -436,27 +467,48 @@ class Quadrille {
       this._fromImage(args[1], args[2]);
       return;
     }
-    if (args.length === 3 && typeof args[0] === 'number' &&
-      (typeof args[1] === 'number' || typeof args[1] === 'bigint')) {
-      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
-      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
-      this._fromBigInt(args[1], args[2]);
-      return;
-    }
-    if (args.length === 4 &&
-      typeof args[0] === 'number' &&
-      typeof args[1] === 'number' &&
-      typeof args[2] === 'bigint') {
-      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
-      this._fromBigInt(args[2], args[3]);
-      return;
-    }
     if (args.length === 4 &&
       typeof args[0] === 'number' &&
       typeof args[1] === 'number' &&
       typeof args[2] === 'number') {
       this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
       this.rand(args[2], args[3]);
+      return;
+    }
+    // Case: width + bitboard + value [+ littleEndian]
+    if (args.length === 3 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'bigint') {
+      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
+      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[1], args[2]);
+      return;
+    }
+    if (args.length === 4 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'bigint' &&
+      typeof args[3] === 'boolean') {
+      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
+      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[1], args[2], args[3]);
+      return;
+    }
+    // Case: width + height + bitboard + value [+ littleEndian]
+    if (args.length === 4 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'number' &&
+      typeof args[2] === 'bigint') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[2], args[3]);
+      return;
+    }
+    if (args.length === 5 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'number' &&
+      typeof args[2] === 'bigint' &&
+      typeof args[4] === 'boolean') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[2], args[3], args[4]);
       return;
     }
   }
@@ -474,25 +526,6 @@ class Quadrille {
     return cleaned.length < size
       ? cleaned.concat(new Array(size - cleaned.length).fill(null))
       : cleaned;
-  }
-
-  _fromBigInt(...args) {
-    const [input, value] = args;
-    const length = this.width * this.height;
-    if ((typeof input === 'number' || typeof input === 'bigint') && this.constructor.isFilled(value)) {
-      const bigint = BigInt(input);
-      if (bigint < 0n) {
-        throw new Error('Value cannot be negative');
-      }
-      if (bigint.toString(2).length > length) {
-        throw new Error('Value is too high to fill quadrille');
-      }
-      let index = 0;
-      for (const { row, col } of this) {
-        (bigint & (1n << BigInt(length - 1 - index))) && this.fill(row, col, value);
-        index++;
-      }
-    }
   }
 
   _fromFEN(...args) {
@@ -586,6 +619,14 @@ class Quadrille {
 
   _toIndex(row, col, width = this.width) {
     return row * width + col;
+  }
+
+  bitIndex(row, col, littleEndian = false) {
+    return this.constructor.bitIndex(row, col, this.width, this.height, littleEndian);
+  }
+
+  bitCell(bitIndex, littleEndian = false) {
+    return this.constructor.bitCell(bitIndex, this.width, this.height, littleEndian);
   }
 
   // ITERATORS
@@ -1065,10 +1106,11 @@ class Quadrille {
    * Clears cell values in various ways:
    * 1. `clear()` — clears all filled cells.
    * 2. `clear(row)` — clears a specific row.
-   * 3. `clear(row, col)` — clears a specific cell.
-   * 4. `clear(row, col, directions)` — flood clears from a cell.
-   * 5. `clear(row, col, border)` — flood clears from a cell with optional border clearing.
-   * 6. `clear(row, col, directions, border)` — flood clears from a cell using given directions and border.
+   * 3. `clear(bitboard, littleEndian = false)` — clears filled cells based on a bitboard (as a BigInt); MSB corresponds to the top-left cell by default.
+   * 4. `clear(row, col)` — clears a specific cell.
+   * 5. `clear(row, col, directions)` — flood clears from a cell.
+   * 6. `clear(row, col, border)` — flood clears from a cell with optional border clearing.
+   * 7. `clear(row, col, directions, border)` — flood clears from a cell using given directions and border.
    * @param {...*} args
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
@@ -1080,6 +1122,27 @@ class Quadrille {
       if (this.isValid(args[0], 0)) {
         this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => this._clearCell(cell));
       }
+    }
+    if ((args.length === 1 || args.length === 2) && typeof args[0] === 'bigint') {
+      const bitboard = args[0];
+      const littleEndian = args[1] === true;
+      if (bitboard < 0n) {
+        console.warn('Bitboard cannot be negative');
+        return this;
+      }
+      for (const { row, col } of this.cells(this.constructor.isFilled)) {
+        const bit = this.bitIndex(row, col, littleEndian);
+        bitboard & 1n << bit && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
+      }
+      const totalBits = bitboard.toString(2).length;
+      const maxBits = this.width * this.height;
+      if (totalBits > maxBits) {
+        console.warn(
+          `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
+          `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
+        );
+      }
+      return this;
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (this.isValid(args[0], args[1])) {
@@ -1113,10 +1176,11 @@ class Quadrille {
    * 2. `fill(value)` — fills all empty cells with `value`.
    * 3. `fill(color1, color2)` — fills all cells with a chessboard pattern using the specified colors.
    * 4. `fill(row, value)` — fills a specific row.
-   * 5. `fill(row, col, value)` — fills a specific cell.
-   * 6. `fill(row, col, value, directions)` — flood fill from a cell in given directions.
-   * 7. `fill(row, col, value, border)` — flood fill with/without border in 4 directions.
-   * 8. `fill(row, col, value, directions, border)` — flood fill in custom directions with/without border.
+   * 5. `fill(bitboard, value, littleEndian = false)` — fills empty cells based on a bitboard (as a BigInt); MSB corresponds to the top-left cell by default.
+   * 6. `fill(row, col, value)` — fills a specific cell.
+   * 7. `fill(row, col, value, directions)` — flood fill from a cell in given directions.
+   * 8. `fill(row, col, value, border)` — flood fill with/without border in 4 directions.
+   * 9. `fill(row, col, value, directions, border)` — flood fill in custom directions with/without border.
    * @param {...*} args
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
@@ -1144,6 +1208,31 @@ class Quadrille {
           return args[1] === undefined ? null : args[1];
         });
       }
+    }
+    if ((args.length === 2 || args.length === 3) &&
+      typeof args[0] === 'bigint' && this.constructor.isFilled(args[1])) {
+      const bitboard = args[0];
+      const value = args[1];
+      const littleEndian = args[2] === true;
+      if (bitboard < 0n) {
+        console.warn('Bitboard cannot be negative');
+        return this;
+      }
+      for (const { row, col } of this.cells(this.constructor.isEmpty)) {
+        const bit = this.bitIndex(row, col, littleEndian);
+        bitboard & 1n << bit && (this._memory2D[row][col] = value);
+      }
+      const totalBits = bitboard.toString(2).length;
+      const maxBits = this.width * this.height;
+      if (totalBits > maxBits) {
+        console.warn(
+          `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
+          `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
+        );
+        // e.g.,
+        // const minHeight = Math.ceil(totalBits / this.width);
+      }
+      return this;
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (this.isValid(args[0], args[1])) {
@@ -1334,15 +1423,23 @@ class Quadrille {
   // REFORMATTER
 
   /**
-   * Returns an integer representation using big-endian and row-major ordering.
+   * Returns a bitboard representation of the quadrille.
    * Only filled cells are considered.
-   * @returns {bigint}
+   * Bits are ordered in **row-major** layout.
+   * By default, the representation is **big-endian**: the top-left cell is the most significant bit.
+   * To use **little-endian** encoding (bottom-right as most significant bit), pass `true`.
+   * @param {boolean} [littleEndian=false] - If true, encodes using little-endian order.
+   * @returns {bigint} Binary representation of the filled pattern.
    */
-  toBigInt() {
+  toBitboard(littleEndian = false) {
     let result = 0n;
-    this.visit(({ row, col }) => {
-      result += 2n ** (BigInt(this.width) * BigInt(this.height - row) - (BigInt(col) + 1n));
-    }, this.constructor.isFilled);
+    const length = this.width * this.height;
+    let index = 0;
+    for (const { row, col } of this) {
+      const bit = littleEndian ? index : length - 1 - index;
+      this.constructor.isFilled(this.read(row, col)) && (result |= 1n << BigInt(bit));
+      index++;
+    }
     return result;
   }
 
