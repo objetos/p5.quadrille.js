@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.1.1
+ * @version 3.1.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.1.1';
+  static VERSION = '3.1.2';
 
   // STYLE
 
@@ -380,7 +380,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille with empty cells filled and filled cells untouched
    */
   static neg(q, target) {
-    const result = new Quadrille(this._p, q.width, q.height);
+    const result = new Quadrille(q._p, q.width, q.height);
     this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), this.isEmpty);
     return result;
   }
@@ -401,7 +401,7 @@ class Quadrille {
     col ??= sameOrigin ? q2._col - q1._col : 0;
     const width = col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col);
     const height = row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row);
-    const quadrille = new Quadrille(this._p, width, height);
+    const quadrille = new Quadrille(q1._p, width, height);
     quadrille.visit(({ row: i, col: j }) => {
       const i1 = row < 0 ? i + row : i;
       const j1 = col < 0 ? j + col : j;
@@ -1164,21 +1164,21 @@ class Quadrille {
       const littleEndian = args[1] === true;
       if (bitboard < 0n) {
         console.warn('Bitboard cannot be negative');
-        return this;
       }
-      for (const { row, col } of this.cells(this.constructor.isFilled)) {
-        const bit = this.bitIndex(row, col, littleEndian);
-        bitboard & 1n << bit && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
+      else {
+        for (const { row, col } of this.cells(this.constructor.isFilled)) {
+          const bit = this.bitIndex(row, col, littleEndian);
+          bitboard & 1n << bit && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
+        }
+        const totalBits = bitboard.toString(2).length;
+        const maxBits = this.width * this.height;
+        if (totalBits > maxBits) {
+          console.warn(
+            `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
+            `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
+          );
+        }
       }
-      const totalBits = bitboard.toString(2).length;
-      const maxBits = this.width * this.height;
-      if (totalBits > maxBits) {
-        console.warn(
-          `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
-          `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
-        );
-      }
-      return this;
     }
     if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (this.isValid(args[0], args[1])) {
@@ -1252,23 +1252,23 @@ class Quadrille {
       const littleEndian = args[2] === true;
       if (bitboard < 0n) {
         console.warn('Bitboard cannot be negative');
-        return this;
       }
-      for (const { row, col } of this.cells(this.constructor.isEmpty)) {
-        const bit = this.bitIndex(row, col, littleEndian);
-        bitboard & 1n << bit && (this._memory2D[row][col] = value);
+      else {
+        for (const { row, col } of this.cells(this.constructor.isEmpty)) {
+          const bit = this.bitIndex(row, col, littleEndian);
+          bitboard & 1n << bit && (this._memory2D[row][col] = value);
+        }
+        const totalBits = bitboard.toString(2).length;
+        const maxBits = this.width * this.height;
+        if (totalBits > maxBits) {
+          console.warn(
+            `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
+            `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
+          );
+          // e.g.,
+          // const minHeight = Math.ceil(totalBits / this.width);
+        }
       }
-      const totalBits = bitboard.toString(2).length;
-      const maxBits = this.width * this.height;
-      if (totalBits > maxBits) {
-        console.warn(
-          `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
-          `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
-        );
-        // e.g.,
-        // const minHeight = Math.ceil(totalBits / this.width);
-      }
-      return this;
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (this.isValid(args[0], args[1])) {
