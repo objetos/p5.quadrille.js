@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.1.2
+ * @version 3.1.3
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.1.2';
+  static VERSION = '3.1.3';
 
   // STYLE
 
@@ -1467,7 +1467,7 @@ class Quadrille {
    * @param {boolean} [littleEndian=false] - If true, encodes using little-endian order.
    * @returns {bigint} Binary representation of the filled pattern.
    */
-  toBitboard(littleEndian = false) {
+  toBigInt(littleEndian = false) {
     let result = 0n;
     const length = this.width * this.height;
     let index = 0;
