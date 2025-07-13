@@ -1943,11 +1943,11 @@ class Quadrille {
   // HELPER RENDER FUNCTIONS
 
   static _display(params) {
-    const { value, objectDisplay } = params;
+    const { value, objectDisplay, options } = params;
     if (this.isObject(value) && objectDisplay === undefined && 'display' in value) {
       const display = value.display;
       if (typeof display === 'function') {
-        return display.call(value, params);
+        return display.call(value, options);
       } else {
         params.value = display;
       }

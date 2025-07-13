@@ -107,7 +107,6 @@ p5.registerAddon((p5, fn) => {
       graphics.translate(col * cellLength, row * cellLength);
       options.row = row;
       options.col = col;
-      // options.graphics = graphics; // TODO decide on this: fbo doesn't seem to need it
       const params = {
         value, quadrille, graphics, options, origin, row, col,
         width: quadrille.width, height: quadrille.height, mode: quadrille._mode,
