@@ -1322,7 +1322,7 @@ class Quadrille {
   }
 
   _clearCell(value) {
-    if (this.constructor.isFunction(value)) {
+    if (this.constructor.isFunction(value) || this.constructor.isObject(value)) {
       value.fbo?.remove();
       value.fbo = undefined;
     }
@@ -1943,14 +1943,10 @@ class Quadrille {
   // HELPER RENDER FUNCTIONS
 
   static _display(params) {
-    const { value, objectDisplay, options } = params;
+    const { value, objectDisplay } = params;
     if (this.isObject(value) && objectDisplay === undefined && 'display' in value) {
-      const display = value.display;
-      if (typeof display === 'function') {
-        return display.call(value, options);
-      } else {
-        params.value = display;
-      }
+      params._this = value; // Directly add context here
+      params.value = value.display;
     }
     const handlers = [
       { check: this.isFunction.bind(this), display: params.functionDisplay },
@@ -2013,20 +2009,30 @@ class Quadrille {
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static functionDisplay({
+    mode,
     graphics,
     options,
     value,
     cellLength = this.cellLength,
+    _this
   } = {}) {
-    const fbo = value.fbo ?? (value.fbo = graphics.createFramebuffer({ width: cellLength, height: cellLength }));
-    const pg = fbo.graphics ?? (fbo.graphics = graphics);
-    fbo.begin();
-    pg._rendererState = pg.push();
-    (options?.origin === 'corner' && pg.translate(-cellLength / 2, -cellLength / 2));
-    value.call(pg, options);
-    pg.pop(pg._rendererState);
-    fbo.end();
-    this.imageDisplay({ graphics, cellLength, value: fbo });
+    if (mode === 'webgl') {
+      const fbo = (_this ?? value).fbo ??= graphics.createFramebuffer({ width: cellLength, height: cellLength });
+      const pg = fbo.graphics ?? (fbo.graphics = graphics);
+      fbo.begin();
+      pg.clear();
+      pg._rendererState = pg.push();
+      (options?.origin === 'corner' && pg.translate(-cellLength / 2, -cellLength / 2));
+      value.call(_this ?? pg, options);
+      pg.pop(pg._rendererState);
+      fbo.end();
+      this.imageDisplay({ graphics, cellLength, value: fbo });
+    } else {
+      graphics.push();
+      (options?.origin === 'center' && graphics.translate(cellLength / 2, cellLength / 2));
+      value.call(_this ?? graphics, options);
+      graphics.pop();
+    }
   }
 
   /**
