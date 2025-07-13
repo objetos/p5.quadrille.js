@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.1.4
+ * @version 3.2.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.1.4';
+  static VERSION = '3.2.0';
 
   // STYLE
 
@@ -1943,6 +1943,15 @@ class Quadrille {
   // HELPER RENDER FUNCTIONS
 
   static _display(params) {
+    const { value, objectDisplay } = params;
+    if (this.isObject(value) && objectDisplay === undefined && 'display' in value) {
+      const display = value.display;
+      if (typeof display === 'function') {
+        return display.call(value, params);
+      } else {
+        params.value = display;
+      }
+    }
     const handlers = [
       { check: this.isFunction.bind(this), display: params.functionDisplay },
       { check: this.isImage.bind(this), display: params.imageDisplay },

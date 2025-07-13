@@ -1,6 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.1.4
+ * @version 3.2.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -107,10 +107,13 @@ p5.registerAddon((p5, fn) => {
       graphics.translate(col * cellLength, row * cellLength);
       options.row = row;
       options.col = col;
+      // options.graphics = graphics; // TODO decide on this: fbo doesn't seem to need it
       const params = {
-        quadrille, graphics, value, width: quadrille.width, height: quadrille.height,
-        row, col, outline, outlineWeight, cellLength, textColor, textZoom, textFont, origin, options, functionDisplay,
-        imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+        value, quadrille, graphics, options, origin, row, col,
+        width: quadrille.width, height: quadrille.height, mode: quadrille._mode,
+        outline, outlineWeight, cellLength, textColor, textZoom, textFont,
+        functionDisplay, imageDisplay, colorDisplay, stringDisplay,
+        numberDisplay, arrayDisplay, objectDisplay, tileDisplay
       };
       quadrille.constructor._display(params);
       graphics.pop();
