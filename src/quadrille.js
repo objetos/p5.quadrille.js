@@ -1945,7 +1945,7 @@ class Quadrille {
   static _display(params) {
     const { value, objectDisplay } = params;
     if (this.isObject(value) && objectDisplay === undefined && 'display' in value) {
-      params._this = value; // Directly add context here
+      params._this = value;
       params.value = value.display;
     }
     const handlers = [
