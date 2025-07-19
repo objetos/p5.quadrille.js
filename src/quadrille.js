@@ -1319,21 +1319,24 @@ class Quadrille {
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
-          args[2] === undefined ? null : args[2], args[3]);
+        const [row, col, value, directions] = args;
+        this._flood(row, col, this._memory2D[row][col],
+          value === undefined ? null : this._parseFn(value, row, col), directions);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'boolean') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
-          args[2] === undefined ? null : args[2], 4, args[3]);
+        const [row, col, value, border] = args;
+        this._flood(row, col, this._memory2D[row][col],
+          value === undefined ? null : this._parseFn(value, row, col), 4, border);
       }
     }
     if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
       typeof args[3] === 'number' && typeof args[4] === 'boolean') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
-          args[2] === undefined ? null : args[2], args[3], args[4]);
+        const [row, col, value, directions, border] = args;
+        this._flood(row, col, this._memory2D[row][col],
+          value === undefined ? null : this._parseFn(value, row, col), directions, border);
       }
     }
     return this;
