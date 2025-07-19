@@ -34,10 +34,10 @@ class Quadrille {
    * The function will be called with `{ row, col }` and must return a value
    * to be stored in the quadrille. Display functions should not use this.
    * @param {Function} fn - A function returning a value to fill cells with.
-   * @returns {Function} The same function, tagged with `.isFactory = true`.
+   * @returns {Function} The same function, tagged with `._isFactory = true`.
   */
   static factory(fn) {
-    fn.isFactory = true;
+    fn._isFactory = true;
     return fn;
   }
 
@@ -1344,7 +1344,7 @@ class Quadrille {
 
   /**
    * Internal helper to evaluate a value for a given cell.
-   * If the value is a function tagged with `.isFactory`, it is called
+   * If the value is a function tagged with `._isFactory`, it is called
    * with `{ row, col }`. Otherwise, the value is returned as-is.
    * @param {*} value - A literal, display function, or factory function.
    * @param {number} row - Row index of the cell.
@@ -1353,7 +1353,7 @@ class Quadrille {
    */
   _parseFn(value, row, col) {
     if (typeof value === 'function') {
-      return value.isFactory
+      return value._isFactory
         ? value({ row, col })
         : value;
     }
