@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.2.0
+ * @version 3.2.1
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,38 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.2.0';
+  static VERSION = '3.2.1';
+
+  // Factory
+
+  /**
+   * Tags a function as a factory, meaning it should be executed during `fill`.
+   * The function will be called with `{ row, col }` and must return a value
+   * to be stored in the quadrille. Display functions should not use this.
+   * @param {Function} fn - A function returning a value to fill cells with.
+   * @returns {Function} The same function, tagged with `.isFactory = true`.
+  */
+  static factory(fn) {
+    fn.isFactory = true;
+    return fn;
+  }
+
+  /**
+   * Declares that a value is a shared singleton to be reused across cells. 
+   * Unlike `Quadrille.factory(fn)`, this method is purely semantic and does
+   * not modify the value. It clarifies that the same instance is intended
+   * to be reused when passed to `fill()`, particularly for object values
+   * like class instances.
+   * This is useful for improving code readability and documenting intent.
+   * @example
+   * const elf = Quadrille.singleton(new Unit('Elf', 'blue', '🧝'));
+   * game.fill(elf); // same object used in all cells
+   * @param {*} value - A literal or object to share across multiple cells.
+   * @returns {*} The same value, unmodified.
+   */
+  static singleton(value) {
+    return value;
+  }
 
   // STYLE
 
@@ -1209,39 +1240,49 @@ class Quadrille {
   /**
    * Fills the quadrille using a variety of modes:
    * 1. `fill()` — fills all cells in chessboard pattern using default colors.
-   * 2. `fill(value)` — fills all empty cells with `value`.
-   * 3. `fill(color1, color2)` — fills all cells with a chessboard pattern using the specified colors.
+   * 2. `fill(value)` — fills all empty cells with a value or factory.
+   * 3. `fill(color1, color2)` — fills chessboard with specified colors.
    * 4. `fill(row, value)` — fills a specific row.
-   * 5. `fill(bitboard, value, littleEndian = false)` — fills empty cells based on a bitboard (as a BigInt); MSB corresponds to the top-left cell by default.
+   * 5. `fill(bitboard, value, littleEndian = false)` — fills empty cells based on a bitboard.
    * 6. `fill(row, col, value)` — fills a specific cell.
-   * 7. `fill(row, col, value, directions)` — flood fill from a cell in given directions.
-   * 8. `fill(row, col, value, border)` — flood fill with/without border in 4 directions.
-   * 9. `fill(row, col, value, directions, border)` — flood fill in custom directions with/without border.
-   * @param {...*} args
-   * @returns {Quadrille} The modified quadrille (for chaining).
+   * 7. `fill(row, col, value, directions)` — flood fill in directions.
+   * 8. `fill(row, col, value, border)` — flood fill with/without border.
+   * 9. `fill(row, col, value, directions, border)` — full flood fill.
+   * 
+   * @param {...*} args - Arguments as described above.
+   * @returns {Quadrille} This quadrille (for chaining).
    */
   fill(...args) {
     if (args.length === 0) {
       this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = this._p.color((row + col) % 2 === 0 ? this.constructor.lightSquare : this.constructor.darkSquare);
+        this._memory2D[row][col] = this._p.color((row + col) % 2 === 0
+          ? this.constructor.lightSquare
+          : this.constructor.darkSquare);
       });
     }
     if (args.length === 1 && this.constructor.isFilled(args[0])) {
-      this.visit(({ row, col }) => this._memory2D[row][col] = args[0], this.constructor.isEmpty);
+      this.visit(({ row, col }) => {
+        this._memory2D[row][col] = this._parseFn(args[0], row, col);
+      }, this.constructor.isEmpty);
     }
-    if (args.length === 2 && (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
+    if (args.length === 2 &&
+      (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
       (this.constructor.isColor(args[1]) || typeof args[1] === 'string')) {
       this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = (row + col) % 2 === 0 ? this._p.color(args[0]) : this._p.color(args[1]);
+        this._memory2D[row][col] = (row + col) % 2 === 0
+          ? this._p.color(args[0])
+          : this._p.color(args[1]);
       });
     }
     if (args.length === 2 && typeof args[0] === 'number') {
       if (this.isValid(args[0], 0)) {
-        this._memory2D[args[0]] = this._memory2D[args[0]].map(cell => {
+        const row = args[0];
+        const value = args[1];
+        this._memory2D[row] = this._memory2D[row].map((cell, col) => {
           cell = this._clearCell(cell);
-          return args[1] === undefined ? null : args[1];
+          return value === undefined ? null : this._parseFn(value, row, col);
         });
       }
     }
@@ -1252,75 +1293,79 @@ class Quadrille {
       const littleEndian = args[2] === true;
       if (bitboard < 0n) {
         console.warn('Bitboard cannot be negative');
-      }
-      else {
+      } else {
         for (const { row, col } of this.cells(this.constructor.isEmpty)) {
           const bit = this.bitIndex(row, col, littleEndian);
-          bitboard & 1n << bit && (this._memory2D[row][col] = value);
+          if (bitboard & (1n << bit)) {
+            this._memory2D[row][col] = this._parseFn(value, row, col);
+          }
         }
-        const totalBits = bitboard.toString(2).length;
-        const maxBits = this.width * this.height;
-        if (totalBits > maxBits) {
-          console.warn(
-            `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
-            `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
-          );
-          // e.g.,
-          // const minHeight = Math.ceil(totalBits / this.width);
-        }
+      }
+      const totalBits = bitboard.toString(2).length;
+      const maxBits = this.width * this.height;
+      if (totalBits > maxBits) {
+        console.warn(
+          `Bitboard has ${totalBits} bits but quadrille holds only ${maxBits}. ` +
+          `Increase quadrille width and/or height so that width * height ≥ ${totalBits}.`
+        );
       }
     }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] === 'number') {
       if (this.isValid(args[0], args[1])) {
-        this._memory2D[args[0]][args[1]] = this._clearCell(this._memory2D[args[0]][args[1]]);
-        this._memory2D[args[0]][args[1]] = args[2] === undefined ? null : args[2];
+        const [row, col, value] = args;
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = value === undefined ? null : this._parseFn(value, row, col);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3]);
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
+          args[2] === undefined ? null : args[2], args[3]);
       }
     }
     if (args.length === 4 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'boolean') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], 4, args[3]);
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
+          args[2] === undefined ? null : args[2], 4, args[3]);
       }
     }
-    if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[3] === 'number' && typeof args[4] === 'boolean') {
+    if (args.length === 5 && typeof args[0] === 'number' && typeof args[1] === 'number' &&
+      typeof args[3] === 'number' && typeof args[4] === 'boolean') {
       if (this.isValid(args[0], args[1])) {
-        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]], args[2] === undefined ? null : args[2], args[3], args[4]);
+        this._flood(args[0], args[1], this._memory2D[args[0]][args[1]],
+          args[2] === undefined ? null : args[2], args[3], args[4]);
       }
     }
     return this;
   }
 
-  _flood(row, col, value1, value2, directions = 4, border = false) {
-    if (directions !== 4 && directions !== 8) {
-      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
-      directions = 4;
+  /**
+   * Internal helper to evaluate a value for a given cell.
+   * If the value is a function tagged with `.isFactory`, it is called
+   * with `{ row, col }`. Otherwise, the value is returned as-is.
+   * @param {*} value - A literal, display function, or factory function.
+   * @param {number} row - Row index of the cell.
+   * @param {number} col - Column index of the cell.
+   * @returns {*} Evaluated cell content.
+   */
+  _parseFn(value, row, col) {
+    if (typeof value === 'function') {
+      return value.isFactory
+        ? value({ row, col })
+        : value;
     }
-    if (this.isValid(row, col) && this._memory2D[row][col] !== value2) {
-      if (this._memory2D[row][col] === value1) {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = value2;
-        this._flood(row, col - 1, value1, value2, directions, border);
-        this._flood(row - 1, col, value1, value2, directions, border);
-        this._flood(row, col + 1, value1, value2, directions, border);
-        this._flood(row + 1, col, value1, value2, directions, border);
-        if (directions === 8) {
-          this._flood(row - 1, col - 1, value1, value2, directions, border);
-          this._flood(row - 1, col + 1, value1, value2, directions, border);
-          this._flood(row + 1, col + 1, value1, value2, directions, border);
-          this._flood(row + 1, col - 1, value1, value2, directions, border);
-        }
-      }
-      if (border) {
-        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
-        this._memory2D[row][col] = value2;
-      }
-    }
+    return value;
   }
 
+  /**
+   * Clears a cell value before writing a new one into the grid.
+   * If the value is a function or object and contains an internal
+   * framebuffer (`fbo`), the framebuffer is removed and the reference
+   * is cleared to avoid memory leaks. This is used to manage retained
+   * drawing resources for function-based or object-based displays.
+   * @param {*} value - The current cell value to be cleared.
+   * @returns {null} Always returns null as the cleared cell value.
+   */
   _clearCell(value) {
     if (this.constructor.isFunction(value) || this.constructor.isObject(value)) {
       value.fbo?.remove();
@@ -2001,7 +2046,13 @@ class Quadrille {
   }
 
   /**
-   * Renders a function-based cell using an internal framebuffer.
+   * Renders a function-based cell using an internal framebuffer in WEBGL mode.
+   * Also serves as the fallback renderer for any object with a `display` function.
+   * In `WEBGL` mode, rendering is performed into a framebuffer object (FBO),
+   * and the result is drawn using `imageDisplay`. The drawing function is
+   * invoked with `options` as its only parameter and `this` bound to the framebuffer's
+   * `p5.Graphics` context (or the object if provided).
+   * In `P2D` mode, the function is called directly with `options` and drawn to the main context.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {Object} params.options - Display options (e.g. origin).
