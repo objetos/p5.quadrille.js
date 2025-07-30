@@ -451,14 +451,15 @@ class Quadrille {
    * 2. width, height → empty quadrille of given dimensions.
    * 3. two colors → 8×8 chessboard with custom light/dark colors.
    * 4. jagged or flat array → quadrille from array contents.
-   * 5. width + array → reshaped array by row into given width.
-   * 6. string → single-row quadrille from characters.
+   * 5. width + array → array reshaped into rows.
+   * 6. string → single-row from characters.
    * 7. width + string → reshaped string.
    * 8. width + image → visual content from image.
    * 9. width + image + boolean → image pixelation.
-   * 10. width + height + order + value → filled by order.
-   * 11. width + bitboard + value [+ littleEndian] → binary-encoded pattern (inferred height).
-   * 12. width + height + bitboard + value [+ littleEndian] → binary-encoded pattern with explicit dimensions.
+   * 10. width + height + predicate + value → fill by predicate.
+   * 11. width + height + order + value → filled by order (random).
+   * 12. width + bitboard + value [+ littleEndian] → bitboard pattern (auto height).
+   * 13. width + height + bitboard + value [+ littleEndian] → bitboard pattern (explicit size).
    * Used internally by `p5.prototype.createQuadrille`.
    * @param {p5} p - The p5 instance.
    * @param {...any} args - Arguments to select construction mode.
@@ -517,6 +518,12 @@ class Quadrille {
       this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width))
         .fill().map(() => Array(args[0]).fill(null));
       this._fromImage(args[1], args[2]);
+      return;
+    }
+    if (args.length === 4 &&
+      typeof args[0] === 'number' && typeof args[1] === 'number' && typeof args[2] === 'function') {
+      this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[2], args[3]);
       return;
     }
     if (args.length === 4 &&
@@ -719,11 +726,7 @@ class Quadrille {
       for (let col = 0; col < rowData.length; col++) {
         const value = rowData[col];
         const cell = { row, col, value };
-        if (
-          !filter ||
-          (isFn && filter(cell)) ||
-          (values && values.has(value))
-        ) {
+        if (!filter || (isFn && filter(cell)) || (values && values.has(value))) {
           yield cell;
         }
       }
@@ -1167,18 +1170,24 @@ class Quadrille {
   /**
    * Clears cell values in various ways:
    * 1. `clear()` — clears all filled cells.
-   * 2. `clear(row)` — clears a specific row.
-   * 3. `clear(bitboard, littleEndian = false)` — clears filled cells based on a bitboard (as a BigInt); MSB corresponds to the top-left cell by default.
-   * 4. `clear(row, col)` — clears a specific cell.
-   * 5. `clear(row, col, directions)` — flood clears from a cell.
-   * 6. `clear(row, col, border)` — flood clears from a cell with optional border clearing.
-   * 7. `clear(row, col, directions, border)` — flood clears from a cell using given directions and border.
+   * 2. `clear(predicate)` — clears all cells for which the predicate returns true.
+   * 3. `clear(row)` — clears a specific row.
+   * 4. `clear(bitboard, littleEndian = false)` — clears filled cells based on a bitboard (as a BigInt); MSB corresponds to the top-left cell by default.
+   * 5. `clear(row, col)` — clears a specific cell.
+   * 6. `clear(row, col, directions)` — flood clears from a cell.
+   * 7. `clear(row, col, border)` — flood clears from a cell with optional border clearing.
+   * 8. `clear(row, col, directions, border)` — flood clears from a cell using given directions and border.
    * @param {...*} args
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
   clear(...args) {
     if (args.length === 0) {
       this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
+    }
+    if (args.length === 1 && typeof args[0] === 'function') {
+      for (const { row, col, value } of this.cells(args[0])) {
+        this._memory2D[row][col] = this._clearCell(value);
+      }
     }
     if (args.length === 1 && typeof args[0] === 'number') {
       if (this.isValid(args[0], 0)) {
@@ -1236,14 +1245,14 @@ class Quadrille {
    * Fills the quadrille using a variety of modes:
    * 1. `fill()` — fills all cells in chessboard pattern using default colors.
    * 2. `fill(value)` — fills all empty cells with a value or factory.
-   * 3. `fill(color1, color2)` — fills chessboard with specified colors.
-   * 4. `fill(row, value)` — fills a specific row.
-   * 5. `fill(bitboard, value, littleEndian = false)` — fills empty cells based on a bitboard.
-   * 6. `fill(row, col, value)` — fills a specific cell.
-   * 7. `fill(row, col, value, directions)` — flood fill in directions.
-   * 8. `fill(row, col, value, border)` — flood fill with/without border.
-   * 9. `fill(row, col, value, directions, border)` — full flood fill.
-   * 
+   * 3. `fill(predicate, value)` — fills matching cells with a value.
+   * 4. `fill(color1, color2)` — fills chessboard with specified colors.
+   * 5. `fill(row, value)` — fills a specific row.
+   * 6. `fill(bitboard, value, littleEndian = false)` — fills empty cells based on a bitboard.
+   * 7. `fill(row, col, value)` — fills a specific cell.
+   * 8. `fill(row, col, value, directions)` — flood fill in directions.
+   * 9. `fill(row, col, value, border)` — flood fill with/without border.
+   * 10. `fill(row, col, value, directions, border)` — full flood fill.
    * @param {...*} args - Arguments as described above.
    * @returns {Quadrille} This quadrille (for chaining).
    */
@@ -1260,6 +1269,13 @@ class Quadrille {
       this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._parseFn(args[0], row, col);
       }, this.constructor.isEmpty);
+    }
+    if (args.length === 2 && typeof args[0] === 'function' && this.constructor.isFilled(args[1])) {
+      const [predicate, value] = args;
+      for (const { row, col } of this.cells(predicate)) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
+        this._memory2D[row][col] = this._parseFn(value, row, col);
+      }
     }
     if (args.length === 2 &&
       (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
