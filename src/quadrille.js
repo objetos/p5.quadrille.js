@@ -1364,28 +1364,8 @@ class Quadrille {
    * @returns {*} Evaluated cell content.
    */
   _parseFn(value, row, col) {
-    if (typeof value === 'function') {
-      return value._isFactory ? value({ row, col }) : value;
-    }
-    return value;
+    return typeof value === 'function' && value._isFactory ? value({ row, col }) : value;
   }
-
-  /*
-  // TODO Non-factory version. Tested it and worked but it is a hack
-  _parseFn(value, row, col) {
-    if (typeof value === 'function') {
-      const result = value({ row, col });
-      // If the result is undefined, it's a display function: store directly
-      if (result === undefined) {
-        return value; // display function
-      }
-      // If a valid JS value is returned, it's a factory: store the result
-      return result;
-    }
-    // Non-function value: store directly
-    return value;
-  }
-  // */
 
   /**
    * Clears a cell value before writing a new one into the grid.
