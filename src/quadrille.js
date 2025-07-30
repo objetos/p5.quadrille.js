@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.2.1
+ * @version 3.3.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.2.1';
+  static VERSION = '3.3.0';
 
   // Factory
 
@@ -699,38 +699,33 @@ class Quadrille {
   // ITERATORS
 
   /**
-   * Lazily iterates in row-major order (top to bottom, left to right) over all matching cells in the quadrille.
+   * Lazily iterates in row-major order (top to bottom, left to right)
+   * over all matching cells in the quadrille.
    * The optional `filter` can be:
-   * - `null` or omitted → yield all cells
-   * - A `Function(value)` → yield cells where the function returns `true`
-   * - An `Array` or `Set` of values → yield cells whose value is in the set
-   * - An object with optional `value`, `row`, and/or `col` predicates:
-   *    {
-   *      value: v => v === 1,
-   *      row: r => r % 2 === 0,
-   *      col: c => c < 4
-   *    }
+   * - `null` or omitted → yields all cells
+   * - An `Array` or `Set` of values → yields cells whose value is in the collection
+   * - A `Function({ row, col, value })` → yields cells where the function returns `true`
    * @generator
-   * @param {Array|Set|Function|Object|null} [filter=null] - Optional filter for selecting cells.
+   * @param {Array|Set|Function|null} [filter=null] - Optional filter for selecting cells.
    * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
    */
   *cells(filter = null) {
     const isFn = typeof filter === 'function';
-    const isSet = filter && !isFn && !filter.value && !filter.row && !filter.col;
-    const isObj = filter && typeof filter === 'object' && (filter.value || filter.row || filter.col);
-    const set = isSet ? new Set(filter) : null;
+    const isSet = filter && typeof filter !== 'function' && typeof filter.has === 'function';
+    const isArr = Array.isArray(filter);
+    const values = isSet ? filter : isArr ? new Set(filter) : null;
     for (let row = 0; row < this._memory2D.length; row++) {
       const rowData = this._memory2D[row];
       for (let col = 0; col < rowData.length; col++) {
         const value = rowData[col];
-        const match = !filter
-          || (isFn && filter(value))
-          || (isSet && set.has(value))
-          || (isObj &&
-            (!filter.value || filter.value(value)) &&
-            (!filter.row || filter.row(row)) &&
-            (!filter.col || filter.col(col)));
-        if (match) yield { row, col, value };
+        const cell = { row, col, value };
+        if (
+          !filter ||
+          (isFn && filter(cell)) ||
+          (values && values.has(value))
+        ) {
+          yield cell;
+        }
       }
     }
   }
@@ -749,7 +744,7 @@ class Quadrille {
   /**
    * Iterates over cells using `for...of`, calling the given function with each cell object.
    * @param {(cell: { row: number, col: number, value: any }) => void} callback - Function to apply to each cell.
-   * @param {Array|Set|Function|Object} [filter] - Optional filter for selecting cells.
+   * @param {Array|Set|Function|null} [filter] - Optional filter for selecting cells.
    */
   visit(callback, filter) {
     for (const cell of this.cells(filter)) {
