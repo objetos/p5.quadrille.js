@@ -405,14 +405,14 @@ class Quadrille {
   }
 
   /**
-   * Logical NEG of a quadrille: fills empty cells with a target value.
+   * Logical NOT of a quadrille: empties filled cells and fills empty cells with a target value.
    * @param {Quadrille} q Input quadrille
    * @param {*} target Value to fill where the quadrille is empty
-   * @returns {Quadrille} A new quadrille with empty cells filled and filled cells untouched
+   * @returns {Quadrille} A new quadrille with inverted filled/empty status
    */
-  static neg(q, target) {
+  static not(q, target) {
     const result = new Quadrille(q._p, q.width, q.height);
-    this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), ({ value }) => this.isEmpty(value));
+    q.visit(({ row, col, value }) => this.isFilled(value) ? result.clear(row, col) : result.fill(row, col, target));
     return result;
   }
 
