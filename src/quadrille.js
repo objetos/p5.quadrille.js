@@ -412,7 +412,7 @@ class Quadrille {
    */
   static neg(q, target) {
     const result = new Quadrille(q._p, q.width, q.height);
-    this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), this.isEmpty);
+    this.isFilled(target) && q.visit(({ row, col }) => result.fill(row, col, target), ({ value }) => this.isEmpty(value));
     return result;
   }
 
@@ -846,10 +846,10 @@ class Quadrille {
    */
   get order() {
     let result = 0;
-    this.visit(() => result++, this.constructor.isFilled);
+    this.visit(() => result++, ({ value }) => this.constructor.isFilled(value));
     return result;
     // also possible
-    // return [...this.cells({ value: Quadrille.isFilled })].length;
+    // return [...this.cells(({ value }) => this.constructor.isFilled(value))].length;
   }
 
   /**
@@ -1159,8 +1159,8 @@ class Quadrille {
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
   replace(...args) {
-    args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), this.constructor.isFilled);
-    args.length === 2 && this.visit(({ row, col }) => this.fill(row, col, args[1]), v => v === args[0]);
+    args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), ({ value }) => this.constructor.isFilled(value));
+    args.length === 2 && this.visit(({ row, col }) => this.fill(row, col, args[1]), ({ value }) => value === args[0]);
     return this;
   }
 

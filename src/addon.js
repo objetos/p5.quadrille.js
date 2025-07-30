@@ -94,10 +94,12 @@ p5.registerAddon((p5, fn) => {
     quadrille._origin = origin;
     options.origin ??= quadrille._mode === 'webgl' ? 'center' : 'corner'; // options.origin ??= origin; // other option
     quadrille._cellLength = cellLength;
-    quadrille._x = x ? x : col ? col * cellLength : 0;
-    quadrille._y = y ? y : row ? row * cellLength : 0;
-    quadrille._col = Number.isInteger(col) ? col : Number.isInteger(quadrille._x / cellLength) ? quadrille._x / cellLength : undefined;
-    quadrille._row = Number.isInteger(row) ? row : Number.isInteger(quadrille._y / cellLength) ? quadrille._y / cellLength : undefined;
+    quadrille._x = (x ?? (col != null ? col * cellLength : 0));
+    quadrille._y = (y ?? (row != null ? row * cellLength : 0));
+    const qx = quadrille._x / cellLength;
+    const qy = quadrille._y / cellLength;
+    quadrille._col = Number.isInteger(col) ? col : Number.isInteger(qx) ? qx : undefined;
+    quadrille._row = Number.isInteger(row) ? row : Number.isInteger(qy) ? qy : undefined;
     graphics.push();
     quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
       (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2));
