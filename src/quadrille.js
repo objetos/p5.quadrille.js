@@ -1398,26 +1398,23 @@ class Quadrille {
       console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
     }
-    if (!this.isValid(row, col)) return;
-    const current = this._memory2D[row][col];
-    const same = this.constructor.equal(current, value1);
-    const differentFromValue2 = !this.constructor.equal(current, value2);
-    if (differentFromValue2) {
-      if (same) {
-        this._memory2D[row][col] = this._clearCell(current);
+    if (this.isValid(row, col) && this._memory2D[row][col] !== value2) {
+      if (this._memory2D[row][col] === value1) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
-        this._flood(row - 1, col, value1, value2, directions, border);
-        this._flood(row + 1, col, value1, value2, directions, border);
         this._flood(row, col - 1, value1, value2, directions, border);
+        this._flood(row - 1, col, value1, value2, directions, border);
         this._flood(row, col + 1, value1, value2, directions, border);
+        this._flood(row + 1, col, value1, value2, directions, border);
         if (directions === 8) {
           this._flood(row - 1, col - 1, value1, value2, directions, border);
           this._flood(row - 1, col + 1, value1, value2, directions, border);
           this._flood(row + 1, col + 1, value1, value2, directions, border);
           this._flood(row + 1, col - 1, value1, value2, directions, border);
         }
-      } else if (border) {
-        this._memory2D[row][col] = this._clearCell(current);
+      }
+      if (border) {
+        this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = value2;
       }
     }
