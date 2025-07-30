@@ -1389,6 +1389,41 @@ class Quadrille {
   }
 
   /**
+   * Recursive flood fill using value1 → value2 replacement.
+   * Supports 4- or 8-directional movement and optional border fill.
+   * @private
+   */
+  _flood(row, col, value1, value2, directions = 4, border = false) {
+    if (directions !== 4 && directions !== 8) {
+      console.warn(`flood fill is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
+      directions = 4;
+    }
+    if (!this.isValid(row, col)) return;
+    const current = this._memory2D[row][col];
+    const same = this.constructor.equal(current, value1);
+    const differentFromValue2 = !this.constructor.equal(current, value2);
+    if (differentFromValue2) {
+      if (same) {
+        this._memory2D[row][col] = this._clearCell(current);
+        this._memory2D[row][col] = value2;
+        this._flood(row - 1, col, value1, value2, directions, border);
+        this._flood(row + 1, col, value1, value2, directions, border);
+        this._flood(row, col - 1, value1, value2, directions, border);
+        this._flood(row, col + 1, value1, value2, directions, border);
+        if (directions === 8) {
+          this._flood(row - 1, col - 1, value1, value2, directions, border);
+          this._flood(row - 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col + 1, value1, value2, directions, border);
+          this._flood(row + 1, col - 1, value1, value2, directions, border);
+        }
+      } else if (border) {
+        this._memory2D[row][col] = this._clearCell(current);
+        this._memory2D[row][col] = value2;
+      }
+    }
+  }
+
+  /**
    * Randomly clears or fills cells in the quadrille.
    * - If `value` is `null`, clears `times` filled cells.
    * - If `value` is not `null`, fills `times` empty cells with `value`.
