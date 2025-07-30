@@ -32,12 +32,13 @@ class Quadrille {
   /**
    * Tags a function as a factory, meaning it should be executed during `fill`.
    * The function will be called with `{ row, col }` and must return a value
-   * to be stored in the quadrille. Display functions should not use this.
-   * @param {Function} fn - A function returning a value to fill cells with.
-   * @returns {Function} The same function, tagged with `._isFactory = true`.
-  */
+   * to be stored in the quadrille. Display functions (returning `undefined`)
+   * should not use this. If a non-function is passed, it is returned as-is.
+   * @param {*} fn - A function returning a value to fill cells with, or a direct value.
+   * @returns {Function|*} The same function tagged with `._isFactory = true`, or the value itself.
+   */
   static factory(fn) {
-    fn._isFactory = true;
+    this.isFunction(fn) && (fn._isFactory = true);
     return fn;
   }
 
