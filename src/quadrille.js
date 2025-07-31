@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.0
+ * @version 3.3.1
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.0';
+  static VERSION = '3.3.1';
 
   // Factory
 
@@ -1202,7 +1202,7 @@ class Quadrille {
         console.warn('Bitboard cannot be negative');
       }
       else {
-        for (const { row, col } of this.cells(this.constructor.isFilled)) {
+        for (const { row, col } of this.cells(({ value }) => this.constructor.isFilled(value))) {
           const bit = this.bitIndex(row, col, littleEndian);
           bitboard & 1n << bit && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
         }
@@ -1269,7 +1269,7 @@ class Quadrille {
     if (args.length === 1 && this.constructor.isFilled(args[0])) {
       this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._parseFn(args[0], row, col);
-      }, this.constructor.isEmpty);
+      }, ({ value }) => this.constructor.isEmpty(value));
     }
     if (args.length === 2 && typeof args[0] === 'function' && this.constructor.isFilled(args[1])) {
       const [predicate, value] = args;
@@ -1306,7 +1306,7 @@ class Quadrille {
       if (bitboard < 0n) {
         console.warn('Bitboard cannot be negative');
       } else {
-        for (const { row, col } of this.cells(this.constructor.isEmpty)) {
+        for (const { row, col } of this.cells(({ value }) => this.constructor.isEmpty(value))) {
           const bit = this.bitIndex(row, col, littleEndian);
           if (bitboard & (1n << bit)) {
             this._memory2D[row][col] = this._parseFn(value, row, col);
@@ -1458,7 +1458,7 @@ class Quadrille {
         ({ row, col } = this._fromIndex(index));
       } while (this.isFilled(row, col));
       this.fill(row, col, value);
-    }, this.constructor.isFilled);
+    }, ({ value }) => this.constructor.isFilled(value));
     return this;
   }
 

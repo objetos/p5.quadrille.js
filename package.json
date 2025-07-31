@@ -1,6 +1,6 @@
 {
   "name": "p5.quadrille",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "A grid-based teaching and rendering library for p5.js.",
   "type": "module",
   "main": "dist/p5.quadrille.esm.js",
@@ -46,6 +46,6 @@
     "@types/estree": "^1.0.8",
     "p5": "^2.0.3",
     "rollup": "^4.46.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
