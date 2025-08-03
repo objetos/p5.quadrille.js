@@ -1,6 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.3.1
+ * @version 3.3.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -79,8 +79,10 @@ p5.registerAddon((p5, fn) => {
     stringDisplay = quadrille.constructor.stringDisplay,
     numberDisplay = quadrille.constructor.numberDisplay,
     tileDisplay = quadrille.constructor.tileDisplay,
-    arrayDisplay = quadrille.constructor.arrayDisplay,
-    objectDisplay = quadrille.constructor.objectDisplay,
+    booleanDisplay = quadrille.constructor.booleanDisplay,
+    symbolDisplay,
+    arrayDisplay,
+    objectDisplay,
     cellLength = quadrille.constructor.cellLength,
     outlineWeight = quadrille.constructor.outlineWeight,
     outline = quadrille.constructor.outline,
@@ -113,8 +115,8 @@ p5.registerAddon((p5, fn) => {
         value, quadrille, graphics, options, origin, row, col,
         width: quadrille.width, height: quadrille.height, mode: quadrille._mode,
         outline, outlineWeight, cellLength, textColor, textZoom, textFont,
-        functionDisplay, imageDisplay, colorDisplay, stringDisplay,
-        numberDisplay, arrayDisplay, objectDisplay, tileDisplay
+        functionDisplay, imageDisplay, colorDisplay, stringDisplay, booleanDisplay,
+        numberDisplay, arrayDisplay, objectDisplay, tileDisplay, symbolDisplay
       };
       quadrille.constructor._display(params);
       graphics.pop();

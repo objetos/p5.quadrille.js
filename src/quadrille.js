@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.1
+ * @version 3.3.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.1';
+  static VERSION = '3.3.2';
 
   // Factory
 
@@ -994,6 +994,24 @@ class Quadrille {
   }
 
   /**
+   * Checks whether the given value is a boolean.
+   * @param {*} value
+   * @returns {boolean}
+   */
+  static isBoolean(value) {
+    return typeof value === 'boolean';
+  }
+
+  /**
+   * Checks whether the given value is a symbol.
+   * @param {*} value
+   * @returns {boolean}
+   */
+  static isSymbol(value) {
+    return typeof value === 'symbol';
+  }
+
+  /**
    * Checks whether the given value is a number.
    * @param {*} value
    * @returns {boolean}
@@ -1081,6 +1099,26 @@ class Quadrille {
    */
   isFilled(row, col) {
     return this.constructor.isFilled(this.read(row, col));
+  }
+
+  /**
+   * Checks whether the cell at (row, col) contains a boolean.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
+   */
+  isBoolean(row, col) {
+    return this.constructor.isBoolean(this.read(row, col));
+  }
+
+  /**
+   * Checks whether the cell at (row, col) contains a symbol.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
+   */
+  isSymbol(row, col) {
+    return this.constructor.isSymbol(this.read(row, col));
   }
 
   /**
@@ -1588,6 +1626,8 @@ class Quadrille {
    * @param {Function} [params.colorDisplay] - Function to draw color values.
    * @param {Function} [params.stringDisplay] - Function to draw string values.
    * @param {Function} [params.numberDisplay] - Function to draw number values.
+   * @param {Function} [params.booleanDisplay] - Function to draw boolean values.
+   * @param {Function} [params.symbolDisplay] - Function to draw symbol values.
    * @param {Function} [params.arrayDisplay] - Function to draw array values.
    * @param {Function} [params.objectDisplay] - Function to draw object values.
    * @param {number} [params.cellLength=this._cellLength] - Cell size in pixels.
@@ -1607,6 +1647,8 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
+    booleanDisplay = this.constructor.booleanDisplay,
+    symbolDisplay,
     arrayDisplay,
     objectDisplay,
     cellLength = this._cellLength || this.constructor.cellLength,
@@ -1617,9 +1659,10 @@ class Quadrille {
   } = {}) {
     const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     this._p.drawQuadrille(this, {
-      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay, stringDisplay,
-      numberDisplay, arrayDisplay, objectDisplay, cellLength, outlineWeight, outline, textColor,
-      textZoom, textFont, origin, options
+      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay,
+      stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
+      arrayDisplay, objectDisplay, cellLength, outlineWeight, outline,
+      textColor, textZoom, textFont, origin, options
     });
     this._p.save(graphics, filename);
   }
@@ -1883,6 +1926,8 @@ class Quadrille {
    * @param {Function} [params.colorDisplay]
    * @param {Function} [params.stringDisplay]
    * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.booleanDisplay]
+   * @param {Function} [params.symbolDisplay]
    * @param {Function} [params.arrayDisplay]
    * @param {Function} [params.objectDisplay]
    * @param {Function} [params.functionDisplay]
@@ -1906,15 +1951,18 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
-    arrayDisplay = this.constructor.arrayDisplay,
-    objectDisplay = this.constructor.objectDisplay,
+    booleanDisplay = this.constructor.booleanDisplay,
+    symbolDisplay,
+    arrayDisplay,
+    objectDisplay,
     functionDisplay = this.constructor.functionDisplay,
     tileDisplay = this.constructor.tileDisplay
   } = {}) {
     let memory1D = this.toArray();
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
-      outlineWeight, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
+      outlineWeight, stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
+      arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
       renderer: 'p2d' // renderer: this._mode // kills machine in webgl!
     };
     switch (mode) {
@@ -1974,6 +2022,8 @@ class Quadrille {
    * @param {Function} [params.colorDisplay]
    * @param {Function} [params.stringDisplay]
    * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.booleanDisplay]
+   * @param {Function} [params.symbolDisplay]
    * @param {Function} [params.arrayDisplay]
    * @param {Function} [params.objectDisplay]
    * @param {Function} [params.functionDisplay]
@@ -1996,8 +2046,10 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
-    arrayDisplay = this.constructor.arrayDisplay,
-    objectDisplay = this.constructor.objectDisplay,
+    booleanDisplay = this.constructor.booleanDisplay,
+    symbolDisplay,
+    arrayDisplay,
+    objectDisplay,
     functionDisplay = this.constructor.functionDisplay,
     tileDisplay = this.constructor.tileDisplay,
     background = this.constructor.background,
@@ -2011,7 +2063,8 @@ class Quadrille {
     graphics.background(background);
     const params = {
       graphics, value, textColor, textZoom, outline, outlineWeight, cellLength, textFont, origin, options,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
+      arrayDisplay, objectDisplay, functionDisplay, tileDisplay
     };
     this._display(params);
     graphics.loadPixels();
@@ -2041,6 +2094,8 @@ class Quadrille {
       { check: this.isColor.bind(this), display: params.colorDisplay },
       { check: this.isNumber.bind(this), display: params.numberDisplay },
       { check: this.isString.bind(this), display: params.stringDisplay },
+      { check: this.isBoolean.bind(this), display: params.booleanDisplay },
+      { check: this.isSymbol.bind(this), display: params.symbolDisplay },
       { check: this.isArray.bind(this), display: params.arrayDisplay },
       { check: this.isObject.bind(this), display: params.objectDisplay }
     ];
@@ -2147,6 +2202,35 @@ class Quadrille {
       : value;
     graphics.noStroke();
     graphics.image(img, 0, 0, cellLength, cellLength);
+  }
+
+  /**
+   * Renders a boolean value centered in the cell using `stringDisplay`.
+   * Displays ✅ for `true` and ❎ for `false`.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {boolean} params.value - Boolean value to render.
+   * @param {p5.Font} [params.textFont] - Optional font.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   * @param {*} [params.textColor=this.textColor] - Fill color for text.
+   * @param {number} [params.textZoom=this.textZoom] - Text size scaling factor.
+   */
+  static booleanDisplay({
+    graphics,
+    value,
+    textFont,
+    cellLength = this.cellLength,
+    textColor = this.textColor,
+    textZoom = this.textZoom
+  } = {}) {
+    this.stringDisplay({
+      graphics,
+      value: value ? '✅' : '❎',
+      textFont,
+      cellLength,
+      textColor,
+      textZoom
+    });
   }
 
   /**
