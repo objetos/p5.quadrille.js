@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.2
+ * @version 3.3.3
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.2';
+  static VERSION = '3.3.3';
 
   // Factory
 
@@ -1021,6 +1021,15 @@ class Quadrille {
   }
 
   /**
+   * Checks whether the given value is a BigInt.
+   * @param {*} value
+   * @returns {boolean}
+   */
+  static isBigInt(value) {
+    return typeof value === 'bigint';
+  }
+
+  /**
    * Checks whether the given value is a string.
    * @param {*} value
    * @returns {boolean}
@@ -1129,6 +1138,16 @@ class Quadrille {
    */
   isNumber(row, col) {
     return this.constructor.isNumber(this.read(row, col));
+  }
+
+  /**
+   * Checks whether the cell at (row, col) contains a BigInt.
+   * @param {number} row
+   * @param {number} col
+   * @returns {boolean}
+   */
+  isBigInt(row, col) {
+    return this.constructor.isBigInt(this.read(row, col));
   }
 
   /**
@@ -1626,6 +1645,7 @@ class Quadrille {
    * @param {Function} [params.colorDisplay] - Function to draw color values.
    * @param {Function} [params.stringDisplay] - Function to draw string values.
    * @param {Function} [params.numberDisplay] - Function to draw number values.
+   * @param {Function} [params.bigintDisplay] - Function to draw bigint values.
    * @param {Function} [params.booleanDisplay] - Function to draw boolean values.
    * @param {Function} [params.symbolDisplay] - Function to draw symbol values.
    * @param {Function} [params.arrayDisplay] - Function to draw array values.
@@ -1647,6 +1667,7 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
+    bigintDisplay = this.constructor.bigintDisplay,
     booleanDisplay = this.constructor.booleanDisplay,
     symbolDisplay,
     arrayDisplay,
@@ -1660,7 +1681,7 @@ class Quadrille {
     const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     this._p.drawQuadrille(this, {
       graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay,
-      stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
+      stringDisplay, numberDisplay, bigintDisplay, booleanDisplay, symbolDisplay,
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline,
       textColor, textZoom, textFont, origin, options
     });
@@ -1926,6 +1947,7 @@ class Quadrille {
    * @param {Function} [params.colorDisplay]
    * @param {Function} [params.stringDisplay]
    * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.bigintDisplay]
    * @param {Function} [params.booleanDisplay]
    * @param {Function} [params.symbolDisplay]
    * @param {Function} [params.arrayDisplay]
@@ -1951,6 +1973,7 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
+    bigintDisplay = this.constructor.bigintDisplay,
     booleanDisplay = this.constructor.booleanDisplay,
     symbolDisplay,
     arrayDisplay,
@@ -1961,8 +1984,8 @@ class Quadrille {
     let memory1D = this.toArray();
     const params = {
       background, cellLength, textColor, textZoom, imageDisplay, colorDisplay, outline, textFont, origin, options,
-      outlineWeight, stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
-      arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
+      outlineWeight, stringDisplay, numberDisplay, bigintDisplay, booleanDisplay,
+      symbolDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay,
       renderer: 'p2d' // renderer: this._mode // kills machine in webgl!
     };
     switch (mode) {
@@ -2022,6 +2045,7 @@ class Quadrille {
    * @param {Function} [params.colorDisplay]
    * @param {Function} [params.stringDisplay]
    * @param {Function} [params.numberDisplay]
+   * @param {Function} [params.bigintDisplay]
    * @param {Function} [params.booleanDisplay]
    * @param {Function} [params.symbolDisplay]
    * @param {Function} [params.arrayDisplay]
@@ -2046,6 +2070,7 @@ class Quadrille {
     colorDisplay = this.constructor.colorDisplay,
     stringDisplay = this.constructor.stringDisplay,
     numberDisplay = this.constructor.numberDisplay,
+    bigintDisplay = this.constructor.bigintDisplay,
     booleanDisplay = this.constructor.booleanDisplay,
     symbolDisplay,
     arrayDisplay,
@@ -2063,8 +2088,8 @@ class Quadrille {
     graphics.background(background);
     const params = {
       graphics, value, textColor, textZoom, outline, outlineWeight, cellLength, textFont, origin, options,
-      imageDisplay, colorDisplay, stringDisplay, numberDisplay, booleanDisplay, symbolDisplay,
-      arrayDisplay, objectDisplay, functionDisplay, tileDisplay
+      imageDisplay, colorDisplay, stringDisplay, numberDisplay, bigintDisplay, booleanDisplay,
+      symbolDisplay, arrayDisplay, objectDisplay, functionDisplay, tileDisplay
     };
     this._display(params);
     graphics.loadPixels();
@@ -2093,6 +2118,7 @@ class Quadrille {
       { check: this.isImage.bind(this), display: params.imageDisplay },
       { check: this.isColor.bind(this), display: params.colorDisplay },
       { check: this.isNumber.bind(this), display: params.numberDisplay },
+      { check: this.isBigInt.bind(this), display: params.bigintDisplay },
       { check: this.isString.bind(this), display: params.stringDisplay },
       { check: this.isBoolean.bind(this), display: params.booleanDisplay },
       { check: this.isSymbol.bind(this), display: params.symbolDisplay },
@@ -2123,6 +2149,27 @@ class Quadrille {
     cellLength = this.cellLength
   } = {}) {
     this.colorDisplay({ graphics, value: graphics.color(value), cellLength });
+  }
+
+  /**
+   * Renders a BigInt value using numberDisplay after converting to Number.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {bigint} params.value - BigInt value to render.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   * @param {*} [params.textColor=this.textColor] - Fill color for text.
+   * @param {number} [params.textZoom=this.textZoom] - Text size scaling factor.
+   */
+  static bigintDisplay({
+    graphics,
+    value,
+    cellLength = this.cellLength
+  } = {}) {
+    this.numberDisplay({
+      graphics,
+      value: Number(value),
+      cellLength
+    });
   }
 
   /**
