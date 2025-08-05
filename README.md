@@ -131,17 +131,17 @@ Let `n` be the total number of cells in the quadrille.
 
 # Releases
 
-- **Latest (v3.3.4):**  
+- **Latest (v3.3.5):**  
   These links always point to the latest stable version on npm.
   - [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.js)
   - [p5.quadrille.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js)
   - [npm package](https://www.npmjs.com/package/p5.quadrille)
 
-- **Current tagged version (v3.3.4):**  
+- **Current tagged version (v3.3.5):**  
   Use these if you want to lock to a specific version.
-  - [p5.quadrille@3.3.4.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.3.4/dist/p5.quadrille.js)
-  - [p5.quadrille@3.3.4.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.3.4/dist/p5.quadrille.min.js)
-  - [npm package (v3.3.4)](https://www.npmjs.com/package/p5.quadrille/v/3.3.4)
+  - [p5.quadrille@3.3.5.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.3.5/dist/p5.quadrille.js)
+  - [p5.quadrille@3.3.5.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.3.5/dist/p5.quadrille.min.js)
+  - [npm package (v3.3.5)](https://www.npmjs.com/package/p5.quadrille/v/3.3.5)
 
 - **Legacy (v2.x):**  
   GitHub CDN links compatible with p5 v1.

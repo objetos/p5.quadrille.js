@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.4
+ * @version 3.3.5
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.4';
+  static VERSION = '3.3.5';
 
   // Factory
 
@@ -515,6 +515,26 @@ class Quadrille {
       this._fromImage(args[1]);
       return;
     }
+    // Handle bigint cases early to avoid ambiguity with boolean third argument
+    if (args.length === 3 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'bigint') {
+      const bitLength = args[1].toString(2).length;
+      const rows = Math.ceil(bitLength / args[0]);
+      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[1], args[2]);
+      return;
+    }
+    if (args.length === 4 &&
+      typeof args[0] === 'number' &&
+      typeof args[1] === 'bigint' &&
+      typeof args[3] === 'boolean') {
+      const bitLength = args[1].toString(2).length;
+      const rows = Math.ceil(bitLength / args[0]);
+      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
+      this.fill(args[1], args[2], args[3]);
+      return;
+    }
     if (args.length === 3 && typeof args[0] === 'number' && typeof args[1] !== 'number' && typeof args[2] === 'boolean') {
       this._memory2D = Array(Math.round(args[0] * args[1].height / args[1].width))
         .fill().map(() => Array(args[0]).fill(null));
@@ -533,24 +553,6 @@ class Quadrille {
       typeof args[2] === 'number') {
       this._memory2D = Array(args[1]).fill().map(() => Array(args[0]).fill(null));
       this.rand(args[2], args[3]);
-      return;
-    }
-    // Case: width + bitboard + value [+ littleEndian]
-    if (args.length === 3 &&
-      typeof args[0] === 'number' &&
-      typeof args[1] === 'bigint') {
-      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
-      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
-      this.fill(args[1], args[2]);
-      return;
-    }
-    if (args.length === 4 &&
-      typeof args[0] === 'number' &&
-      typeof args[1] === 'bigint' &&
-      typeof args[3] === 'boolean') {
-      const rows = Number((BigInt(args[1].toString(2).length) + BigInt(args[0]) - 1n) / BigInt(args[0]));
-      this._memory2D = Array(rows).fill().map(() => Array(args[0]).fill(null));
-      this.fill(args[1], args[2], args[3]);
       return;
     }
     // Case: width + height + bitboard + value [+ littleEndian]
