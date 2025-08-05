@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.3
+ * @version 3.3.4
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.3';
+  static VERSION = '3.3.4';
 
   // Factory
 
@@ -1657,30 +1657,30 @@ class Quadrille {
    * @param {number} [params.textZoom] - Scale factor for text rendering.
    */
   toImage(filename, {
-    values,
+    filter,
     textFont,
     origin = 'corner',
     options = {},
-    tileDisplay = this.constructor.tileDisplay,
-    functionDisplay = this.constructor.functionDisplay,
-    imageDisplay = this.constructor.imageDisplay,
-    colorDisplay = this.constructor.colorDisplay,
-    stringDisplay = this.constructor.stringDisplay,
-    numberDisplay = this.constructor.numberDisplay,
-    bigintDisplay = this.constructor.bigintDisplay,
-    booleanDisplay = this.constructor.booleanDisplay,
+    tileDisplay,
+    functionDisplay,
+    imageDisplay,
+    colorDisplay,
+    stringDisplay,
+    numberDisplay,
+    bigintDisplay,
+    booleanDisplay,
     symbolDisplay,
     arrayDisplay,
     objectDisplay,
     cellLength = this._cellLength || this.constructor.cellLength,
-    outlineWeight = this.constructor.outlineWeight,
-    outline = this.constructor.outline,
-    textColor = this.constructor.textColor,
-    textZoom = this.constructor.textZoom
+    outlineWeight,
+    outline,
+    textColor,
+    textZoom
   } = {}) {
     const graphics = this._p.createGraphics(this.width * cellLength, this.height * cellLength, this._mode);
     this._p.drawQuadrille(this, {
-      graphics, values, tileDisplay, functionDisplay, imageDisplay, colorDisplay,
+      graphics, filter, tileDisplay, functionDisplay, imageDisplay, colorDisplay,
       stringDisplay, numberDisplay, bigintDisplay, booleanDisplay, symbolDisplay,
       arrayDisplay, objectDisplay, cellLength, outlineWeight, outline,
       textColor, textZoom, textFont, origin, options
@@ -1960,26 +1960,26 @@ class Quadrille {
     mode = 'LUMA',
     target = this.constructor.outline,
     ascending = true,
-    textColor = this.constructor.textColor,
-    textZoom = this.constructor.textZoom,
-    background = this.constructor.background,
+    textColor,
+    textZoom,
+    background,
     cellLength = this._p.int(this._p.max(this._p.width / this.width, this._p.height / this.height) / 10),
-    outlineWeight = this.constructor.outlineWeight,
-    outline = this.constructor.outline,
+    outlineWeight,
+    outline,
     textFont,
-    origin = 'corner',
-    options = {},
-    imageDisplay = this.constructor.imageDisplay,
-    colorDisplay = this.constructor.colorDisplay,
-    stringDisplay = this.constructor.stringDisplay,
-    numberDisplay = this.constructor.numberDisplay,
-    bigintDisplay = this.constructor.bigintDisplay,
-    booleanDisplay = this.constructor.booleanDisplay,
+    origin,
+    options,
+    imageDisplay,
+    colorDisplay,
+    stringDisplay,
+    numberDisplay,
+    bigintDisplay,
+    booleanDisplay,
     symbolDisplay,
     arrayDisplay,
     objectDisplay,
-    functionDisplay = this.constructor.functionDisplay,
-    tileDisplay = this.constructor.tileDisplay
+    functionDisplay,
+    tileDisplay
   } = {}) {
     let memory1D = this.toArray();
     const params = {
