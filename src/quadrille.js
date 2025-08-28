@@ -1820,12 +1820,12 @@ class Quadrille {
    *                        - if width < 0, this is the right edge
    * @param {number} width  Positive = crop right, negative = crop left (non-zero).
    * @param {number} height Positive = crop down,  negative = crop up   (non-zero).
-   * @returns {Quadrille}
+   * @returns {Quadrille|undefined} A new cropped Quadrille, or `undefined` if skipped.
    */
   crop(row, col, width, height) {
     if (!Number.isFinite(width) || !Number.isFinite(height) || width === 0 || height === 0) {
       console.warn('Quadrille.crop skipped: width/height must be finite and non-zero');
-      return this;
+      return;
     }
     const w = Math.abs(width);
     const h = Math.abs(height);
