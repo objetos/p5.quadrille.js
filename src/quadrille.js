@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.5
+ * @version 3.3.6
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.5';
+  static VERSION = '3.3.6';
 
   // Factory
 
@@ -1566,6 +1566,33 @@ class Quadrille {
       }
     }
     return this;
+  }
+
+  // Rotate all cells in row-major order by n steps.
+  // n > 0  => shift left n cells
+  // n < 0  => shift right |n| cells
+  shift(n = 1) {
+    const w = this.width, h = this.height
+    const total = w * h
+    if (!total) return this
+    // normalize n to [0, total)
+    let k = Math.trunc(n) % total
+    k = k < 0 ? k + total : k
+    if (k === 0) return this
+    // flatten -> rotate -> write back (O(total))
+    const flat = new Array(total)
+    let i = 0
+    for (let r = 0; r < h; r++) {
+      const row = this._memory2D[r]
+      for (let c = 0; c < w; c++) flat[i++] = row[c]
+    }
+    const rotated = flat.slice(k).concat(flat.slice(0, k))
+    i = 0
+    for (let r = 0; r < h; r++) {
+      const row = this._memory2D[r]
+      for (let c = 0; c < w; c++) row[c] = rotated[i++]
+    }
+    return this
   }
 
   // TRANSFORMS
