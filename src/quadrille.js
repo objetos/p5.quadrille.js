@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.3.6
+ * @version 3.4.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.3.6';
+  static VERSION = '3.4.0';
 
   // Factory
 
@@ -1807,6 +1807,37 @@ class Quadrille {
     if (this.isValid(row, 0)) {
       return new Quadrille(this._p, this._memory2D[row]);
     }
+  }
+
+  /**
+   * Returns a new Quadrille cropped to the given rectangle.
+   * Negative width/height extend left/up; the result is always upright (not flipped).
+   * @param {number} row    Anchor row index:
+   *                        - if height > 0, this is the top edge
+   *                        - if height < 0, this is the bottom edge
+   * @param {number} col    Anchor column index:
+   *                        - if width > 0, this is the left edge
+   *                        - if width < 0, this is the right edge
+   * @param {number} width  Positive = crop right, negative = crop left (non-zero).
+   * @param {number} height Positive = crop down,  negative = crop up   (non-zero).
+   * @returns {Quadrille}
+   */
+  crop(row, col, width, height) {
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width === 0 || height === 0) {
+      console.warn('Quadrille.crop skipped: width/height must be finite and non-zero');
+      return this;
+    }
+    const w = Math.abs(width);
+    const h = Math.abs(height);
+    const startRow = height > 0 ? row : row - (h - 1);
+    const startCol = width > 0 ? col : col - (w - 1);
+    const array1D = [];
+    for (let i = 0; i < h; i++) {
+      for (let j = 0; j < w; j++) {
+        array1D.push(this.read(startRow + i, startCol + j));
+      }
+    }
+    return new Quadrille(this._p, w, array1D);
   }
 
   // VISUAL ALGORITHMS
