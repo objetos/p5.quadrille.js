@@ -1568,31 +1568,61 @@ class Quadrille {
     return this;
   }
 
-  // Rotate all cells in row-major order by n steps.
-  // n > 0  => shift left n cells
-  // n < 0  => shift right |n| cells
-  shift(n = 1) {
-    const w = this.width, h = this.height
-    const total = w * h
-    if (!total) return this
-    // normalize n to [0, total)
-    let k = Math.trunc(n) % total
-    k = k < 0 ? k + total : k
-    if (k === 0) return this
-    // flatten -> rotate -> write back (O(total))
-    const flat = new Array(total)
-    let i = 0
-    for (let r = 0; r < h; r++) {
-      const row = this._memory2D[r]
-      for (let c = 0; c < w; c++) flat[i++] = row[c]
+  /**
+   * Shifts all cells in row-major order.
+   * Direction:
+   *  - n > 0: shift LEFT by n cells
+   *  - n < 0: shift RIGHT by |n| cells
+   * When wrap === true (default), this is a circular rotation.
+   * When wrap === false, cells shifted out are discarded and vacated
+   * positions are filled with null (logical shift).
+   * @param {number} n    Number of cells to shift (positive = left, negative = right).
+   * @param {boolean} [wrap=true] Whether to wrap around or not (logical shift).
+   * @returns {Quadrille} this (chainable).
+   */
+  shift(n = 1, wrap = true) {
+    const w = this.width, h = this.height;
+    const total = w * h;
+    if (!total) return this;
+    let k = Math.trunc(n) || 0;
+    if (k === 0) return this;
+    // Normalize/clamp shift amount
+    if (wrap) {
+      k = ((k % total) + total) % total;  // [0, total)
+      if (k === 0) return this;
+    } else {
+      if (k > total) k = total;
+      if (k < -total) k = -total;
     }
-    const rotated = flat.slice(k).concat(flat.slice(0, k))
-    i = 0
+    // Flatten
+    const flat = new Array(total);
+    let i = 0;
     for (let r = 0; r < h; r++) {
-      const row = this._memory2D[r]
-      for (let c = 0; c < w; c++) row[c] = rotated[i++]
+      const row = this._memory2D[r];
+      for (let c = 0; c < w; c++) flat[i++] = row[c];
     }
-    return this
+    // Transform
+    let out;
+    if (wrap) {
+      // circular left-rotation by k
+      out = flat.slice(k).concat(flat.slice(0, k));
+    } else {
+      // logical shift with null fill
+      if (k > 0) {
+        // left by k: drop first k, fill right with nulls
+        out = flat.slice(k).concat(Array(k).fill(null));
+      } else {
+        const m = -k; // right by m: fill left with nulls, drop last m
+        out = Array(m).fill(null).concat(flat.slice(0, total - m));
+      }
+    }
+    // Write back
+    i = 0;
+    for (let r = 0; r < h; r++) {
+      const row = this._memory2D[r];
+      for (let c = 0; c < w; c++) row[c] = out[i++];
+    }
+    return this;
   }
 
   // TRANSFORMS
