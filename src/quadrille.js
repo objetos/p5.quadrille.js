@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.0
+ * @version 3.4.1
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.0';
+  static VERSION = '3.4.1';
 
   // Factory
 
@@ -1782,20 +1782,23 @@ class Quadrille {
   }
 
   /**
-   * Creates a new quadrille from a square ring of neighbors centered at (row, col).
-   * @param {number} row - Center row index.
-   * @param {number} col - Center column index.
-   * @param {number} [dimension=1] - Radius of the ring (half the side length minus one).
-   * @returns {Quadrille} A new Quadrille containing the neighbor cells.
+   * Creates a new square quadrille centered at (row, col) with side = 2*dimension+1.
+   * @param {number} row
+   * @param {number} col
+   * @param {number} [dimension=1] Radius of the square (>= 0).
+   * @param {boolean} [wrap=true] When true, indices wrap around grid bounds.
+   * @returns {Quadrille|undefined}
    */
-  ring(row, col, dimension = 1) {
-    const array1D = [];
-    for (let i = -dimension; i <= dimension; i++) {
-      for (let j = -dimension; j <= dimension; j++) {
-        array1D.push(this.read(row + i, col + j));
-      }
+  ring(row, col, ...args) {
+    const [a, b] = args;
+    const dimension = (typeof b === 'number') ? b : (typeof a === 'number' ? a : 1);
+    const wrap = (typeof b === 'boolean') ? b : (typeof a === 'boolean' ? a : true);
+    if (!Number.isFinite(dimension) || dimension < 0) {
+      console.warn('Quadrille.ring skipped: dimension must be finite and >= 0');
+      return;
     }
-    return new Quadrille(this._p, 2 * dimension + 1, array1D);
+    const size = 2 * dimension + 1;
+    return this.crop(row - dimension, col - dimension, size, size, wrap);
   }
 
   /**
@@ -1820,9 +1823,10 @@ class Quadrille {
    *                        - if width < 0, this is the right edge
    * @param {number} width  Positive = crop right, negative = crop left (non-zero).
    * @param {number} height Positive = crop down,  negative = crop up   (non-zero).
+   * @param {boolean} [wrap=true] When true, indices wrap around grid bounds.
    * @returns {Quadrille|undefined} A new cropped Quadrille, or `undefined` if skipped.
    */
-  crop(row, col, width, height) {
+  crop(row, col, width, height, wrap = true) {
     if (!Number.isFinite(width) || !Number.isFinite(height) || width === 0 || height === 0) {
       console.warn('Quadrille.crop skipped: width/height must be finite and non-zero');
       return;
@@ -1832,9 +1836,18 @@ class Quadrille {
     const startRow = height > 0 ? row : row - (h - 1);
     const startCol = width > 0 ? col : col - (w - 1);
     const array1D = [];
+    const _h = this.height;
+    const _w = this.width;
+    const mod = (n, m) => ((n % m) + m) % m;
     for (let i = 0; i < h; i++) {
       for (let j = 0; j < w; j++) {
-        array1D.push(this.read(startRow + i, startCol + j));
+        if (wrap) {
+          const rr = mod(startRow + i, _h);
+          const cc = mod(startCol + j, _w);
+          array1D.push(this.read(rr, cc));
+        } else {
+          array1D.push(this.read(startRow + i, startCol + j));
+        }
       }
     }
     return new Quadrille(this._p, w, array1D);
