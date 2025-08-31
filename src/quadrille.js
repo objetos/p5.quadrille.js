@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.1
+ * @version 3.4.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.1';
+  static VERSION = '3.4.2';
 
   // Factory
 
@@ -1872,10 +1872,9 @@ class Quadrille {
         const source = this.clone();
         this.visit(
           ({ row, col }) => this._conv(mask, row, col, half_size, source),
-          {
-            row: r => r >= half_size && r < this.height - half_size,
-            col: c => c >= half_size && c < this.width - half_size
-          }
+          ({ row, col }) =>
+            row >= half_size && row < this.height - half_size &&
+            col >= half_size && col < this.width - half_size
         );
       }
       else if (row >= half_size && row < this.height - half_size && col >= half_size && col < this.width - half_size) {
