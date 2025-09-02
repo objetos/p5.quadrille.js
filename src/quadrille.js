@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.4
+ * @version 3.4.5
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.4';
+  static VERSION = '3.4.5';
 
   // Factory
 
@@ -1565,6 +1565,64 @@ class Quadrille {
         this._memory2D[args[2]][args[3]] = temp;
       }
     }
+    return this;
+  }
+
+  /**
+   * Slides all non-null cells by (dx, dy) across the grid.
+   * wrap=false (default) clips at edges; wrap=true toroidally wraps.
+   * - dx > 0: right;  dx < 0: left
+   * - dy > 0: down;   dy < 0: up
+   * Collisions resolve as last-writer-wins in row-major order.
+   * @param {number} [dx=0]
+   * @param {number} [dy=0]
+   * @param {boolean} [wrap=false]
+   * @returns {Quadrille} this
+   */
+  slide(dx = 0, dy = 0, wrap = false) {
+    const w = this.width;
+    const h = this.height;
+    const total = w * h;
+    if (!total) return this;
+
+    // Coerce to integers safely (avoid 32-bit |0 overflow on large shifts).
+    let kx = Number.isFinite(dx) ? Math.trunc(dx) : 0;
+    let ky = Number.isFinite(dy) ? Math.trunc(dy) : 0;
+
+    // When wrapping, normalize to canonical ranges to avoid huge loops.
+    if (wrap) {
+      kx = ((kx % w) + w) % w;
+      ky = ((ky % h) + h) % h;
+    }
+
+    const src = this.toArray();                 // row-major snapshot
+    const out = new Array(total).fill(null);
+
+    if (wrap) {
+      // Toroidal move: always deposit within bounds.
+      for (let i = 0; i < total; i++) {
+        const v = src[i];
+        if (v == null) continue;
+        const { row, col } = this._fromIndex(i, w);
+        const r2 = (row + ky) % h;
+        const c2 = (col + kx) % w;
+        out[this._toIndex(r2, c2, w)] = v;
+      }
+    } else {
+      // Clipping move: only deposit if the target lies inside the grid.
+      for (let i = 0; i < total; i++) {
+        const v = src[i];
+        if (v == null) continue;
+        const { row, col } = this._fromIndex(i, w);
+        const r2 = row + ky;
+        const c2 = col + kx;
+        if (r2 >= 0 && r2 < h && c2 >= 0 && c2 < w) {
+          out[this._toIndex(r2, c2, w)] = v;
+        }
+      }
+    }
+
+    this._init1D(out, w);
     return this;
   }
 
