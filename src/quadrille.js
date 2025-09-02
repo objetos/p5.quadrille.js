@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.3
+ * @version 3.4.4
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.3';
+  static VERSION = '3.4.4';
 
   // Factory
 
@@ -282,23 +282,23 @@ class Quadrille {
   }
 
   /**
-   * Returns the bit index for a cell in row-major order.
-   * Optionally supports little-endian (default: false) layout.
-   * If the cell is out of bounds, logs a warning with suggestions.
-   * @param {number} row - Row index of the cell.
-   * @param {number} col - Column index of the cell.
-   * @param {number} [width=8] - Number of columns in the quadrille.
-   * @param {number} [height=8] - Number of rows in the quadrille.
-   * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
-   * @returns {bigint|undefined} The bit index, or undefined if out of bounds.
+   * Returns the bit index (row-major).
+   * Default is big-endian (MSB = top-left). Set `littleEndian = true` for LSB = top-left.
+   * If the cell is out of bounds, logs a warning and returns `undefined`.
+   * @param {number} row
+   * @param {number} col
+   * @param {number} [width=8]
+   * @param {number} [height=8]
+   * @param {boolean} [littleEndian=false]
+   * @returns {number|undefined} The bit index, or undefined if out of bounds.
    */
   static bitIndex(row, col, width = 8, height = 8, littleEndian = false) {
     if (row < 0 || row >= height || col < 0 || col >= width) {
       const suggestions = [];
-      (row < 0) && suggestions.push(`height ≥ ${height - row}`);
-      (row >= height) && suggestions.push(`height ≥ ${row + 1}`);
-      (col < 0) && suggestions.push(`width ≥ ${width - col}`);
-      (col >= width) && suggestions.push(`width ≥ ${col + 1}`);
+      row < 0 && suggestions.push(`height ≥ ${height - row}`);
+      row >= height && suggestions.push(`height ≥ ${row + 1}`);
+      col < 0 && suggestions.push(`width ≥ ${width - col}`);
+      col >= width && suggestions.push(`width ≥ ${col + 1}`);
       console.warn(
         `Ignored out-of-bounds cell (${row}, ${col}) for quadrille size ${width}×${height}.` +
         (suggestions.length ? ` Suggested: ${suggestions.join(', ')}.` : '')
@@ -306,14 +306,14 @@ class Quadrille {
       return;
     }
     const index = row * width + col;
-    return littleEndian ? BigInt(index) : BigInt(width * height - 1 - index);
+    return littleEndian ? index : (width * height - 1 - index);
   }
 
   /**
    * Returns the cell position corresponding to a bit index.
    * Optionally supports little-endian (default: false) layout.
    * If the bit index is out of bounds, logs a warning.
-   * @param {bigint|number} bitIndex - Bit index to convert.
+   * @param {number|bigint} bitIndex - Bit index to convert.
    * @param {number} [width=8] - Number of columns in the quadrille.
    * @param {number} [height=8] - Number of rows in the quadrille.
    * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
@@ -689,7 +689,7 @@ class Quadrille {
    * @param {number} row - Row index of the cell.
    * @param {number} col - Column index of the cell.
    * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
-   * @returns {bigint|undefined} The bit index, or undefined if out of bounds.
+   * @returns {number|undefined} The bit index, or undefined if out of bounds.
    */
   bitIndex(row, col, littleEndian = false) {
     return this.constructor.bitIndex(row, col, this.width, this.height, littleEndian);
@@ -698,7 +698,7 @@ class Quadrille {
   /**
    * Returns the cell position for a given bit index using the instance’s dimensions.
    * Delegates to the static version.
-   * @param {bigint|number} bitIndex - Bit index to convert.
+   * @param {number|bigint} bitIndex - Bit index to convert.
    * @param {boolean} [littleEndian=false] - Whether to use little-endian ordering.
    * @returns {{row: number, col: number}|undefined} The cell position, or undefined if out of bounds.
    */
@@ -1263,7 +1263,7 @@ class Quadrille {
       else {
         for (const { row, col } of this.cells(({ value }) => this.constructor.isFilled(value))) {
           const bit = this.bitIndex(row, col, littleEndian);
-          bitboard & 1n << bit && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
+          bitboard & 1n << BigInt(bit) && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
         }
         const totalBits = bitboard.toString(2).length;
         const maxBits = this.width * this.height;
@@ -1367,7 +1367,7 @@ class Quadrille {
       } else {
         for (const { row, col } of this.cells(({ value }) => this.constructor.isEmpty(value))) {
           const bit = this.bitIndex(row, col, littleEndian);
-          if (bitboard & (1n << bit)) {
+          if (bitboard & (1n << BigInt(bit))) {
             this._memory2D[row][col] = this._parseFn(value, row, col);
           }
         }
@@ -1575,7 +1575,7 @@ class Quadrille {
    *  - n < 0: shift RIGHT by |n| cells
    * wrap === true (default): circular shift.
    * wrap === false: logical shift; vacated positions become null.
-   * @param {number} n  Number of cells to shift (positive = left, negative = right).
+   * @param {number|bigint} n  Number of cells to shift (positive = left, negative = right).
    * @param {boolean} [wrap=true]  Whether to wrap around or slide with null fill.
    * @returns {Quadrille} this (chainable).
    */
@@ -1583,7 +1583,7 @@ class Quadrille {
     const w = this.width;
     const total = w * this.height;
     if (!total) return this;
-    let k = Math.trunc(n) || 0;
+    let k = this.constructor.isBigInt(n) ? Number(n) : Math.trunc(n) || 0;
     // single-wrap normalization/clamp
     k = wrap
       ? ((k % total) + total) % total
