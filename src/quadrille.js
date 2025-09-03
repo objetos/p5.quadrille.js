@@ -1569,59 +1569,52 @@ class Quadrille {
   }
 
   /**
-   * Slides all non-null cells by (dx, dy) across the grid.
-   * wrap=false (default) clips at edges; wrap=true toroidally wraps.
+   * Slides all filled cells by (dx, dy) across the grid.
+   * wrap=true (default) toroidally wraps; wrap=false clips at edges.
    * - dx > 0: right;  dx < 0: left
    * - dy > 0: down;   dy < 0: up
    * Collisions resolve as last-writer-wins in row-major order.
-   * @param {number} [dx=0]
-   * @param {number} [dy=0]
-   * @param {boolean} [wrap=false]
+   * @param {number} [dx]
+   * @param {number} [dy]
+   * @param {boolean} [wrap=true]
    * @returns {Quadrille} this
    */
-  slide(dx = 0, dy = 0, wrap = false) {
+  slide(dx, dy, wrap = true) {
+    if (this.order === 0) return this;
     const w = this.width;
     const h = this.height;
-    const total = w * h;
-    if (!total) return this;
-
-    // Coerce to integers safely (avoid 32-bit |0 overflow on large shifts).
     let kx = Number.isFinite(dx) ? Math.trunc(dx) : 0;
     let ky = Number.isFinite(dy) ? Math.trunc(dy) : 0;
-
-    // When wrapping, normalize to canonical ranges to avoid huge loops.
     if (wrap) {
       kx = ((kx % w) + w) % w;
       ky = ((ky % h) + h) % h;
+      if (kx === 0 && ky === 0) return this;
     }
-
-    const src = this.toArray();                 // row-major snapshot
-    const out = new Array(total).fill(null);
-
+    const src = this.toArray();
+    const out = new Array(w * h).fill(null);
     if (wrap) {
-      // Toroidal move: always deposit within bounds.
-      for (let i = 0; i < total; i++) {
+      for (let i = 0; i < src.length; i++) {
         const v = src[i];
-        if (v == null) continue;
-        const { row, col } = this._fromIndex(i, w);
-        const r2 = (row + ky) % h;
-        const c2 = (col + kx) % w;
-        out[this._toIndex(r2, c2, w)] = v;
-      }
-    } else {
-      // Clipping move: only deposit if the target lies inside the grid.
-      for (let i = 0; i < total; i++) {
-        const v = src[i];
-        if (v == null) continue;
-        const { row, col } = this._fromIndex(i, w);
-        const r2 = row + ky;
-        const c2 = col + kx;
-        if (r2 >= 0 && r2 < h && c2 >= 0 && c2 < w) {
+        if (this.constructor.isFilled(v)) {
+          const { row, col } = this._fromIndex(i, w);
+          const r2 = (row + ky) % h;
+          const c2 = (col + kx) % w;
           out[this._toIndex(r2, c2, w)] = v;
         }
       }
+    } else {
+      for (let i = 0; i < src.length; i++) {
+        const v = src[i];
+        if (this.constructor.isFilled(v)) {
+          const { row, col } = this._fromIndex(i, w);
+          const r2 = row + ky;
+          const c2 = col + kx;
+          if (r2 >= 0 && r2 < h && c2 >= 0 && c2 < w) {
+            out[this._toIndex(r2, c2, w)] = v;
+          }
+        }
+      }
     }
-
     this._init1D(out, w);
     return this;
   }
@@ -1631,30 +1624,30 @@ class Quadrille {
    * Direction:
    *  - n > 0: shift LEFT by n cells
    *  - n < 0: shift RIGHT by |n| cells
-   * wrap === true (default): circular shift.
-   * wrap === false: logical shift; vacated positions become null.
-   * @param {number|bigint} n  Number of cells to shift (positive = left, negative = right).
-   * @param {boolean} [wrap=true]  Whether to wrap around or slide with null fill.
-   * @returns {Quadrille} this (chainable).
+   * wrap=true (default): circular shift; wrap=false: logical slide with null fill.
+   * @param {number|bigint} n
+   * @param {boolean} [wrap=true]
+   * @returns {Quadrille} this
    */
   shift(n = 1, wrap = true) {
     const w = this.width;
-    const total = w * this.height;
-    if (!total) return this;
+    const total = this.size;
     let k = this.constructor.isBigInt(n) ? Number(n) : Math.trunc(n) || 0;
-    // single-wrap normalization/clamp
-    k = wrap
-      ? ((k % total) + total) % total
-      : (k > total ? total : (k < -total ? -total : k));
     if (k === 0) return this;
-    const a = this.toArray();
     if (wrap) {
-      // circular left-shift by k
-      const out = a.slice(k).concat(a.slice(0, k));
+      // normalize into [0, total)
+      k = ((k % total) + total) % total;
+      if (k === 0) return this;
+      const a = this.toArray();
+      const out = a.slice(k).concat(a.slice(0, k)); // circular left-shift by k
       this._init1D(out, w);
       return this;
     }
-    // logical shift (in-place) with null fill
+    // logical slide (clip), clamp to [-total, total]
+    if (k > total) k = total;
+    else if (k < -total) k = -total;
+    if (k === 0) return this;
+    const a = this.toArray();
     if (k > 0) {
       a.copyWithin(0, k);
       a.fill(null, total - k);
