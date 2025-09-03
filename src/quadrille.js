@@ -1569,27 +1569,26 @@ class Quadrille {
   }
 
   /**
-   * Slides all filled cells by (dx, dy) across the grid.
-   * wrap=true (default) toroidally wraps; wrap=false clips at edges.
-   * - dx > 0: right;  dx < 0: left
-   * - dy > 0: down;   dy < 0: up
-   * Collisions resolve as last-writer-wins in row-major order.
-   * @param {number} [dx]
-   * @param {number} [dy]
+   * Slides all filled cells by (dRow, dCol) across the grid.
+   *  - dRow > 0: down;   dRow < 0: up
+   *  - dCol > 0: right;  dCol < 0: left
+   * wrap=true (default): toroidal wrap; wrap=false: clip at edges.
+   * @param {number} dRow
+   * @param {number} dCol
    * @param {boolean} [wrap=true]
    * @returns {Quadrille} this
    */
-  slide(dx, dy, wrap = true) {
+  slide(dRow, dCol, wrap = true) {
     if (this.order === 0) return this;
     const w = this.width;
     const h = this.height;
-    let kx = Number.isFinite(dx) ? Math.trunc(dx) : 0;
-    let ky = Number.isFinite(dy) ? Math.trunc(dy) : 0;
+    let ky = Number.isFinite(dRow) ? Math.trunc(dRow) : 0;
+    let kx = Number.isFinite(dCol) ? Math.trunc(dCol) : 0;
     if (wrap) {
-      kx = ((kx % w) + w) % w;
       ky = ((ky % h) + h) % h;
-      if (kx === 0 && ky === 0) return this;
+      kx = ((kx % w) + w) % w;
     }
+    if (kx === 0 && ky === 0) return this;
     const src = this.toArray();
     const out = new Array(w * h).fill(null);
     if (wrap) {
@@ -1629,7 +1628,11 @@ class Quadrille {
    * @param {boolean} [wrap=true]
    * @returns {Quadrille} this
    */
-  shift(n = 1, wrap = true) {
+  shift(...args) {
+    if (this.order === 0) return this;
+    const [_a, _b] = args;
+    const wrap = (typeof _a === 'boolean') ? _a : (typeof _b === 'boolean' ? _b : true);
+    let n = (typeof _a === 'boolean') ? (_b == null ? 1 : _b) : (_a == null ? 1 : _a);
     const w = this.width;
     const total = this.size;
     let k = this.constructor.isBigInt(n) ? Number(n) : Math.trunc(n) || 0;
