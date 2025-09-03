@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.5
+ * @version 3.4.6
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.5';
+  static VERSION = '3.4.6';
 
   // Factory
 
@@ -1569,7 +1569,7 @@ class Quadrille {
   }
 
   /**
-   * Slides all filled cells by (dRow, dCol) across the grid.
+   * Shifts all filled cells by (dRow, dCol) across the grid.
    *  - dRow > 0: down;   dRow < 0: up
    *  - dCol > 0: right;  dCol < 0: left
    * wrap=true (default): toroidal wrap; wrap=false: clip at edges.
@@ -1578,7 +1578,7 @@ class Quadrille {
    * @param {boolean} [wrap=true]
    * @returns {Quadrille} this
    */
-  slide(dRow, dCol, wrap = true) {
+  shift(dRow, dCol, wrap = true) {
     if (this.order === 0) return this;
     const w = this.width;
     const h = this.height;
@@ -1615,51 +1615,6 @@ class Quadrille {
       }
     }
     this._init1D(out, w);
-    return this;
-  }
-
-  /**
-   * Shifts all cells in row-major order.
-   * Direction:
-   *  - n > 0: shift LEFT by n cells
-   *  - n < 0: shift RIGHT by |n| cells
-   * wrap=true (default): circular shift; wrap=false: logical slide with null fill.
-   * @param {number|bigint} n
-   * @param {boolean} [wrap=true]
-   * @returns {Quadrille} this
-   */
-  shift(...args) {
-    if (this.order === 0) return this;
-    const [_a, _b] = args;
-    const wrap = (typeof _a === 'boolean') ? _a : (typeof _b === 'boolean' ? _b : true);
-    let n = (typeof _a === 'boolean') ? (_b == null ? 1 : _b) : (_a == null ? 1 : _a);
-    const w = this.width;
-    const total = this.size;
-    let k = this.constructor.isBigInt(n) ? Number(n) : Math.trunc(n) || 0;
-    if (k === 0) return this;
-    if (wrap) {
-      // normalize into [0, total)
-      k = ((k % total) + total) % total;
-      if (k === 0) return this;
-      const a = this.toArray();
-      const out = a.slice(k).concat(a.slice(0, k)); // circular left-shift by k
-      this._init1D(out, w);
-      return this;
-    }
-    // logical slide (clip), clamp to [-total, total]
-    if (k > total) k = total;
-    else if (k < -total) k = -total;
-    if (k === 0) return this;
-    const a = this.toArray();
-    if (k > 0) {
-      a.copyWithin(0, k);
-      a.fill(null, total - k);
-    } else {
-      const m = -k;
-      a.copyWithin(m, 0, total - m);
-      a.fill(null, 0, m);
-    }
-    this._init1D(a, w);
     return this;
   }
 
