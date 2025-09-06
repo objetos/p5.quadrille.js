@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.6
+ * @version 3.4.7
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.6';
+  static VERSION = '3.4.7';
 
   // Factory
 
@@ -406,18 +406,6 @@ class Quadrille {
   }
 
   /**
-   * Logical NOT of a quadrille: empties filled cells and fills empty cells with a target value.
-   * @param {Quadrille} q Input quadrille
-   * @param {*} target Value to fill where the quadrille is empty
-   * @returns {Quadrille} A new quadrille with inverted filled/empty status
-   */
-  static not(q, target) {
-    const result = new Quadrille(q._p, q.width, q.height);
-    q.visit(({ row, col, value }) => this.isFilled(value) ? result.clear(row, col) : result.fill(row, col, target));
-    return result;
-  }
-
-  /**
    * Merges two quadrilles by applying a binary operator to their overlapping cells. 
    * @param {Quadrille} q1 - First quadrille.
    * @param {Quadrille} q2 - Second quadrille.
@@ -444,6 +432,35 @@ class Quadrille {
       quadrille.fill(i, j, operator(value1, value2));
     });
     return quadrille;
+  }
+
+  /**
+   * Logical NOT of a quadrille (non-destructive).
+   * Returns a new quadrille where filled/empty status is inverted.
+   * @param {Quadrille} q Input quadrille
+   * @param {*} target Value to fill where the quadrille is empty
+   * @returns {Quadrille} A new quadrille with inverted filled/empty status
+   */
+  static not(q, target) {
+    return q.clone().not(target);
+  }
+
+  /**
+   * Returns a shifted copy of the given Quadrille.
+   * Shifts all filled cells of `q` by (dRow, dCol) across the grid. 
+   * - dRow > 0: shift down;   dRow < 0: shift up
+   * - dCol > 0: shift right;  dCol < 0: shift left
+   * - wrap = true (default): toroidal wrap-around
+   * - wrap = false: clip at edges (cells falling outside are discarded)
+   * This function is **non-destructive**: the input Quadrille remains unchanged.
+   * @param {Quadrille} q - The Quadrille to shift.
+   * @param {number} dRow - Vertical shift amount.
+   * @param {number} dCol - Horizontal shift amount.
+   * @param {boolean} [wrap=true] - Whether to wrap around the edges.
+   * @returns {Quadrille} A new shifted Quadrille.
+   */
+  static shift(q, dRow, dCol, wrap = true) {
+    return q.clone().shift(dRow, dCol, wrap);
   }
 
   /**
@@ -1615,6 +1632,22 @@ class Quadrille {
       }
     }
     this._init1D(out, w);
+    return this;
+  }
+
+  /**
+   * Inverts filled/empty status in-place.
+   * - Filled cells become empty (cleared).
+   * - Empty cells get filled with `target`.
+   * @param {*} target Value to place into previously-empty cells
+   * @returns {Quadrille} this
+   */
+  not(target) {
+    this.visit(({ row, col, value }) =>
+      this.constructor.isFilled(value)
+        ? this.clear(row, col)
+        : this.fill(row, col, target)
+    );
     return this;
   }
 
