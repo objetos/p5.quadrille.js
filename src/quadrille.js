@@ -344,11 +344,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing only cells filled in both q1 and q2
    */
   static and(q1, q2, row, col) {
-    return this.merge(q1, q2, (a, b) => {
-      if (this.isFilled(a) && this.isFilled(b)) {
-        return a;
-      }
-    }, row, col);
+    return q1.clone().and(q2, row, col);
   }
 
   /**
@@ -360,14 +356,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing cells filled in either q1 or q2
    */
   static or(q1, q2, row, col) {
-    return this.merge(q1, q2, (a, b) => {
-      if (this.isFilled(a)) {
-        return a;
-      }
-      if (this.isFilled(b)) {
-        return b;
-      }
-    }, row, col);
+    return q1.clone().or(q2, row, col);
   }
 
   /**
@@ -379,14 +368,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing cells filled in one, but not both, of q1 and q2
    */
   static xor(q1, q2, row, col) {
-    return this.merge(q1, q2, (a, b) => {
-      if (this.isFilled(a) && this.isEmpty(b)) {
-        return a;
-      }
-      if (this.isEmpty(a) && this.isFilled(b)) {
-        return b;
-      }
-    }, row, col);
+    return q1.clone().xor(q2, row, col);
   }
 
   /**
@@ -398,11 +380,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille with cells filled in q1 but not in q2
    */
   static diff(q1, q2, row, col) {
-    return this.merge(q1, q2, (a, b) => {
-      if (this.isFilled(a) && this.isEmpty(b)) {
-        return a;
-      }
-    }, row, col);
+    return q1.clone().diff(q2, row, col);
   }
 
   /**
@@ -415,23 +393,7 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2.
    */
   static merge(q1, q2, operator, row, col) {
-    const sameOrigin = q1._row !== undefined && q2._row !== undefined &&
-      q1._cellLength !== undefined && q1._cellLength === q2._cellLength;
-    row ??= sameOrigin ? q2._row - q1._row : 0;
-    col ??= sameOrigin ? q2._col - q1._col : 0;
-    const width = col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col);
-    const height = row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row);
-    const quadrille = new Quadrille(q1._p, width, height);
-    quadrille.visit(({ row: i, col: j }) => {
-      const i1 = row < 0 ? i + row : i;
-      const j1 = col < 0 ? j + col : j;
-      const i2 = row > 0 ? i - row : i;
-      const j2 = col > 0 ? j - col : j;
-      const value1 = q1.read(i1, j1);
-      const value2 = q2.read(i2, j2);
-      quadrille.fill(i, j, operator(value1, value2));
-    });
-    return quadrille;
+    return q1.clone().merge(q2, operator, row, col);
   }
 
   /**
@@ -1701,6 +1663,102 @@ class Quadrille {
         ? this.clear(row, col)
         : this.fill(row, col, target)
     );
+    return this;
+  }
+
+  /**
+   * Logical AND between this quadrille and another.
+   * @param {Quadrille} q Second quadrille
+   * @param {number} row Relative row offset from this
+   * @param {number} col Relative column offset from this
+   * @returns {Quadrille} This quadrille containing only cells filled in both
+   */
+  and(q, row, col) {
+    return this.merge(q, (a, b) => {
+      if (this.constructor.isFilled(a) && this.constructor.isFilled(b)) {
+        return a;
+      }
+    }, row, col);
+  }
+
+  /**
+   * Logical OR between this quadrille and another.
+   * @param {Quadrille} q Second quadrille
+   * @param {number} row Relative row offset from this
+   * @param {number} col Relative column offset from this
+   * @returns {Quadrille} This quadrille containing cells filled in either
+   */
+  or(q, row, col) {
+    return this.merge(q, (a, b) => {
+      if (this.constructor.isFilled(a)) {
+        return a;
+      }
+      if (this.constructor.isFilled(b)) {
+        return b;
+      }
+    }, row, col);
+  }
+
+  /**
+   * Logical XOR between this quadrille and another.
+   * @param {Quadrille} q Second quadrille
+   * @param {number} row Relative row offset from this
+   * @param {number} col Relative column offset from this
+   * @returns {Quadrille} This quadrille containing cells filled in one, but not both
+   */
+  xor(q, row, col) {
+    return this.merge(q, (a, b) => {
+      if (this.constructor.isFilled(a) && this.constructor.isEmpty(b)) {
+        return a;
+      }
+      if (this.constructor.isEmpty(a) && this.constructor.isFilled(b)) {
+        return b;
+      }
+    }, row, col);
+  }
+
+  /**
+   * Logical difference (this minus q) between two quadrilles.
+   * @param {Quadrille} q Second quadrille
+   * @param {number} row Relative row offset from this
+   * @param {number} col Relative column offset from this
+   * @returns {Quadrille} This quadrille with cells filled in this but not in q
+   */
+  diff(q, row, col) {
+    return this.merge(q, (a, b) => {
+      if (this.constructor.isFilled(a) && this.constructor.isEmpty(b)) {
+        return a;
+      }
+    }, row, col);
+  }
+
+  /**
+   * Merges another quadrille into this one by applying a binary operator to overlapping cells.
+   * @param {Quadrille} q - Quadrille to merge into this one.
+   * @param {(a: *, b: *) => *} operator - Function receiving two cell values and returning the merged result.
+   * @param {number} [row] - Optional relative row offset from this to q.
+   * @param {number} [col] - Optional relative column offset from this to q.
+   * @returns {Quadrille} This quadrille after the merge.
+   */
+  merge(q, operator, row, col) {
+    const sameOrigin = this._row !== undefined && q._row !== undefined &&
+      this._cellLength !== undefined && this._cellLength === q._cellLength;
+    row ??= sameOrigin ? q._row - this._row : 0;
+    col ??= sameOrigin ? q._col - this._col : 0;
+    const width = col < 0 ? Math.max(q.width, this.width - col) : Math.max(this.width, q.width + col);
+    const height = row < 0 ? Math.max(q.height, this.height - row) : Math.max(this.height, q.height + row);
+    const result = new Quadrille(this._p, width, height);
+    result.visit(({ row: i, col: j }) => {
+      const i1 = row < 0 ? i + row : i;
+      const j1 = col < 0 ? j + col : j;
+      const i2 = row > 0 ? i - row : i;
+      const j2 = col > 0 ? j - col : j;
+      const value1 = this.read(i1, j1);
+      const value2 = q.read(i2, j2);
+      result.fill(i, j, operator(value1, value2));
+    });
+    // Mutate this quadrille to become the merged result.
+    this._memory2D = result._memory2D;
     return this;
   }
 
