@@ -1753,11 +1753,11 @@ class Quadrille {
     let result = 0n;
     const length = this.width * this.height;
     let index = 0;
-    for (const { row, col } of this) {
+    this.visit(({ row, col }) => {
       const bit = littleEndian ? index : length - 1 - index;
       this.constructor.isFilled(this.read(row, col)) && (result |= 1n << BigInt(bit));
       index++;
-    }
+    })
     return result;
   }
 
