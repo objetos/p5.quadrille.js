@@ -1923,13 +1923,27 @@ class Quadrille {
    * @returns {Quadrille} A new Quadrille with the same content.
    */
   clone(cache = true) {
-    const clone = new Quadrille(this._p, this._memory2D.map(array => array.slice()));
+    const H = this.height;
+    const src = this._memory2D;
+    const mem = new Array(H);
+    for (let r = 0; r < H; r++) mem[r] = src[r].slice();
+    const clone = Object.create(Quadrille.prototype);
+    clone._p = this._p;
+    clone._memory2D = mem;
     if (cache) {
       clone._cellLength = this._cellLength;
       clone._x = this._x;
       clone._y = this._y;
       clone._col = this._col;
       clone._row = this._row;
+      clone._origin = this._origin;
+    } else {
+      clone._cellLength = this.constructor.cellLength;
+      clone._x = 0;
+      clone._y = 0;
+      clone._col = undefined;
+      clone._row = undefined;
+      clone._origin = 'corner';
     }
     return clone;
   }
