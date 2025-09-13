@@ -827,7 +827,7 @@ class Quadrille {
    * @returns {Array<Array<*>>}
    */
   get memory2D() {
-    return this.clone(false)._memory2D;
+    return this.clone()._memory2D;
   }
 
   /**
@@ -1540,7 +1540,7 @@ class Quadrille {
    * @returns {Quadrille} The modified quadrille (for chaining).
    */
   randomize() {
-    const clone = this.clone(false);
+    const clone = this.clone();
     this.clear();
     clone.visit(({ value }) => {
       let row, col;
@@ -1919,10 +1919,9 @@ class Quadrille {
 
   /**
    * Returns a shallow copy of this quadrille.
-   * @param {boolean} [cache=true] - Whether to copy positional and layout metadata.
    * @returns {Quadrille} A new Quadrille with the same content.
    */
-  clone(cache = true) {
+  clone() {
     const H = this.height;
     const src = this._memory2D;
     const mem = new Array(H);
@@ -1930,21 +1929,12 @@ class Quadrille {
     const clone = Object.create(Quadrille.prototype);
     clone._p = this._p;
     clone._memory2D = mem;
-    if (cache) {
-      clone._cellLength = this._cellLength;
-      clone._x = this._x;
-      clone._y = this._y;
-      clone._col = this._col;
-      clone._row = this._row;
-      clone._origin = this._origin;
-    } else {
-      clone._cellLength = this.constructor.cellLength;
-      clone._x = 0;
-      clone._y = 0;
-      clone._col = undefined;
-      clone._row = undefined;
-      clone._origin = 'corner';
-    }
+    clone._cellLength = this._cellLength;
+    clone._x = this._x;
+    clone._y = this._y;
+    clone._col = this._col;
+    clone._row = this._row;
+    clone._origin = this._origin;
     return clone;
   }
 
