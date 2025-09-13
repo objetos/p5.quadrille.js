@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.7
+ * @version 3.4.8
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -728,12 +728,13 @@ class Quadrille {
   /**
    * Lazily iterates in row-major order (top to bottom, left to right)
    * over all matching cells in the quadrille.
-   * The optional `filter` can be:
-   * - `null` or omitted → yields all cells
-   * - An `Array` or `Set` of values → yields cells whose value is in the collection
-   * - A `Function({ row, col, value })` → yields cells where the function returns `true`
+   * The optional `filter` determines which cells are yielded:
+   * - `null`, `undefined` → all cells
+   * - `Function({ row, col, value })` → cells where the predicate returns `true`
+   * - `Array` / `Set` of values → cells whose value is contained in the collection
+   * - single value (non-function, non-collection) → cells whose value === filter
    * @generator
-   * @param {Array|Set|Function|null} [filter=null] - Optional filter for selecting cells.
+   * @param {Array|Set|Function|*|null} [filter=null] - Optional filter for selecting cells.
    * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
    */
   *cells(filter = null) {
@@ -746,7 +747,12 @@ class Quadrille {
       for (let col = 0; col < rowData.length; col++) {
         const value = rowData[col];
         const cell = { row, col, value };
-        if (!filter || (isFn && filter(cell)) || (values && values.has(value))) {
+        if (
+          (filter == null) ||
+          (isFn && filter(cell)) ||
+          (values && values.has(value)) ||
+          (!isFn && !values && value === filter)
+        ) {
           yield cell;
         }
       }
@@ -765,13 +771,60 @@ class Quadrille {
   }
 
   /**
-   * Iterates over cells using `for...of`, calling the given function with each cell object.
-   * @param {(cell: { row: number, col: number, value: any }) => void} callback - Function to apply to each cell.
-   * @param {Array|Set|Function|null} [filter] - Optional filter for selecting cells.
+   * Iterates over cells and calls the given function with each matching cell object.
+   * The optional `filter` determines which cells are visited:
+   * - `null`, `undefined` → all cells
+   * - `Function({ row, col, value })` → cells where the predicate returns `true`
+   * - `Array` / `Set` of values → cells whose value is contained in the collection
+   * - single value (non-function, non-collection) → cells whose value === filter
+   * @param {(cell: { row, number, col: number, value: any }) => void} callback
+   * @param {Array|Set|Function|*|null} [filter]
    */
   visit(callback, filter) {
-    for (const cell of this.cells(filter)) {
-      callback(cell);
+    const mem = this._memory2D;
+    const H = this.height;
+    const W = this.width;
+    // Fast path: null / undefined → iterate all cells directly
+    if (filter == null) {
+      for (let row = 0; row < H; row++) {
+        const rowData = mem[row];
+        for (let col = 0; col < W; col++) {
+          callback({ row, col, value: rowData[col] });
+        }
+      }
+      return;
+    }
+    // Fast path: Array / Set membership
+    if ((filter && typeof filter.has === 'function') || Array.isArray(filter)) {
+      const values = Array.isArray(filter) ? new Set(filter) : filter;
+      for (let row = 0; row < H; row++) {
+        const rowData = mem[row];
+        for (let col = 0; col < W; col++) {
+          const v = rowData[col];
+          values.has(v) && callback({ row, col, value: v });
+        }
+      }
+      return;
+    }
+    // Predicate → evaluate inline
+    if (typeof filter === 'function') {
+      for (let row = 0; row < H; row++) {
+        const rowData = mem[row];
+        for (let col = 0; col < W; col++) {
+          const cell = { row, col, value: rowData[col] };
+          filter(cell) && callback(cell);
+        }
+      }
+      return;
+    }
+    // Fast path: single value (strict identity; non-function)
+    const needle = filter;
+    for (let row = 0; row < H; row++) {
+      const rowData = mem[row];
+      for (let col = 0; col < W; col++) {
+        const v = rowData[col];
+        v === needle && callback({ row, col, value: v });
+      }
     }
   }
 
@@ -1262,9 +1315,9 @@ class Quadrille {
       this._memory2D = this._memory2D.map(row => row.map(cell => this._clearCell(cell)));
     }
     if (args.length === 1 && typeof args[0] === 'function') {
-      for (const { row, col, value } of this.cells(args[0])) {
+      this.visit(({ row, col, value }) => {
         this._memory2D[row][col] = this._clearCell(value);
-      }
+      }, args[0]);
     }
     if (args.length === 1 && typeof args[0] === 'number') {
       if (this.isValid(args[0], 0)) {
@@ -1278,10 +1331,10 @@ class Quadrille {
         console.warn('Bitboard cannot be negative');
       }
       else {
-        for (const { row, col } of this.cells(({ value }) => this.constructor.isFilled(value))) {
+        this.visit(({ row, col }) => {
           const bit = this.bitIndex(row, col, littleEndian);
           bitboard & 1n << BigInt(bit) && (this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]));
-        }
+        }, ({ value }) => this.constructor.isFilled(value));
         const totalBits = bitboard.toString(2).length;
         const maxBits = this.width * this.height;
         if (totalBits > maxBits) {
@@ -1349,10 +1402,10 @@ class Quadrille {
     }
     if (args.length === 2 && typeof args[0] === 'function' && this.constructor.isFilled(args[1])) {
       const [predicate, value] = args;
-      for (const { row, col } of this.cells(predicate)) {
+      this.visit(({ row, col }) => {
         this._memory2D[row][col] = this._clearCell(this._memory2D[row][col]);
         this._memory2D[row][col] = this._parseFn(value, row, col);
-      }
+      }, predicate);
     }
     if (args.length === 2 &&
       (this.constructor.isColor(args[0]) || typeof args[0] === 'string') &&
@@ -1382,12 +1435,12 @@ class Quadrille {
       if (bitboard < 0n) {
         console.warn('Bitboard cannot be negative');
       } else {
-        for (const { row, col } of this.cells(({ value }) => this.constructor.isEmpty(value))) {
+        this.visit(({ row, col }) => {
           const bit = this.bitIndex(row, col, littleEndian);
           if (bitboard & (1n << BigInt(bit))) {
             this._memory2D[row][col] = this._parseFn(value, row, col);
           }
-        }
+        }, ({ value }) => this.constructor.isEmpty(value));
       }
       const totalBits = bitboard.toString(2).length;
       const maxBits = this.width * this.height;
