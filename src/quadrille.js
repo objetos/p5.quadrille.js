@@ -344,7 +344,11 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing only cells filled in both q1 and q2
    */
   static and(q1, q2, row, col) {
-    return q1.clone().and(q2, row, col);
+    return this.merge(q1, q2, (a, b) => {
+      if (this.isFilled(a) && this.isFilled(b)) {
+        return a;
+      }
+    }, row, col);
   }
 
   /**
@@ -356,7 +360,14 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing cells filled in either q1 or q2
    */
   static or(q1, q2, row, col) {
-    return q1.clone().or(q2, row, col);
+    return this.merge(q1, q2, (a, b) => {
+      if (this.isFilled(a)) {
+        return a;
+      }
+      if (this.isFilled(b)) {
+        return b;
+      }
+    }, row, col);
   }
 
   /**
@@ -368,7 +379,14 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille containing cells filled in one, but not both, of q1 and q2
    */
   static xor(q1, q2, row, col) {
-    return q1.clone().xor(q2, row, col);
+    return this.merge(q1, q2, (a, b) => {
+      if (this.isFilled(a) && this.isEmpty(b)) {
+        return a;
+      }
+      if (this.isEmpty(a) && this.isFilled(b)) {
+        return b;
+      }
+    }, row, col);
   }
 
   /**
@@ -380,20 +398,92 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille with cells filled in q1 but not in q2
    */
   static diff(q1, q2, row, col) {
-    return q1.clone().diff(q2, row, col);
+    return this.merge(q1, q2, (a, b) => {
+      if (this.isFilled(a) && this.isEmpty(b)) {
+        return a;
+      }
+    }, row, col);
   }
 
   /**
-   * Merges two quadrilles by applying a binary operator to their overlapping cells. 
-   * @param {Quadrille} q1 - First quadrille.
-   * @param {Quadrille} q2 - Second quadrille.
-   * @param {(a: *, b: *) => *} operator - Function receiving two cell values and returning the merged result.
-   * @param {number} [row] - Optional relative row offset from q1 to q2.
-   * @param {number} [col] - Optional relative column offset from q1 to q2.
-   * @returns {Quadrille} A new quadrille resulting from the logic combination of q1 and q2.
+   * Merges two quadrilles by applying a binary operator to their overlapping cells.
+   * Builds the result memory directly and returns a fresh Quadrille (no ctor call).
+   * @param {Quadrille} q1
+   * @param {Quadrille} q2
+   * @param {(a: *, b: *) => *} operator
+   * @param {number} [row]
+   * @param {number} [col]
+   * @returns {Quadrille}
    */
   static merge(q1, q2, operator, row, col) {
-    return q1.clone().merge(q2, operator, row, col);
+    const sameOrigin = q1._row !== undefined && q2._row !== undefined &&
+      q1._cellLength !== undefined && q1._cellLength === q2._cellLength;
+    row ??= sameOrigin ? q2._row - q1._row : 0;
+    col ??= sameOrigin ? q2._col - q1._col : 0;
+    const width = col < 0 ? Math.max(q2.width, q1.width - col) : Math.max(q1.width, q2.width + col);
+    const height = row < 0 ? Math.max(q2.height, q1.height - row) : Math.max(q1.height, q2.height + row);
+    const mem = this._allocNullMemory(height, width);
+    for (let i = 0; i < height; i++) {
+      const outRow = mem[i];
+      const i1 = row < 0 ? i + row : i;
+      const i2 = row > 0 ? i - row : i;
+      for (let j = 0; j < width; j++) {
+        const j1 = col < 0 ? j + col : j;
+        const j2 = col > 0 ? j - col : j;
+        const v1 = q1.read(i1, j1);
+        const v2 = q2.read(i2, j2);
+        outRow[j] = operator(v1, v2);
+      }
+    }
+    return this._allocQ(q1, mem);
+  }
+
+  /**
+   * Allocates a height×width 2D array filled with nulls (never undefined).
+   * @param {number} H
+   * @param {number} W
+   * @returns {Array<Array<*>>}
+   */
+  static _allocNullMemory(H, W) {
+    const mem = new Array(H);
+    for (let i = 0; i < H; i++) {
+      const row = new Array(W);
+      for (let j = 0; j < W; j++) row[j] = null;
+      mem[i] = row;
+    }
+    return mem;
+  }
+
+  /**
+   * Allocates a Quadrille *without* calling the constructor, mirroring the
+   * fresh defaults of `new Quadrille(p, ...)`.
+   * Usage:
+   *   _allocQ(from, H, W)   -> creates H×W null-padded memory
+   *   _allocQ(from, mem2D)  -> wraps provided 2D array
+   * Fresh defaults replicated:
+   *   _p:          from._p
+   *   _cellLength: from.constructor.cellLength
+   *   _x:          0
+   *   _y:          0
+   *   _origin:     'corner'
+   *   _row/_col:   left undefined
+   * @param {Quadrille} from
+   * @param {number|Array<Array<*>>} hOrMem
+   * @param {number} [w]
+   * @returns {Quadrille}
+   */
+  static _allocQ(from, hOrMem, w) {
+    const Ctor = from.constructor;
+    const mem = Array.isArray(hOrMem) ? hOrMem : this._allocNullMemory(hOrMem, w);
+    const q = Object.create(Ctor.prototype);
+    q._p = from._p;
+    q._memory2D = mem;
+    q._cellLength = Ctor.cellLength;
+    q._x = 0;
+    q._y = 0;
+    q._origin = 'corner';
+    // _row/_col intentionally left undefined
+    return q;
   }
 
   /**
@@ -1733,12 +1823,13 @@ class Quadrille {
   }
 
   /**
-   * Merges another quadrille into this one by applying a binary operator to overlapping cells.
-   * @param {Quadrille} q - Quadrille to merge into this one.
-   * @param {(a: *, b: *) => *} operator - Function receiving two cell values and returning the merged result.
-   * @param {number} [row] - Optional relative row offset from this to q.
-   * @param {number} [col] - Optional relative column offset from this to q.
-   * @returns {Quadrille} This quadrille after the merge.
+   * Merges another quadrille into this one by applying a binary operator.
+   * Uses an in-place fast path when dimensions match and there is no offset.
+   * @param {Quadrille} q
+   * @param {(a: *, b: *) => *} operator
+   * @param {number} [row]
+   * @param {number} [col]
+   * @returns {Quadrille} this
    */
   merge(q, operator, row, col) {
     const sameOrigin = this._row !== undefined && q._row !== undefined &&
@@ -1747,18 +1838,37 @@ class Quadrille {
     col ??= sameOrigin ? q._col - this._col : 0;
     const width = col < 0 ? Math.max(q.width, this.width - col) : Math.max(this.width, q.width + col);
     const height = row < 0 ? Math.max(q.height, this.height - row) : Math.max(this.height, q.height + row);
-    const result = new Quadrille(this._p, width, height);
-    result.visit(({ row: i, col: j }) => {
-      const i1 = row < 0 ? i + row : i;
-      const j1 = col < 0 ? j + col : j;
-      const i2 = row > 0 ? i - row : i;
-      const j2 = col > 0 ? j - col : j;
-      const value1 = this.read(i1, j1);
-      const value2 = q.read(i2, j2);
-      result.fill(i, j, operator(value1, value2));
-    });
-    // Mutate this quadrille to become the merged result.
-    this._memory2D = result._memory2D;
+    // Hot path: exact same size and no offset → safe in-place update
+    if (row === 0 && col === 0 && width === this.width && height === this.height) {
+      const H = this.height, W = this.width;
+      const m0 = this._memory2D;
+      const mQ = q._memory2D;
+      for (let i = 0; i < H; i++) {
+        const r0 = m0[i], rQ = mQ[i];
+        for (let j = 0; j < W; j++) r0[j] = operator(r0[j], rQ[j]);
+      }
+      return this;
+    }
+    // General path: allocate fresh memory, compute, then swap in
+    const H0 = this.height, W0 = this.width;
+    const Hq = q.height, Wq = q.width;
+    const rNeg = row < 0, rPos = row > 0;
+    const cNeg = col < 0, cPos = col > 0;
+    const mem = this.constructor._allocNullMemory(height, width);
+    const m0 = this._memory2D, mQ = q._memory2D;
+    for (let i = 0; i < height; i++) {
+      const i1 = rNeg ? i + row : i;     // index into this
+      const i2 = rPos ? i - row : i;     // index into q
+      const outRow = mem[i];
+      for (let j = 0; j < width; j++) {
+        const j1 = cNeg ? j + col : j;
+        const j2 = cPos ? j - col : j;
+        const v1 = i1 >= 0 && j1 >= 0 && i1 < H0 && j1 < W0 ? m0[i1][j1] : null;
+        const v2 = i2 >= 0 && j2 >= 0 && i2 < Hq && j2 < Wq ? mQ[i2][j2] : null;
+        outRow[j] = operator(v1, v2);
+      }
+    }
+    this._memory2D = mem;
     return this;
   }
 
@@ -1939,18 +2049,14 @@ class Quadrille {
   }
 
   /**
-   * Returns a new Quadrille cropped to the given rectangle.
-   * Negative width/height extend left/up; the result is always upright (not flipped).
-   * @param {number} row    Anchor row index:
-   *                        - if height > 0, this is the top edge
-   *                        - if height < 0, this is the bottom edge
-   * @param {number} col    Anchor column index:
-   *                        - if width > 0, this is the left edge
-   *                        - if width < 0, this is the right edge
-   * @param {number} width  Positive = crop right, negative = crop left (non-zero).
-   * @param {number} height Positive = crop down,  negative = crop up   (non-zero).
-   * @param {boolean} [wrap=false] When true, indices wrap around grid bounds.
-   * @returns {Quadrille|undefined} A new cropped Quadrille, or `undefined` if skipped.
+   * Crops a rectangular region. Positive/negative width/height control direction.
+   * Optionally wraps indices.
+   * @param {number} row
+   * @param {number} col
+   * @param {number} width
+   * @param {number} height
+   * @param {boolean} [wrap=false]
+   * @returns {Quadrille|undefined}
    */
   crop(row, col, width, height, wrap = false) {
     if (!Number.isFinite(width) || !Number.isFinite(height) || width === 0 || height === 0) {
@@ -1961,22 +2067,25 @@ class Quadrille {
     const h = Math.abs(height);
     const startRow = height > 0 ? row : row - (h - 1);
     const startCol = width > 0 ? col : col - (w - 1);
-    const array1D = [];
-    const _h = this.height;
-    const _w = this.width;
-    const mod = (n, m) => ((n % m) + m) % m;
-    for (let i = 0; i < h; i++) {
-      for (let j = 0; j < w; j++) {
-        if (wrap) {
-          const rr = mod(startRow + i, _h);
-          const cc = mod(startCol + j, _w);
-          array1D.push(this.read(rr, cc));
-        } else {
-          array1D.push(this.read(startRow + i, startCol + j));
+    const H = this.height, W = this.width;
+    const mem = this.constructor._allocNullMemory(h, w);
+    if (wrap) {
+      const mod = (n, m) => ((n % m) + m) % m;
+      for (let i = 0; i < h; i++) {
+        const rr = mod(startRow + i, H);
+        for (let j = 0; j < w; j++) {
+          const cc = mod(startCol + j, W);
+          mem[i][j] = this.read(rr, cc);
+        }
+      }
+    } else {
+      for (let i = 0; i < h; i++) {
+        for (let j = 0; j < w; j++) {
+          mem[i][j] = this.read(startRow + i, startCol + j);
         }
       }
     }
-    return new Quadrille(this._p, w, array1D);
+    return this.constructor._allocQ(this, mem);
   }
 
   /**
@@ -2000,14 +2109,14 @@ class Quadrille {
   }
 
   /**
-   * Returns a new quadrille containing the contents of the given row.
-   * @param {number} row - The row index to extract.
-   * @returns {Quadrille|undefined} A new Quadrille with the specified row, or `undefined` if invalid.
+   * Extracts a single row as a new 1×W Quadrille.
+   * @param {number} row
+   * @returns {Quadrille|undefined}
    */
   row(row) {
-    if (this.isValid(row, 0)) {
-      return new Quadrille(this._p, this._memory2D[row]);
-    }
+    if (!this.isValid(row, 0)) return;
+    const srcRow = this._memory2D[row];
+    return this.constructor._allocQ(this, [srcRow.slice()]);
   }
 
   // VISUAL ALGORITHMS
