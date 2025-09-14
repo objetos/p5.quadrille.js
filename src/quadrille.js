@@ -1836,10 +1836,8 @@ class Quadrille {
       this._cellLength !== undefined && this._cellLength === q._cellLength;
     row ??= sameOrigin ? q._row - this._row : 0;
     col ??= sameOrigin ? q._col - this._col : 0;
-    const width = col < 0 ? Math.max(q.width, this.width - col) : Math.max(this.width, q.width + col);
-    const height = row < 0 ? Math.max(q.height, this.height - row) : Math.max(this.height, q.height + row);
     // Hot path: exact same size and no offset → safe in-place update
-    if (row === 0 && col === 0 && width === this.width && height === this.height) {
+    if (row === 0 && col === 0 && this.width === q.width && this.height === q.height) {
       const H = this.height, W = this.width;
       const m0 = this._memory2D;
       const mQ = q._memory2D;
@@ -1849,7 +1847,9 @@ class Quadrille {
       }
       return this;
     }
-    // General path: allocate fresh memory, compute, then swap in
+    // General path: compute output bounds
+    const width = col < 0 ? Math.max(q.width, this.width - col) : Math.max(this.width, q.width + col);
+    const height = row < 0 ? Math.max(q.height, this.height - row) : Math.max(this.height, q.height + row);
     const H0 = this.height, W0 = this.width;
     const Hq = q.height, Wq = q.width;
     const rNeg = row < 0, rPos = row > 0;
@@ -1860,11 +1860,15 @@ class Quadrille {
       const i1 = rNeg ? i + row : i;     // index into this
       const i2 = rPos ? i - row : i;     // index into q
       const outRow = mem[i];
+      // cache source row pointers (or null) to skip row checks in inner loop
+      const rowThis = (i1 >= 0 && i1 < H0) ? m0[i1] : null;
+      const rowQ = (i2 >= 0 && i2 < Hq) ? mQ[i2] : null;
       for (let j = 0; j < width; j++) {
         const j1 = cNeg ? j + col : j;
         const j2 = cPos ? j - col : j;
-        const v1 = i1 >= 0 && j1 >= 0 && i1 < H0 && j1 < W0 ? m0[i1][j1] : null;
-        const v2 = i2 >= 0 && j2 >= 0 && i2 < Hq && j2 < Wq ? mQ[i2][j2] : null;
+        // Match read(...) semantics for inputs: OOB → undefined
+        const v1 = rowThis && j1 >= 0 && j1 < W0 ? rowThis[j1] : undefined;
+        const v2 = rowQ && j2 >= 0 && j2 < Wq ? rowQ[j2] : undefined;
         outRow[j] = operator(v1, v2);
       }
     }
