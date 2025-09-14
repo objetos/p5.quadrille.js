@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.7';
+  static VERSION = '3.4.8';
 
   // Factory
 
