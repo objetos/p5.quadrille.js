@@ -775,52 +775,7 @@ class Quadrille {
     return this.constructor.bitCell(bitIndex, this.width, this.height, littleEndian);
   }
 
-  // ITERATORS
-
-  /**
-   * Lazily iterates in row-major order (top to bottom, left to right)
-   * over all matching cells in the quadrille.
-   * The optional `filter` determines which cells are yielded:
-   * - `null`, `undefined` → all cells
-   * - `Function({ row, col, value })` → cells where the predicate returns `true`
-   * - `Array` / `Set` of values → cells whose value is contained in the collection
-   * - single value (non-function, non-collection) → cells whose value === filter
-   * @generator
-   * @param {Array|Set|Function|*|null} [filter=null] - Optional filter for selecting cells.
-   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
-   */
-  *cells(filter = null) {
-    const isFn = typeof filter === 'function';
-    const isSet = filter && typeof filter !== 'function' && typeof filter.has === 'function';
-    const isArr = Array.isArray(filter);
-    const values = isSet ? filter : isArr ? new Set(filter) : null;
-    for (let row = 0; row < this._memory2D.length; row++) {
-      const rowData = this._memory2D[row];
-      for (let col = 0; col < rowData.length; col++) {
-        const value = rowData[col];
-        const cell = { row, col, value };
-        if (
-          (filter == null) ||
-          (isFn && filter(cell)) ||
-          (values && values.has(value)) ||
-          (!isFn && !values && value === filter)
-        ) {
-          yield cell;
-        }
-      }
-    }
-  }
-
-  /**
-   * Default iterator for the quadrille.
-   * Allows iteration over all cells using `for...of`.
-   * Equivalent to `this.cells()` with no filter.
-   * @generator
-   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
-   */
-  *[Symbol.iterator]() {
-    yield* this.cells();
-  }
+  // ITERATOR
 
   /**
    * Iterates over cells and calls the given function with each matching cell object.
