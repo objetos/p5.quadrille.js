@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.8
+ * @version 3.4.9
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.8';
+  static VERSION = '3.4.9';
 
   // Factory
 
@@ -440,15 +440,15 @@ class Quadrille {
 
   /**
    * Allocates a height×width 2D array filled with nulls (never undefined).
-   * @param {number} H
-   * @param {number} W
+   * @param {number} h
+   * @param {number} w
    * @returns {Array<Array<*>>}
    */
-  static _allocNullMemory(H, W) {
-    const mem = new Array(H);
-    for (let i = 0; i < H; i++) {
-      const row = new Array(W);
-      for (let j = 0; j < W; j++) row[j] = null;
+  static _allocNullMemory(h, w) {
+    const mem = new Array(h);
+    for (let i = 0; i < h; i++) {
+      const row = new Array(w);
+      for (let j = 0; j < w; j++) row[j] = null;
       mem[i] = row;
     }
     return mem;
@@ -458,7 +458,7 @@ class Quadrille {
    * Allocates a Quadrille *without* calling the constructor, mirroring the
    * fresh defaults of `new Quadrille(p, ...)`.
    * Usage:
-   *   _allocQ(from, H, W)   -> creates H×W null-padded memory
+   *   _allocQ(from, h, w)   -> creates h×w null-padded memory
    *   _allocQ(from, mem2D)  -> wraps provided 2D array
    * Fresh defaults replicated:
    *   _p:          from._p
@@ -473,12 +473,12 @@ class Quadrille {
    * @returns {Quadrille}
    */
   static _allocQ(from, hOrMem, w) {
-    const Ctor = from.constructor;
+    const ctor = from.constructor;
     const mem = Array.isArray(hOrMem) ? hOrMem : this._allocNullMemory(hOrMem, w);
-    const q = Object.create(Ctor.prototype);
+    const q = Object.create(ctor.prototype);
     q._p = from._p;
     q._memory2D = mem;
-    q._cellLength = Ctor.cellLength;
+    q._cellLength = ctor.cellLength;
     q._x = 0;
     q._y = 0;
     q._origin = 'corner';
@@ -778,25 +778,29 @@ class Quadrille {
   // ITERATOR
 
   /**
-   * Iterates over cells and calls the given function with each matching cell object.
+   * Iterates over cells and calls the given function with each matching cell object,
+   * in row-major order (row 0..height-1, within each row col 0..width-1).
    * The optional `filter` determines which cells are visited:
    * - `null`, `undefined` → all cells
    * - `Function({ row, col, value })` → cells where the predicate returns `true`
    * - `Array` / `Set` of values → cells whose value is contained in the collection
    * - single value (non-function, non-collection) → cells whose value === filter
-   * @param {(cell: { row, number, col: number, value: any }) => void} callback
+   * Early stop: if the callback returns `false` (strict), iteration stops immediately.
+   * Any other return value (including no return) is ignored.
+   * @param {(cell: { row: number, col: number, value: any }) => any} callback
    * @param {Array|Set|Function|*|null} [filter]
+   * @returns {void}
    */
   visit(callback, filter) {
-    const mem = this._memory2D;
-    const H = this.height;
-    const W = this.width;
+    const memory2D = this._memory2D;
+    const height = this.height;
+    const width = this.width;
     // Fast path: null / undefined → iterate all cells directly
     if (filter == null) {
-      for (let row = 0; row < H; row++) {
-        const rowData = mem[row];
-        for (let col = 0; col < W; col++) {
-          callback({ row, col, value: rowData[col] });
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
+          if (callback({ row, col, value: rowData[col] }) === false) return;
         }
       }
       return;
@@ -804,33 +808,39 @@ class Quadrille {
     // Fast path: Array / Set membership
     if ((filter && typeof filter.has === 'function') || Array.isArray(filter)) {
       const values = Array.isArray(filter) ? new Set(filter) : filter;
-      for (let row = 0; row < H; row++) {
-        const rowData = mem[row];
-        for (let col = 0; col < W; col++) {
-          const v = rowData[col];
-          values.has(v) && callback({ row, col, value: v });
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
+          const value = rowData[col];
+          if (values.has(value)) {
+            if (callback({ row, col, value }) === false) return;
+          }
         }
       }
       return;
     }
     // Predicate → evaluate inline
     if (typeof filter === 'function') {
-      for (let row = 0; row < H; row++) {
-        const rowData = mem[row];
-        for (let col = 0; col < W; col++) {
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
           const cell = { row, col, value: rowData[col] };
-          filter(cell) && callback(cell);
+          if (filter(cell)) {
+            if (callback(cell) === false) return;
+          }
         }
       }
       return;
     }
     // Fast path: single value (strict identity; non-function)
     const needle = filter;
-    for (let row = 0; row < H; row++) {
-      const rowData = mem[row];
-      for (let col = 0; col < W; col++) {
-        const v = rowData[col];
-        v === needle && callback({ row, col, value: v });
+    for (let row = 0; row < height; row++) {
+      const rowData = memory2D[row];
+      for (let col = 0; col < width; col++) {
+        const value = rowData[col];
+        if (value === needle) {
+          if (callback({ row, col, value }) === false) return;
+        }
       }
     }
   }
