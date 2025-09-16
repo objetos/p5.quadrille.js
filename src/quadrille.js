@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.9
+ * @version 3.4.10
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.9';
+  static VERSION = '3.4.10';
 
   // Factory
 
@@ -432,7 +432,8 @@ class Quadrille {
         const j2 = col > 0 ? j - col : j;
         const v1 = q1.read(i1, j1);
         const v2 = q2.read(i2, j2);
-        outRow[j] = operator(v1, v2);
+        const r = operator(v1, v2);
+        outRow[j] = this.isFilled(r) ? r : null;
       }
     }
     return this._allocQ(q1, mem);
@@ -1801,6 +1802,7 @@ class Quadrille {
       this._cellLength !== undefined && this._cellLength === q._cellLength;
     row ??= sameOrigin ? q._row - this._row : 0;
     col ??= sameOrigin ? q._col - this._col : 0;
+    const ctor = this.constructor;
     // Hot path: exact same size and no offset → safe in-place update
     if (row === 0 && col === 0 && this.width === q.width && this.height === q.height) {
       const H = this.height, W = this.width;
@@ -1808,7 +1810,10 @@ class Quadrille {
       const mQ = q._memory2D;
       for (let i = 0; i < H; i++) {
         const r0 = m0[i], rQ = mQ[i];
-        for (let j = 0; j < W; j++) r0[j] = operator(r0[j], rQ[j]);
+        for (let j = 0; j < W; j++) {
+          const r = operator(r0[j], rQ[j]);
+          r0[j] = ctor.isFilled(r) ? r : null;
+        }
       }
       return this;
     }
@@ -1819,7 +1824,7 @@ class Quadrille {
     const Hq = q.height, Wq = q.width;
     const rNeg = row < 0, rPos = row > 0;
     const cNeg = col < 0, cPos = col > 0;
-    const mem = this.constructor._allocNullMemory(height, width);
+    const mem = ctor._allocNullMemory(height, width);
     const m0 = this._memory2D, mQ = q._memory2D;
     for (let i = 0; i < height; i++) {
       const i1 = rNeg ? i + row : i;     // index into this
@@ -1834,7 +1839,8 @@ class Quadrille {
         // Match read(...) semantics for inputs: OOB → undefined
         const v1 = rowThis && j1 >= 0 && j1 < W0 ? rowThis[j1] : undefined;
         const v2 = rowQ && j2 >= 0 && j2 < Wq ? rowQ[j2] : undefined;
-        outRow[j] = operator(v1, v2);
+        const r = operator(v1, v2);
+        outRow[j] = ctor.isFilled(r) ? r : null;
       }
     }
     this._memory2D = mem;
@@ -2037,24 +2043,27 @@ class Quadrille {
     const startRow = height > 0 ? row : row - (h - 1);
     const startCol = width > 0 ? col : col - (w - 1);
     const H = this.height, W = this.width;
-    const mem = this.constructor._allocNullMemory(h, w);
+    const ctor = this.constructor;
+    const mem = ctor._allocNullMemory(h, w);
     if (wrap) {
       const mod = (n, m) => ((n % m) + m) % m;
       for (let i = 0; i < h; i++) {
         const rr = mod(startRow + i, H);
         for (let j = 0; j < w; j++) {
           const cc = mod(startCol + j, W);
-          mem[i][j] = this.read(rr, cc);
+          const v = this.read(rr, cc);
+          mem[i][j] = ctor.isFilled(v) ? v : null;
         }
       }
     } else {
       for (let i = 0; i < h; i++) {
         for (let j = 0; j < w; j++) {
-          mem[i][j] = this.read(startRow + i, startCol + j);
+          const v = this.read(startRow + i, startCol + j);
+          mem[i][j] = ctor.isFilled(v) ? v : null;
         }
       }
     }
-    return this.constructor._allocQ(this, mem);
+    return ctor._allocQ(this, mem);
   }
 
   /**
