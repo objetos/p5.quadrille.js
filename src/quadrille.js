@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.10
+ * @version 3.5.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.10';
+  static VERSION = '3.5.0';
 
   // Factory
 
@@ -776,7 +776,138 @@ class Quadrille {
     return this.constructor.bitCell(bitIndex, this.width, this.height, littleEndian);
   }
 
-  // ITERATOR
+  // ITERATORs
+
+  /**
+   * High-level traversal that delegates to the sparse (generator) or dense (visit) path.
+   * Uses the same filter semantics as `visit`/`cells`.
+   * Early stop: if the callback returns `false` (strict), traversal stops.
+   * @param {(cell: { row: number, col: number, value: any }) => any} callback
+   * @param {Array|Set|Function|*|null} [filter=null]
+   * @returns {void}
+   */
+  traverse(callback, filter = null) {
+    if (this._sparse) {
+      for (const cell of this.cells(filter)) {
+        if (callback(cell) === false) break;
+      }
+      return;
+    }
+    this.visit(callback, filter);
+  }
+
+  /**
+   * Lazily iterates in row-major order (top to bottom, left to right)
+   * over all matching cells in the quadrille.
+   * The optional `filter` determines which cells are yielded:
+   * - `null`, `undefined` → all cells
+   * - `Function({ row, col, value })` → cells where the predicate returns `true`
+   * - `Array` / `Set` of values → cells whose value is contained in the collection
+   * - single value (non-function, non-collection) → cells whose value === filter
+   * @generator
+   * @param {Array|Set|Function|*|null} [filter=null] - Optional filter for selecting cells.
+   * @yields {{ row: number, col: number, value: any }} Cell object with coordinates and value.
+   */
+  *cells(filter = null) {
+    const isFn = typeof filter === 'function';
+    const isSet = filter && typeof filter !== 'function' && typeof filter.has === 'function';
+    const isArr = Array.isArray(filter);
+    const values = isSet ? filter : isArr ? new Set(filter) : null;
+    for (let row = 0; row < this._memory2D.length; row++) {
+      const rowData = this._memory2D[row];
+      for (let col = 0; col < rowData.length; col++) {
+        const value = rowData[col];
+        const cell = { row, col, value };
+        if (
+          (filter == null) ||
+          (isFn && filter(cell)) ||
+          (values && values.has(value)) ||
+          (!isFn && !values && value === filter)
+        ) {
+          yield cell;
+        }
+      }
+    }
+  }
+
+  /**
+   * Default iterator for the quadrille.
+   * Allows iteration over all cells using `for...of`.
+   * Equivalent to `this.cells()` with no filter.
+   * @generator
+   * @returns {IterableIterator<{ row: number, col: number, value: any }>}
+   */
+  *[Symbol.iterator]() {
+    yield* this.cells();
+  }
+
+  /**
+   * Iterates over cells and calls the given function with each matching cell object,
+   * in row-major order (row 0..height-1, within each row col 0..width-1).
+   * The optional `filter` determines which cells are visited:
+   * - `null`, `undefined` → all cells
+   * - `Function({ row, col, value })` → cells where the predicate returns `true`
+   * - `Array` / `Set` of values → cells whose value is contained in the collection
+   * - single value (non-function, non-collection) → cells whose value === filter
+   * Early stop: if the callback returns `false` (strict), iteration stops immediately.
+   * Any other return value (including no return) is ignored.
+   * @param {(cell: { row: number, col: number, value: any }) => any} callback
+   * @param {Array|Set|Function|*|null} [filter]
+   * @returns {void}
+   */
+  visit(callback, filter) {
+    const memory2D = this._memory2D;
+    const height = this.height;
+    const width = this.width;
+    // Fast path: null / undefined → iterate all cells directly
+    if (filter == null) {
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
+          if (callback({ row, col, value: rowData[col] }) === false) return;
+        }
+      }
+      return;
+    }
+    // Fast path: Array / Set membership
+    if ((filter && typeof filter.has === 'function') || Array.isArray(filter)) {
+      const values = Array.isArray(filter) ? new Set(filter) : filter;
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
+          const value = rowData[col];
+          if (values.has(value)) {
+            if (callback({ row, col, value }) === false) return;
+          }
+        }
+      }
+      return;
+    }
+    // Predicate → evaluate inline
+    if (typeof filter === 'function') {
+      for (let row = 0; row < height; row++) {
+        const rowData = memory2D[row];
+        for (let col = 0; col < width; col++) {
+          const cell = { row, col, value: rowData[col] };
+          if (filter(cell)) {
+            if (callback(cell) === false) return;
+          }
+        }
+      }
+      return;
+    }
+    // Fast path: single value (strict identity; non-function)
+    const needle = filter;
+    for (let row = 0; row < height; row++) {
+      const rowData = memory2D[row];
+      for (let col = 0; col < width; col++) {
+        const value = rowData[col];
+        if (value === needle) {
+          if (callback({ row, col, value }) === false) return;
+        }
+      }
+    }
+  }
 
   /**
    * Iterates over cells and calls the given function with each matching cell object,
