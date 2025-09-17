@@ -108,7 +108,7 @@ p5.registerAddon((p5, fn) => {
     quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
       (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2));
     graphics.translate(quadrille._x, quadrille._y);
-    quadrille.visit(({ row, col, value }) => {
+    quadrille.traverse(({ row, col, value }) => {
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
       options.row = row;

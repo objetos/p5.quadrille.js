@@ -786,7 +786,7 @@ class Quadrille {
    * @param {Array|Set|Function|*|null} [filter=null]
    * @returns {void}
    */
-  traverse(callback, filter = null) {
+  visit(callback, filter = null) {
     if (this._sparse) {
       for (const cell of this.cells(filter)) {
         if (callback(cell) === false) break;
@@ -842,7 +842,7 @@ class Quadrille {
   }
 
   /**
-   * Iterates over cells and calls the given function with each matching cell object,
+   * Traverses all cells and calls the given function with each matching cell object,
    * in row-major order (row 0..height-1, within each row col 0..width-1).
    * The optional `filter` determines which cells are visited:
    * - `null`, `undefined` → all cells
@@ -855,7 +855,7 @@ class Quadrille {
    * @param {Array|Set|Function|*|null} [filter]
    * @returns {void}
    */
-  visit(callback, filter) {
+  traverse(callback, filter) {
     const memory2D = this._memory2D;
     const height = this.height;
     const width = this.width;
