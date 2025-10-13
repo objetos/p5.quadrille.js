@@ -139,9 +139,9 @@ Let `n` be the total number of cells in the quadrille.
 
 - **Current tagged version (v3.4.10):**  
   Use these if you want to lock to a specific version.
-  - [p5.quadrille@3.4.10.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.4.10/dist/p5.quadrille.js)
-  - [p5.quadrille@3.4.10.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.4.10/dist/p5.quadrille.min.js)
-  - [npm package (v3.4.10)](https://www.npmjs.com/package/p5.quadrille/v/3.4.10)
+  - [p5.quadrille@3.4.11.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.4.11/dist/p5.quadrille.js)
+  - [p5.quadrille@3.4.11.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.4.11/dist/p5.quadrille.min.js)
+  - [npm package (v3.4.10)](https://www.npmjs.com/package/p5.quadrille/v/3.4.11)
 
 - **Legacy (v2.x):**  
   GitHub CDN links compatible with p5 v1.

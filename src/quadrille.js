@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.10
+ * @version 3.4.11
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.10';
+  static VERSION = '3.4.11';
 
   // Factory
 
@@ -786,8 +786,7 @@ class Quadrille {
    * - `Function({ row, col, value })` → cells where the predicate returns `true`
    * - `Array` / `Set` of values → cells whose value is contained in the collection
    * - single value (non-function, non-collection) → cells whose value === filter
-   * Early stop: if the callback returns `false` (strict), iteration stops immediately.
-   * Any other return value (including no return) is ignored.
+   * Note: this function does NOT short-circuit; it always visits all eligible cells.
    * @param {(cell: { row: number, col: number, value: any }) => any} callback
    * @param {Array|Set|Function|*|null} [filter]
    * @returns {void}
@@ -801,7 +800,7 @@ class Quadrille {
       for (let row = 0; row < height; row++) {
         const rowData = memory2D[row];
         for (let col = 0; col < width; col++) {
-          if (callback({ row, col, value: rowData[col] }) === false) return;
+          callback({ row, col, value: rowData[col] });
         }
       }
       return;
@@ -814,7 +813,7 @@ class Quadrille {
         for (let col = 0; col < width; col++) {
           const value = rowData[col];
           if (values.has(value)) {
-            if (callback({ row, col, value }) === false) return;
+            callback({ row, col, value });
           }
         }
       }
@@ -827,7 +826,7 @@ class Quadrille {
         for (let col = 0; col < width; col++) {
           const cell = { row, col, value: rowData[col] };
           if (filter(cell)) {
-            if (callback(cell) === false) return;
+            callback(cell);
           }
         }
       }
@@ -840,7 +839,7 @@ class Quadrille {
       for (let col = 0; col < width; col++) {
         const value = rowData[col];
         if (value === needle) {
-          if (callback({ row, col, value }) === false) return;
+          callback({ row, col, value });
         }
       }
     }
