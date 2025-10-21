@@ -12,6 +12,15 @@ BASE = "http://localhost:1313/p5.quadrille.js/"
 PATHS = [
     # Section index
     "docs/accessors/",
+    
+    # queries (index + pages)
+    "docs/accessors/queries/",
+    "docs/accessors/queries/bit_cell/",
+    "docs/accessors/queries/bit_index/",
+    "docs/accessors/queries/magnitude/",
+    "docs/accessors/queries/screen_col/",
+    "docs/accessors/queries/screen_row/",
+    "docs/accessors/queries/search/",
 
     # cell_contents (index + pages)
     "docs/accessors/cell_contents/",
@@ -36,15 +45,6 @@ PATHS = [
     "docs/accessors/instance_creators/crop/",
     "docs/accessors/instance_creators/ring/",
     "docs/accessors/instance_creators/row/",
-
-    # queries (index + pages)
-    "docs/accessors/queries/",
-    "docs/accessors/queries/bit_cell/",
-    "docs/accessors/queries/bit_index/",
-    "docs/accessors/queries/magnitude/",
-    "docs/accessors/queries/screen_col/",
-    "docs/accessors/queries/screen_row/",
-    "docs/accessors/queries/search/",
 ]
 
 # Optional warm-up of local assets used in this section
