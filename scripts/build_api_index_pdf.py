@@ -6,7 +6,7 @@ from playwright.async_api import async_playwright, TimeoutError as PWTimeout
 
 # ===== CONFIG =====
 BASE = "http://localhost:1313/p5.quadrille.js/"  # e.g. "http://localhost:1313/"
-API_INDEX = "docs/"              # _index.md for the Quadrille API
+API_INDEX = ""              # _index.md for the Quadrille API
 OUT = "quadrille-api-index.pdf"
 
 VIEWPORT = {"width": 1600, "height": 2400}
