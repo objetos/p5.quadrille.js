@@ -12,9 +12,9 @@ type: docs
 [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)
 -->
 
-# p5.quadrille.js API
+# p5.quadrille.js <!-- API -->
 
-Welcome to the [p5.quadrille.js](https://github.com/objetos/p5.quadrille.js) Application Programming Interface (API). This open-source [p5.js](https://beta.p5js.org/) library provides a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are illustrated with interactive sketches to help you explore their use.
+<!--Welcome to the [p5.quadrille.js](https://github.com/objetos/p5.quadrille.js) Application Programming Interface (API).--> This open-source [p5.js](https://beta.p5js.org/) library provides a simple yet powerful API for grid-based creative coding, game design, and visual computing. Most methods are illustrated with interactive sketches to help you explore their use.
 
 {{< figure src="p5.quadrille.js.png" caption="***Paintings sorted according to their [luma](https://en.wikipedia.org/wiki/Luma_(video)) using quadrille [sort]({{< relref sort >}})***" alt="Paintings sorted by luma using quadrille.sort()" >}}
 
