@@ -5,10 +5,12 @@ type: docs
 
 [![npm version](https://img.shields.io/npm/v/p5.quadrille.svg)](https://www.npmjs.com/package/p5.quadrille)
 [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)
-[![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)
 [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)
 [![Source Code](https://img.shields.io/badge/Source_Code-181717?logo=github)](https://github.com/objetos/p5.quadrille.js)
 [![Blog](https://img.shields.io/badge/Blog-0A0A0A?logo=dev.to&logoColor=white)](https://jpcharalambosh.co/tags/p5.quadrille.js/)
+<!--
+[![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)
+-->
 
 # p5.quadrille.js API
 
@@ -46,7 +48,10 @@ To replicate this locally or in the Web Editor, make sure your `index.html` incl
 Refer to the [Releases](#releases) section below for the latest versions.
 
 {{< callout type="warning" >}}
-Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply include the necessary scripts to get started. See the [official guide](https://beta.p5js.org/tutorials/setting-up-your-environment/) or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local setup instructions.
+Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply include the necessary scripts to get started. See the [official guide](https://beta.p5js.org/tutorials/setting-up-your-environment/). 
+<!--
+or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local setup instructions
+-->
 {{< /callout >}}
 
 # Releases
@@ -82,6 +87,7 @@ Note that with **p5.js**, there’s no **“installation”** in the traditional
   Install with `npm i p5.quadrille`.
 - [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)  
   The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://beta.p5js.org/reference/), [examples](https://beta.p5js.org/examples/), [tutorials](https://beta.p5js.org/learn/), and [libraries](https://beta.p5js.org/libraries/).
+<!-- 
 - [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)  
   An evolving educational resource covering:  
   – Object-Oriented and Functional Programming essentials  
@@ -89,6 +95,7 @@ Note that with **p5.js**, there’s no **“installation”** in the traditional
   – Tutorials & step-by-step guides  
   – Real-world projects by students and jam participants  
   – Advanced demos by the author
+-->
 - [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)  
   Published in *SoftwareX*. Goes beyond technical documentation—explains the motivation, research hypothesis, design rationale, and internal architecture of **p5.quadrille.js**.
 - [![Source Code](https://img.shields.io/badge/Source_Code-181717?logo=github)](https://github.com/objetos/p5.quadrille.js)  
