@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.11
+ * @version 3.4.12
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.11';
+  static VERSION = '3.4.12';
 
   // Factory
 
@@ -2395,23 +2395,23 @@ class Quadrille {
     origin = 'corner',
     options = {},
     renderer = 'p2d',
-    imageDisplay = this.constructor.imageDisplay,
-    colorDisplay = this.constructor.colorDisplay,
-    stringDisplay = this.constructor.stringDisplay,
-    numberDisplay = this.constructor.numberDisplay,
-    bigintDisplay = this.constructor.bigintDisplay,
-    booleanDisplay = this.constructor.booleanDisplay,
+    imageDisplay = this.imageDisplay,
+    colorDisplay = this.colorDisplay,
+    stringDisplay = this.stringDisplay,
+    numberDisplay = this.numberDisplay,
+    bigintDisplay = this.bigintDisplay,
+    booleanDisplay = this.booleanDisplay,
     symbolDisplay,
     arrayDisplay,
     objectDisplay,
-    functionDisplay = this.constructor.functionDisplay,
-    tileDisplay = this.constructor.tileDisplay,
-    background = this.constructor.background,
-    cellLength = this.constructor.cellLength,
-    outlineWeight = this.constructor.outlineWeight,
-    outline = this.constructor.outline,
-    textColor = this.constructor.textColor,
-    textZoom = this.constructor.textZoom
+    functionDisplay = this.functionDisplay,
+    tileDisplay = this.tileDisplay,
+    background = this.background,
+    cellLength = this.cellLength,
+    outlineWeight = this.outlineWeight,
+    outline = this.outline,
+    textColor = this.textColor,
+    textZoom = this.textZoom
   } = {}) {
     const graphics = createGraphics(cellLength, cellLength, renderer);
     graphics.background(background);
