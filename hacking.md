@@ -41,4 +41,4 @@ git submodule update --init --recursive
 hugo server --disableFastRender
 ```
 
-Open: [http://localhost:1313/](http://localhost:1313/)
+Open: [http://localhost:1313/p5.quadrille.js/](http://localhost:1313/p5.quadrille.js/)
