@@ -1,6 +1,6 @@
 {
   "name": "p5.quadrille",
-  "version": "3.4.12",
+  "version": "3.4.13",
   "description": "A grid-based teaching and rendering library for p5.js.",
   "type": "module",
   "main": "dist/p5.quadrille.esm.js",
@@ -39,13 +39,13 @@
     "access": "public"
   },
   "peerDependencies": {
-    "p5": "^2.0.5"
+    "p5": "^2.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/estree": "^1.0.8",
-    "p5": "^2.0.5",
-    "rollup": "^4.52.5",
+    "p5": "^2.1.1",
+    "rollup": "^4.53.3",
     "typescript": "^5.9.3"
   }
 }

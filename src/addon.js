@@ -1,6 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.4.12
+ * @version 3.4.13
  * @author JP Charalambos
  * @license GPL-3.0-only
  *

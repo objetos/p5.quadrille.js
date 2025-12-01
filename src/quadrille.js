@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.12
+ * @version 3.4.13
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.12';
+  static VERSION = '3.4.13';
 
   // Factory
 
@@ -959,6 +959,31 @@ class Quadrille {
    */
   get mouseCol() {
     return this.screenCol(this._p.mouseX);
+  }
+
+  /**
+   * Gets the minimal axis-aligned span of filled cells.
+   * Returns undefined if the quadrille has no filled cells.
+   * @returns {{row:number, col:number, width:number, height:number}|undefined}
+   */
+  get span() {
+    let minRow = this.height, maxRow = -1, minCol = this.width, maxCol = -1;
+    this.visit(
+      ({ row, col }) => {
+        row < minRow && (minRow = row);
+        row > maxRow && (maxRow = row);
+        col < minCol && (minCol = col);
+        col > maxCol && (maxCol = col);
+      },
+      ({ value }) => this.constructor.isFilled(value)
+    );
+    if (maxRow === -1) return; // fully empty
+    return {
+      row: minRow,
+      col: minCol,
+      width: maxCol - minCol + 1,
+      height: maxRow - minRow + 1
+    };
   }
 
   /*
@@ -2063,6 +2088,16 @@ class Quadrille {
       }
     }
     return ctor._allocQ(this, mem);
+  }
+
+  /**
+   * Returns a new quadrille trimmed to its minimal span of filled cells.
+   * Returns undefined if the quadrille has no filled cells.
+   * @returns {Quadrille|undefined}
+   */
+  trim() {
+    const s = this.span;
+    return s ? this.crop(s.row, s.col, s.width, s.height) : undefined;
   }
 
   /**
