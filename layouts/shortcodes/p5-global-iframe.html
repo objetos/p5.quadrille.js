@@ -11,6 +11,21 @@
 {{ $lib4 := .Get `lib4` }}
 {{ $lib5 := .Get `lib5` }}
 
+{{/* --- Original sketch code --- */}}
+{{ $p5script := .Inner }}
+
+{{/* 
+  Minimal, robust fix:
+  - Take any root-relative asset path (/images/, /paintings/, /videos/, /fonts/)
+  - Prefix it with .Site.BaseURL so it works both locally and on GitHub Pages.
+  - Works even inside template literals like `/paintings/p${i}.jpg`.
+*/}}
+{{ $base := strings.TrimSuffix "/" .Site.BaseURL }}
+{{ $finalScript := $p5script }}
+{{ range $root := slice "/images/" "/paintings/" "/videos/" "/fonts/" }}
+  {{ $finalScript = replace $finalScript $root (printf "%s%s" $base $root) }}
+{{ end }}
+
 <iframe
   id="{{ .Get `id` }}"
   style="width:{{ default "800" (.Get `width`) }}px; height:{{ default "600" (.Get `height`) }}px"
@@ -18,6 +33,7 @@
         <!DOCTYPE html>
         <html>
           <head>
+            <meta charset='utf-8'>
             <script src='https://cdn.jsdelivr.net/npm/p5@{{ $ver }}/lib/p5.min.js'></script>
             {{ if eq $sound "true" }}
               <script src='https://cdn.jsdelivr.net/npm/p5.sound@{{ $defsoundver }}/dist/p5.sound.min.js'></script>
@@ -25,13 +41,13 @@
             {{ if eq $treegl "true" }}<script src='https://cdn.jsdelivr.net/gh/VisualComputing/p5.treegl/p5.treegl.min.js'></script>{{ end }}
             {{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.platonic/dist/p5.platonic.min.js'></script>{{ end }}
             {{ if eq $quadrille "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js'></script>{{ end }}
-            {{ if isset .Params "lib1" }} <script src={{ $lib1 }}></script> {{ end }}
-            {{ if isset .Params "lib2" }} <script src={{ $lib2 }}></script> {{ end }}
-            {{ if isset .Params "lib3" }} <script src={{ $lib3 }}></script> {{ end }}
-            {{ if isset .Params "lib4" }} <script src={{ $lib4 }}></script> {{ end }}
-            {{ if isset .Params "lib5" }} <script src={{ $lib5 }}></script> {{ end }}
+            {{ if isset .Params "lib1" }} <script src='{{ $lib1 }}'></script> {{ end }}
+            {{ if isset .Params "lib2" }} <script src='{{ $lib2 }}'></script> {{ end }}
+            {{ if isset .Params "lib3" }} <script src='{{ $lib3 }}'></script> {{ end }}
+            {{ if isset .Params "lib4" }} <script src='{{ $lib4 }}'></script> {{ end }}
+            {{ if isset .Params "lib5" }} <script src='{{ $lib5 }}'></script> {{ end }}
             <script>
-              {{ .Inner | safeJS }}
+              {{ $finalScript | safeJS }}
             </script>
           </head>
           <body>

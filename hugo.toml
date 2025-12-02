@@ -33,6 +33,21 @@ enableGitInfo = true
 
 [markup.tableOfContents]
   startLevel = 1
+  
+# mount assets so that p5-global-iframe "sees it"
+[[module.mounts]]
+  source = "static/images"
+  target = "assets/images"
+[[module.mounts]]
+  source = "static/videos"
+  target = "assets/videos"
+[[module.mounts]]
+  source = "static/paintings"
+  target = "assets/paintings"
+  
+[[module.mounts]]
+  source = "static/fonts"
+  target = "assets/fonts"
 
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
