@@ -33,6 +33,9 @@ coverage/
 # REPL / temp
 .node_repl_history
 
+# design drop zone: the SoftwareX paper (published elsewhere, not for the repo)
+design/
+
 # hugo
 content/
 public/
