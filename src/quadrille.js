@@ -2838,6 +2838,43 @@ class Quadrille {
       graphics.quad(0, 0, cellLength, 0, cellLength, cellLength, 0, cellLength);
     }
   }
+
+  /**
+   * Thin-wall display function for lattice mazes — a `colorDisplay` sibling
+   * passed per draw, never stored: walls stay plain colors, and
+   * `drawQuadrille(board, { colorDisplay: Quadrille.thinWall, outlineWeight: 0 })`
+   * renders them thin while omitting the param renders them fat — same storage.
+   * Each wall cell reads its orientation from its own index parity: odd row +
+   * even col draws a horizontal segment, even row + odd col a vertical one, and
+   * odd-odd pillar cells draw nothing — segments overshoot from -cellLength/2 to
+   * 3*cellLength/2, meeting exactly at the centers of their flanking pillars, so
+   * joints, corners, and tips form themselves at lattice points. The stroke is
+   * the cell `value`, so the stored wall color is the skin. Works in p2d and
+   * webgl (color cells render on the shared context, no per-cell framebuffer).
+   * Scope: lattice convention — cropping or shifting by odd offsets flips
+   * parities, and a wall on a room slot (even-even) draws nothing yet still
+   * blocks `distances`/`path`; omit the param for the always-truthful fat look.
+   * @param {Object} params
+   * @param {p5.Graphics} params.graphics - Rendering context.
+   * @param {*} params.value - Wall color; used as the stroke.
+   * @param {number} params.row - Cell row index.
+   * @param {number} params.col - Cell column index.
+   * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
+   */
+  static thinWall({
+    graphics,
+    value,
+    row,
+    col,
+    cellLength = this.cellLength
+  } = {}) {
+    graphics.push();
+    graphics.stroke(value);
+    graphics.strokeWeight(cellLength / 4);
+    row % 2 && !(col % 2) && graphics.line(-cellLength / 2, cellLength / 2, 3 * cellLength / 2, cellLength / 2); // horizontal segment
+    !(row % 2) && col % 2 && graphics.line(cellLength / 2, -cellLength / 2, cellLength / 2, 3 * cellLength / 2); // vertical segment
+    graphics.pop(); // pillars draw nothing (overshoot meets at their centers)
+  }
 }
 
 // Export the Quadrille class as the default export
