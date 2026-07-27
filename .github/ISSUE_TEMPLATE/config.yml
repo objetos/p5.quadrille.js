@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ❓ Question / Help
+    url: https://github.com/objetos/p5.quadrille.js/discussions/categories/q-a
+    about: Ask and answer usage questions in Discussions (the course forum).
+  - name: 💡 Ideas & Show and tell
+    url: https://github.com/objetos/p5.quadrille.js/discussions
+    about: Share sketches, demos, and early ideas before they become feature requests.
