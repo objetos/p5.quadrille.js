@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.4.13
+ * @version 3.5.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.4.13';
+  static VERSION = '3.5.0';
 
   // Factory
 
@@ -1630,6 +1630,63 @@ class Quadrille {
       } while (this.isFilled(row, col));
       this.fill(row, col, value);
     }, ({ value }) => this.constructor.isFilled(value));
+    return this;
+  }
+
+  /**
+   * Clears the quadrille, then generates a perfect maze at the current
+   * dimensions, filling wall cells with `value` — the maze analogue of the
+   * zero-arg `fill()` chessboard. Rooms sit at even (row, col) indices,
+   * cell (0, 0) is always open, and the maze is borderless: the quadrille
+   * edge bounds it. Perfect means any two empty cells are joined by exactly
+   * one path, so no start/end cells are needed. Odd dimensions are
+   * canonical: on even ones a warning is issued and the trailing row/col,
+   * holding no rooms, seals as a wall strip. The generator is an iterative
+   * randomized depth-first search (explicit stack, no recursion), O(size).
+   * `value` is stored through `fill` internals, honoring the
+   * `Quadrille.factory` contract: a plain function is stored as a
+   * display-contract wall, whereas a factory-tagged one is evaluated per
+   * wall cell. For the shipped thin-wall look, walls are plain colors
+   * (see `Quadrille.thinWall`).
+   * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
+   * @param {*} value - Wall value: literal, display function, or factory.
+   * @returns {Quadrille} The modified quadrille (for chaining).
+   */
+  maze(value) {
+    const width = this.width;
+    const height = this.height;
+    if (width % 2 === 0 || height % 2 === 0) {
+      const suggestions = [];
+      width % 2 === 0 && suggestions.push(`width ${width - 1} or ${width + 1}`);
+      height % 2 === 0 && suggestions.push(`height ${height - 1} or ${height + 1}`);
+      console.warn(
+        `maze() expects odd dimensions but got ${width}×${height}: the trailing even ` +
+        `row/col holds no rooms and seals as a wall strip. Suggested: ${suggestions.join(', ')}.`
+      );
+    }
+    this.clear();
+    // open[row][col] === true → room or carved passage; every other cell becomes a wall
+    const open = Array(height).fill().map(() => Array(width).fill(false));
+    // iterative randomized depth-first search over the room lattice (even indices)
+    open[0][0] = true;
+    const stack = [[0, 0]];
+    while (stack.length) {
+      const [row, col] = stack[stack.length - 1];
+      const candidates = [];
+      row >= 2 && !open[row - 2][col] && candidates.push([row - 2, col]);
+      row + 2 < height && !open[row + 2][col] && candidates.push([row + 2, col]);
+      col >= 2 && !open[row][col - 2] && candidates.push([row, col - 2]);
+      col + 2 < width && !open[row][col + 2] && candidates.push([row, col + 2]);
+      if (candidates.length) {
+        const [r, c] = candidates[this._p.int(this._p.random(candidates.length))];
+        open[(row + r) / 2][(col + c) / 2] = true; // carve the shared wall slot
+        open[r][c] = true;
+        stack.push([r, c]);
+      } else {
+        stack.pop();
+      }
+    }
+    this.visit(({ row, col }) => !open[row][col] && this.fill(row, col, value));
     return this;
   }
 
