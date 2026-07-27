@@ -1039,6 +1039,96 @@ class Quadrille {
   }
 
   /**
+   * Breadth-first-search wavefront from the given cell, over any quadrille:
+   * filled cells are obstacles, empty cells are passable. Returns a
+   * number-field quadrille — `0` at the seed, the arrival ring elsewhere,
+   * and empty where unreachable — which renders as gray levels for free.
+   * Seeding on a filled or invalid cell yields a fully empty field.
+   * `directions` mirrors flood fill: `4` or `8` (corner-cutting at 8);
+   * other values warn and fall back to 4.
+   * Note: The neighbor guard leads with `isValid` on purpose — out-of-bounds
+   * `read` returns `undefined`, which counts as empty, so an emptiness-only
+   * guard would walk off the board forever.
+   * @param {number} row - Seed row index.
+   * @param {number} col - Seed column index.
+   * @param {number} [directions=4] - Neighborhood: 4 or 8.
+   * @returns {Quadrille} A new quadrille holding the distance field.
+   */
+  distances(row, col, directions = 4) {
+    if (directions !== 4 && directions !== 8) {
+      console.warn(`distances is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
+      directions = 4;
+    }
+    const dist = this.constructor._allocQ(this, this.height, this.width);
+    if (!this.isValid(row, col) || this.isFilled(row, col)) {
+      return dist; // an agent cannot stand in a wall (nor off the board)
+    }
+    const deltas = directions === 8
+      ? [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
+      : [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    dist.fill(row, col, 0);
+    let frontier = [[row, col]];
+    for (let d = 1; frontier.length; d++) {
+      const next = [];
+      for (const [r, c] of frontier) {
+        for (const [dr, dc] of deltas) {
+          const nr = r + dr;
+          const nc = c + dc;
+          if (this.isValid(nr, nc) && this.isEmpty(nr, nc) && dist.isEmpty(nr, nc)) {
+            dist.fill(nr, nc, d);
+            next.push([nr, nc]);
+          }
+        }
+      }
+      frontier = next;
+    }
+    return dist;
+  }
+
+  /**
+   * Returns a shortest path between two cells as an array of `{ row, col }`
+   * steps — excluding start, including end (the moves, not the position) —
+   * following the `search` return convention. Sugar over `distances` plus
+   * greedy descent: from the target, step to any neighbor one ring closer;
+   * the BFS invariant guarantees such a neighbor exists. Failure is uniform:
+   * unreachable target, filled endpoint (either one), off-board endpoint,
+   * and `start === end` all yield an empty array.
+   * `directions` mirrors flood fill: `4` or `8`; other values warn and fall
+   * back to 4.
+   * @param {number} row1 - Start row index.
+   * @param {number} col1 - Start column index.
+   * @param {number} row2 - Target row index.
+   * @param {number} col2 - Target column index.
+   * @param {number} [directions=4] - Neighborhood: 4 or 8.
+   * @returns {Array<{ row: number, col: number }>} Steps from start to target. Empty on failure.
+   */
+  path(row1, col1, row2, col2, directions = 4) {
+    const dist = this.distances(row1, col1, directions); // warns on invalid directions
+    const steps = [];
+    if (dist.isEmpty(row2, col2)) {
+      return steps; // wall or off-board target, wall start (empty field), or sealed region
+    }
+    const deltas = directions === 8
+      ? [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
+      : [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    let row = row2;
+    let col = col2;
+    let d = dist.read(row, col); // start === end reads 0 → no moves
+    while (d > 0) {
+      steps.push({ row, col });
+      d--;
+      for (const [dr, dc] of deltas) {
+        if (dist.read(row + dr, col + dc) === d) {
+          row += dr;
+          col += dc;
+          break;
+        }
+      }
+    }
+    return steps.reverse();
+  }
+
+  /**
    * Converts a pixel Y coordinate to a quadrille row index.
    * @param {number} pixelY - The screen Y-coordinate in pixels.
    * @param {number} [y=this._y || 0] - The quadrille's Y-coordinate origin.
