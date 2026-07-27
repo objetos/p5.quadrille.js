@@ -1039,11 +1039,13 @@ class Quadrille {
   }
 
   /**
-   * Breadth-first-search wavefront from the given cell, over any quadrille:
-   * filled cells are obstacles, empty cells are passable. Returns a
-   * number-field quadrille — `0` at the seed, the arrival ring elsewhere,
-   * and empty where unreachable — which renders as gray levels for free.
-   * Seeding on a filled or invalid cell yields a fully empty field.
+   * Returns the seed cell's reach as a number-field quadrille — `0` at the
+   * seed, steps-to-reach elsewhere, and empty where out of reach — computed
+   * as a breadth-first-search wavefront over any quadrille: filled cells are
+   * obstacles, empty cells are passable. The field renders as gray levels
+   * for free, and one field serves any number of agents (compute it from
+   * the target; every agent descends it). Seeding on a filled or invalid
+   * cell yields a fully empty field — an agent cannot stand in a wall.
    * `directions` mirrors flood fill: `4` or `8` (corner-cutting at 8);
    * other values warn and fall back to 4.
    * Note: The neighbor guard leads with `isValid` on purpose — out-of-bounds
@@ -1052,11 +1054,11 @@ class Quadrille {
    * @param {number} row - Seed row index.
    * @param {number} col - Seed column index.
    * @param {number} [directions=4] - Neighborhood: 4 or 8.
-   * @returns {Quadrille} A new quadrille holding the distance field.
+   * @returns {Quadrille} A new quadrille holding the reach field.
    */
-  distances(row, col, directions = 4) {
+  reach(row, col, directions = 4) {
     if (directions !== 4 && directions !== 8) {
-      console.warn(`distances is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
+      console.warn(`reach is using 4 directions instead of ${directions}, see: https://en.m.wikipedia.org/wiki/Flood_fill`);
       directions = 4;
     }
     const dist = this.constructor._allocQ(this, this.height, this.width);
@@ -1088,7 +1090,7 @@ class Quadrille {
   /**
    * Returns a shortest path between two cells as an array of `{ row, col }`
    * steps — excluding start, including end (the moves, not the position) —
-   * following the `search` return convention. Sugar over `distances` plus
+   * following the `search` return convention. Sugar over `reach` plus
    * greedy descent: from the target, step to any neighbor one ring closer;
    * the BFS invariant guarantees such a neighbor exists. Failure is uniform:
    * unreachable target, filled endpoint (either one), off-board endpoint,
@@ -1103,7 +1105,7 @@ class Quadrille {
    * @returns {Array<{ row: number, col: number }>} Steps from start to target. Empty on failure.
    */
   path(row1, col1, row2, col2, directions = 4) {
-    const dist = this.distances(row1, col1, directions); // warns on invalid directions
+    const dist = this.reach(row1, col1, directions); // warns on invalid directions
     const steps = [];
     if (dist.isEmpty(row2, col2)) {
       return steps; // wall or off-board target, wall start (empty field), or sealed region
@@ -2853,7 +2855,7 @@ class Quadrille {
    * webgl (color cells render on the shared context, no per-cell framebuffer).
    * Scope: lattice convention — cropping or shifting by odd offsets flips
    * parities, and a wall on a room slot (even-even) draws nothing yet still
-   * blocks `distances`/`path`; omit the param for the always-truthful fat look.
+   * blocks `reach`/`path`; omit the param for the always-truthful fat look.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {*} params.value - Wall color; used as the stroke.
