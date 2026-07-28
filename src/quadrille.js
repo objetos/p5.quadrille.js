@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.2
+ * @version 3.5.0-rc.3
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.2';
+  static VERSION = '3.5.0-rc.3';
 
   // Factory
 
@@ -484,6 +484,39 @@ class Quadrille {
     q._y = 0;
     q._origin = 'corner';
     // _row/_col intentionally left undefined
+    return q;
+  }
+
+  /**
+   * Wraps a raw JS array as a live, zero-copy Quadrille view for display.
+   * The view aliases the caller's memory — it reads and writes the array;
+   * that's the point. Cell mutators (fill, clear, replace, flood) write
+   * through to the array; shape transforms (rotate, transpose, shift, sort,
+   * resizing) rebuild internal memory and silently detach the view. Holes
+   * (undefined) and ragged rows render as empty cells via read semantics —
+   * nothing is copied, normalized, or repaired. A 1D array wraps as a single
+   * row (first-element detection, mirroring createQuadrille); for 2D arrays
+   * the skeleton is validated: every row must be an array.
+   * Used internally by `drawQuadrille` when passed an array; the numbered
+   * contract/limitations list lives in the drawQuadrille docs (single source).
+   * @param {p5} p - The p5 instance.
+   * @param {Array} mem - 2D array (rows of arrays) or 1D array (one row).
+   * @returns {Quadrille} The live view.
+   * @throws {Error} If a 2D array contains a non-array row.
+   */
+  static _view(p, mem) {
+    const mem2D = Array.isArray(mem[0]) ? mem : [mem];
+    if (!mem2D.every(Array.isArray)) {
+      throw new Error('drawQuadrille(array): every row must be an array');
+    }
+    const q = Object.create(this.prototype);
+    q._p = p;
+    q._memory2D = mem2D;
+    q._cellLength = this.cellLength;
+    q._x = 0;
+    q._y = 0;
+    q._origin = 'corner';
+    // _row/_col left undefined (set by drawQuadrille)
     return q;
   }
 
@@ -2040,7 +2073,8 @@ class Quadrille {
   transpose() {
     // credit goes to Fawad Ghafoorwho wrote about it here:
     // https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]));
+    // Array.from (not map): hole-safe for array views; rebuilt memory normalizes undefined → null
+    this._memory2D = Array.from(this._memory2D[0], (_, i) => this._memory2D.map(row => row[i] ?? null));
     return this;
   }
 
@@ -2051,7 +2085,8 @@ class Quadrille {
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
     // https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript/58668351#58668351
-    this._memory2D = this._memory2D[0].map((_, i) => this._memory2D.map(row => row[i]).reverse());
+    // Array.from (not map): hole-safe for array views; rebuilt memory normalizes undefined → null
+    this._memory2D = Array.from(this._memory2D[0], (_, i) => this._memory2D.map(row => row[i] ?? null).reverse());
     return this;
   }
 
@@ -2083,7 +2118,9 @@ class Quadrille {
    * @returns {Array<*>}
    */
   toArray() {
-    return this._memory2D.flat();
+    // flatMap + Array.from (not flat): hole-safe for array views — flat() drops holes,
+    // which would misalign shift() and any 1D consumer; holes flatten as null
+    return this._memory2D.flatMap(row => Array.from(row, v => v ?? null));
   }
 
   /**
@@ -2856,9 +2893,10 @@ class Quadrille {
    * and odd-odd pillar cells draw nothing. Segments overshoot from
    * `-cellLength/2` to `3*cellLength/2`, meeting at the centers of their
    * flanking pillars, so joints, corners, and tips form themselves at lattice
-   * points. Stroke is `outline`, weight is `outlineWeight` — recolor and
-   * reweight via the draw params, never by mutating storage. Works in P2D
-   * and WEBGL.
+   * points. At the quadrille's perimeter, where no pillar flanks, segments
+   * terminate flush with the edge instead of overshooting. Stroke is
+   * `outline`, weight is `outlineWeight` — recolor and reweight via the draw
+   * params, never by mutating storage. Works in P2D and WEBGL.
    *
    * Total on any quadrille, meaningful on lattice mazes at their natural
    * origin: cropping or shifting by odd offsets flips parities, and a wall on
@@ -2869,6 +2907,8 @@ class Quadrille {
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} params.row - Cell row index.
    * @param {number} params.col - Cell column index.
+   * @param {number} [params.width] - Quadrille width in cells (right-edge clamp; omitted → overshoot).
+   * @param {number} [params.height] - Quadrille height in cells (bottom-edge clamp; omitted → overshoot).
    * @param {*} [params.outline=this.outline] - Wall stroke color.
    * @param {number} [params.outlineWeight=cellLength/4] - Wall stroke weight.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
@@ -2877,6 +2917,8 @@ class Quadrille {
     graphics,
     row,
     col,
+    width,
+    height,
     cellLength = this.cellLength,
     outline = this.outline,
     outlineWeight = cellLength / 4
@@ -2885,8 +2927,10 @@ class Quadrille {
     graphics.noFill();
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
-    row % 2 && !(col % 2) && graphics.line(-cellLength / 2, cellLength / 2, 3 * cellLength / 2, cellLength / 2); // horizontal segment
-    !(row % 2) && col % 2 && graphics.line(cellLength / 2, -cellLength / 2, cellLength / 2, 3 * cellLength / 2); // vertical segment
+    row % 2 && !(col % 2) && graphics.line(col ? -cellLength / 2 : 0, cellLength / 2,
+      width === undefined || col < width - 1 ? 3 * cellLength / 2 : cellLength, cellLength / 2); // horizontal segment, flush at the perimeter
+    !(row % 2) && col % 2 && graphics.line(cellLength / 2, row ? -cellLength / 2 : 0,
+      cellLength / 2, height === undefined || row < height - 1 ? 3 * cellLength / 2 : cellLength); // vertical segment, flush at the perimeter
     graphics.pop(); // pillars draw nothing (overshoot meets at their centers)
   }
 }

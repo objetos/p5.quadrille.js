@@ -1,11 +1,13 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.5.0-rc.2
+ * @version 3.5.0-rc.3
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
  * @description
  * Prototype extensions for p5.js that support creating and rendering Quadrille instances.
+ * drawQuadrille also renders raw JS arrays through a live zero-copy view; its docs
+ * carry the numbered contract and limitations of the view vs a full Quadrille.
  * Part of the p5.quadrille.js library.
  * See https://objetos.github.io/docs/api/ for full usage and examples.
  */
@@ -33,11 +35,31 @@ p5.registerAddon((p5, fn) => {
   /**
    * Draws the given Quadrille to the canvas or a p5.Graphics context.
    * Supports 2D and WEBGL modes, honoring origin conventions.
+   *
+   * Also accepts a raw 1D/2D JS array, wrapped on the fly as a live zero-copy
+   * view. The view aliases the array. Exact contract and limitations vs a
+   * full Quadrille (single source of truth — referenced by Quadrille._view):
+   * 1. Empty means null (or undefined) — never false, 0, or '': a bool[][]
+   *    renders ✅/❎ and zeros render dark; filter at draw or normalize.
+   * 2. Display is the only verb arrays get — no algebra, queries, or
+   *    transforms on raw arrays; adopt the returned view (aliases) or
+   *    createQuadrille (copies, normalizes, owns) for the rest of the API.
+   * 3. Aliasing is cell-deep, not shape-deep: fill/clear/replace/flood on
+   *    the view write through to the array, while rotate/transpose/shift/
+   *    sort and resizing rebuild memory and silently detach the view.
+   * 4. Nothing is normalized: width is row 0's length — shorter rows render
+   *    their missing tail empty, longer rows truncate, holes render empty.
+   * 5. One small view object is allocated per call (cell data is never
+   *    copied); hold the returned view and draw it for zero allocation.
+   * 6. mouseRow/mouseCol are live on the instance this call just drew —
+   *    capture the return value rather than wrapping fresh next frame.
    * @function
    * @memberof p5
    * @name drawQuadrille
    * @instance
-   * @param {Quadrille} quadrille - The Quadrille instance to render.
+   * @param {Quadrille|Array} quadrille - The Quadrille to render, or a raw 1D/2D
+   * array wrapped on the fly as a live zero-copy view — the view aliases the
+   * array (reads and writes go through; nothing is copied or repaired).
    * @param {Object} [params={}] - Optional rendering parameters.
    * @param {p5.Graphics} [params.graphics=this] - Target graphics buffer.
    * @param {number} [params.x] - Absolute X offset (pixels).
@@ -62,35 +84,38 @@ p5.registerAddon((p5, fn) => {
    * @param {*} [params.outline]
    * @param {*} [params.textColor]
    * @param {number} [params.textZoom]
-   * @returns {Quadrille} The rendered quadrille.
+   * @returns {Quadrille} The rendered quadrille — for arrays, the view: a real
+   * Quadrille aliasing the array, with mouseRow/mouseCol live after the call.
    */
-  fn.drawQuadrille = function (quadrille, {
-    graphics = this,
-    x,
-    y,
-    row,
-    col,
-    filter,
-    textFont,
-    origin,
-    options = {},
-    functionDisplay = quadrille.constructor.functionDisplay,
-    imageDisplay = quadrille.constructor.imageDisplay,
-    colorDisplay = quadrille.constructor.colorDisplay,
-    stringDisplay = quadrille.constructor.stringDisplay,
-    numberDisplay = quadrille.constructor.numberDisplay,
-    tileDisplay = quadrille.constructor.tileDisplay,
-    booleanDisplay = quadrille.constructor.booleanDisplay,
-    bigintDisplay = quadrille.constructor.bigintDisplay,
-    symbolDisplay,
-    arrayDisplay,
-    objectDisplay,
-    cellLength = quadrille.constructor.cellLength,
-    outlineWeight = quadrille.constructor.outlineWeight,
-    outline = quadrille.constructor.outline,
-    textColor = quadrille.constructor.textColor,
-    textZoom = quadrille.constructor.textZoom
-  } = {}) {
+  fn.drawQuadrille = function (quadrille, params = {}) {
+    Array.isArray(quadrille) && (quadrille = Quadrille._view(this, quadrille)); // raw array → live zero-copy view
+    let {
+      graphics = this,
+      x,
+      y,
+      row,
+      col,
+      filter,
+      textFont,
+      origin,
+      options = {},
+      functionDisplay = quadrille.constructor.functionDisplay,
+      imageDisplay = quadrille.constructor.imageDisplay,
+      colorDisplay = quadrille.constructor.colorDisplay,
+      stringDisplay = quadrille.constructor.stringDisplay,
+      numberDisplay = quadrille.constructor.numberDisplay,
+      tileDisplay = quadrille.constructor.tileDisplay,
+      booleanDisplay = quadrille.constructor.booleanDisplay,
+      bigintDisplay = quadrille.constructor.bigintDisplay,
+      symbolDisplay,
+      arrayDisplay,
+      objectDisplay,
+      cellLength = quadrille.constructor.cellLength,
+      outlineWeight = quadrille.constructor.outlineWeight,
+      outline = quadrille.constructor.outline,
+      textColor = quadrille.constructor.textColor,
+      textZoom = quadrille.constructor.textZoom
+    } = params;
     quadrille._mode = (graphics._renderer instanceof p5.RendererGL) ? 'webgl' : 'p2d';
     // Warn: here we align with p5 conventions
     // https://p5js.org/learn/getting-started-in-webgl-coords-and-transform.html
