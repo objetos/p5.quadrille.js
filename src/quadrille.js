@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.1
+ * @version 3.5.0-rc.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.1';
+  static VERSION = '3.5.0-rc.2';
 
   // Factory
 
@@ -1738,8 +1738,9 @@ class Quadrille {
    * `value` is stored through `fill` internals, honoring the
    * `Quadrille.factory` contract: a plain function is stored as a
    * display-contract wall, whereas a factory-tagged one is evaluated per
-   * wall cell. For the shipped thin-wall look, walls are plain colors
-   * (see `Quadrille.thinWall`).
+   * wall cell. For the shipped thin-wall look, see `Quadrille.thinWall` — a
+   * value-agnostic display styled by the draw call's `outline`/`outlineWeight`,
+   * so any wall value renders thin.
    * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
    * @param {*} value - Wall value: literal, display function, or factory.
    * @returns {Quadrille} The modified quadrille (for chaining).
@@ -2842,37 +2843,48 @@ class Quadrille {
   }
 
   /**
-   * Thin-wall display function for lattice mazes — a `colorDisplay` sibling
-   * passed per draw, never stored: walls stay plain colors, and
-   * `drawQuadrille(board, { colorDisplay: Quadrille.thinWall, outlineWeight: 0 })`
-   * renders them thin while omitting the param renders them fat — same storage.
+   * Thin-wall display function — a value-agnostic display passed per draw,
+   * never stored: walls stay whatever they are (colors, images, emojis, …),
+   * and the thin look is pure draw-site styling. Install it as *every*
+   * display and silence the tile so only the wall segments show:
+   * `drawQuadrille(board, { colorDisplay: Quadrille.thinWall, imageDisplay: Quadrille.thinWall, stringDisplay: Quadrille.thinWall, numberDisplay: Quadrille.thinWall, tileDisplay: null })`
+   * renders any wall type thin, while omitting the params renders it fat —
+   * same storage.
+   *
    * Each wall cell reads its orientation from its own index parity: odd row +
-   * even col draws a horizontal segment, even row + odd col a vertical one, and
-   * odd-odd pillar cells draw nothing — segments overshoot from -cellLength/2 to
-   * 3*cellLength/2, meeting exactly at the centers of their flanking pillars, so
-   * joints, corners, and tips form themselves at lattice points. The stroke is
-   * the cell `value`, so the stored wall color is the skin. Works in p2d and
-   * webgl (color cells render on the shared context, no per-cell framebuffer).
-   * Scope: lattice convention — cropping or shifting by odd offsets flips
-   * parities, and a wall on a room slot (even-even) draws nothing yet still
-   * blocks `reach`/`path`; omit the param for the always-truthful fat look.
+   * even col draws a horizontal segment, even row + odd col a vertical one,
+   * and odd-odd pillar cells draw nothing. Segments overshoot from
+   * `-cellLength/2` to `3*cellLength/2`, meeting at the centers of their
+   * flanking pillars, so joints, corners, and tips form themselves at lattice
+   * points. Stroke is `outline`, weight is `outlineWeight` — recolor and
+   * reweight via the draw params, never by mutating storage. Works in P2D
+   * and WEBGL.
+   *
+   * Total on any quadrille, meaningful on lattice mazes at their natural
+   * origin: cropping or shifting by odd offsets flips parities, and a wall on
+   * a room slot (even-even) draws nothing yet still blocks `reach`/`path`;
+   * omit the params for the always-truthful fat look.
+   *
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
-   * @param {*} params.value - Wall color; used as the stroke.
    * @param {number} params.row - Cell row index.
    * @param {number} params.col - Cell column index.
+   * @param {*} [params.outline=this.outline] - Wall stroke color.
+   * @param {number} [params.outlineWeight=cellLength/4] - Wall stroke weight.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static thinWall({
     graphics,
-    value,
     row,
     col,
-    cellLength = this.cellLength
+    cellLength = this.cellLength,
+    outline = this.outline,
+    outlineWeight = cellLength / 4
   } = {}) {
     graphics.push();
-    graphics.stroke(value);
-    graphics.strokeWeight(cellLength / 4);
+    graphics.noFill();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
     row % 2 && !(col % 2) && graphics.line(-cellLength / 2, cellLength / 2, 3 * cellLength / 2, cellLength / 2); // horizontal segment
     !(row % 2) && col % 2 && graphics.line(cellLength / 2, -cellLength / 2, cellLength / 2, 3 * cellLength / 2); // vertical segment
     graphics.pop(); // pillars draw nothing (overshoot meets at their centers)
