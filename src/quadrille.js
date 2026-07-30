@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.3
+ * @version 3.5.0-rc.4
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.3';
+  static VERSION = '3.5.0-rc.4';
 
   // Factory
 
@@ -2832,7 +2832,11 @@ class Quadrille {
   }
 
   /**
-   * Renders a string value centered in the cell.
+   * Renders a string value centered in the cell. Unboxed on purpose: at large
+   * `textZoom` values glyphs may overflow the cell but are never clipped or
+   * dropped — the boxed `text()` form discards lines taller than the box, and
+   * emoji line metrics vary per browser font (Firefox's are taller), which
+   * made zooms near 1 vanish there while rendering elsewhere.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {string} params.value - Text to render.
@@ -2854,7 +2858,7 @@ class Quadrille {
     graphics.fill(textColor);
     graphics.textSize(cellLength * textZoom / value.length);
     graphics.textAlign('center', 'center');
-    graphics.text(value, 0, 0, cellLength, cellLength);
+    graphics.text(value, cellLength / 2, cellLength / 2);
   }
 
   /**
