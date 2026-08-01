@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.4
+ * @version 3.5.0-rc.5
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.4';
+  static VERSION = '3.5.0-rc.5';
 
   // Factory
 
@@ -88,7 +88,7 @@ class Quadrille {
    * Default text drawing zoom.
    * @type {number}
    */
-  static _textZoom = 0.78;
+  static _textZoom = 1;
 
   /**
    * Gets the current text zoom scale.
@@ -687,7 +687,8 @@ class Quadrille {
   }
 
   _format(memory1D, size) {
-    const cleaned = memory1D.map(v => v === undefined ? null : v);
+    // Array.from (not map): visits holes, so both holes and undefined normalize → null
+    const cleaned = Array.from(memory1D, v => v ?? null);
     return cleaned.length < size
       ? cleaned.concat(new Array(size - cleaned.length).fill(null))
       : cleaned;
@@ -1588,7 +1589,8 @@ class Quadrille {
       if (this.isValid(args[0], 0)) {
         const row = args[0];
         const value = args[1];
-        this._memory2D[row] = this._memory2D[row].map((cell, col) => {
+        // Array.from (not map): hole-safe for array views; rebuilt row normalizes undefined → null
+        this._memory2D[row] = Array.from(this._memory2D[row], (cell, col) => {
           cell = this._clearCell(cell);
           return value === undefined ? null : this._parseFn(value, row, col);
         });
