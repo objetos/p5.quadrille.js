@@ -1,0 +1,141 @@
+{{/* Ported from objetos.github.io/layouts/shortcodes/p5.html (REORG_3_5.md
+     Stage 3, task 1). Kept in LOCKSTEP with objetos and the vc donor — same
+     structure, one per-repo VALUE: $defqver below stays EMPTY on this host by
+     design (reference docs track the latest dist-tag; the book pins).
+     quadrille="true"  → latest p5.quadrille (empty $defqver → no @version pin)
+     quadrille="x.y.z" → explicit ad-hoc pin (version comparisons, regressions)
+     quadrille="false" → not loaded (default)
+     HOST DELTAS vs the objetos copy (this site deploys under a subpath):
+     1. Root-relative asset paths (/images/, /paintings/, /videos/, /fonts/)
+        in inline sketches and in the `sketch` param are prefixed with
+        .Site.BaseURL — carried over from this host's p5-global-iframe.
+     2. <meta charset='utf-8'> in the iframe head — carried over likewise
+        (emoji in srcdoc); candidate to sync into objetos/vc at the next
+        lockstep sync.
+     The tree/platonic/ground extras are inert unless their flag/param is used. */}}
+{{ $id          := printf "p5-%d" .Ordinal }}
+{{ $defver      := `2.3.0` }}
+{{ $ver         := default $defver (.Get "ver") }}
+{{ $defsoundver := `0.3.0` }}
+{{ $sketch      := .Get "sketch" }}
+{{ $sound       := .Get "sound"     | default "false" | lower }}
+{{ $tree        := .Get "tree"      | default "false" | lower }}
+{{ $platonic    := .Get "platonic"  | default "false" | lower }}
+{{ $quadrille   := .Get "quadrille" | default "false" | lower }}
+{{ $defqver     := `` }}{{/* EMPTY by design on this host — reference docs track latest */}}
+{{ $qver        := cond (eq $quadrille "true") $defqver (cond (eq $quadrille "false") "" $quadrille) }}
+{{ $qsuffix     := cond (ne $qver "") (printf "@%s" $qver) "" }}
+{{ $treesrc     := default `https://cdn.jsdelivr.net/npm/p5.tree/dist/p5.tree.min.js` (.Get `treesrc`) }}
+{{ $ground      := .Get `ground` }}
+{{ $closure     := slice }}
+{{ with $ground }}{{ $closure = index hugo.Data.grounds . }}{{ end }}
+
+{{/* HOST DELTA 1: prefix root-relative asset paths with the site base URL so
+     sketches work both locally and under the GitHub Pages subpath. Works even
+     inside template literals like `/paintings/p${i}.jpg`. */}}
+{{ $base := strings.TrimSuffix "/" .Site.BaseURL }}
+{{ $inner := .Inner }}
+{{ range $root := slice "/images/" "/paintings/" "/videos/" "/fonts/" }}
+  {{ $inner = replace $inner $root (printf "%s%s" $base $root) }}
+{{ end }}
+{{ $sketchsrc := $sketch }}
+{{ with $sketchsrc }}{{ if strings.HasPrefix . "/" }}{{ $sketchsrc = printf "%s%s" $base . }}{{ end }}{{ end }}
+
+{{ if and .Inner (strings.Contains .Inner "p.setup") }}
+
+{{/* ── inline, p.setup detected → instance mode, div ────────── */}}
+
+{{ $divid := printf "%s-div" $id }}
+
+{{ $p5key := printf "p5lib-%s" $ver }}
+{{ if not (.Page.Store.Get $p5key) }}{{ .Page.Store.Set $p5key true }}
+<script src='https://cdn.jsdelivr.net/npm/p5@{{ $ver }}/lib/p5.min.js'></script>
+{{ end }}
+{{ if eq $sound "true" }}{{ $key := printf "p5sound-%s" $defsoundver }}{{ if not (.Page.Store.Get $key) }}{{ .Page.Store.Set $key true }}
+<script src='https://cdn.jsdelivr.net/npm/p5.sound@{{ $defsoundver }}/dist/p5.sound.min.js'></script>
+{{ end }}{{ end }}
+{{ if eq $tree "true" }}{{ if not (.Page.Store.Get "p5tree") }}{{ .Page.Store.Set "p5tree" true }}
+<script src='{{ $treesrc }}'></script>
+{{ end }}{{ end }}
+{{ if eq $platonic "true" }}{{ if not (.Page.Store.Get "p5platonic") }}{{ .Page.Store.Set "p5platonic" true }}
+<script src='https://cdn.jsdelivr.net/npm/p5.platonic/dist/p5.platonic.min.js'></script>
+{{ end }}{{ end }}
+{{ if ne $quadrille "false" }}{{ $qsrc := printf "https://cdn.jsdelivr.net/npm/p5.quadrille%s/dist/p5.quadrille.min.js" $qsuffix }}{{ if not (.Page.Store.Get $qsrc) }}{{ .Page.Store.Set $qsrc true }}
+<script src='{{ $qsrc }}'></script>
+{{ end }}{{ end }}
+{{/* cdn="urlA,urlB" — throwaway external scripts for one embed (experiments);
+     promote a proven dep to a named ground in data/grounds.yaml. */}}
+{{ with .Get `cdn` }}{{ range (split . `,`) }}{{ $u := trim . ` ` }}{{ if not ($.Page.Store.Get $u) }}{{ $.Page.Store.Set $u true }}<script src='{{ $u }}'></script>{{ end }}{{ end }}{{ end }}
+{{ range $closure }}{{ if not ($.Page.Store.Get .) }}{{ $.Page.Store.Set . true }}<script src='{{ . }}'></script>{{ end }}{{ end }}
+
+<div id='{{ $divid }}'></div>
+<script>
+new p5(function(p) {
+  {{ $inner | safeJS }}
+}, '{{ $divid }}')
+</script>
+
+{{ else }}
+
+{{/* ── external sketch or inline global → global mode, iframe ── */}}
+
+<iframe
+  id='{{ $id }}'
+  {{ with .Get `allow` }}allow='{{ . }}'{{ end }}
+  style='border:none; display:block; width:0; height:0;'
+  srcdoc="
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset='utf-8'>
+        <style>body{margin:0;padding:0;overflow:hidden}canvas{display:block}</style>
+        <script src='https://cdn.jsdelivr.net/npm/p5@{{ $ver }}/lib/p5.min.js'></script>
+        {{ if eq $sound "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.sound@{{ $defsoundver }}/dist/p5.sound.min.js'></script>{{ end }}
+        {{ if eq $tree "true" }}<script src='{{ $treesrc }}'></script>{{ end }}
+        {{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.platonic/dist/p5.platonic.min.js'></script>{{ end }}
+        {{ if ne $quadrille "false" }}<script src='https://cdn.jsdelivr.net/npm/p5.quadrille{{ $qsuffix }}/dist/p5.quadrille.min.js'></script>{{ end }}
+        {{ with .Get `cdn` }}{{ range (split . `,`) }}<script src='{{ trim . ` ` }}'></script>{{ end }}{{ end }}
+        {{ range $closure }}<script src='{{ . }}'></script>{{ end }}
+        {{ if .Inner }}
+        <script>
+          {{ $inner | safeJS }}
+        </script>
+        {{ else }}
+        <script src='{{ $sketchsrc }}'></script>
+        {{ end }}
+        <script>
+          (function() {
+            // size the iframe to the FULL body content, not just the canvas, so
+            // DOM controls placed below the canvas (buttons, sliders, captions)
+            // are not clipped. Poll briefly so late-created controls are caught.
+            var last = '', n = 0
+            var t = setInterval(function() {
+              var c = document.querySelector('canvas')
+              if (c && c.offsetWidth > 0) {
+                var w = Math.max(c.offsetWidth, document.body.scrollWidth)
+                var h = Math.max(c.offsetHeight, document.body.scrollHeight)
+                var key = w + 'x' + h
+                if (key !== last) {
+                  last = key
+                  window.parent.postMessage({ type: 'p5resize', id: '{{ $id }}', w: w, h: h }, '*')
+                }
+              }
+              if (++n > 60) clearInterval(t)
+            }, 100)
+          })()
+        </script>
+      </head>
+      <body></body>
+    </html>
+  "
+></iframe>
+<script>
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'p5resize' && e.data.id === '{{ $id }}') {
+    var f = document.getElementById('{{ $id }}')
+    if (f) { f.style.width = e.data.w + 'px'; f.style.height = e.data.h + 'px' }
+  }
+})
+</script>
+
+{{ end }}
