@@ -18,7 +18,7 @@ import p5 from 'p5';
 // i. isPolyomino()
 // ii. perlin / simplex noise
 // iii. sort() using 'webgl' mode, requires using fbos to speed up sample() (which currently only supports 'p2d' renderer)
-// iv. screenRow and screenCol lacks webgl mode (would require p5.treegl)
+// iv. screenRow and screenCol pick correctly in webgl only under the default camera; picking with a moved camera needs unprojection (p5.tree)
 // v. Decide mouseCornerX, mouseCornerY, screenCornerX() and screenCornerY()
 class Quadrille {
   /**
