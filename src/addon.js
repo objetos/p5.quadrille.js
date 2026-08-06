@@ -69,13 +69,22 @@ p5.registerAddon((p5, fn) => {
    * @param {Function|Object|Set|Array|null} [params.filter] - Cell filter.
    * @param {p5.Font} [params.textFont] - Optional text font.
    * @param {string} [params.origin='corner'] - `'corner'` or `'center'`.
-   * @param {Object} [params.options={}] - Optional config forwarded to shader/functions.
+   * @param {Object} [params.options={}] - Config handed to cell-stored functions and to
+   * object cells' `display` methods — their ONLY argument (the `*Display` draw params
+   * receive the full params bag instead). Carries `origin`, plus `row` and `col` for the
+   * cell being drawn. ⚠ It is ONE object reused for every cell: `row`/`col` are
+   * overwritten before each display call, so a stashed reference reports the LAST cell.
+   * `origin` is defaulted with `??=`, so a caller-supplied object keeps whatever origin
+   * it was first drawn under — pass a fresh object, or set `origin` explicitly, when
+   * drawing the same options to both P2D and WEBGL.
    * @param {Function} [params.functionDisplay]
    * @param {Function} [params.imageDisplay]
    * @param {Function} [params.colorDisplay]
    * @param {Function} [params.stringDisplay]
    * @param {Function} [params.numberDisplay]
    * @param {Function} [params.bigintDisplay]
+   * @param {Function} [params.booleanDisplay]
+   * @param {Function} [params.symbolDisplay]
    * @param {Function} [params.tileDisplay]
    * @param {Function} [params.arrayDisplay]
    * @param {Function} [params.objectDisplay]
