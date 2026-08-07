@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.6
+ * @version 3.5.0-rc.7
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.6';
+  static VERSION = '3.5.0-rc.7';
 
   // Factory
 
@@ -85,10 +85,47 @@ class Quadrille {
   }
 
   /**
-   * Default text drawing zoom.
+   * Glyph size as a fraction of `cellLength`. Leaves a margin so a glyph does not crowd the
+   * tile stroke, which straddles the cell boundary and eats `outlineWeight / 2` inward on
+   * each side.
    * @type {number}
    */
-  static _textZoom = 1;
+  static _textZoom = 0.78;
+
+  /**
+   * Baseline offsets, keyed by `renderer|font|size|value`. See `stringDisplay`.
+   * @type {Map<string, number>}
+   * @private
+   */
+  static _dy = new Map();
+
+  /**
+   * Stable ids for fonts appearing in the `_dy` key. A `p5.Font` stringifies to
+   * `'[object Object]'`, so two fonts at one size would otherwise share a cache entry.
+   * @type {WeakMap<Object, number>}
+   * @private
+   */
+  static _fontIds = new WeakMap();
+
+  /** @private */
+  static _fontSeq = 0;
+
+  /**
+   * Id for `font` within this session, allocated on first sight.
+   * @param {*} font
+   * @returns {number|string}
+   * @private
+   */
+  static _fontId(font) {
+    if (!font) {
+      return '';
+    }
+    let id = this._fontIds.get(font);
+    if (id === undefined) {
+      this._fontIds.set(font, id = ++this._fontSeq);
+    }
+    return id;
+  }
 
   /**
    * Gets the current text zoom scale.
@@ -2689,12 +2726,11 @@ class Quadrille {
   // HELPER RENDER FUNCTIONS
 
   /**
-   * Dispatch table for `_display`: `[predicate, params key]` in priority order. Hoisted —
-   * it was rebuilt inside `_display`, allocating ten bound functions and eleven objects
-   * per cell per frame. The predicates are mutually exclusive (`isObject` is "filled and
-   * none of the others"), so the scan's fall-through is defensive, not reachable — keep it
-   * a scan anyway, since widening a predicate would make order matter. Both properties are
-   * pinned by `node testing/bench.mjs gate`.
+   * Dispatch table for `_display`: `[predicate, params key]` in priority order. Hoisted so
+   * the per-cell path allocates nothing. The predicates are mutually exclusive (`isObject`
+   * is "filled and none of the others"), so the scan's fall-through is defensive rather than
+   * reachable — keep it a scan anyway, since widening a predicate would make order matter.
+   * Both properties are pinned by `node testing/bench.mjs gate`.
    * @type {Array<[string, string]>}
    * @private
    */
@@ -2734,12 +2770,11 @@ class Quadrille {
 
   /**
    * Renders a number as a grayscale fill.
-   * The value reaches `fill` unwrapped. The old `graphics.color(value)` was redundant,
-   * not a string-conversion hatch: p5's renderer implements `fill(...args)` as
+   * The value reaches `fill` unwrapped: p5's renderer implements `fill(...args)` as
    * `this._pInst.color(...args)`, so `fill(x)` converts whatever `color(x)` would.
-   * String-to-color conversion is a STORAGE concern living in the constructors and `fill`;
-   * a CSS string never arrives here anyway, since `isColor` is `instanceof p5.Color` and
-   * `'red'` therefore renders as the word via `stringDisplay`.
+   * String-to-color conversion is a STORAGE concern, handled by the constructors and `fill`;
+   * a CSS string never arrives here, since `isColor` is `instanceof p5.Color` and `'red'`
+   * therefore renders as the word via `stringDisplay`.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} params.value - Numeric value to draw.
@@ -2874,7 +2909,7 @@ class Quadrille {
   } = {}) {
     this.stringDisplay({
       graphics,
-      value: value ? '✅' : '❎',
+      value: value ? '✓' : '✗',
       textFont,
       cellLength,
       textColor,
@@ -2907,26 +2942,60 @@ class Quadrille {
     textFont && graphics.textFont(textFont)
     graphics.noStroke();
     graphics.fill(textColor);
-    graphics.textSize(cellLength * textZoom / value.length);
-    graphics.textAlign('center', 'center');
-    graphics.text(value, cellLength / 2, cellLength / 2);
+    // Sized by code POINTS, so one emoji counts as one character whether or not it is a
+    // surrogate pair.
+    const size = cellLength * textZoom / [...value].length;
+    graphics.textSize(size);
+    const ctx = graphics.drawingContext;
+    // P2D can measure a glyph's INK; WEBGL has no 2D context, but a loaded font reports ink
+    // bounds itself. Both centre PER GLYPH, so tall and short glyphs sit mid-cell rather
+    // than sharing a baseline. Test for the METHOD: the WEBGL context is truthy.
+    const p2d = typeof ctx?.measureText === 'function';
+    graphics.textAlign('center', 'alphabetic');
+    // Cached by renderer|font|size|value — sound because ink extent is a pure function of
+    // those, whereas canvas state does not survive a cell's push/pop. The key uses values we
+    // just set rather than reading back ctx.font, so the steady state is one Map lookup.
+    const key = `${p2d ? 'p2d' : 'gl'}|${this._fontId(textFont)}|${size}|${value}`;
+    let dy = this._dy.get(key);
+    if (dy === undefined) {
+      try {
+        if (p2d) {
+          graphics.textAscent();             // flush textSize onto ctx.font before measuring
+          const m = ctx.measureText(value);
+          dy = (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+        } else {
+          // Drawn from a baseline at 0 the ink spans [b.y, b.y + b.h], so centring it means
+          // shifting the baseline by minus its midpoint. Try the renderer first, since a
+          // sketch that set its font with global textFont() passes no textFont draw param.
+          const b = graphics.textBounds?.(value, 0, 0, size) ??
+            textFont?.textBounds?.(value, 0, 0, size);
+          dy = b ? -(b.y + b.h / 2) : 0;
+        }
+      } catch (e) {
+        dy = 0;                              // metrics are a nicety; never break a draw
+      }
+      Number.isFinite(dy) || (dy = 0);
+      this._dy.set(key, dy);
+    }
+    graphics.text(value, cellLength / 2, cellLength / 2 + dy);
   }
 
   /**
    * Draws the outline (tile) for a cell.
-   * Uses `rect`. NOTE: this is NOT a fast path — p5 v2's renderer implements `quad`, `line`
-   * and `rect` identically, each building a `Shape` and calling `drawShape`, so switching
-   * primitives here buys nothing measurable. `rect` is kept for consistency with
-   * `colorDisplay`, and because it honors `rectMode`, which `colorDisplay` already assumed
-   * to be `CORNER`. See testing/bench.html for the primitive A/B.
-   * Unlike every other display, this one runs on EVERY cell — filled and empty alike — so
-   * it is where per-cell cost scales with board area; `outlineWeight: 0` skips it entirely,
-   * which is what makes the empty-cell skip in `drawQuadrille` possible.
+   *
+   * Uses `quad` rather than `rect` for expressiveness, not speed — the two measure the same.
+   * Four independent vertices can describe any quadrilateral (skewed, projected,
+   * texture-mapped), where `rect` is axis-aligned by construction, and `quad` is immune to a
+   * caller's `rectMode`.
+   *
+   * Runs on EVERY cell, filled and empty alike, so it is where per-cell cost scales with
+   * board area. `outlineWeight: 0` skips it entirely, which is what lets `drawQuadrille`
+   * skip empty cells altogether.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    * @param {*} [params.outline=this.outline] - Outline color.
-   * @param {number} [params.outlineWeight=this.outlineWeight] - Stroke weight. `0` skips the cell entirely.
+   * @param {number} [params.outlineWeight=this.outlineWeight] - Stroke weight. `0` draws nothing.
    */
   static tileDisplay({
     graphics,
@@ -2938,7 +3007,7 @@ class Quadrille {
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
-      graphics.rect(0, 0, cellLength, cellLength);
+      graphics.quad(0, 0, cellLength, 0, cellLength, cellLength, 0, cellLength);
     }
   }
 
@@ -2991,22 +3060,15 @@ class Quadrille {
     graphics.stroke(outline);
     graphics.strokeWeight(outlineWeight);
     graphics.strokeCap('round');
-    // Stroked lines with ROUND caps, and PERIMETER ends inset by `half`.
+    // Stroked lines with ROUND caps, PERIMETER ends inset by `half`.
     //
     // The cap is load-bearing: it extends outlineWeight/2 past the endpoint, so interior
-    // segments ending at a pillar centre close every joint for free. Terminating at the
-    // centre with a plain rect instead leaves an L-corner notch of exactly half the wall
-    // width. The cap's one defect was at the board edge, where it bulged past a boundary
-    // these docs call flush — fixed by pulling perimeter ends IN by `half`, so the cap
-    // lands exactly on the edge.
+    // segments ending at a pillar centre close every joint for free. Terminating exactly at
+    // the centre would leave an L-corner notch of half the wall width. Perimeter ends are
+    // pulled IN by `half` so the cap lands on the board edge rather than past it.
     //
-    // Measured (testing/bench.html, 2000 calls, two runs): line+ROUND and a filled rect
-    // come out the SAME within noise — one run showed line 2x faster, a second showed
-    // parity, on a machine whose whole table moved 2.5x between runs and whose timer is
-    // quantised to 1ms. So the reason for line is geometric, not speed. A rounded rect was
-    // slowest in both runs, which is why the rounded-tip variant stayed deferred.
-    // `strokeCap` is set explicitly rather than relying on p5's default, since a
-    // sketch-level SQUARE cap would silently reopen every joint.
+    // `strokeCap` is set explicitly rather than inherited: a sketch-level SQUARE cap would
+    // silently reopen every joint.
     const mid = cellLength / 2, half = outlineWeight / 2;
     if (row % 2 && !(col % 2)) {                 // horizontal segment
       const x = col ? -mid : half;
