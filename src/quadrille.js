@@ -2914,13 +2914,14 @@ class Quadrille {
 
   /**
    * Draws the outline (tile) for a cell.
-   * `rect`, not `quad`: in p5 v2 `quad` routes through the shape system (four `Vector`s,
-   * four vertices and a `Quad` primitive per call) while `rect` reaches `_renderRect`.
+   * Uses `rect`. NOTE: this is NOT a fast path — p5 v2's renderer implements `quad`, `line`
+   * and `rect` identically, each building a `Shape` and calling `drawShape`, so switching
+   * primitives here buys nothing measurable. `rect` is kept for consistency with
+   * `colorDisplay`, and because it honors `rectMode`, which `colorDisplay` already assumed
+   * to be `CORNER`. See testing/bench.html for the primitive A/B.
    * Unlike every other display, this one runs on EVERY cell — filled and empty alike — so
-   * it is the one place where the choice of primitive scales with board area. The saving is
-   * argued from p5's source and verified equivalent, but is unmeasured on a real canvas:
-   * with p5 stubbed the two are indistinguishable, so only testing/bench.html can see it.
-   * `rect` honors `rectMode`, which `colorDisplay` already assumed to be `CORNER`.
+   * it is where per-cell cost scales with board area; `outlineWeight: 0` skips it entirely,
+   * which is what makes the empty-cell skip in `drawQuadrille` possible.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
@@ -2952,13 +2953,13 @@ class Quadrille {
    *
    * Each wall cell reads its orientation from its own index parity: odd row +
    * even col draws a horizontal segment, even row + odd col a vertical one,
-   * and odd-odd pillar cells draw nothing. Segments overshoot from
-   * `-cellLength/2` to `3*cellLength/2`, meeting at the centers of their
-   * flanking pillars, so joints, corners, and tips form themselves at lattice
-   * points. At the quadrille's perimeter, where no pillar flanks, segments
-   * terminate flush with the edge instead of overshooting. Color is `outline`, thickness
-   * is `outlineWeight` — restyle via the draw params, never by mutating storage. Drawn as
-   * filled rects (see body) and working in P2D and WEBGL.
+   * and odd-odd pillar cells draw nothing. Interior segments run from `-cellLength/2` to
+   * `3*cellLength/2`, ending at the centers of their flanking pillars; the ROUND stroke cap
+   * reaches half a wall-thickness beyond, so joints, corners, and tips close on themselves
+   * at lattice points. At the quadrille's perimeter, where no pillar flanks, the end is
+   * inset by `outlineWeight/2` so the cap lands flush with the edge rather than past it.
+   * Color is `outline`, thickness is `outlineWeight` — restyle via the draw params, never by
+   * mutating storage. Works in P2D and WEBGL.
    *
    * Total on any quadrille, meaningful on lattice mazes at their natural
    * origin: cropping or shifting by odd offsets flips parities, and a wall on
@@ -2986,24 +2987,36 @@ class Quadrille {
     outlineWeight = cellLength / 4
   } = {}) {
     graphics.push();
-    graphics.noStroke();
-    graphics.fill(outline);
-    // Filled rects, not stroked lines. CONFORMANCE, not speed: p5's default strokeCap is
-    // ROUND, so a perimeter segment bulged outlineWeight/2 past an edge this function's own
-    // docs call flush. Rect ends are square, which matches the documented contract;
-    // interior joints hide the difference under the overshoot. (line() also builds a
-    // Vector/vertex/Line graph per call, as quad() did in tileDisplay — but at ~35 segments
-    // on an 11×15 maze that saving is unmeasurable and is NOT the reason for the change.)
+    graphics.noFill();
+    graphics.stroke(outline);
+    graphics.strokeWeight(outlineWeight);
+    graphics.strokeCap('round');
+    // Stroked lines with ROUND caps, and PERIMETER ends inset by `half`.
+    //
+    // The cap is load-bearing: it extends outlineWeight/2 past the endpoint, so interior
+    // segments ending at a pillar centre close every joint for free. Terminating at the
+    // centre with a plain rect instead leaves an L-corner notch of exactly half the wall
+    // width. The cap's one defect was at the board edge, where it bulged past a boundary
+    // these docs call flush — fixed by pulling perimeter ends IN by `half`, so the cap
+    // lands exactly on the edge.
+    //
+    // Measured (testing/bench.html, 2000 calls, two runs): line+ROUND and a filled rect
+    // come out the SAME within noise — one run showed line 2x faster, a second showed
+    // parity, on a machine whose whole table moved 2.5x between runs and whose timer is
+    // quantised to 1ms. So the reason for line is geometric, not speed. A rounded rect was
+    // slowest in both runs, which is why the rounded-tip variant stayed deferred.
+    // `strokeCap` is set explicitly rather than relying on p5's default, since a
+    // sketch-level SQUARE cap would silently reopen every joint.
     const mid = cellLength / 2, half = outlineWeight / 2;
     if (row % 2 && !(col % 2)) {                 // horizontal segment
-      const x = col ? -mid : 0;
-      const x2 = width === undefined || col < width - 1 ? 3 * mid : cellLength;
-      graphics.rect(x, mid - half, x2 - x, outlineWeight);
+      const x = col ? -mid : half;
+      const x2 = width === undefined || col < width - 1 ? 3 * mid : cellLength - half;
+      graphics.line(x, mid, x2, mid);
     }
     if (!(row % 2) && col % 2) {                 // vertical segment
-      const y = row ? -mid : 0;
-      const y2 = height === undefined || row < height - 1 ? 3 * mid : cellLength;
-      graphics.rect(mid - half, y, outlineWeight, y2 - y);
+      const y = row ? -mid : half;
+      const y2 = height === undefined || row < height - 1 ? 3 * mid : cellLength - half;
+      graphics.line(mid, y, mid, y2);
     }
     graphics.pop();                              // pillars draw nothing
   }
