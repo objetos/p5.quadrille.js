@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.7
+ * @version 3.5.0-rc.8
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.7';
+  static VERSION = '3.5.0-rc.8';
 
   // Factory
 
@@ -93,39 +93,18 @@ class Quadrille {
   static _textZoom = 0.78;
 
   /**
-   * Baseline offsets, keyed by `renderer|font|size|value`. See `stringDisplay`.
-   * @type {Map<string, number>}
+   * Baseline offsets: `size -> (value -> dy)`. Cleared when the font or renderer changes.
+   * See `stringDisplay`.
+   * @type {Map<number, Map<string, number>>}
    * @private
    */
   static _dy = new Map();
 
-  /**
-   * Stable ids for fonts appearing in the `_dy` key. A `p5.Font` stringifies to
-   * `'[object Object]'`, so two fonts at one size would otherwise share a cache entry.
-   * @type {WeakMap<Object, number>}
-   * @private
-   */
-  static _fontIds = new WeakMap();
+  /** Font the `_dy` cache was built for. @private */
+  static _dyFont;
 
-  /** @private */
-  static _fontSeq = 0;
-
-  /**
-   * Id for `font` within this session, allocated on first sight.
-   * @param {*} font
-   * @returns {number|string}
-   * @private
-   */
-  static _fontId(font) {
-    if (!font) {
-      return '';
-    }
-    let id = this._fontIds.get(font);
-    if (id === undefined) {
-      this._fontIds.set(font, id = ++this._fontSeq);
-    }
-    return id;
-  }
+  /** Renderer the `_dy` cache was built for. @private */
+  static _dyP2d;
 
   /**
    * Gets the current text zoom scale.
@@ -2952,11 +2931,17 @@ class Quadrille {
     // than sharing a baseline. Test for the METHOD: the WEBGL context is truthy.
     const p2d = typeof ctx?.measureText === 'function';
     graphics.textAlign('center', 'alphabetic');
-    // Cached by renderer|font|size|value — sound because ink extent is a pure function of
-    // those, whereas canvas state does not survive a cell's push/pop. The key uses values we
-    // just set rather than reading back ctx.font, so the steady state is one Map lookup.
-    const key = `${p2d ? 'p2d' : 'gl'}|${this._fontId(textFont)}|${size}|${value}`;
-    let dy = this._dy.get(key);
+    // Font and renderer are constant for a whole draw, so they invalidate the cache by
+    // identity rather than joining a key string. Only size and value vary per cell, and
+    // they index a two-level Map — so a hit costs two lookups and allocates nothing.
+    if (this._dyFont !== textFont || this._dyP2d !== p2d) {
+      this._dy.clear();
+      this._dyFont = textFont;
+      this._dyP2d = p2d;
+    }
+    let bySize = this._dy.get(size);
+    bySize === undefined && this._dy.set(size, bySize = new Map());
+    let dy = bySize.get(value);
     if (dy === undefined) {
       try {
         if (p2d) {
@@ -2975,7 +2960,7 @@ class Quadrille {
         dy = 0;                              // metrics are a nicety; never break a draw
       }
       Number.isFinite(dy) || (dy = 0);
-      this._dy.set(key, dy);
+      bySize.set(value, dy);
     }
     graphics.text(value, cellLength / 2, cellLength / 2 + dy);
   }

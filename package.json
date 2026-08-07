@@ -1,6 +1,6 @@
 {
   "name": "p5.quadrille",
-  "version": "3.5.0-rc.7",
+  "version": "3.5.0-rc.8",
   "description": "A grid-based teaching and rendering library for p5.js.",
   "type": "module",
   "main": "dist/p5.quadrille.esm.js",
