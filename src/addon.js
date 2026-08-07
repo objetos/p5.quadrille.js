@@ -1,6 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
- * @version 3.5.0-rc.5
+ * @version 3.5.0-rc.6
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -142,11 +142,29 @@ p5.registerAddon((p5, fn) => {
     quadrille._mode === 'webgl' ? (origin === 'corner' && graphics.translate(-graphics.width / 2, -graphics.height / 2)) :
       (origin === 'center' && graphics.translate(graphics.width / 2, graphics.height / 2));
     graphics.translate(quadrille._x, quadrille._y);
+    // Hot path: an empty cell has NO display channel — no predicate matches null — so the
+    // only mark it can ever leave is its tile. When no tile will be drawn, bail before the
+    // push/translate/params/dispatch instead of walking all of it to draw nothing.
+    // Identity-guarded: a CUSTOM tileDisplay may legitimately draw at outlineWeight 0.
+    // Done here rather than by composing onto `filter`, which also accepts Sets, Arrays
+    // and bare values — this works with every form and leaves caller filters untouched.
+    const skipEmpty = !tileDisplay ||
+      (tileDisplay === quadrille.constructor.tileDisplay && outlineWeight === 0);
     quadrille.visit(({ row, col, value }) => {
+      if (skipEmpty && value == null) {
+        return;
+      }
       graphics.push();
       graphics.translate(col * cellLength, row * cellLength);
       options.row = row;
       options.col = col;
+      // A FRESH bag per cell, deliberately. Hoisting one bag out of the loop was tried
+      // during rc.6 and reverted: the literal measures ~0.03 µs/cell against a per-cell
+      // floor of ~0.45–0.7 µs/cell, so under a tenth of the floor and well below
+      // run-to-run variance — while a shared bag needs `value` and `_this` reset every
+      // iteration or a cell renders the previous cell's display, silently. The first
+      // attempt also collided with this function's own `params` argument.
+      // See design/display_perf.md §6.
       const params = {
         value, quadrille, graphics, options, origin, row, col,
         width: quadrille.width, height: quadrille.height, mode: quadrille._mode,

@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.5
+ * @version 3.5.0-rc.6
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.5';
+  static VERSION = '3.5.0-rc.6';
 
   // Factory
 
@@ -1102,6 +1102,15 @@ class Quadrille {
     const deltas = directions === 8
       ? [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]
       : [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    // Lee's wave expansion: level-synchronous BFS from one seed, stamping each ring with
+    // its distance. `frontier`/`next` IS the wavefront the 🐭🧀 demo animates. Exact for unit
+    // step cost, which is all a grid of passable/impassable cells has. Dijkstra adds
+    // weights, A* prunes toward one target — both give up the point of this call: the
+    // field answers EVERY target at once. `path` is the backtrace half.
+    //
+    // Refs: Lee, C. Y. (1961). IRE Trans. Electronic Computers EC-10(3), 346–365.
+    //         doi:10.1109/TEC.1961.5219222 · https://en.wikipedia.org/wiki/Lee_algorithm
+    //       Moore, E. F. (1959). Annals of the Harvard Computation Lab 30(II), 285–292.
     dist.fill(row, col, 0);
     let frontier = [[row, col]];
     for (let d = 1; frontier.length; d++) {
@@ -1149,6 +1158,11 @@ class Quadrille {
       : [[-1, 0], [1, 0], [0, -1], [0, 1]];
     let row = row2;
     let col = col2;
+    // Backtrace half of Lee's algorithm: from the target, step to any neighbour stamped
+    // one lower. The BFS invariant guarantees one exists — hence no failure branch here
+    // and no priority queue anywhere. Ties break in `deltas` order, so this is A shortest
+    // path, not THE one. A* would visit fewer cells per query; reach-then-descend is the
+    // trade, since the field is reusable. Refs in `reach`.
     let d = dist.read(row, col); // start === end reads 0 → no moves
     while (d > 0) {
       steps.push({ row, col });
@@ -1795,7 +1809,21 @@ class Quadrille {
     this.clear();
     // open[row][col] === true → room or carved passage; every other cell becomes a wall
     const open = Array(height).fill().map(() => Array(width).fill(false));
-    // iterative randomized depth-first search over the room lattice (even indices)
+    // Iterative randomized DFS ("recursive backtracker") over the room lattice at even
+    // indices. Explicit stack, so a big board cannot overflow it like the legacy `_flood`.
+    //
+    // Any spanning tree of the lattice is a perfect maze, so this picks TEXTURE, not
+    // correctness. Mean over 400 seeds, 11×15 board, rooms by carved-slot count
+    // (regenerate with `node testing/bench.mjs texture`):
+    //   randomized DFS (this)  dead ends 13.6%  corridors 77.1%  junctions  9.4%
+    //   randomized Prim's      dead ends 32.5%  corridors 42.4%  junctions 25.1%
+    // DFS backtracks only when stuck — long corridors. Prim's grows from a random frontier
+    // cell — bushy tree, 2.4× the dead ends. Kruskal's differs again; Wilson's and
+    // Aldous–Broder sample spanning trees uniformly. Corridors read as a maze to a player.
+    //
+    // Refs: https://en.wikipedia.org/wiki/Maze_generation_algorithm
+    //       Prim, R. C. (1957). Bell System Technical Journal 36(6), 1389–1401.
+    //       Buck, J. (2015). Mazes for Programmers. Pragmatic Bookshelf. (texture survey)
     open[0][0] = true;
     const stack = [[0, 0]];
     while (stack.length) {
@@ -2660,27 +2688,42 @@ class Quadrille {
 
   // HELPER RENDER FUNCTIONS
 
+  /**
+   * Dispatch table for `_display`: `[predicate, params key]` in priority order. Hoisted —
+   * it was rebuilt inside `_display`, allocating ten bound functions and eleven objects
+   * per cell per frame. The predicates are mutually exclusive (`isObject` is "filled and
+   * none of the others"), so the scan's fall-through is defensive, not reachable — keep it
+   * a scan anyway, since widening a predicate would make order matter. Both properties are
+   * pinned by `node testing/bench.mjs gate`.
+   * @type {Array<[string, string]>}
+   * @private
+   */
+  static _handlers = [
+    ['isFunction', 'functionDisplay'],
+    ['isImage', 'imageDisplay'],
+    ['isColor', 'colorDisplay'],
+    ['isNumber', 'numberDisplay'],
+    ['isBigInt', 'bigintDisplay'],
+    ['isString', 'stringDisplay'],
+    ['isBoolean', 'booleanDisplay'],
+    ['isSymbol', 'symbolDisplay'],
+    ['isArray', 'arrayDisplay'],
+    ['isObject', 'objectDisplay']
+  ];
+
   static _display(params) {
     const { value, objectDisplay } = params;
     if (this.isObject(value) && objectDisplay === undefined && 'display' in value) {
       params._this = value;
       params.value = value.display;
     }
-    const handlers = [
-      { check: this.isFunction.bind(this), display: params.functionDisplay },
-      { check: this.isImage.bind(this), display: params.imageDisplay },
-      { check: this.isColor.bind(this), display: params.colorDisplay },
-      { check: this.isNumber.bind(this), display: params.numberDisplay },
-      { check: this.isBigInt.bind(this), display: params.bigintDisplay },
-      { check: this.isString.bind(this), display: params.stringDisplay },
-      { check: this.isBoolean.bind(this), display: params.booleanDisplay },
-      { check: this.isSymbol.bind(this), display: params.symbolDisplay },
-      { check: this.isArray.bind(this), display: params.arrayDisplay },
-      { check: this.isObject.bind(this), display: params.objectDisplay }
-    ];
-    for (const handler of handlers) {
-      if (handler.check(params.value) && handler.display) {
-        handler.display.call(this, params);
+    // Indexed loop, no destructuring: for..of allocates an iterator per cell. Display
+    // lookup before the predicate call — same outcome, cheaper on the common miss.
+    const handlers = this._handlers;
+    for (let i = 0; i < handlers.length; i++) {
+      const display = params[handlers[i][1]];
+      if (display && this[handlers[i][0]](params.value)) {
+        display.call(this, params);
         break;
       }
     }
@@ -2690,7 +2733,13 @@ class Quadrille {
   }
 
   /**
-   * Renders a number value using its color equivalent.
+   * Renders a number as a grayscale fill.
+   * The value reaches `fill` unwrapped. The old `graphics.color(value)` was redundant,
+   * not a string-conversion hatch: p5's renderer implements `fill(...args)` as
+   * `this._pInst.color(...args)`, so `fill(x)` converts whatever `color(x)` would.
+   * String-to-color conversion is a STORAGE concern living in the constructors and `fill`;
+   * a CSS string never arrives here anyway, since `isColor` is `instanceof p5.Color` and
+   * `'red'` therefore renders as the word via `stringDisplay`.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} params.value - Numeric value to draw.
@@ -2701,7 +2750,7 @@ class Quadrille {
     value,
     cellLength = this.cellLength
   } = {}) {
-    this.colorDisplay({ graphics, value: graphics.color(value), cellLength });
+    this.colorDisplay({ graphics, value, cellLength });
   }
 
   /**
@@ -2865,11 +2914,18 @@ class Quadrille {
 
   /**
    * Draws the outline (tile) for a cell.
+   * `rect`, not `quad`: in p5 v2 `quad` routes through the shape system (four `Vector`s,
+   * four vertices and a `Quad` primitive per call) while `rect` reaches `_renderRect`.
+   * Unlike every other display, this one runs on EVERY cell — filled and empty alike — so
+   * it is the one place where the choice of primitive scales with board area. The saving is
+   * argued from p5's source and verified equivalent, but is unmeasured on a real canvas:
+   * with p5 stubbed the two are indistinguishable, so only testing/bench.html can see it.
+   * `rect` honors `rectMode`, which `colorDisplay` already assumed to be `CORNER`.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    * @param {*} [params.outline=this.outline] - Outline color.
-   * @param {number} [params.outlineWeight=this.outlineWeight] - Stroke weight.
+   * @param {number} [params.outlineWeight=this.outlineWeight] - Stroke weight. `0` skips the cell entirely.
    */
   static tileDisplay({
     graphics,
@@ -2881,7 +2937,7 @@ class Quadrille {
       graphics.noFill();
       graphics.stroke(outline);
       graphics.strokeWeight(outlineWeight);
-      graphics.quad(0, 0, cellLength, 0, cellLength, cellLength, 0, cellLength);
+      graphics.rect(0, 0, cellLength, cellLength);
     }
   }
 
@@ -2900,9 +2956,9 @@ class Quadrille {
    * `-cellLength/2` to `3*cellLength/2`, meeting at the centers of their
    * flanking pillars, so joints, corners, and tips form themselves at lattice
    * points. At the quadrille's perimeter, where no pillar flanks, segments
-   * terminate flush with the edge instead of overshooting. Stroke is
-   * `outline`, weight is `outlineWeight` — recolor and reweight via the draw
-   * params, never by mutating storage. Works in P2D and WEBGL.
+   * terminate flush with the edge instead of overshooting. Color is `outline`, thickness
+   * is `outlineWeight` — restyle via the draw params, never by mutating storage. Drawn as
+   * filled rects (see body) and working in P2D and WEBGL.
    *
    * Total on any quadrille, meaningful on lattice mazes at their natural
    * origin: cropping or shifting by odd offsets flips parities, and a wall on
@@ -2915,8 +2971,8 @@ class Quadrille {
    * @param {number} params.col - Cell column index.
    * @param {number} [params.width] - Quadrille width in cells (right-edge clamp; omitted → overshoot).
    * @param {number} [params.height] - Quadrille height in cells (bottom-edge clamp; omitted → overshoot).
-   * @param {*} [params.outline=this.outline] - Wall stroke color.
-   * @param {number} [params.outlineWeight=cellLength/4] - Wall stroke weight.
+   * @param {*} [params.outline=this.outline] - Wall color.
+   * @param {number} [params.outlineWeight=cellLength/4] - Wall thickness in pixels.
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    */
   static thinWall({
@@ -2930,14 +2986,26 @@ class Quadrille {
     outlineWeight = cellLength / 4
   } = {}) {
     graphics.push();
-    graphics.noFill();
-    graphics.stroke(outline);
-    graphics.strokeWeight(outlineWeight);
-    row % 2 && !(col % 2) && graphics.line(col ? -cellLength / 2 : 0, cellLength / 2,
-      width === undefined || col < width - 1 ? 3 * cellLength / 2 : cellLength, cellLength / 2); // horizontal segment, flush at the perimeter
-    !(row % 2) && col % 2 && graphics.line(cellLength / 2, row ? -cellLength / 2 : 0,
-      cellLength / 2, height === undefined || row < height - 1 ? 3 * cellLength / 2 : cellLength); // vertical segment, flush at the perimeter
-    graphics.pop(); // pillars draw nothing (overshoot meets at their centers)
+    graphics.noStroke();
+    graphics.fill(outline);
+    // Filled rects, not stroked lines. CONFORMANCE, not speed: p5's default strokeCap is
+    // ROUND, so a perimeter segment bulged outlineWeight/2 past an edge this function's own
+    // docs call flush. Rect ends are square, which matches the documented contract;
+    // interior joints hide the difference under the overshoot. (line() also builds a
+    // Vector/vertex/Line graph per call, as quad() did in tileDisplay — but at ~35 segments
+    // on an 11×15 maze that saving is unmeasurable and is NOT the reason for the change.)
+    const mid = cellLength / 2, half = outlineWeight / 2;
+    if (row % 2 && !(col % 2)) {                 // horizontal segment
+      const x = col ? -mid : 0;
+      const x2 = width === undefined || col < width - 1 ? 3 * mid : cellLength;
+      graphics.rect(x, mid - half, x2 - x, outlineWeight);
+    }
+    if (!(row % 2) && col % 2) {                 // vertical segment
+      const y = row ? -mid : 0;
+      const y2 = height === undefined || row < height - 1 ? 3 * mid : cellLength;
+      graphics.rect(mid - half, y, outlineWeight, y2 - y);
+    }
+    graphics.pop();                              // pillars draw nothing
   }
 }
 
