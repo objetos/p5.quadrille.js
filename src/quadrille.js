@@ -1,6 +1,6 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
- * @version 3.5.0-rc.8
+ * @version 3.5.0-rc.9
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -25,7 +25,7 @@ class Quadrille {
    * Library version identifier.
    * @type {string}
    */
-  static VERSION = '3.5.0-rc.8';
+  static VERSION = '3.5.0-rc.9';
 
   // Factory
 
@@ -1093,7 +1093,8 @@ class Quadrille {
    * seed, steps-to-reach elsewhere, and empty where out of reach — computed
    * as a breadth-first-search wavefront over any quadrille: filled cells are
    * obstacles, empty cells are passable. The field renders as gray levels
-   * for free, and one field serves any number of agents (compute it from
+   * for free (see `heatMap` for a colored ramp), and one field serves any
+   * number of agents (compute it from
    * the target; every agent descends it). Seeding on a filled or invalid
    * cell yields a fully empty field — an agent cannot stand in a wall.
    * `directions` mirrors flood fill: `4` or `8` (corner-cutting at 8);
@@ -2364,6 +2365,65 @@ class Quadrille {
     return this.constructor._allocQ(this, [srcRow.slice()]);
   }
 
+  /**
+   * Returns a new quadrille of colors ramped by this quadrille's numbers: `hot`
+   * at `0`, `cold` at the largest number present, `lerpColor` in between. Number
+   * cells map to colors; every other cell — empty, string, image, … — comes back
+   * empty, so a `reach` field maps to exactly its reachable region.
+   * The ramp is anchored at ZERO, not at the smallest number present, because
+   * zero is what a distance field puts at its seed; a field whose numbers start
+   * at 1 therefore never reaches full `hot`. Negative numbers clamp to `hot`.
+   * The scale is the field's own maximum, read here in one pass — dimensions
+   * cannot supply it, since the largest distance on an open board and in a maze
+   * of the same size differ several-fold.
+   * Being an instance creator, the result is an ordinary color quadrille: it
+   * draws through the default `colorDisplay` (no display override anywhere), and
+   * it composes with algebra, `toImage` and `sort`. The numbers survive in the
+   * receiver — one field stays a visited set, a distance map AND a drawable.
+   * Note: `cold` defaults to the HUE COMPLEMENT of `hot` — same saturation and
+   * lightness, hue rotated 180° — computed as `max + min - channel` per channel,
+   * which is that rotation in HSL without leaving RGB. An achromatic `hot`
+   * (white, grey, black) has no hue to rotate, so its ramp inverts lightness
+   * instead: `heatMap(color(255))` runs white to black. Two consequences worth
+   * knowing: the ramp is opaque, so it hides what is behind it (pass a faded
+   * `cold` to overlay instead), and a complement pair holds HSL lightness — not
+   * LUMA, which still varies linearly, but across a narrow band (OrangeRed to
+   * its complement spans ~21 luma units), so `sort` on the result stays ordered
+   * yet ties readily. An analogous pair reads as one gradient and spreads much
+   * wider: `heatMap(color('yellow'), color('red'))` spans ~150.
+   * The default is computed in RGB units; under a non-default `colorMode`, pass
+   * `cold` explicitly.
+   * @param {p5.Color|string} [hot=Quadrille.outline] - Color at `0`.
+   * @param {p5.Color|string} [cold] - Color at the largest number; defaults to `hot`'s hue complement.
+   * @returns {Quadrille} A new quadrille of colors.
+   */
+  heatMap(hot = this.constructor.outline, cold) {
+    const ctor = this.constructor;
+    const p = this._p;
+    const isNumber = ({ value }) => ctor.isNumber(value);
+    const hi = p.color(hot);
+    let lo;
+    if (cold === undefined) {
+      // Channels rounded to RGB units so the complement is exact and involutive.
+      const r = Math.round(p.red(hi)), g = Math.round(p.green(hi)), b = Math.round(p.blue(hi));
+      const top = Math.max(r, g, b), bottom = Math.min(r, g, b);
+      // `max + min - channel` is a 180° hue rotation in HSL, S and L intact. An achromatic
+      // hot has no hue to rotate (it would return itself), so it inverts lightness instead:
+      // white → black. Mid grey is the one genuinely degenerate choice of `hot`.
+      const sum = top === bottom ? 255 : top + bottom;
+      lo = p.color(sum - r, sum - g, sum - b, p.alpha(hi));
+    } else {
+      lo = p.color(cold);
+    }
+    let max = 0;
+    this.visit(({ value }) => value > max && (max = value), isNumber);
+    const mem = ctor._allocNullMemory(this.height, this.width);
+    this.visit(({ row, col, value }) => {
+      mem[row][col] = p.lerpColor(hi, lo, max > 0 ? Math.min(Math.max(value / max, 0), 1) : 0);
+    }, isNumber);
+    return ctor._allocQ(this, mem);
+  }
+
   // VISUAL ALGORITHMS
 
   /**
@@ -2769,6 +2829,10 @@ class Quadrille {
 
   /**
    * Renders a BigInt value using numberDisplay after converting to Number.
+   * Delegation targets the class default, not a `numberDisplay` draw param: overrides do not
+   * cascade across type tiers, so styling bigint cells means passing `bigintDisplay` (which
+   * receives the full params bag, like every display). `booleanDisplay` delegates to
+   * `stringDisplay` the same way.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {bigint} params.value - BigInt value to render.
