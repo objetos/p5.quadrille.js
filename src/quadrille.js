@@ -2933,7 +2933,7 @@ class Quadrille {
 
   /**
    * Renders a boolean value centered in the cell using `stringDisplay`.
-   * Displays ✅ for `true` and ❎ for `false`.
+   * Displays `✓` for `true` and `✗` for `false`.
    * @param {Object} params
    * @param {p5.Graphics} params.graphics - Rendering context.
    * @param {boolean} params.value - Boolean value to render.
