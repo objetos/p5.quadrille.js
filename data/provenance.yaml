@@ -1,0 +1,298 @@
+# provenance.yaml — the three tiers a code fence can cite. Stage 18.
+#
+# Consumed by layouts/partials/provenance/maps.html. Everything site-specific
+# lives HERE so annotate.html and maps.html copy between repos verbatim — the
+# vc notebook gets the same two partials and its own tiers (JS -> p5 / three /
+# twgl -> GLSL). Same donor discipline as p5.html, running the other way.
+#
+# KEYS ARE TOKEN PATHS, dot-separated. Length 1 matches a single Chroma
+# identifier span; length 2 matches a span PAIR (name, punctuation, name).
+# That is what lets `Math.floor` reach MDN while a bare `floor` stays p5's —
+# the whole reason MDN beat W3Schools, which has no per-symbol target for the
+# qualified form.
+#
+# THREE PASSES, ordered: pair -> member -> any. The any pass is made genuinely
+# bare by masking dotted identifiers first (see annotate.html), which is why a
+# generated 339-name p5 list is safe: `event.code` and `arr.set(...)` cannot be
+# claimed by it.
+
+quadrille:
+  class: pv-q
+  title: Quadrille API
+  external: false
+  # Tokens are DERIVED from content/docs/** — see maps.html. This section
+  # only carries what derivation cannot produce or must override.
+  exclude:
+    # NEVER linked — any tier, any position. Genuinely ambiguous.
+    # `filter`: Array.prototype.filter, visual_algorithms/filter.md (the
+    #   convolution method) AND draw_quadrille/filter_prop.md (the draw param).
+    #   Three meanings.
+    # `sort`: collides with Array.prototype.sort — and quadrille's own sort is
+    #   p2d-only, so the fence reading is genuinely uncertain.
+    # `search` LEFT THIS LIST 2026-08-11 (Stage M1) for `member_only` below:
+    #   nothing else claims member position since the js members list was
+    #   removed, and the String reading occurs in no fence. See member_only.
+    # `shift`: quadrille mutator AND Array.prototype.shift — and Layered
+    #   Boards' own References cites the Array one by name, so both readings
+    #   are live in this book.
+    # ⚠ EXCLUSION IS GLOBAL. An early build linked `fill` to p5 on 103 sites,
+    # 66 of them `board.fill(...)`, because dropping a token from tier 3 left
+    # the p5 loop free to claim it. A wrong link is worse than no link.
+    - filter
+    - sort
+    - shift
+    # `row`, `col` — Stage 19, 2026-08-06. The instance creator q.row(i) shares
+    # its name with the commonest local in the book: `{ row, col }`
+    # destructuring, loop counters, draw params, an entity's position field.
+    # `col` has no api page at all (the draw-param page is titled "row, col" and
+    # sits in `silent`), so while `row` was merely member_only the two behaved
+    # DIFFERENTLY inside one expression — `other.row` linked to the instance
+    # creator and `other.col` beside it could not. Measured: 9 such anchors
+    # across Layered Boards and Polymorphic Cell Objects, every one wrong
+    # (`goal.row` x3, `step.row` x2, `other.row` x2, plus figurines).
+    # ⚠ NO HEURISTIC CAN FIX THIS. In a params bag they are draw params, in a
+    # display callback they are cell coordinates, on a cell object they are a
+    # field, and nothing in the source tells those apart. Excluding both is the
+    # only rule that covers both.
+    # COST, STATED: `q.row(0)` loses its link — ZERO occurrences in Foundations
+    # and Strategies; the `row` api page's own prose links anyway. `col` is
+    # listed defensively: unlinkable today, and this stops a future `col` page
+    # from silently starting to link.
+    - row
+    - col
+  # Linked to tier 3 ONLY after a dot; the bare form belongs to p5 or JS.
+  # Measured, not guessed: every receiver of `.fill`/`.width`/`.height` in the
+  # book is a quadrille (board, q, trail, hint, piece, mask, game, next,
+  # counts, view, current, dragged) except `pg`, a p5.Graphics — handled by
+  # p5.receivers below.
+  member_only:
+    - fill      # q.fill(r,c,v) vs p5 fill(255)
+    - width     # q.width vs canvas width
+    - height    # q.height vs canvas height
+    - rotate    # q.rotate() vs p5 rotate(angle)
+    - clear     # q.clear() vs p5 clear()
+    # `search` — Stage M1, 2026-08-11. q.search(pattern, strict) vs
+    #   String.prototype.search. The String reading occurs in NO fence, nor
+    #   does location.search (grep-gated at M1 close), and every fence
+    #   receiver of `.search` is a quadrille (game, fenBoard, board, plus the
+    #   api page's own demo). Bare `search` never occurs in a fence, so the
+    #   member-only restriction costs nothing. Back to `exclude` the day a
+    #   regexp search or a URL query string enters a fence.
+    - search
+    # `row` LEFT THIS LIST 2026-08-06 (Stage 19) for `exclude`, together with
+    # `col`. Member-only was not enough: it links the dotted form from ANY
+    # receiver, and most receivers of `.row` in this book are cell objects and
+    # step records, not quadrilles. See the note in `exclude`.
+  # Written ONLY as `Quadrille.<tok>` or as an object key, never bare — so the
+  # bare form belongs to p5. Emitted as a PAIR entry (`Quadrille.textFont`),
+  # which keeps the quadrille link and hands `textFont(font)` back to tier 2.
+  # Found by the shadow warning on 2026-08-05.
+  statics:
+    - textFont
+  # Pages known to yield no symbol. Anything NOT listed that fails the
+  # identifier filter warns — so the coverage report is an alarm that fires on
+  # drift, not permanent build noise. Four grouping indexes plus four
+  # deliberately prose/param-titled pages (Stage 3 chose those titles).
+  silent:
+    - /docs/properties/read_only
+    - /docs/properties/read_write
+    - /docs/accessors/cell_contents
+    - /docs/accessors/instance_creators
+    - /docs/p5_functions/draw_quadrille/x_y
+    - /docs/p5_functions/draw_quadrille/row_col
+    - /docs/p5_functions/draw_quadrille/display_fns
+    - /docs/p5_functions/draw_quadrille/drawing_arrays
+  extra:
+    # The class itself. Position-agnostic on purpose: it wants to link both as a
+    # bare mention and as the receiver in `Quadrille.cellLength`, where the tail
+    # links separately to its own page. This host has no `/docs/` index page — the
+    # api IS the whole site — so the class links to the home page (`/`), which
+    # maps.html resolves to site.Home.RelPermalink (subpath-safe).
+    Quadrille: /
+    # Underivable tokens. Every display-function slot belongs to ONE page whose
+    # title is prose ("display functions"), so derivation reaches none of them.
+    colorDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    stringDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    numberDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    imageDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    arrayDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    objectDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    functionDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    tileDisplay: /docs/p5_functions/draw_quadrille/display_fns/
+    # NOT listed, deliberately: `value`. It is a display-contract key, but also one
+    # of the commonest variable names in any sketch, so linking it would be wrong far
+    # more often than right — a judgement, not an oversight. This is why `value` sits
+    # unlinked beside a linked `cellLength`.
+    # ⚠ `options` USED TO BE LISTED HERE ALONGSIDE `value`, and that bundling was the
+    # error: `value` is only ever a callback-bag key, whereas `options` is also a
+    # documented top-level drawQuadrille draw param, a sibling of row/col/filter/origin/
+    # cellLength — and `cellLength` links. It now has its own api page
+    # (draw_quadrille/options), so DERIVATION supplies it and no entry is needed here.
+    # That is the mechanism working as designed: a new api page becomes linkable with
+    # zero edits to this file. It is also the reminder that this vocabulary GROWS when
+    # the api tree grows — run scripts/check-fence-names.mjs after adding api pages,
+    # not only after writing chapters.
+
+p5:
+  class: pv-p5
+  title: p5.js reference
+  external: true
+  base: https://p5js.org/reference/p5/
+  # ⚠ THE TOKEN LIST IS GENERATED, NOT WRITTEN HERE.
+  # See data/p5_globals.yaml + scripts/gen-p5-globals.mjs. Three hand-built
+  # lists in a row shipped with holes — sin, strokeWeight, deltaTime, floor,
+  # max, then drawingContext — several of them cited BY NAME in the chapters'
+  # own References. The generator reads p5's own types/global.d.ts, so the list
+  # cannot drift from the reference it links to and is pinned to the p5 version
+  # the book serves. Bump p5, rerun the script, commit.
+  #
+  # Constants (CENTER, TWO_PI, WEBGL, …) share the /reference/p5/<name>/ shape —
+  # verified, not assumed. Set false if that ever changes.
+  link_constants: true
+  # Receivers that are p5 objects rather than quadrilles. The cross product with
+  # quadrille.member_only is GENERATED in maps.html, so adding a receiver costs
+  # ONE line rather than one per receiver × token. `pg` was the first case;
+  # `graphics` the second, reported from Board Algebra where `graphics.fill`
+  # was being handed to the quadrille tier. This is the ONE heuristic in the
+  # design that does not heal itself — which is why the coverage script must
+  # report receivers.
+  receivers:
+    - pg
+    - graphics
+    # `buffer` and `layer` REMOVED 2026-08-06 (Stage 19). Both were seeded ahead
+    # of evidence, against this list's own stated policy — `pg` and `graphics`
+    # came from the provenance report, these two from guessing. And `layer` was
+    # pointing the wrong way: it is a live QUADRILLE local in Layered Boards'
+    # pulled-apart figure (`layers.forEach((layer, i) => …)`). No `layer.foo()`
+    # call exists yet, so nothing was mislinked — but the first one written
+    # would have gone to p5. Add either back when the RECEIVERS column shows it.
+  # ── p5.Element receivers ────────────────────────────────────────────────
+  # DOM elements from createSelect / createSlider / createColorPicker /
+  # createCheckbox / createButton. Their methods are p5.Element methods and do
+  # NOT live under /reference/p5/ — verified: p5js.org/reference/p5.Element/value/
+  # and /p5.Element/style/ both resolve, so the shape is uniform under a
+  # different base. That is why they get their own base and list rather than
+  # being folded into `receivers`, which would have emitted 404s.
+  #
+  # Generated as PAIRS (receiver × method), so every name below is safe even
+  # when it collides with something else bare: `value`, `size`, `remove`,
+  # `class`, `selected` and `position` only ever link after one of these
+  # receivers. This is the mechanism that lets `value` stay unlinked as an
+  # ordinary variable while `select.value()` links.
+  #
+  # The three concrete names came from the provenance report's RECEIVERS
+  # column, which is exactly how this list is meant to grow — add a name when
+  # the report shows it, not by guessing ahead.
+  element_base: https://p5js.org/reference/p5.Element/
+  element_receivers:
+    - select
+    - globalPicker
+    - globalSlider
+    - picker
+    - slider
+    - checkbox
+    - button
+    - input
+  element_methods:
+    - value
+    - option
+    - selected
+    - checked
+    - changed
+    - input
+    - position
+    - size
+    - style
+    - html
+    - attribute
+    - removeAttribute
+    - id
+    - addClass
+    - removeClass
+    - hasClass
+    - toggleClass
+    - child
+    - parent
+    - center
+    - show
+    - hide
+    - remove
+    - elt
+    - mousePressed
+    - mouseClicked
+    - mouseOver
+    - mouseOut
+  # Genuinely one-off pairs that are not receiver × member_only.
+  qualified: {}
+
+js:
+  class: pv-js
+  title: MDN
+  external: true
+  base: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+  # Bare-position globals: href = base + group + "/" + token.
+  #
+  # NO `Statements` GROUP. Chroma tags if/for/const/return as keywords (k/kr/kd),
+  # never nf/nx, so an identifier pass can never match them. Carrying them was
+  # dead weight. ☐ Linking keywords would need the pass to accept `kr` spans —
+  # which would also make p5's int/float reachable. Worth considering, not free.
+  groups:
+    Global_Objects:
+      - Array
+      - Object
+      - Math
+      - Number
+      - String
+      - Boolean
+      - Map
+      - Set
+      - JSON
+      - BigInt
+      - Symbol
+      - Promise
+      - RegExp
+      - Error
+  # ⚠ NO `members` LIST. An earlier round added one (Array/String methods in
+  # member position) on the theory that `arr.push(v)` needed distinguishing
+  # from p5's `push()`. The book's actual fences say otherwise: a dotted call
+  # here is almost always a QUADRILLE (`cover.replace(...)`, `board.clone()`)
+  # or a p5 OBJECT (`graphics.push()`), and Array/String method calls on plain
+  # locals are rare. The list mislinked both of those to MDN — reported
+  # 2026-08-05 from Board Algebra. Removed rather than patched.
+  #
+  # Consequence, accepted: `arr.map(fn)` links to nothing. JS methods reach MDN
+  # only through `qualified` below, where a named receiver makes the tier
+  # certain. That is the honest trade — a wrong link is worse than no link.
+  #
+  # Member position now resolves: p5 receivers first (p5.receivers), then
+  # quadrille.member_only, then tier 3 position-agnostic. Nothing else claims a
+  # dotted identifier.
+  # Token PAIRS — the receiver disambiguates the tier. This is what gives
+  # Math.floor an MDN target while bare `floor` stays p5's.
+  qualified:
+    Math.floor: Global_Objects/Math/floor
+    Math.ceil: Global_Objects/Math/ceil
+    Math.round: Global_Objects/Math/round
+    Math.abs: Global_Objects/Math/abs
+    Math.min: Global_Objects/Math/min
+    Math.max: Global_Objects/Math/max
+    Math.random: Global_Objects/Math/random
+    Math.pow: Global_Objects/Math/pow
+    Math.sqrt: Global_Objects/Math/sqrt
+    Math.sign: Global_Objects/Math/sign
+    Math.trunc: Global_Objects/Math/trunc
+    Math.hypot: Global_Objects/Math/hypot
+    Array.isArray: Global_Objects/Array/isArray
+    Array.from: Global_Objects/Array/from
+    Object.keys: Global_Objects/Object/keys
+    Object.values: Global_Objects/Object/values
+    Object.entries: Global_Objects/Object/entries
+    Object.assign: Global_Objects/Object/assign
+    Object.freeze: Global_Objects/Object/freeze
+    JSON.parse: Global_Objects/JSON/parse
+    JSON.stringify: Global_Objects/JSON/stringify
+  # Operators are punctuation in Chroma (o/p), so they are out of reach of an
+  # identifier pass, and their MDN slugs are not their tokens anyway
+  # (Spread_syntax, Optional_chaining, Nullish_coalescing). Recorded so nobody
+  # re-derives the idea. Not worth it.
+  operators: {}

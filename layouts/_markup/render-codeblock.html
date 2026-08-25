@@ -1,0 +1,24 @@
+{{/*
+  render-codeblock.html — hugo-book's own hook with ONE LINE CHANGED to wrap the
+  highlighted code in provenance/annotate (ported from objetos.github.io's
+  hextra hook, REORG_3_5.md Stage 18). Everything else is hugo-book verbatim,
+  including the filename block above.
+
+  The annotate partial links known identifiers inside ```js / ```javascript
+  fences to their tier's reference (quadrille → this site's own api page, p5 →
+  the p5 reference, JS → MDN). Non-js langs return untouched (the gate lives in
+  annotate.html). It requires class-based Chroma output, so this site sets
+  [markup.highlight] noClasses = false and ships a Chroma stylesheet via
+  assets/custom.scss — without that, fences render without color.
+*/ -}}
+{{- with (index .Attributes "filename") -}}
+  {{- $href := index $.Attributes "href" -}}
+  {{- if $href -}}
+    {{- $href = partial "docs/links/portable-link" (dict "Page" $.PageInner "Destination" $href) -}}
+  {{- end -}}
+<div class="book-codeblock-filename">
+  <a {{ with $href }}href="{{ . }}"{{ end }}>{{ . }}</a>
+</div>
+{{- end -}}
+{{- $highlighted := transform.HighlightCodeBlock . .Options -}}
+{{- partial "provenance/annotate" (dict "lang" .Type "html" $highlighted.Wrapped) -}}

@@ -1,5 +1,4 @@
 baseURL = "https://objetos.github.io/p5.quadrille.js/"
-languageCode = "en-us"
 title = "p5.quadrille.js"
 theme = 'book'
 
@@ -8,14 +7,14 @@ defaultContentLanguage = "en"
 
 [languages]
   [languages.en]
-    languageName = "English"
-    languageCode = "en"
+    label = "English"
+    locale = "en-US"
     weight = 1
     # title = "p5.quadrille.js"
 
   # [languages.es]
-  #   languageName = "Español"
-  #   languageCode = "es"
+  #   label = "Español"
+  #   locale = "es"
   #   weight = 2
     # title = "p5.quadrille.js"
 
@@ -27,28 +26,16 @@ enableGitInfo = true
 [markup]
 [markup.goldmark.renderer]
   unsafe = true
-# pdf style
-#[markup.highlight]
-  #style = "github"
+# Class-based Chroma output so the provenance pass (layouts/partials/provenance)
+# can wrap identifier spans. The stylesheet (github + github-dark) lives in
+# assets/_custom.scss; `style` here is inert with noClasses=false.
+[markup.highlight]
+  noClasses = false
+  style = "github"
 
 [markup.tableOfContents]
   startLevel = 1
   
-# mount assets so that p5-global-iframe "sees it"
-[[module.mounts]]
-  source = "static/images"
-  target = "assets/images"
-[[module.mounts]]
-  source = "static/videos"
-  target = "assets/videos"
-[[module.mounts]]
-  source = "static/paintings"
-  target = "assets/paintings"
-  
-[[module.mounts]]
-  source = "static/fonts"
-  target = "assets/fonts"
-
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences

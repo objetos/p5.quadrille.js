@@ -1,0 +1,190 @@
+{{/*
+  provenance/annotate.html — link known identifiers inside a highlighted code
+  block to their tier's reference. Stage 18. Called from
+  layouts/_markup/render-codeblock.html, which passes `lang` and the `html`
+  returned by hextra's components/codeblock partial.
+
+  The lang gate lives HERE, not in the hook, so the hook stays a ONE-LINE diff
+  against the theme file. Non-js langs return untouched.
+
+  ── WHITESPACE DISCIPLINE ─────────────────────────────────────────────────
+  Every action in this file carries BOTH trim markers. An untrimmed action — a
+  bare comment included — emits the newlines around it, and in a fully trimmed
+  template that surfaces as dozens of whitespace-only file diffs. That cost a
+  gate run on 2026-08-05. If you add a line here, trim it.
+
+  ── WHY ON CHROMA'S OUTPUT AND NOT ON THE SOURCE ──────────────────────────
+  Chroma has already classified every token, so strings, template literals,
+  regex literals and comments sit in their own spans and are structurally
+  unreachable. A source-level pass would link `fill` inside the comment
+  `// fresh level, one call` and read the `#` in color('#0b332b') as a
+  preprocessor directive the way the vc glsl hook does. Verified on a real
+  build: zero anchors landed inside a comment or string span.
+
+  ── PASSES, AND THE ORDER IS THE DISAMBIGUATION ─────────────────────────
+    0. "recv"    ANY p5 function after a KNOWN p5 receiver — graphics.push(),
+                 pg.rect(). Computed per fence from the receivers present, not
+                 materialised as a map: a full receivers x p5-tokens cross
+                 product would be ~2000 entries, while per fence it is at most
+                 (receivers present) x (p5 tokens present), typically under 20.
+    1. "pair"    named receiver — Math.floor -> MDN, Quadrille.textFont -> api
+    2. "member"  any receiver, after a dot — .fill/.width/.height -> quadrille
+    3. "anyq"    tier 3, POSITION-AGNOSTIC — cover.replace(...) and a bare
+                 createQuadrille(...) are both the quadrille's
+    4. "anyx"    tiers 1-2, BARE ONLY — fill(255) / sin(x) -> p5
+
+  THE RULE THAT MAKES MEMBER POSITION TRACTABLE: in this book a dotted call is
+  a p5 object or a quadrille, essentially never an Array. p5 receivers CAN be
+  enumerated (they come from createGraphics), quadrille receivers cannot — so
+  pass 0 handles the enumerable case and everything left over defaults to the
+  quadrille. An earlier round instead put Array/String methods in member
+  position, which mislinked `cover.replace(...)` and `graphics.push()` to MDN;
+  that list is gone.
+
+  ⚠ WHY anyq AND anyx ARE SEPARATE. Pass 4 is made bare-only by MASKING every
+  remaining dotted identifier before it runs and lifting the mask after, since
+  Go RE2 has no lookbehind. That mask is essential for tiers 1-2: with the full
+  p5 surface, `event.code`, `arr.set(...)` and `obj.index` would all be handed
+  to p5. But it is WRONG for tier 3, because most quadrille calls ARE member
+  calls — `palette.isFilled(...)`, `board.clone()`. Running quadrille under the
+  mask silently unlinked them. So tier 3 gets its own position-agnostic pass
+  BEFORE the mask goes down.
+
+  ⚠ THE DOT SPAN IS NOT ALWAYS JUST A DOT. Chroma merges adjacent punctuation,
+  so a CHAINED call emits <span class="p">)).</span> rather than
+  <span class="p">.</span> — confirmed 2026-08-05 on
+  `cover.replace(color('red')).fill(color('green'))`. Every dot-matching
+  pattern here therefore matches a p span ENDING in a dot and captures it, so
+  the original punctuation is reproduced verbatim. Matching a bare `\.` missed
+  every chained call in the book, in both the member pass and the mask.
+
+  Receiver-name disambiguation is a HEURISTIC, not a proof — `pg` was the first
+  p5-object receiver found, `graphics` the second, `select`/`globalPicker`/
+  `globalSlider` the DOM ones. The provenance report's RECEIVERS column is how
+  the next one gets found. That is the one part of this design that does not
+  heal itself.
+
+  ── THREE SILENT-FAILURE SHAPES, EACH LEARNED THE HARD WAY ────────────────
+  1. MATCH THE UNMINIFIED FORM. transform.Highlight emits class="nx" WITH
+     quotes; --minify strips them later, AFTER templates render. Matching
+     <span class=nx> would match everything under `hugo server` and nothing in
+     production — the worst possible failure shape.
+  2. ${1} NOT $1 — Go RE2 expansion.
+  3. THE safeHTML IS LOAD-BEARING. replaceRE returns a plain string, and a
+     plain string returned to the hook is HTML-escaped on output: every fence
+     in the book would render as visible markup.
+
+  ── PRESENCE SET, NOT PER-ENTRY SCANNING (perf, 2026-08-05) ───────────────
+  The first cut guarded each map entry with strings.Contains over the whole
+  fence: 3 passes x ~250 entries = ~750 full-string scans per fence, ~300
+  fences, hundreds of MB of scanning. Build went 13.5 s -> 44.5 s. Now the
+  identifiers present in the fence are extracted ONCE and each entry costs one
+  dict lookup (44.5 -> 28.5 s). Further trims, same round:
+    · extraction uses TrimPrefix/TrimSuffix per match instead of a regex per
+      match — ~100 matches x ~300 fences is 30k operations, and string ops are
+      far cheaper than replaceRE;
+    · maps.html pre-splits by pass, so no pass ranges entries it cannot use;
+    · the pair pass is skipped entirely on a fence with no `.` span;
+    · a fence with no identifiers skips everything.
+  Keep this shape. Reintroducing a per-entry scan silently costs ~30 s.
+
+  What remains is inherent: one replaceRE per linked token per fence, over a
+  multi-KB string, because Go templates have no callback-replace. More tokens
+  in data/provenance.yaml therefore means a slower build — the p5 list tripling
+  on 2026-08-05 pushes back against these savings, and that is a real trade,
+  not a free lunch.
+
+  ☐ OPT-OUT FOR AUTHORING: set `params.provenance: false` in hugo.yaml (or
+  pass -e / a config override) and this partial becomes a pass-through, giving
+  back the whole annotation cost while writing prose. Ship builds leave it on.
+*/ -}}
+{{- $html := .html -}}
+{{- if and (in (slice "js" "javascript") .lang) (ne site.Params.provenance false) -}}
+  {{- $html = printf "%s" $html -}}
+  {{- $maps := partialCached "provenance/maps" . "provenance-maps" -}}
+  {{- /* ⚠ `this.<name>` is ALWAYS the enclosing object's own member — never a
+         library call. Reported 2026-08-05: `this.row` linked to the quadrille
+         instance creator in Behave (and `this.col` did not, which is how
+         it was spotted). Masking the identifier immediately after `this.` takes
+         it out of every pass; the mask lifts at the end.
+         Masks only the FIRST identifier: in `this.board.fill(...)` the `board`
+         is masked while `.fill` stays visible, so the quadrille call still
+         links. The class of the `this` span is not matched — lexers disagree on
+         whether it is k, kc or bp — only that a span ends with it.
+         Declared HERE, outside the `if $present` block, because a variable
+         declared inside a Go template block is not visible after it. */ -}}
+  {{- $hasThis := strings.Contains $html ">this</span>" -}}
+  {{- if $hasThis -}}
+    {{- $html = replaceRE `(>this</span><span class="p">[^<]*\.</span>)<span class="(nf|nx)">` `${1}<span class="SELFMASK${2}">` $html -}}
+  {{- end -}}
+  {{- $present := dict -}}
+  {{- range $c := (slice "nx" "nf") -}}
+    {{- $open := printf `<span class="%s">` $c -}}
+    {{- range $m := findRE (printf `<span class="%s">[A-Za-z_$][A-Za-z0-9_$]*</span>` $c) $html -}}
+      {{- $present = merge $present (dict (strings.TrimSuffix "</span>" (strings.TrimPrefix $open $m)) true) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $present -}}
+    {{- $hasDot := findRE `<span class="p">[^<]*\.</span>` $html 1 -}}
+    {{- if $hasDot -}}
+      {{- /* Pass 0 — any p5 function after a known p5 receiver. Built per fence
+             from what is actually present, which keeps it cheap. */ -}}
+      {{- range $r := $maps.receivers -}}
+        {{- if isset $present $r -}}
+          {{- range $k, $e := $maps.anyx -}}
+            {{- if and (eq $e.class "pv-p5") (isset $present $e.tok) -}}
+              {{- $a := printf `<a class="%s" href="%s" title="%s" draggable="false" target="_blank" rel="noopener">%s</a>` $e.class $e.href $e.title $e.tok -}}
+              {{- $html = replaceRE
+                    (printf `<span class="(nf|nx)">%s</span><span class="p">([^<]*\.)</span><span class="(nf|nx)">%s</span>` $r $e.tok)
+                    (printf `<span class="${1}">%s</span><span class="p">${2}</span><span class="${3}">%s</span>` $r $a)
+                    $html -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- range $pass := (slice "pair" "member" "anyq" "anyx") -}}
+      {{- if or (ne $pass "pair") $hasDot -}}
+      {{- if and (eq $pass "anyx") $hasDot -}}
+        {{- /* Mask every still-unlinked dotted identifier so the bare-only pass
+               cannot claim it. Lifted immediately after. Tier 3 has already had
+               its position-agnostic pass, so nothing of the quadrille's is
+               lost here. */ -}}
+        {{- $html = replaceRE `<span class="p">([^<]*\.)</span><span class="(nf|nx)">` `<span class="p">${1}</span><span class="MEMBERMASK${2}">` $html -}}
+      {{- end -}}
+      {{- range $key, $e := (index $maps $pass) -}}
+        {{- if isset $present $e.tok -}}
+          {{- if or (ne $pass "pair") (isset $present $e.head) -}}
+            {{- $attrs := "" -}}
+            {{- if $e.external -}}
+              {{- $attrs = " target=\"_blank\" rel=\"noopener\"" -}}
+            {{- end -}}
+            {{- $a := printf `<a class="%s" href="%s" title="%s" draggable="false"%s>%s</a>` $e.class $e.href $e.title $attrs $e.tok -}}
+            {{- $re := "" -}}
+            {{- $rep := "" -}}
+            {{- if eq $pass "pair" -}}
+            {{- $re = printf `<span class="(nf|nx)">%s</span><span class="p">([^<]*\.)</span><span class="(nf|nx)">%s</span>` $e.head $e.tok -}}
+            {{- $rep = printf `<span class="${1}">%s</span><span class="p">${2}</span><span class="${3}">%s</span>` $e.head $a -}}
+            {{- else if eq $pass "member" -}}
+            {{- $re = printf `<span class="p">([^<]*\.)</span><span class="(nf|nx)">%s</span>` $e.tok -}}
+            {{- $rep = printf `<span class="p">${1}</span><span class="${2}">%s</span>` $a -}}
+            {{- else -}}
+              {{- $re = printf `<span class="(nf|nx)">%s</span>` $e.tok -}}
+              {{- $rep = printf `<span class="${1}">%s</span>` $a -}}
+            {{- end -}}
+            {{- $html = replaceRE $re $rep $html -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if and (eq $pass "anyx") $hasDot -}}
+        {{- $html = replaceRE `<span class="MEMBERMASK(nf|nx)">` `<span class="${1}">` $html -}}
+      {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $hasThis -}}
+    {{- $html = replaceRE `<span class="SELFMASK(nf|nx)">` `<span class="${1}">` $html -}}
+  {{- end -}}
+  {{- $html = $html | safeHTML -}}
+{{- end -}}
+{{- $html -}}

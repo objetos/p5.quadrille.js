@@ -1,30 +1,53 @@
 {{/* Ported from objetos.github.io/layouts/shortcodes/p5.html (REORG_3_5.md
-     Stage 3, task 1). Kept in LOCKSTEP with objetos and the vc donor — same
-     structure, one per-repo VALUE: $defqver below stays EMPTY on this host by
-     design (reference docs track the latest dist-tag; the book pins).
-     quadrille="true"  → latest p5.quadrille (empty $defqver → no @version pin)
+     Stage 1). Kept in LOCKSTEP with the objetos and vc donors — same structure,
+     same per-repo VALUE: $defqver below pins 3.5.0-rc.9 until the release bump
+     (then set it to 3.5.0 — one line, every quadrille="true" use follows).
+     quadrille="true"  → the pinned $defqver (3.5.0-rc.9 → 3.5.0 at release)
      quadrille="x.y.z" → explicit ad-hoc pin (version comparisons, regressions)
      quadrille="false" → not loaded (default)
      HOST DELTAS vs the objetos copy (this site deploys under a subpath):
      1. Root-relative asset paths (/images/, /paintings/, /videos/, /fonts/)
         in inline sketches and in the `sketch` param are prefixed with
-        .Site.BaseURL — carried over from this host's p5-global-iframe.
+        .Site.BaseURL — carried over from this host's former p5-global-iframe.
      2. <meta charset='utf-8'> in the iframe head — carried over likewise
         (emoji in srcdoc); candidate to sync into objetos/vc at the next
         lockstep sync.
      The tree/platonic/ground extras are inert unless their flag/param is used. */}}
 {{ $id          := printf "p5-%d" .Ordinal }}
-{{ $defver      := `2.3.0` }}
+{{ $defver      := `2.3.2` }}
 {{ $ver         := default $defver (.Get "ver") }}
-{{ $defsoundver := `0.3.0` }}
+{{ $defsoundver := `0.4.1` }}
 {{ $sketch      := .Get "sketch" }}
+{{ $sketchsrc   := $sketch }}{{/* local sketches get a content-hash query: an iframe caches its
+     subresources independently of the parent page, so an edited sketch was being served
+     stale even after a hard reload of the page (objetos incident 2026-08-06). External
+     URLs and missing files fall through unchanged. */}}
+{{ with $sketch }}{{ $f := printf "static%s" . }}{{ if os.FileExists $f }}{{ $sketchsrc = printf "%s?v=%d" . (hash.FNV32a (os.ReadFile $f)) }}{{ end }}{{ end }}
 {{ $sound       := .Get "sound"     | default "false" | lower }}
 {{ $tree        := .Get "tree"      | default "false" | lower }}
 {{ $platonic    := .Get "platonic"  | default "false" | lower }}
 {{ $quadrille   := .Get "quadrille" | default "false" | lower }}
-{{ $defqver     := `` }}{{/* EMPTY by design on this host — reference docs track latest */}}
+{{ $defqver     := `3.5.0-rc.9` }}{{/* release bump → 3.5.0 (one line; see header) */}}
+{{/* Local override for trying an UNPUBLISHED build, set in the environment rather than by
+     editing this file:  HUGO_QUADRILLE_SRC=/lib/p5.quadrille.js hugo server
+     Nothing tracked changes, so a deploy cannot ship a local path by accident. The HUGO_
+     prefix is required: Hugo's getenv allowlist defaults to ^HUGO_ and refuses the rest. */}}
+{{ with getenv "HUGO_QUADRILLE_SRC" }}{{ $defqver = . }}{{ end }}
 {{ $qver        := cond (eq $quadrille "true") $defqver (cond (eq $quadrille "false") "" $quadrille) }}
 {{ $qsuffix     := cond (ne $qver "") (printf "@%s" $qver) "" }}
+{{/* A LOCAL, unpublished build can be tried before it goes to npm. The override accepts
+     either form:
+       a full URL  — http://localhost:3000/dist/p5.quadrille.js  (served by anything)
+       a site path — /lib/p5.quadrille.js  (read from static/, content-hash cache-busted)
+     if/else rather than `cond`, which evaluates BOTH branches and would call os.ReadFile
+     on a file that does not exist. */}}
+{{ $qsrc        := printf "https://cdn.jsdelivr.net/npm/p5.quadrille%s/dist/p5.quadrille.min.js" $qsuffix }}
+{{ if strings.Contains $qver "://" }}
+  {{ $qsrc = $qver }}
+{{ else if hasPrefix $qver "/" }}
+  {{ $f := printf "static%s" $qver }}
+  {{ if os.FileExists $f }}{{ $qsrc = printf "%s?v=%d" $qver (hash.FNV32a (os.ReadFile $f)) }}{{ else }}{{ $qsrc = $qver }}{{ end }}
+{{ end }}
 {{ $treesrc     := default `https://cdn.jsdelivr.net/npm/p5.tree/dist/p5.tree.min.js` (.Get `treesrc`) }}
 {{ $ground      := .Get `ground` }}
 {{ $closure     := slice }}
@@ -38,7 +61,6 @@
 {{ range $root := slice "/images/" "/paintings/" "/videos/" "/fonts/" }}
   {{ $inner = replace $inner $root (printf "%s%s" $base $root) }}
 {{ end }}
-{{ $sketchsrc := $sketch }}
 {{ with $sketchsrc }}{{ if strings.HasPrefix . "/" }}{{ $sketchsrc = printf "%s%s" $base . }}{{ end }}{{ end }}
 
 {{ if and .Inner (strings.Contains .Inner "p.setup") }}
@@ -93,7 +115,7 @@ new p5(function(p) {
         {{ if eq $sound "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.sound@{{ $defsoundver }}/dist/p5.sound.min.js'></script>{{ end }}
         {{ if eq $tree "true" }}<script src='{{ $treesrc }}'></script>{{ end }}
         {{ if eq $platonic "true" }}<script src='https://cdn.jsdelivr.net/npm/p5.platonic/dist/p5.platonic.min.js'></script>{{ end }}
-        {{ if ne $quadrille "false" }}<script src='https://cdn.jsdelivr.net/npm/p5.quadrille{{ $qsuffix }}/dist/p5.quadrille.min.js'></script>{{ end }}
+        {{ if ne $quadrille "false" }}<script src='{{ $qsrc }}'></script>{{ end }}
         {{ with .Get `cdn` }}{{ range (split . `,`) }}<script src='{{ trim . ` ` }}'></script>{{ end }}{{ end }}
         {{ range $closure }}<script src='{{ . }}'></script>{{ end }}
         {{ if .Inner }}
@@ -107,21 +129,60 @@ new p5(function(p) {
           (function() {
             // size the iframe to the FULL body content, not just the canvas, so
             // DOM controls placed below the canvas (buttons, sliders, captions)
-            // are not clipped. Poll briefly so late-created controls are caught.
-            var last = '', n = 0
-            var t = setInterval(function() {
-              var c = document.querySelector('canvas')
-              if (c && c.offsetWidth > 0) {
-                var w = Math.max(c.offsetWidth, document.body.scrollWidth)
-                var h = Math.max(c.offsetHeight, document.body.scrollHeight)
+            // are not clipped.
+            // p5 v2 gotchas this must survive (REORG incident 2026-08-01):
+            // 1. p5 ALWAYS creates a default 100x100 canvas BEFORE user setup;
+            //    async setups (await loadFont/loadImage) leave it up for a while,
+            //    so early measurements see 100x100 — keep observing to correct.
+            // 2. p5 inserts a HIDDEN 1x1 text-measurement canvas BEFORE the main
+            //    canvas on first text/font use; querySelector('canvas') then
+            //    returns a 0-width element forever — measure the max over ALL
+            //    canvases and never gate on a single one.
+            var last = ''
+            function measure() {
+              var w = 0, h = 0
+              document.querySelectorAll('canvas').forEach(function(c) {
+                if (c.offsetWidth > w) w = c.offsetWidth
+                if (c.offsetHeight > h) h = c.offsetHeight
+              })
+              w = Math.max(w, document.body.scrollWidth)
+              h = Math.max(h, document.body.scrollHeight)
+              // scrollHeight IGNORES absolutely positioned children, and p5
+              // position() lays elements out against the initial containing
+              // block, not against body. Controls parked under the canvas with
+              // position(x, height + k) were therefore clipped away entirely,
+              // not merely scrolled out of view: body carries overflow hidden.
+              // Measure those boxes directly. The iframe never scrolls, so
+              // client coords are document coords. (search.md, 2026-08-08)
+              Array.prototype.forEach.call(document.body.children, function(el) {
+                var r = el.getBoundingClientRect()
+                if (r.right > w) w = Math.ceil(r.right)
+                if (r.bottom > h) h = Math.ceil(r.bottom)
+              })
+              if (w > 0 && h > 0) {
                 var key = w + 'x' + h
                 if (key !== last) {
                   last = key
                   window.parent.postMessage({ type: 'p5resize', id: '{{ $id }}', w: w, h: h }, '*')
                 }
               }
-              if (++n > 60) clearInterval(t)
-            }, 100)
+            }
+            var t = setInterval(measure, 100)
+            // after the initial 6s burst, drop to a slow heartbeat instead of
+            // dying: late font/media loads still correct the size
+            setTimeout(function() { clearInterval(t); setInterval(measure, 1000) }, 6000)
+            // 3. this block runs from the document head, so document.body does
+            //    NOT exist yet: observing it straight away throws (Argument 1 is
+            //    not an object) and the observer half of this fix never installs,
+            //    leaving only the 1s heartbeat. Wait for the body to be parsed.
+            //    NOTE: everything in this script sits inside the srcdoc
+            //    attribute, so no double quotes and no angle brackets anywhere,
+            //    comments included -- they close the attribute and Hugo fails.
+            if (window.ResizeObserver) {
+              document.addEventListener('DOMContentLoaded', function() {
+                new ResizeObserver(measure).observe(document.body)
+              })
+            }
           })()
         </script>
       </head>
