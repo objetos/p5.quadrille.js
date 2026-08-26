@@ -24,7 +24,7 @@
 {{ $tree        := .Get "tree"      | default "false" | lower }}
 {{ $platonic    := .Get "platonic"  | default "false" | lower }}
 {{ $quadrille   := .Get "quadrille" | default "false" | lower }}
-{{ $defqver     := `3.5.0-rc.9` }}{{/* release pin (see header) */}}
+{{ $defqver     := `3.5.0` }}{{/* release pin (see header) */}}
 {{/* Local override for trying an UNPUBLISHED build, set in the environment rather than by
      editing this file:  HUGO_QUADRILLE_SRC=/lib/p5.quadrille.js hugo server
      Nothing tracked changes, so a deploy cannot ship a local path by accident. The HUGO_
