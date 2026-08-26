@@ -1,9 +1,0 @@
-{{ $type := .Get "type" | default "info" }}
-
-{{ if eq $type "error" }}
-  {{ $type = "danger" }}
-{{ end }}
-
-<blockquote class="book-hint {{ $type }}">
-  {{ .Inner | .Page.RenderString }}
-</blockquote>

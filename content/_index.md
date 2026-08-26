@@ -29,9 +29,8 @@ To start coding right away, right-click the sketch title (`quadrille-api-intro`)
 (Mouse press randomizes the `quadrille` [Pola](https://en.wikipedia.org/wiki/Policarpa_Salavarrieta); key press resets it.)  
 <iframe src="https://editor.p5js.org/nakednous/full/FHb4aijva" width="400" height="442"></iframe>
 
-{{< callout type="info" >}}
-Why not take it further? Try implementing a simple puzzle game where the player swaps cells using [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}) to restore the original image after it has been randomized.
-{{< /callout >}}
+> [!NOTE]
+> Why not take it further? Try implementing a simple puzzle game where the player swaps cells using [swap(cell1, cell2)]({{< relref "swap_cell1_cell2" >}}) to restore the original image after it has been randomized.
 
 This sketch demonstrates the complete [4-step `p5.quadrille.js` usage workflow](https://github.com/objetos/p5.quadrille.js?tab=readme-ov-file#usage):
 
@@ -49,12 +48,11 @@ To replicate this locally or in the Web Editor, make sure your `index.html` incl
 
 Refer to the [Releases](#releases) section below for the latest versions.
 
-{{< callout type="warning" >}}
-Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply include the necessary scripts to get started. See the [official guide](https://beta.p5js.org/tutorials/setting-up-your-environment/). 
-<!--
-or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local setup instructions
--->
-{{< /callout >}}
+> [!WARNING]
+> Note that with **p5.js**, there’s no **“installation”** in the traditional sense. You simply include the necessary scripts to get started. See the [official guide](https://beta.p5js.org/tutorials/setting-up-your-environment/). 
+> <!--
+> or the [Getting Started section](https://objetos.github.io/docs/p5_intro/getting_started/#html-template-for-local-development) in the book draft for local setup instructions
+> -->
 
 # Releases
 
