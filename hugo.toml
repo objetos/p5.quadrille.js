@@ -26,9 +26,8 @@ enableGitInfo = true
 [markup]
 [markup.goldmark.renderer]
   unsafe = true
-# Class-based Chroma output so the provenance pass (layouts/partials/provenance)
-# can wrap identifier spans. The stylesheet (github + github-dark) lives in
-# assets/_custom.scss; `style` here is inert with noClasses=false.
+# Class-based Chroma output for the github/github-dark stylesheet in
+# assets/_custom.scss. (`style` here is inert with noClasses=false.)
 [markup.highlight]
   noClasses = false
   style = "github"

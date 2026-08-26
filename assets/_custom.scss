@@ -1,14 +1,12 @@
-/* _custom.scss — imported by book.scss. Carries the provenance tier colors and
-   the Chroma pair (hextra's assets/css/chroma/light.css + dark.css,
-   `hugo gen chromastyles --style=github`). Upstream: hextra
-   (https://github.com/imfing/hextra) and Hugo markdown alerts
-   (https://gohugo.io/render-hooks/blockquotes/).
+/* _custom.scss — imported by book.scss. Carries the Chroma pair (hextra's
+   assets/css/chroma/light.css + dark.css, `hugo gen chromastyles
+   --style=github`). Upstream: hextra (https://github.com/imfing/hextra) and
+   Hugo markdown alerts (https://gohugo.io/render-hooks/blockquotes/).
 
-   COLOR, NOT UNDERLINE. The provenance pass tints each linked identifier by tier
-   (quadrille/p5/JS); keywords, strings, numbers and comments keep their Chroma
-   colors untouched — those are the ones carrying syntax, and the pass never
-   rewrites them. The tier is never carried by color alone: every anchor also has
-   a title attribute. The underline survives on hover.
+   The provenance tier colors (the .chroma a.pv-* rules) are COMMENTED OUT at
+   the bottom of this file — the linker was dropped before the 3.5.0 release.
+   Syntax highlighting stays: keywords, strings, numbers and comments keep
+   their Chroma colors.
 
    hextra's chroma CSS (not Hugo 0.165's `hugo gen chromastyles`) is used
    verbatim because the newer generator colors `.p` (Punctuation) and `.nx`
@@ -201,38 +199,40 @@
   }
 }
 
-/* ── provenance tier colors ─────────────────────────────────────────────── */
-.chroma a.pv-q,
-.chroma a.pv-p5,
-.chroma a.pv-js {
-  color: var(--pv-tier);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-}
-
-.chroma a.pv-q  { --pv-tier: #0a7d68; }  /* quadrille API */
-.chroma a.pv-p5 { --pv-tier: #9c4fa8; }  /* p5.js */
-.chroma a.pv-js { --pv-tier: #a8721f; }  /* JavaScript */
-
-@media (prefers-color-scheme: dark) {
-  .chroma a.pv-q  { --pv-tier: #5fe0c0; }
-  .chroma a.pv-p5 { --pv-tier: #e2a8e2; }
-  .chroma a.pv-js { --pv-tier: #f0c66a; }
-}
-
-/* hugo-book styles `.markdown a[href]:visited` at 0,0,3,1 — higher than the
-   0,0,2,1 `.chroma a.pv-*` rules above — so a VISITED anchor fell back to the
-   theme's --color-visited-link (purple) instead of its tier color. Match the
-   specificity on the visited state so every tier keeps its own color whether
-   or not the reader has clicked it. */
-.chroma a.pv-q:visited,
-.chroma a.pv-p5:visited,
-.chroma a.pv-js:visited {
-  color: var(--pv-tier);
-}
-
-.chroma a.pv-q:hover,
-.chroma a.pv-p5:hover,
-.chroma a.pv-js:hover {
-  border-bottom-color: currentColor;
-}
+// ── provenance tier colors — DROPPED before the 3.5.0 release ──────────────
+// These colored the provenance linker's tier anchors. The linker (and its
+// partials/data) was dropped, so they are inert and kept only so the linker can
+// be re-enabled by uncommenting them. Restore layouts/partials/provenance/ +
+// data/ first.
+// .chroma a.pv-q,
+// .chroma a.pv-p5,
+// .chroma a.pv-js {
+//   color: var(--pv-tier);
+//   text-decoration: none;
+//   border-bottom: 1px solid transparent;
+// }
+//
+// .chroma a.pv-q  { --pv-tier: #0a7d68; }  // quadrille API
+// .chroma a.pv-p5 { --pv-tier: #9c4fa8; }  // p5.js
+// .chroma a.pv-js { --pv-tier: #a8721f; }  // JavaScript
+//
+// @media (prefers-color-scheme: dark) {
+//   .chroma a.pv-q  { --pv-tier: #5fe0c0; }
+//   .chroma a.pv-p5 { --pv-tier: #e2a8e2; }
+//   .chroma a.pv-js { --pv-tier: #f0c66a; }
+// }
+//
+// // hugo-book styles `.markdown a[href]:visited` at higher specificity than
+// // `.chroma a.pv-*`, so a VISITED anchor fell back to --color-visited-link
+// // instead of its tier color; match it on the visited state:
+// .chroma a.pv-q:visited,
+// .chroma a.pv-p5:visited,
+// .chroma a.pv-js:visited {
+//   color: var(--pv-tier);
+// }
+//
+// .chroma a.pv-q:hover,
+// .chroma a.pv-p5:hover,
+// .chroma a.pv-js:hover {
+//   border-bottom-color: currentColor;
+// }

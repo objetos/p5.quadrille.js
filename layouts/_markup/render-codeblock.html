@@ -1,16 +1,13 @@
 {{/*
-  render-codeblock.html — hugo-book's own hook with ONE LINE CHANGED to wrap the
-  highlighted code in provenance/annotate. Everything else is hugo-book verbatim,
-  including the filename block above. Upstream: hugo-book
-  (https://github.com/alex-shpak/hugo-book) and Hugo code-block render hooks
-  (https://gohugo.io/render-hooks/code-blocks/).
+  render-codeblock.html — hugo-book's own code-block hook, kept as a site
+  override so the provenance annotate call below can be re-enabled if needed.
+  Upstream: hugo-book (https://github.com/alex-shpak/hugo-book) and Hugo
+  code-block render hooks (https://gohugo.io/render-hooks/code-blocks/).
 
-  The annotate partial links known identifiers inside ```js / ```javascript
-  fences to their tier's reference (quadrille → this site's own api page, p5 →
-  the p5 reference, JS → MDN). Non-js langs return untouched (the gate lives in
-  annotate.html). It requires class-based Chroma output, so this site sets
-  [markup.highlight] noClasses = false and ships a Chroma stylesheet via
-  assets/_custom.scss — without that, fences render without color.
+  The provenance linker (which wrapped ```js / ```javascript identifiers in
+  tier links — quadrille → api page, p5 → reference, JS → MDN) was DROPPED
+  before the 3.5.0 release. To re-enable it, restore layouts/partials/provenance/
+  and data/, then uncomment the annotate call at the bottom of this file.
 */ -}}
 {{- with (index .Attributes "filename") -}}
   {{- $href := index $.Attributes "href" -}}
@@ -22,4 +19,8 @@
 </div>
 {{- end -}}
 {{- $highlighted := transform.HighlightCodeBlock . .Options -}}
-{{- partial "provenance/annotate" (dict "lang" .Type "html" $highlighted.Wrapped) -}}
+{{- /* provenance linker dropped (pre-3.5.0). Re-enable: restore
+       layouts/partials/provenance/ + data/, and replace the next line with
+         partial "provenance/annotate" (dict "lang" .Type "html" $highlighted.Wrapped)
+*/ -}}
+{{- $highlighted.Wrapped -}}
