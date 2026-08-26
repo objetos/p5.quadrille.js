@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // provenance-report.mjs — what the provenance pass did NOT link, and which
-// receivers appear in the book. Stage 18.
+// receivers appear in the docs.
 //
 //   hugo --gc --minify -d /tmp/post
 //   node scripts/provenance-report.mjs /tmp/post

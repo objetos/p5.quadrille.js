@@ -1,6 +1,6 @@
 {{/*
   provenance/maps.html — build the token -> reference maps ONCE per build.
-  Stage 18. Returns three sub-maps, one per pass:
+  Returns three sub-maps, one per pass (quadrille api · p5.js · MDN):
 
       dict "pair" {...} "member" {...} "any" {...}
 
@@ -128,8 +128,8 @@
 {{- $p5 := $data.p5 -}}
 {{/* Receivers that are p5 objects rather than quadrilles. The cross product
      with member_only is GENERATED, not hand-listed: `pg` was the first case,
-     `graphics` the second (reported from Board Algebra, where `graphics.fill`
-     was being handed to the quadrille tier). Hand-listing pairs would have
+     `graphics` the second (spotted where `graphics.fill` was being handed to
+     the quadrille tier). Hand-listing pairs would have
      needed a new line for every receiver × token; this needs a new line per
      receiver, and only for receivers that actually appear. */ -}}
 {{- range $recv := $p5.receivers -}}
@@ -201,8 +201,8 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- /* js.members was removed 2026-08-05 — see the note in data/provenance.yaml.
-       A dotted identifier in this book is a quadrille or a p5 object, not an
+{{- /* js.members was removed — see the note in data/provenance.yaml.
+       A dotted identifier in these docs is a quadrille or a p5 object, not an
        Array method, and claiming it for MDN mislinked `cover.replace(...)` and
        `graphics.push()` alike. */ -}}
 {{- range $path, $slug := $js.qualified -}}
@@ -215,9 +215,7 @@
 
 {{- /* Set `params.provenance_debug: true` in hugo.yaml to print map sizes once
        per build — answers "is this tier populated at all?" by measurement
-       rather than inference. The per-token probes that lived here are gone;
-       see REORG_3_5.md Stage 18 for what they established and the five
-       hypotheses they falsified. */ -}}
+       rather than inference. */ -}}
 {{- if site.Params.provenance_debug -}}
   {{- warnf "provenance: maps built — pair %d · member %d · anyq %d · anyx %d" (len $pairs) (len $members) (len $anysq) (len $anysx) -}}
 {{- end -}}

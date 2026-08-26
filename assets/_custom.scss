@@ -1,14 +1,14 @@
-/* _custom.scss — imported by book.scss. Ported from objetos.github.io's
-   assets/css/custom.css (Stage 18 provenance tiers) and hextra's Chroma pair
-   (assets/css/chroma/light.css + dark.css, `hugo gen chromastyles
-   --style=github`).
+/* _custom.scss — imported by book.scss. Carries the provenance tier colors and
+   the Chroma pair (hextra's assets/css/chroma/light.css + dark.css,
+   `hugo gen chromastyles --style=github`). Upstream: hextra
+   (https://github.com/imfing/hextra) and Hugo markdown alerts
+   (https://gohugo.io/render-hooks/blockquotes/).
 
-   COLOR, NOT UNDERLINE (owner call, 2026-08-05). The provenance pass tints each
-   linked identifier by tier (quadrille/p5/JS); keywords, strings, numbers and
-   comments keep their Chroma colors untouched — those are the ones carrying
-   syntax, and the pass never rewrites them. The tier is never carried by color
-   alone: every anchor also has a title attribute. The underline survives on
-   hover.
+   COLOR, NOT UNDERLINE. The provenance pass tints each linked identifier by tier
+   (quadrille/p5/JS); keywords, strings, numbers and comments keep their Chroma
+   colors untouched — those are the ones carrying syntax, and the pass never
+   rewrites them. The tier is never carried by color alone: every anchor also has
+   a title attribute. The underline survives on hover.
 
    hextra's chroma CSS (not Hugo 0.165's `hugo gen chromastyles`) is used
    verbatim because the newer generator colors `.p` (Punctuation) and `.nx`

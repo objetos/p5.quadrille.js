@@ -1,14 +1,14 @@
-{{/* Ported from objetos.github.io/layouts/shortcodes/p5.html and kept in sync
-     with it. Per-repo value: $defqver below pins 3.5.0.
+{{/* Embedded p5 sketches: global-mode iframe + instance-mode div. Upstream:
+     p5.js (https://p5js.org/), p5.quadrille.js, p5.sound, p5.tree, p5.platonic.
+     Per-repo value: $defqver below pins 3.5.0.
      quadrille="true"  → the pinned $defqver (3.5.0)
      quadrille="x.y.z" → explicit ad-hoc pin (version comparisons, regressions)
      quadrille="false" → not loaded (default)
-     Host deltas vs the objetos copy (this site deploys under a subpath):
+     Host deltas (this site deploys under a subpath):
      1. Root-relative asset paths (/images/, /paintings/, /videos/, /fonts/)
         in inline sketches and in the `sketch` param are prefixed with
-        .Site.BaseURL — carried over from this host's former p5-global-iframe.
-     2. <meta charset='utf-8'> in the iframe head — carried over likewise
-        (emoji in srcdoc); candidate to sync into objetos at the next sync.
+        .Site.BaseURL.
+     2. <meta charset='utf-8'> in the iframe head (emoji in srcdoc).
      The tree/platonic/ground extras are inert unless their flag/param is used. */}}
 {{ $id          := printf "p5-%d" .Ordinal }}
 {{ $defver      := `2.3.2` }}
@@ -17,7 +17,7 @@
 {{ $sketch      := .Get "sketch" }}
 {{ $sketchsrc   := $sketch }}{{/* local sketches get a content-hash query: an iframe caches its
      subresources independently of the parent page, so an edited sketch was being served
-     stale even after a hard reload of the page (objetos incident 2026-08-06). External
+     stale even after a hard reload of the page (a stale-cache incident). External
      URLs and missing files fall through unchanged. */}}
 {{ with $sketch }}{{ $f := printf "static%s" . }}{{ if os.FileExists $f }}{{ $sketchsrc = printf "%s?v=%d" . (hash.FNV32a (os.ReadFile $f)) }}{{ end }}{{ end }}
 {{ $sound       := .Get "sound"     | default "false" | lower }}
@@ -127,7 +127,7 @@ new p5(function(p) {
             // size the iframe to the FULL body content, not just the canvas, so
             // DOM controls placed below the canvas (buttons, sliders, captions)
             // are not clipped.
-            // p5 v2 gotchas this must survive (REORG incident 2026-08-01):
+            // p5 v2 gotchas this must survive:
             // 1. p5 ALWAYS creates a default 100x100 canvas BEFORE user setup;
             //    async setups (await loadFont/loadImage) leave it up for a while,
             //    so early measurements see 100x100 — keep observing to correct.

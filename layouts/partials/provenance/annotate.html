@@ -1,8 +1,8 @@
 {{/*
   provenance/annotate.html — link known identifiers inside a highlighted code
-  block to their tier's reference. Stage 18. Called from
+  block to their tier's reference (quadrille api · p5.js · MDN). Called from
   layouts/_markup/render-codeblock.html, which passes `lang` and the `html`
-  returned by hextra's components/codeblock partial.
+  returned by the theme's code-block partial.
 
   The lang gate lives HERE, not in the hook, so the hook stays a ONE-LINE diff
   against the theme file. Non-js langs return untouched.
@@ -33,7 +33,7 @@
                  createQuadrille(...) are both the quadrille's
     4. "anyx"    tiers 1-2, BARE ONLY — fill(255) / sin(x) -> p5
 
-  THE RULE THAT MAKES MEMBER POSITION TRACTABLE: in this book a dotted call is
+  THE RULE THAT MAKES MEMBER POSITION TRACTABLE: in these docs a dotted call is
   a p5 object or a quadrille, essentially never an Array. p5 receivers CAN be
   enumerated (they come from createGraphics), quadrille receivers cannot — so
   pass 0 handles the enumerable case and everything left over defaults to the
@@ -56,7 +56,7 @@
   `cover.replace(color('red')).fill(color('green'))`. Every dot-matching
   pattern here therefore matches a p span ENDING in a dot and captures it, so
   the original punctuation is reproduced verbatim. Matching a bare `\.` missed
-  every chained call in the book, in both the member pass and the mask.
+  every chained call in these docs, in both the member pass and the mask.
 
   Receiver-name disambiguation is a HEURISTIC, not a proof — `pg` was the first
   p5-object receiver found, `graphics` the second, `select`/`globalPicker`/
@@ -72,7 +72,7 @@
   2. ${1} NOT $1 — Go RE2 expansion.
   3. THE safeHTML IS LOAD-BEARING. replaceRE returns a plain string, and a
      plain string returned to the hook is HTML-escaped on output: every fence
-     in the book would render as visible markup.
+     in these docs would render as visible markup.
 
   ── PRESENCE SET, NOT PER-ENTRY SCANNING (perf, 2026-08-05) ───────────────
   The first cut guarded each map entry with strings.Contains over the whole

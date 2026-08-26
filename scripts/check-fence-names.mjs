@@ -1,40 +1,37 @@
 #!/usr/bin/env node
-// check-fence-names.mjs — book identifiers that shadow a linked vocabulary.
-// Stage 19. See STAGE_19_NAMING.md.
+// check-fence-names.mjs — identifiers in the docs that shadow a linked vocabulary.
+// Part of the provenance pass (see data/provenance.yaml + layouts/partials/provenance).
+// Upstream tiers: quadrille api (this site), p5.js (https://p5js.org/reference/),
+// and MDN (https://developer.mozilla.org/).
 //
 //   node scripts/check-fence-names.mjs
 //
 // WHAT THIS IS FOR. The provenance pass links three vocabularies: quadrille api
-// symbols, p5 globals, and a few JS globals. When the BOOK declares an
-// identifier with one of those names, the pass links it — correctly, by its own
-// rules, and wrongly by any reader's. `Swapper.swap` linked to the quadrille
-// mutator; `const line` and `const roll` went to p5. Every one was found by a
-// human noticing. This replaces the noticing.
+// symbols, p5 globals, and a few JS globals. When a page declares an identifier
+// with one of those names, the pass links it — correctly by its own rules, and
+// wrongly to any reader. `Swapper.swap` linked to the quadrille mutator;
+// `const line` and `const roll` went to p5.
 //
 // ⚠ WORKLIST, NOT A GATE. Always exits 0. The declaration scanner is regex-based
 // and therefore approximate; a false positive costs one line of output, and
 // gating on an approximate scanner would cost trust.
 //
 // ── WHY IT SCANS TWO KINDS OF CODE, AND WHY THAT MATTERS ─────────────────────
-//   ```js fences        — heroes and figurines. Chroma highlights these, so the
-//                         provenance pass sees them and a collision MISLINKS.
+//   ```js fences        — the examples' code blocks. Chroma highlights these, so
+//                         the provenance pass sees them and a collision MISLINKS.
 //   {{< p5 >}} bodies   — inline sketches. These go into an iframe srcdoc and
 //                         never reach Chroma, so a collision here is invisible
 //                         to every grep against public/ — and still real code
-//                         that a reader runs. Found 2026-08-06, when Play's
-//                         `width - 4` produced no anchor and the absence was
-//                         briefly mistaken for a linker bug.
-//   static/gbg/*.js     — the sketches the shortcodes load. Must stay in sync
-//                         with the fence that quotes them.
+//                         that a reader runs (first seen when a `width - 4`
+//                         sketch produced no anchor, mistaken for a linker bug).
 //
 // ── WHY NO YAML LIBRARY, AND WHAT PROTECTS THE PARSE ─────────────────────────
 // This repo is Hugo/Go and has no package.json; adding one for a lint would be
-// a new subsystem, which is the shape of thing Stage 18 kept rejecting. So the
-// two data files are read by a small indentation-aware list reader instead.
-// A hand parser that silently reads nothing reports a clean bill — failure mode
-// (b) that withdrew check-api-coverage.mjs — so it carries the same guard rails
-// gen-p5-globals.mjs uses: minimum sizes, plus assertions on names that MUST be
-// present. If the data files change shape, this throws instead of lying.
+// a new subsystem. So the two data files are read by a small indentation-aware
+// list reader instead. A hand parser that silently reads nothing reports a
+// clean bill, so it carries the same guard rails gen-p5-globals.mjs uses:
+// minimum sizes, plus assertions on names that MUST be present. If the data
+// files change shape, this throws instead of lying.
 //
 // ── THE ONLY ALLOWLIST IS quadrille.exclude, AND IT IS READ, NOT WRITTEN ─────
 // `row`, `col`, `filter`, `sort`, `search`, `shift` are never linked in any
@@ -49,7 +46,7 @@ const ROOT = process.argv[2] ?? '.';
 const P5 = join(ROOT, 'data/p5_globals.yaml');
 const PROV = join(ROOT, 'data/provenance.yaml');
 const CONTENT = join(ROOT, 'content');
-const SKETCHES = [];  // no book sketch dirs on this reference host
+const SKETCHES = [];  // no static sketch dirs on this reference host
 
 for (const f of [P5, PROV]) {
   if (!existsSync(f)) {
@@ -141,7 +138,7 @@ must(apiSymbols.size > 40, `only ${apiSymbols.size} api symbols derived`);
 must(apiSymbols.has('maze') && apiSymbols.has('swap'),
   'a known api symbol is missing — the title derivation broke');
 
-// ── the vocabularies a book name must avoid ─────────────────────────────────
+// ── the vocabularies an identifier must avoid ───────────────────────────────
 const vocab = new Map();                 // name -> tier label
 const add = (n, tier) => {
   if (excluded.has(n)) return;           // never linked, so never a collision
@@ -177,8 +174,8 @@ const recvSet = new Set(receivers);
 //    is a genuine shadow and still reported.
 //
 // ⚠ Both lists are facts about the LIBRARIES' contracts, not decisions about
-// this book — which is why they live here and not in data/provenance.yaml,
-// where the pass would read data it does not consume. The book's own decisions
+// this site — which is why they live here and not in data/provenance.yaml,
+// where the pass would read data it does not consume. The site's own decisions
 // stay in `quadrille.exclude`, which this script reads and never writes.
 const hooks = new Set(['setup', 'draw', 'windowResized',
   'mousePressed', 'mouseReleased', 'mouseClicked', 'mouseMoved', 'mouseDragged',
@@ -307,9 +304,9 @@ for (const dir of SKETCHES) {
 }
 
 // ── report ──────────────────────────────────────────────────────────────────
-// Host delta vs the hextra donor: this reference site has no book chapters —
-// the whole content/docs tree is the api. static/gbg and static/sketches do
-// not exist here; walk() on a missing dir is a no-op, so SKETCHES stays empty.
+// The whole content/docs tree is the api — there are no other sections. And
+// there are no static sketch dirs here; walk() on a missing dir is a no-op, so
+// SKETCHES stays empty.
 const AREAS = [
   ['content/docs', 'api']
 ];
@@ -342,9 +339,9 @@ if (!shadows.length) {
   }
   console.log();
 
-  // BY AREA answers the question a ranked list cannot: is the TEACHING PATH
-  // clean? Foundations and Mechanics are the chapters a reader walks in order,
-  // so a shadow there costs more than one in an api example.
+  // BY AREA answers the question a ranked list cannot: is the API surface
+  // clean? A shadow in an example the reader lands on directly costs more than
+  // one buried in a rarely-visited page.
   const byArea = new Map();
   for (const [name, e] of shadows) {
     for (const s of e.sites) {

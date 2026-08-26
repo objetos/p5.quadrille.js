@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 // gen-p5-globals.mjs — regenerate data/p5_globals.yaml from p5's OWN type
-// declarations. Stage 18.
+// declarations.
 //
 //   node scripts/gen-p5-globals.mjs            # uses P5_VERSION below
 //   node scripts/gen-p5-globals.mjs 2.4.0      # or pass a version
 //
 // WHY THIS EXISTS. Three hand-maintained p5 lists in a row shipped with holes:
-// first `sin`, `strokeWeight`, `deltaTime`, `floor` and `max` — four of them
-// cited BY NAME in the chapters' own References sections — then
+// first `sin`, `strokeWeight`, `deltaTime`, `floor` and `max`, then
 // `drawingContext`. A hand list is not a robust artifact. This one is derived
 // from p5's `types/global.d.ts`, whose header reads "auto-generated from JSDoc
-// documentation": the same JSDoc that builds p5js.org/reference. The list
-// therefore cannot drift from the reference it links to, and it is pinned to
-// the p5 version the book actually serves.
+// documentation": the same JSDoc that builds p5js.org/reference
+// (https://p5js.org/reference/). The list therefore cannot drift from the
+// reference it links to, and it is pinned to the p5 version this site serves.
 //
 // KEEP P5_VERSION IN SYNC with $defver in layouts/shortcodes/p5.html. Bump p5,
 // rerun this, commit the result — that is the whole maintenance story.
