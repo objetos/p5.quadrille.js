@@ -1,17 +1,14 @@
-{{/* Ported from objetos.github.io/layouts/shortcodes/p5.html (REORG_3_5.md
-     Stage 1). Kept in LOCKSTEP with the objetos and vc donors — same structure,
-     same per-repo VALUE: $defqver below pins 3.5.0-rc.9 until the release bump
-     (then set it to 3.5.0 — one line, every quadrille="true" use follows).
-     quadrille="true"  → the pinned $defqver (3.5.0-rc.9 → 3.5.0 at release)
+{{/* Ported from objetos.github.io/layouts/shortcodes/p5.html and kept in sync
+     with it. Per-repo value: $defqver below pins 3.5.0.
+     quadrille="true"  → the pinned $defqver (3.5.0)
      quadrille="x.y.z" → explicit ad-hoc pin (version comparisons, regressions)
      quadrille="false" → not loaded (default)
-     HOST DELTAS vs the objetos copy (this site deploys under a subpath):
+     Host deltas vs the objetos copy (this site deploys under a subpath):
      1. Root-relative asset paths (/images/, /paintings/, /videos/, /fonts/)
         in inline sketches and in the `sketch` param are prefixed with
         .Site.BaseURL — carried over from this host's former p5-global-iframe.
      2. <meta charset='utf-8'> in the iframe head — carried over likewise
-        (emoji in srcdoc); candidate to sync into objetos/vc at the next
-        lockstep sync.
+        (emoji in srcdoc); candidate to sync into objetos at the next sync.
      The tree/platonic/ground extras are inert unless their flag/param is used. */}}
 {{ $id          := printf "p5-%d" .Ordinal }}
 {{ $defver      := `2.3.2` }}
@@ -27,7 +24,7 @@
 {{ $tree        := .Get "tree"      | default "false" | lower }}
 {{ $platonic    := .Get "platonic"  | default "false" | lower }}
 {{ $quadrille   := .Get "quadrille" | default "false" | lower }}
-{{ $defqver     := `3.5.0-rc.9` }}{{/* release bump → 3.5.0 (one line; see header) */}}
+{{ $defqver     := `3.5.0-rc.9` }}{{/* release pin (see header) */}}
 {{/* Local override for trying an UNPUBLISHED build, set in the environment rather than by
      editing this file:  HUGO_QUADRILLE_SRC=/lib/p5.quadrille.js hugo server
      Nothing tracked changes, so a deploy cannot ship a local path by accident. The HUGO_
