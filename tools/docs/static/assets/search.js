@@ -11,6 +11,8 @@
  */
 (function () {
   'use strict';
+  var cfg   = window.quadrilleDocs || {};
+  var root  = cfg.root || '';
   var field = document.querySelector('.sidebar .search');
   var nav   = document.querySelector('.sidebar ul');
   var results = document.querySelector('.sidebar .results');

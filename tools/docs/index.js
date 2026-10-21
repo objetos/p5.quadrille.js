@@ -57,7 +57,8 @@ function main() {
   const files = render(pages, parsed, {
     pkg, readme, inventory, redirects,
     media,
-    source: `${pkg.repository.url.replace(/\.git$/, '')}/blob/main/`,
+    // `git+https://…` is a package-manager form a browser cannot open.
+    source: `${pkg.repository.url.replace(/^git\+/, '').replace(/\.git$/, '')}/blob/main/`,
   });
 
   // Write site/ from scratch.
@@ -75,9 +76,67 @@ function main() {
   }
   if (existsSync(at(paths.static))) cpSync(at(paths.static), out, { recursive: true });
 
+  // Every link the site emits, resolved on disk. A page nested four levels
+  // down that links to a sibling with a site-root path reads correctly to the
+  // generator and 404s in the browser, so this is checked against the files
+  // rather than against the tables that produced them.
+  const broken = [...linkCheck(out, files), ...indexCheck(files)];
+  for (const e of broken) console.error(`[docs] error ${e}`);
+  if (broken.length) {
+    console.error(`[docs] ${broken.length} broken link(s) — site written but not shippable.`);
+    process.exit(1);
+  }
+
   const sketches = pages.reduce((n, p) => n + (p.body.match(/```js[\s\S]*?function setup\s*\(/g) ?? []).length, 0);
   console.log(`[docs] ${files.size} page(s), ${pages.length} docs/ page(s), ${parsed.doclets.length} doclet(s), ` +
               `${sketches} sketch(es), ${warnings.length} warning(s) → ${paths.site}/`);
+}
+
+/**
+ * The search index's hrefs are site-root-relative and are never in the HTML, so
+ * the link check cannot see them: every entry must name a page the build wrote.
+ * @param {Map<string, string>} files
+ * @returns {string[]}
+ */
+function indexCheck(files) {
+  const problems = [];
+  for (const [file, body] of files) {
+    if (!file.endsWith('search.json')) continue;
+    for (const entry of JSON.parse(body)) {
+      if (!files.has(`${entry.h}index.html`)) problems.push(`search.json  ${entry.t} → ${entry.h} is not a page`);
+    }
+  }
+  return problems;
+}
+
+/**
+ * Resolve every `href`/`src` the site emits, relative to the file that carries
+ * it. Directory URLs resolve to their `index.html`; fragments and absolute
+ * URLs are not this check's business.
+ * @param {string} out absolute path of the written site
+ * @param {Map<string, string>} files site-relative file → HTML
+ * @returns {string[]} one line per broken reference
+ */
+function linkCheck(out, files) {
+  const seen = new Set();
+  const problems = [];
+  for (const [file, html] of files) {
+    for (const m of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
+      const target = m[1].replace(/&amp;/g, '&');
+      if (/^(?:[a-z]+:|\/\/|#|data:|mailto:)/i.test(target)) continue;
+      const [pathPart] = target.split('#');
+      if (!pathPart) continue;
+      const resolved = resolve(dirname(join(out, file)), pathPart);
+      const fileTarget = pathPart.endsWith('/') || !/\.[a-z0-9]+$/i.test(pathPart)
+        ? join(resolved, 'index.html') : resolved;
+      if (existsSync(fileTarget)) continue;
+      const key = `${file} → ${target}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      problems.push(`${file} links to ${target}, which is not there`);
+    }
+  }
+  return problems;
 }
 
 main();

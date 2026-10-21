@@ -241,6 +241,11 @@ export function validatePages(pages, parsed, inventory) {
 
   for (const p of pages) {
     if (!groupSlugs.has(p.group)) fail(p, `no such teaching area: ${p.group}`);
+
+    // An unbalanced fence swallows the rest of the page — including the
+    // footnotes the renderer appends — so it is an error, never a warning.
+    const fences = p.body.split('\n').filter((l) => /^ {0,3}(?:```|~~~)/.test(l)).length;
+    if (fences % 2) fail(p, `${fences} code fence(s): one is never closed, and everything after it renders as code`);
     if (!Number.isFinite(p.weight) || p.weight <= 0) warn(p, 'no positive weight — sibling order is undefined');
 
     // One anchor per title among siblings: the parent's child list must not

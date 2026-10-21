@@ -92,4 +92,3 @@ function keyPressed() {
 
 [^1]: Default is `row2 - row1` if both `q1` and `q2` are drawn, or `0` otherwise.
 [^2]: Default is `col2 - col1` if both `q1` and `q2` are drawn, or `0` otherwise.
-```

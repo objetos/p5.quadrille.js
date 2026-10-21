@@ -60,9 +60,6 @@ const depthOf = (path) => (path ? path.split('/').length + 1 : 0);
 /** A site-relative URL as seen from a page. */
 const from = (page, url) => `${'../'.repeat(depthOf(page.path))}${url}`;
 
-/** The sidebar entry of the page itself. */
-const selfUrl = (page) => urlOf(page.path);
-
 // ── The signature strip ─────────────────────────────────────────────────────
 
 /** `(...)` from a doclet's params, variadics and optionals marked. */
@@ -117,7 +114,7 @@ function apiStrip(page, d, ctx) {
   const ret = d.returns ? ` <span class="arrow">→</span> ${type(d.returns.type)}` : '';
   return `
       <aside class="api">
-        ${signatures(d).map((s) => `<code class="sig">${s}</code>${ret}`).join('\n        ')}
+        ${signatures(d).map((s) => `<span class="sigline"><code class="sig">${s}</code>${ret}</span>`).join('\n        ')}
         ${rows}
         <a class="source" href="${ctx.source}#L${d.line}" title="the line that implements it">${esc(`${d.file}:${d.line}`)}</a>
       </aside>`;
@@ -196,6 +193,9 @@ function shell({ page, title, body, ctx, examples }) {
   ${codemirror.js.map((u) => `<script src="${u}"></script>`).join('\n  ')}` : '';
   const cfg = {
     p5: p5.url,
+    // The index's own hrefs are site-root-relative: a result opened from a page
+    // nested four levels down needs this prefix to land where it points.
+    root: from(page, ''),
     lib: from(page, site.bundle),
     // Root-relative prefixes (`/paintings/`) the examples use, resolved from the
     // page to the site root — the iframe inherits this page's base URL.
@@ -238,7 +238,7 @@ function childrenHtml(page, ctx) {
       <section class="children">
         <h2 class="children-title">${kids.length} ${kids.length === 1 ? 'page' : 'pages'}</h2>
         ${kids.map((k) => `
-        <h3 id="${slug(k.title)}"><a href="${urlOf(k.path)}">${esc(k.title)}</a></h3>`).join('')}
+        <h3 id="${slug(k.title)}"><a href="${from(page, urlOf(k.path))}">${esc(k.title)}</a></h3>`).join('')}
       </section>`;
 }
 
@@ -249,8 +249,8 @@ function prevNext(page, ctx) {
   if (!back && !fwd) return '';
   return `
       <nav class="pager">
-        ${back ? `<a class="back" href="${urlOf(back.path)}">← ${esc(back.title)}</a>` : '<span></span>'}
-        ${fwd ? `<a class="fwd" href="${urlOf(fwd.path)}">${esc(fwd.title)} →</a>` : '<span></span>'}
+        ${back ? `<a class="back" href="${from(page, urlOf(back.path))}">← ${esc(back.title)}</a>` : '<span></span>'}
+        ${fwd ? `<a class="fwd" href="${from(page, urlOf(fwd.path))}">${esc(fwd.title)} →</a>` : '<span></span>'}
       </nav>`;
 }
 

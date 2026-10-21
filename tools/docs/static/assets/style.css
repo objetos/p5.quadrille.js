@@ -189,6 +189,7 @@ sup.fnref a { text-decoration: none; }
   background: var(--bg-2);
   font-size: .875rem;
 }
+.api .sigline { flex-basis: 100%; }        /* a static helper and its instance delegate stack */
 .api .sig { background: var(--bg); }
 .api .arrow { color: var(--muted); }
 .api .type { padding: 0; background: none; color: var(--accent-2); }
