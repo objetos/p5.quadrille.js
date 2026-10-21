@@ -13,6 +13,8 @@
 import {
   copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -53,8 +55,15 @@ function main() {
     process.exit(1);
   }
 
+  // A build stamp over everything that ships: the bundle, the static chrome and
+  // the pages. The site's own assets are cached by the browser and a `<script
+  // src>` has no notion of a rebuild — the old Hugo site lost a day to exactly
+  // this on iframe subresources — so every site-local asset URL carries it.
+  const stamp = buildStamp(pages, at(paths.bundle), at(paths.static));
+
   // Render.
   const files = render(pages, parsed, {
+    stamp,
     pkg, readme, inventory, redirects,
     media,
     // `git+https://…` is a package-manager form a browser cannot open.
@@ -93,6 +102,30 @@ function main() {
 }
 
 /**
+ * A short hash of everything the build ships. Reads every file under `static`
+ * (the media included, which is why it is a hash of sizes and names rather than
+ * of the whole tree's bytes) plus the bundle and the pages' own text.
+ * @param {Object[]} pages
+ * @param {string} bundlePath
+ * @param {string} staticDir
+ * @returns {string} 8 hex characters
+ */
+function buildStamp(pages, bundlePath, staticDir) {
+  const hash = createHash('sha1').update(readFileSync(bundlePath));
+  const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory() ? walk(join(dir, e.name)) : [join(dir, e.name)]);
+  for (const file of walk(staticDir).sort()) {
+    hash.update(file);
+    hash.update(String(statSyncOrZero(file)));
+    if (/\.(css|js|json)$/.test(file)) hash.update(readFileSync(file));
+  }
+  for (const page of pages) hash.update(page.file).update(page.body);
+  return hash.digest('hex').slice(0, 8);
+}
+
+const statSyncOrZero = (file) => { try { return readFileSync(file).length; } catch (_) { return 0; } };
+
+/**
  * The search index's hrefs are site-root-relative and are never in the HTML, so
  * the link check cannot see them: every entry must name a page the build wrote.
  * @param {Map<string, string>} files
@@ -124,7 +157,8 @@ function linkCheck(out, files) {
     for (const m of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
       const target = m[1].replace(/&amp;/g, '&');
       if (/^(?:[a-z]+:|\/\/|#|data:|mailto:)/i.test(target)) continue;
-      const [pathPart] = target.split('#');
+      // `?v=<stamp>` is the cache-buster, not part of the path.
+      const [pathPart] = target.split('#')[0].split('?');
       if (!pathPart) continue;
       const resolved = resolve(dirname(join(out, file)), pathPart);
       const fileTarget = pathPart.endsWith('/') || !/\.[a-z0-9]+$/i.test(pathPart)

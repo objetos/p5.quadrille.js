@@ -191,16 +191,17 @@ function shell({ page, title, body, ctx, examples }) {
   const cm = examples ? `
   <link rel="stylesheet" href="${codemirror.css}">
   ${codemirror.js.map((u) => `<script src="${u}"></script>`).join('\n  ')}` : '';
+  const v = (url) => `${url}?v=${ctx.stamp}`;   // a reload after a rebuild gets the new file
   const cfg = {
     p5: p5.url,
     // The index's own hrefs are site-root-relative: a result opened from a page
     // nested four levels down needs this prefix to land where it points.
     root: from(page, ''),
-    lib: from(page, site.bundle),
+    lib: v(from(page, site.bundle)),
     // Root-relative prefixes (`/paintings/`) the examples use, resolved from the
     // page to the site root — the iframe inherits this page's base URL.
     media: Object.fromEntries(ctx.media.map((dir) => [dir, from(page, `${dir}/`)])),
-    index: from(page, site.index),
+    index: v(from(page, site.index)),
   };
   return `<!doctype html>
 <html lang="en">
@@ -208,10 +209,10 @@ function shell({ page, title, body, ctx, examples }) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)} — ${esc(ctx.pkg.name)}</title>
-  <link rel="stylesheet" href="${from(page, site.style)}">${cm}
+  <link rel="stylesheet" href="${v(from(page, site.style))}">${cm}
   <script>window.quadrilleDocs = ${JSON.stringify(cfg)};</script>
-  <script src="${from(page, site.runner)}" defer></script>
-  <script src="${from(page, site.search)}" defer></script>
+  <script src="${v(from(page, site.runner))}" defer></script>
+  <script src="${v(from(page, site.search))}" defer></script>
 </head>
 <body>
   <nav class="sidebar">
