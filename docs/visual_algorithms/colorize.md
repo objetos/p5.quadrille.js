@@ -1,0 +1,40 @@
+---
+title: "colorize(args)"
+weight: 5
+symbol: colorize
+---
+
+Colorize quadrille according to upper-left corner `color0`, bottom-left corner `color1`, upper-right corner `color2`, and bottom-right corner `color3` colors. Call [colorizeTriangle()](../colorize_triangle/) on the two non-overlapping triangles entirely covering the quadrille.
+
+## Example
+
+```js
+'use strict';
+const ROWS = 20;
+const COLS = 20;
+const LENGTH = 20;
+let quadrille;
+
+function setup() {
+  createCanvas(COLS * LENGTH, ROWS * LENGTH);
+  quadrille = createQuadrille(20, 20);
+  quadrille.colorize('red', 'green', 'blue', 'cyan');
+}
+
+function draw() {
+  drawQuadrille(quadrille, { cellLength: LENGTH, outline: 'green' });
+}
+```
+
+## Syntax
+
+> `colorize(color0, [color1], [color2], [color3])`
+
+## Parameters
+
+| Param     | description                                                                                            |
+|-----------|--------------------------------------------------------------------------------------------------------|
+| `color0`  | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner0 color to be interpolated                   |
+| `color1`  | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner1 color to be interpolated default is `color0` |
+| `color2`  | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner2 color to be interpolated default is `color0` |
+| `color3`  | [p5.Color](https://p5js.org/reference/#/p5.Color) : corner3 color to be interpolated default is `color0` |

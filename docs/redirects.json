@@ -1,0 +1,27 @@
+{
+  "note": "Paths the pages branch published outside its final tree, and the page that answers each one now. Stubs are written for every entry; `null` means the landing page. Harvested once from the published site and from every link the gbgs book and the blog carry (docs/inventory.json holds the branch tree itself).",
+  "pages": {
+    "accessors/clone": "accessors/instance_creators/clone",
+    "accessors/is_empty": "accessors/cell_contents/is_empty",
+    "accessors/is_filled": "accessors/cell_contents/is_filled",
+    "accessors/read": "accessors/cell_contents/read",
+    "accessors/ring": "accessors/instance_creators/ring",
+    "accessors/search": "accessors/queries/search",
+    "algebra/neg": "algebra/not",
+    "api/iterators/visit": "iterators",
+    "classes": null,
+    "conversion_methods/to_bigint": "reformatter/to_bigint",
+    "p5_functions/visit_quadrille": "iterators",
+    "properties/height": "properties/read_write/height",
+    "properties/mouse_col": "properties/read_only/mouse_col",
+    "properties/mouse_row": "properties/read_only/mouse_row",
+    "properties/order": "properties/read_only/order",
+    "properties/width": "properties/read_write/width",
+    "reformatter/to_big_int": "reformatter/to_bigint",
+    "style/cell_length": "p5_functions/draw_quadrille/cell_length",
+    "style/chess_symbols": "p5_functions/draw_quadrille/chess_symbols",
+    "style/outline": "p5_functions/draw_quadrille/outline",
+    "style/text_color": "p5_functions/draw_quadrille/text_color",
+    "visual_computing/sort": "visual_algorithms/sort"
+  }
+}

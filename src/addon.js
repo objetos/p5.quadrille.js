@@ -1,5 +1,6 @@
 /**
  * @file Adds `createQuadrille` and `drawQuadrille` functions to the p5 prototype.
+ * @module p5.quadrille/addon
  * @version 3.5.0
  * @author JP Charalambos
  * @license GPL-3.0-only
@@ -9,7 +10,6 @@
  * drawQuadrille also renders raw JS arrays through a live zero-copy view; its docs
  * carry the numbered contract and limitations of the view vs a full Quadrille.
  * Part of the p5.quadrille.js library.
- * See https://objetos.github.io/docs/api/ for full usage and examples.
  */
 
 'use strict';
@@ -27,6 +27,24 @@ p5.registerAddon((p5, fn) => {
    * @instance
    * @param {...*} args - Arguments forwarded to the Quadrille constructor.
    * @returns {Quadrille} The new Quadrille instance.
+   * @group p5_functions
+   * @gbg annexes/animating_boards
+   * @gbg annexes/bitboards
+   * @gbg annexes/drawing_arrays
+   * @gbg foundations/data
+   * @gbg foundations/play
+   * @gbg foundations/rendering
+   * @gbg foundations/sketch
+   * @gbg foundations/timelines
+   * @gbg mechanics/behave
+   * @gbg mechanics/drag
+   * @gbg mechanics/match
+   * @gbg mechanics/meet
+   * @gbg mechanics/reveal
+   * @gbg mechanics/shine
+   * @gbg mechanics/stick
+   * @gbg mechanics/swap
+   * @gbg mechanics/walk
    */
   fn.createQuadrille = function (...args) {
     return new Quadrille(this, ...args);
@@ -95,6 +113,23 @@ p5.registerAddon((p5, fn) => {
    * @param {number} [params.textZoom]
    * @returns {Quadrille} The rendered quadrille — for arrays, the view: a real
    * Quadrille aliasing the array, with mouseRow/mouseCol live after the call.
+   * @group p5_functions
+   * @gbg annexes/animating_boards
+   * @gbg annexes/drawing_arrays
+   * @gbg foundations/data
+   * @gbg foundations/play
+   * @gbg foundations/rendering
+   * @gbg foundations/sketch
+   * @gbg foundations/timelines
+   * @gbg mechanics/behave
+   * @gbg mechanics/drag
+   * @gbg mechanics/match
+   * @gbg mechanics/meet
+   * @gbg mechanics/reveal
+   * @gbg mechanics/shine
+   * @gbg mechanics/stick
+   * @gbg mechanics/swap
+   * @gbg mechanics/walk
    */
   fn.drawQuadrille = function (quadrille, params = {}) {
     Array.isArray(quadrille) && (quadrille = Quadrille._view(this, quadrille)); // raw array → live zero-copy view

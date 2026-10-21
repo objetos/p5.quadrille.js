@@ -1,0 +1,312 @@
+/*
+ * style.css — site chrome for the p5.quadrille.js API reference.
+ * Light/dark follows prefers-color-scheme. The sketch stage is a fixed dark
+ * box: the canvas never inherits the theme. The stage is sized by the runner
+ * from the sketch's own content, so it is not given an aspect ratio here.
+ */
+
+:root {
+  color-scheme: light dark;
+  --bg:       #ffffff;
+  --bg-2:     #f5f6f8;
+  --fg:       #1c1e22;
+  --muted:    #646870;
+  --border:   #e1e4e9;
+  --accent:   #1c7c68;
+  --accent-2: #a2338a;   /* types */
+  --note:     #eef4fb;   /* blockquote tint */
+  --stage:    #0a0a0e;   /* fixed — not themed */
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --sidebar: 17rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #131417;
+    --bg-2:     #1b1d22;
+    --fg:       #e4e6ea;
+    --muted:    #9a9ea7;
+    --border:   #2b2e35;
+    --accent:   #3ec9ab;
+    --accent-2: #e08fd0;
+    --note:     #1a2330;
+  }
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────── */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  display: grid;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  min-height: 100vh;
+  font: 16px/1.6 var(--sans);
+  color: var(--fg);
+  background: var(--bg);
+}
+
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+img { max-width: 100%; height: auto; }
+
+code, pre, textarea { font-family: var(--mono); }
+code { font-size: .92em; padding: .1em .35em; border-radius: 4px; background: var(--bg-2); }
+pre {
+  padding: .9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-2);
+  line-height: 1.5;
+  overflow-x: auto;
+}
+pre code { padding: 0; background: none; font-size: .85rem; }
+
+blockquote {
+  margin: 1rem 0;
+  padding: .5rem 1rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  background: var(--note);
+  color: var(--fg);
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+table { width: 100%; margin: .75rem 0 1.25rem; border-collapse: collapse; font-size: .9375rem; }
+th, td { padding: .45rem .6rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+th { font-size: .8125rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+td > :first-child { margin-top: 0; }
+td > :last-child  { margin-bottom: 0; }
+
+/* ── Sidebar ────────────────────────────────────────────────────────────── */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  background: var(--bg-2);
+  border-right: 1px solid var(--border);
+}
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--fg);
+  text-decoration: none;
+}
+.version { margin-left: .4rem; font-size: .75rem; color: var(--muted); }
+.sidebar .search {
+  width: 100%;
+  margin: .9rem 0 .75rem;
+  padding: .35rem .5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: .875rem/1.5 var(--sans);
+  color: var(--fg);
+  background: var(--bg);
+}
+
+.sidebar ul { margin: 0; padding: 0; list-style: none; }
+.sidebar ul ul { margin-left: .6rem; padding-left: .5rem; border-left: 1px solid var(--border); }
+.sidebar li a {
+  display: block;
+  padding: .25rem .4rem;
+  border-radius: 4px;
+  font-size: .8125rem;
+  line-height: 1.45;
+  color: var(--fg);
+  text-decoration: none;
+}
+.sidebar li a:hover { background: var(--border); }
+.sidebar li a[aria-current="page"] { background: var(--accent); color: #fff; }
+.sidebar details > summary {
+  display: flex;
+  align-items: baseline;
+  gap: .25rem;
+  padding: .25rem .4rem;
+  border-radius: 4px;
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.sidebar details > summary::-webkit-details-marker { display: none; }
+.sidebar details > summary::before { content: "▸"; font-size: .7rem; color: var(--muted); }
+.sidebar details[open] > summary::before { content: "▾"; }
+.sidebar details > summary a { padding: 0; font-weight: 600; }
+.sidebar details > summary a:hover { background: none; text-decoration: underline; }
+
+.sidebar .results li a { display: grid; grid-template-columns: 1fr auto; gap: 0 .5rem; }
+.sidebar .results .kind { font-size: .7rem; color: var(--muted); }
+.sidebar .results .hint {
+  grid-column: 1 / -1;
+  font: .75rem/1.4 var(--sans);
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar .results .none { padding: .3rem .5rem; font: .875rem/1.5 var(--sans); color: var(--muted); }
+
+/* ── Main ───────────────────────────────────────────────────────────────── */
+
+main { min-width: 0; max-width: 60rem; padding: 2rem 2.5rem 3rem; }
+
+h1, h2, h3, h4 { line-height: 1.3; }
+h1 { margin: 0 0 1rem; font-size: 1.75rem; font-family: var(--mono); font-weight: 600; }
+h2 { margin: 2.25rem 0 .9rem; padding-bottom: .3rem; font-size: 1.25rem; border-bottom: 1px solid var(--border); }
+h3 { margin: 1.75rem 0 .5rem; font-size: 1.05rem; }
+h4 { margin: 1.25rem 0 .4rem; font-size: 1rem; }
+h2 code, h3 code { background: none; padding: 0; }
+:target { scroll-margin-top: 1rem; }
+
+.prose > :first-child { margin-top: 0; }
+
+/* Footnotes — the pages carry them; marked has no footnote extension. */
+.footnotes { margin-top: 2.5rem; padding-top: .5rem; border-top: 1px solid var(--border); font-size: .875rem; color: var(--muted); }
+.footnotes ol { padding-left: 1.2rem; }
+sup.fnref { font-size: .7em; }
+sup.fnref a { text-decoration: none; }
+
+/* ── The source-backed strip ────────────────────────────────────────────── */
+
+.api {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .35rem .75rem;
+  margin: -0.35rem 0 1.5rem;
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-2);
+  font-size: .875rem;
+}
+.api .sig { background: var(--bg); }
+.api .arrow { color: var(--muted); }
+.api .type { padding: 0; background: none; color: var(--accent-2); }
+.api .source { margin-left: auto; font: .75rem var(--mono); color: var(--muted); text-decoration: none; }
+.api .source:hover { text-decoration: underline; }
+.api .api-params { flex-basis: 100%; }
+.api .api-params summary { cursor: pointer; font-size: .8125rem; color: var(--muted); }
+.api .fields { margin-bottom: 0; font-size: .8125rem; }
+
+/* ── Children and pager ─────────────────────────────────────────────────── */
+
+.children { margin-top: 2.5rem; }
+.children .children-title { margin-bottom: .4rem; font-size: .8125rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; border: 0; }
+.children h3 { margin: .2rem 0; font-family: var(--mono); font-size: .9375rem; font-weight: 500; }
+.children h3 a { text-decoration: none; }
+.children h3 a:hover { text-decoration: underline; }
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .875rem;
+}
+.pager a { text-decoration: none; }
+.pager a:hover { text-decoration: underline; }
+
+footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8125rem;
+  color: var(--muted);
+}
+
+/* ── Examples ───────────────────────────────────────────────────────────── */
+
+.example { margin: 1.25rem 0 2rem; }
+
+.editor textarea.source {            /* fallback when CodeMirror is absent */
+  display: block;
+  width: 100%;
+  min-height: 12rem;
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .8125rem;
+  line-height: 1.5;
+  color: var(--fg);
+  background: var(--bg-2);
+  resize: vertical;
+}
+
+/* The stage is exactly the sketch: the runner writes the iframe's pixel size. */
+.stage {
+  display: inline-block;          /* the box is the sketch, not the column */
+  margin: .6rem 0;
+  max-width: 100%;
+  overflow: auto;
+  border-radius: 6px;
+  background: var(--stage);
+}
+.stage iframe { display: block; border: 0; background: transparent; }
+
+.toolbar { display: flex; align-items: center; gap: .5rem; }
+.toolbar button {
+  padding: .3rem .9rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+  font-size: .875rem;
+  color: var(--fg);
+  background: var(--bg-2);
+  cursor: pointer;
+}
+.toolbar button:hover { border-color: var(--muted); }
+.toolbar button[data-run] { border-color: transparent; color: #fff; background: var(--accent); }
+.toolbar button[data-run]:hover { filter: brightness(1.08); }
+.toolbar .hint { font-size: .75rem; color: var(--muted); }
+
+/* ── CodeMirror ─────────────────────────────────────────────────────────── */
+
+.editor .CodeMirror {
+  height: auto;                      /* with viewportMargin: Infinity — grows to fit */
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: .8125rem/1.5 var(--mono);
+  color: var(--fg);
+  background: var(--bg-2);
+}
+.editor .CodeMirror-gutters { border-right: 1px solid var(--border); background: var(--bg-2); }
+.editor .CodeMirror-linenumber { color: var(--muted); }
+.editor .CodeMirror-cursor { border-left-color: var(--fg); }
+
+@media (prefers-color-scheme: dark) {
+  .editor .CodeMirror-selected,
+  .editor .CodeMirror-focused .CodeMirror-selected { background: #2b3340; }
+  .editor .cm-s-default .cm-keyword    { color: #c792ea; }
+  .editor .cm-s-default .cm-atom,
+  .editor .cm-s-default .cm-number     { color: #f78c6c; }
+  .editor .cm-s-default .cm-def        { color: #82aaff; }
+  .editor .cm-s-default .cm-variable   { color: #e4e6ea; }
+  .editor .cm-s-default .cm-variable-2 { color: #addb67; }
+  .editor .cm-s-default .cm-property   { color: #80cbc4; }
+  .editor .cm-s-default .cm-operator   { color: #89ddff; }
+  .editor .cm-s-default .cm-string,
+  .editor .cm-s-default .cm-string-2   { color: #c3e88d; }
+  .editor .cm-s-default .cm-comment    { color: #7f8c98; font-style: italic; }
+  .editor .cm-s-default .cm-builtin    { color: #ffcb6b; }
+  .editor .CodeMirror-matchingbracket  { color: #fff !important; text-decoration: none; }
+}
+
+/* ── Narrow ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  body { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  main { padding: 1.5rem 1rem 2rem; }
+}

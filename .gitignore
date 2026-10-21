@@ -42,3 +42,6 @@ public/
 resources/
 themes/
 .hugo*
+
+# docs site
+site/
