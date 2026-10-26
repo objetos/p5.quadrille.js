@@ -67,9 +67,15 @@
 html,body{margin:0;padding:0;overflow:hidden;background:#0a0a0e;color:#e4e6ea;
   font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 canvas{display:block}
-/* p5's DOM helpers (createP, createDiv, createSlider…) append beside the canvas,
-   where a black-on-black default would make their text invisible. */
-body > *:not(canvas){margin:4px 8px 6px}
+/* Nothing here may move the canvas: p5 v2 wraps it in a <main>, and any margin
+   on that wrapper — or on the body — shows as a blank strip on the sketch's top
+   and left edges. The body's text colour is what makes the elements p5's DOM
+   helpers append (createP, createDiv …) readable on the stage's dark
+   background; their position is the sketch's business, not the frame's. */
+body > *{margin:0}
+/* A control that flows after the canvas gets a hairline gap; one the sketch
+   positioned itself is placed by its own coordinates, untouched. */
+body > main + :not([style*="position: absolute"]){margin-top:4px}
 </style>
 <script src="${attr(cfg.p5)}"></script>
 <script src="${attr(cfg.lib)}"></script>
