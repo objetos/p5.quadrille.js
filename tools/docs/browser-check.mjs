@@ -156,6 +156,17 @@ for (const check of checks) {
       size = await evaluate(`document.querySelector('iframe.sketch')?.dataset.size || ''`);
     }
     if (!size) fail(check.path, 'sketch frame never mounted or never sized');
+
+    // The canvas has to start at the frame's origin: a margin on p5's <main>
+    // wrapper once showed as a blank strip along the sketch's top and left.
+    const at = await evaluate(`(() => {
+      const c = document.querySelector('iframe.sketch')?.contentDocument?.querySelector('canvas');
+      if (!c) return null;
+      const r = c.getBoundingClientRect();
+      return [Math.round(r.left), Math.round(r.top)];
+    })()`);
+    if (!at) fail(check.path, 'no canvas in the frame');
+    else if (at[0] !== 0 || at[1] !== 0) fail(check.path, `canvas starts at (${at.join(', ')}), not the frame's origin`);
   }
   if (check.folder) {
     const kids = await evaluate(`document.querySelectorAll('.children h3').length`);
