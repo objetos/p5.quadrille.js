@@ -16,7 +16,7 @@
 
 import { readFileSync } from 'node:fs';
 
-import { groupSlugs, p5RefUrl } from './config.js';
+import { groupSlugs, navSlugs, p5RefUrl } from './config.js';
 import { snake, slug, symbolOfTitle } from './pages.js';
 
 const VOCABULARY = new Set([
@@ -222,7 +222,33 @@ export function validateSources(parsed, surface) {
   return { errors, warnings };
 }
 
-// ── Pages ───────────────────────────────────────────────────────────────────
+// ── Uses ────────────────────────────────────────────────────────────────────
+
+/**
+ * The strict half: a name an example provably calls must be documented — by a
+ * doclet for this library, by a gloss for p5.js and JavaScript. A used name
+ * with neither is a page that promises a reference it does not have, and the
+ * build refuses it rather than printing a hollow row.
+ * @param {Object} uses from uses.js `siteUses`
+ * @param {Object} terms from host-terms.js
+ * @param {Map<string, Object>} docletsByName
+ */
+export function validateUses(uses, terms, docletsByName) {
+  const errors = [], warnings = [];
+  for (const [key, n] of [...uses.counts].sort((a, b) => b[1] - a[1])) {
+    const [tier, name] = [key.slice(0, key.indexOf(':')), key.slice(key.indexOf(':') + 1)];
+    if (tier === 'quadrille') {
+      if (!docletsByName.has(name)) errors.push(`uses  ${name} is called by ${n} example(s) and has no doc block`);
+      continue;
+    }
+    if (!terms[key]) {
+      errors.push(`uses  ${key} is called by ${n} example(s) and has no gloss in tools/docs/host-terms.js`);
+    }
+  }
+  const unused = Object.keys(terms).filter((k) => !uses.counts.has(k));
+  if (unused.length) warnings.push(`uses  ${unused.join(' ')} glossed but used by no example`);
+  return { errors, warnings };
+}
 
 /**
  * Pages against doclets, and the inventory of what the `pages` branch published.
@@ -240,7 +266,7 @@ export function validatePages(pages, parsed, inventory) {
   const titleAt = new Map();
 
   for (const p of pages) {
-    if (!groupSlugs.has(p.group)) fail(p, `no such teaching area: ${p.group}`);
+    if (!groupSlugs.has(p.group) && !navSlugs.has(p.group)) fail(p, `no such area: ${p.group}`);
 
     // An unbalanced fence swallows the rest of the page — including the
     // footnotes the renderer appends — so it is an error, never a warning.

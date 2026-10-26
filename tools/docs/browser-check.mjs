@@ -50,7 +50,9 @@ const PORT = await new Promise((resolve) => {
 /** Pages that exercise each shape: a sketch, a listing, a folder page, search. */
 const checks = [
   { path: 'docs/properties/read_write/width/', sketch: true },
-  { path: 'docs/mutators/rand/rand_times/', sketch: true, domText: true },
+  { path: 'docs/mutators/rand/rand_times/', sketch: true, domText: true, uses: true },
+  { path: 'docs/reference/host/', terms: 60 },
+  { path: 'docs/reference/quadrille_surface/', terms: 40 },
   { path: 'docs/p5_functions/create_quadrille/create_quadrille_FEN/', sketch: true },
   { path: 'docs/algebra/merge/', sketch: true, footnotes: true },
   { path: 'docs/mutators/fill/', folder: true },
@@ -179,6 +181,16 @@ for (const check of checks) {
       if (!(ratio >= 4.5)) fail(check.path, `DOM text "${info.text}" is ${info.color} on ${info.bg} (contrast ${ratio.toFixed(1)}:1)`);
     }
   }
+  // The generated tables: a page with a directive must carry its rows.
+  if (check.terms) {
+    const rows = await evaluate(`document.querySelectorAll('.terms tr[id]').length`);
+    if (rows < check.terms) fail(check.path, `${rows} term row(s), expected at least ${check.terms}`);
+  }
+  // The per-page block at the foot of a page that carries sketches.
+  if (check.uses) {
+    const names = await evaluate(`document.querySelectorAll('.uses dd code').length`);
+    if (!names) fail(check.path, 'no "what this page uses" block');
+  }
   if (check.footnotes) {
     const notes = await evaluate(`document.querySelectorAll('.footnotes li').length`);
     if (!notes) fail(check.path, 'footnotes did not render');
@@ -215,3 +227,6 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(`[check] ${checks.length} page(s), search clicks and sketch frames: all good against ${base}`);
+// The browser and its socket keep the loop alive; the report is complete.
+stop();
+process.exit(0);

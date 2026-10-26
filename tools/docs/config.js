@@ -53,6 +53,17 @@ export const groups = [
 export const groupSlugs = new Set(groups.map((g) => g.slug));
 
 /**
+ * Navigation areas that are not teaching areas: the pages that describe the
+ * surface the examples *call* rather than the surface this library defines.
+ * They are pages like any other; they simply document other people's APIs.
+ */
+export const navAreas = [{ slug: 'reference', title: 'Reference' }];
+export const navSlugs = new Set(navAreas.map((n) => n.slug));
+
+/** The generated p5.js name list, for the tier rules. */
+export const p5globals = 'tools/docs/data/p5-globals.json';
+
+/**
  * CodeMirror 5 UMD — the example editor.
  */
 export const codemirror = { version: '5.65.21' };

@@ -18,10 +18,12 @@ import { readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { paths, site, media } from './config.js';
+import { paths, site, media, groups, p5globals } from './config.js';
 import { parseSources } from './parser.js';
-import { loadPages } from './pages.js';
-import { bundleSurface, validateSources, validatePages } from './validator.js';
+import { loadPages, snake } from './pages.js';
+import { bundleSurface, validateSources, validatePages, validateUses } from './validator.js';
+import { siteUses } from './uses.js';
+import { areas, sections, terms, termHref, rules } from './host-terms.js';
 import { render } from './renderer.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -43,11 +45,20 @@ function main() {
   const inventory = read(paths.inventory) ? JSON.parse(read(paths.inventory)) : null;
   const redirects = read(paths.redirects) ? JSON.parse(read(paths.redirects)) : null;
 
+  // What the examples call, resolved to the three tiers the site documents.
+  const globals = JSON.parse(readFileSync(at(p5globals), 'utf8'));
+  const docletsByName = new Map(parsed.doclets.map((d) => [d.name, d]));
+  const uses = siteUses(pages, {
+    doclets: new Set(parsed.doclets.filter((d) => !d.ignore).map((d) => d.name)),
+    globals, rules,
+  });
+
   // Validate — errors fail the build, warnings print.
   const a = validateSources(parsed, surface);
   const b = validatePages(pages, parsed, inventory);
-  const errors = [...a.errors, ...b.errors];
-  const warnings = [...a.warnings, ...b.warnings];
+  const c = validateUses(uses, terms, docletsByName);
+  const errors = [...a.errors, ...b.errors, ...c.errors];
+  const warnings = [...a.warnings, ...b.warnings, ...c.warnings];
   for (const w of warnings) console.warn(`[docs] warn  ${w}`);
   for (const e of errors)   console.error(`[docs] error ${e}`);
   if (errors.length) {
@@ -63,7 +74,7 @@ function main() {
 
   // Render.
   const files = render(pages, parsed, {
-    stamp,
+    stamp, uses, terms, areas, sections, termHref, groups, docletsByName,
     pkg, readme, inventory, redirects,
     media,
     // `git+https://…` is a package-manager form a browser cannot open.
@@ -97,8 +108,15 @@ function main() {
   }
 
   const sketches = pages.reduce((n, p) => n + (p.body.match(/```js[\s\S]*?function setup\s*\(/g) ?? []).length, 0);
+  const unclaimed = [...uses.unclaimed].sort((a, b) => b[1] - a[1]).slice(0, 8);
   console.log(`[docs] ${files.size} page(s), ${pages.length} docs/ page(s), ${parsed.doclets.length} doclet(s), ` +
-              `${sketches} sketch(es), ${warnings.length} warning(s) → ${paths.site}/`);
+              `${sketches} sketch(es), ${uses.counts.size} name(s) used by the examples, ` +
+              `${warnings.length} warning(s) → ${paths.site}/`);
+  if (unclaimed.length) {
+    console.log(`[docs] note  ${uses.unclaimed.size} name(s) in fences belong to no tier ` +
+                `(locals, or members of an unknown receiver): ` +
+                `${unclaimed.map(([n, c]) => `${n}(${c})`).join(' ')}`);
+  }
 }
 
 /**
@@ -136,7 +154,8 @@ function indexCheck(files) {
   for (const [file, body] of files) {
     if (!file.endsWith('search.json')) continue;
     for (const entry of JSON.parse(body)) {
-      if (!files.has(`${entry.h}index.html`)) problems.push(`search.json  ${entry.t} → ${entry.h} is not a page`);
+      const [page] = entry.h.split('#');
+      if (!files.has(`${page}index.html`)) problems.push(`search.json  ${entry.t} → ${entry.h} is not a page`);
     }
   }
   return problems;

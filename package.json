@@ -20,7 +20,8 @@
     "types": "tsc",
     "docs": "node tools/docs/index.js",
     "map": "node tools/docs/map.js",
-    "clean": "rm -rf site"
+    "clean": "rm -rf site",
+    "docs:globals": "node tools/docs/gen-p5-globals.js"
   },
   "keywords": [
     "p5",
@@ -49,7 +50,7 @@
     "@types/estree": "^1.0.9",
     "comment-parser": "^1.4.9",
     "marked": "^18.1.1",
-    "p5": "^2.3.2",
+    "p5": "2.3.2",
     "rollup": "^4.63.0",
     "typescript": "^7.0.2"
   }

@@ -199,6 +199,29 @@ sup.fnref a { text-decoration: none; }
 .api .api-params summary { cursor: pointer; font-size: .8125rem; color: var(--muted); }
 .api .fields { margin-bottom: 0; font-size: .8125rem; }
 
+/* ── What the examples use ──────────────────────────────────────────────── */
+
+.uses { margin-top: 2.5rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+.uses summary { cursor: pointer; font-size: .875rem; color: var(--muted); }
+.uses summary:hover { color: var(--fg); }
+.uses dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: .3rem 1rem;
+  margin: .9rem 0 0;
+  font-size: .875rem;
+}
+.uses dt { color: var(--muted); font-weight: 600; white-space: nowrap; }
+.uses dd { margin: 0; line-height: 1.9; }
+.uses .hint { margin: .8rem 0 0; font-size: .75rem; color: var(--muted); }
+
+/* The generated reference tables: name, what it is for, how many examples. */
+.terms { margin: .6rem 0 1.5rem; font-size: .875rem; }
+.terms th:last-child, .terms td:last-child { text-align: right; width: 5.5rem; }
+.terms .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.terms-section > h3 { margin-top: 1.75rem; }
+.terms-section > h2 { margin-top: 2.5rem; }
+
 /* ── Children and pager ─────────────────────────────────────────────────── */
 
 .children { margin-top: 2.5rem; }

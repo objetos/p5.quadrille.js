@@ -165,9 +165,18 @@ function footnotes(md) {
   return `${linked}\n\n<section class="footnotes">\n<ol>\n${list}\n</ol>\n</section>\n`;
 }
 
-function bodyHtml(page) {
+function bodyHtml(page, ctx) {
   lifted.clear();
-  let html = marked.parse(footnotes(page.body));
+  const tables = new Map();
+  const body = page.body.replace(/<!--\s*uses:\s*(\w+)\s*-->\n?/g, (_, which) => {
+    const id = `table-${which}`;
+    tables.set(id, which === 'host' ? hostTables(page, ctx) : quadrilleTables(page, ctx));
+    return `<p>@@${id}@@</p>\n`;
+  });
+  let html = marked.parse(footnotes(body));
+  for (const [id, table] of tables) {
+    html = html.replace(`<p>@@${id}@@</p>\n`, table).replace(`@@${id}@@`, table);
+  }
   for (const [id, figure] of lifted) {
     html = html.replace(`<p>@@${id}@@</p>\n`, figure).replace(`@@${id}@@`, figure);
   }
@@ -255,6 +264,124 @@ function prevNext(page, ctx) {
       </nav>`;
 }
 
+// ── What the examples use ───────────────────────────────────────────────────
+// Derived from the fences, never written by hand: `uses.js` resolves each name
+// to a tier, `host-terms.js` glosses the two host tiers, and a name with no
+// gloss fails the build. Pages opt in with `<!-- uses: host -->` or
+// `<!-- uses: quadrille -->`; every page with a sketch also gets the compact
+// block at its foot.
+
+/** A name as the row of a table: linked when the tier has a page, else plain. */
+function termLink(key, page, ctx) {
+  const name = key.slice(key.indexOf(':') + 1).replace(/^Element\./, '');
+  if (key.startsWith('quadrille:')) {
+    const d = ctx.docletsByName.get(name);
+    return d && !d.ignore ? `<a href="${from(page, urlOf(d.page ?? `${d.group}/${snake(d.name)}`))}"><code>${esc(name)}</code></a>`
+      : `<code>${esc(name)}</code>`;
+  }
+  const href = ctx.termHref(key);
+  return href ? `<a href="${href}"><code>${esc(name)}</code></a>` : `<code>${esc(name)}</code>`;
+}
+
+/**
+ * A row's one-line description: the gloss for a host name, the doc block's own
+ * first sentence for this library's — which is why that column needs no
+ * authored prose of its own.
+ */
+function glossOf(key, ctx) {
+  if (key.startsWith('quadrille:')) {
+    const d = ctx.docletsByName.get(key.slice('quadrille:'.length));
+    return d ? firstSentence(d.description) : '';
+  }
+  return ctx.terms[key]?.gloss ?? '';
+}
+
+/** Rows sorted by how many examples use them, then by name. */
+function rowsFor(keys, page, ctx) {
+  return [...keys].sort((a, b) => (ctx.uses.counts.get(b) ?? 0) - (ctx.uses.counts.get(a) ?? 0)
+    || a.localeCompare(b));
+}
+
+function termsTable(rows, page, ctx, { name, gloss, count }) {
+  return `
+        <table class="terms">
+          <thead><tr><th>${esc(name)}</th><th>${esc(gloss)}</th><th>${esc(count)}</th></tr></thead>
+          <tbody>${rows.map((key) => {
+            const bare = key.slice(key.indexOf(':') + 1);
+            return `
+            <tr id="${slug(bare)}">
+              <td>${termLink(key, page, ctx)}</td>
+              <td>${esc(glossOf(key, ctx))}</td>
+              <td class="count">${ctx.uses.counts.get(key) ?? 0}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>`;
+}
+
+/** `<!-- uses: host -->` — p5.js and JavaScript, by area. */
+function hostTables(page, ctx) {
+  const keys = [...ctx.uses.counts.keys()].filter((k) => !k.startsWith('quadrille:'));
+  return ctx.sections.map((section) => {
+    const mine = keys.filter((k) => ctx.areas.find((a) => a.id === ctx.terms[k]?.area)?.section === section.id);
+    return `
+      <section class="terms-section">
+        <h2 id="${esc(section.id)}">${esc(section.title)}</h2>
+        ${ctx.areas.filter((a) => a.section === section.id).map((area) => {
+          const areaKeys = mine.filter((k) => ctx.terms[k].area === area.id);
+          if (!areaKeys.length) return '';
+          return `
+        <h3 id="${esc(area.id)}">${esc(area.title)}</h3>
+        ${termsTable(rowsFor(areaKeys, page, ctx), page, ctx, { name: 'Name', gloss: 'What the examples use it for', count: 'Examples' })}`;
+        }).join('')}
+      </section>`;
+  }).join('');
+}
+
+/** `<!-- uses: quadrille -->` — this library's own surface, by teaching area. */
+function quadrilleTables(page, ctx) {
+  const keys = [...ctx.uses.counts.keys()].filter((k) => k.startsWith('quadrille:'));
+  const byArea = new Map();
+  for (const key of keys) {
+    const d = ctx.docletsByName.get(key.slice('quadrille:'.length));
+    const area = d?.group ?? 'other';
+    if (!byArea.has(area)) byArea.set(area, []);
+    byArea.get(area).push(key);
+  }
+  return ctx.groups.filter((g) => byArea.has(g.slug)).map((g) => `
+      <section class="terms-section">
+        <h2 id="${esc(g.slug)}">${esc(g.title)}</h2>
+        ${termsTable(rowsFor(byArea.get(g.slug), page, ctx), page, ctx,
+          { name: 'Surface', gloss: 'What it is', count: 'Examples' })}
+      </section>`).join('');
+}
+
+/** The compact block at the foot of a page that carries sketches. */
+function usesBlock(page, ctx) {
+  const used = ctx.uses.byPage.get(page.path);
+  if (!used || !used.size) return '';
+  const tiers = [
+    ['quadrille', 'p5.quadrille'],
+    ['p5', 'p5.js'],
+    ['js', 'JavaScript'],
+  ];
+  return `
+      <section class="uses">
+        <details>
+          <summary>What this page's examples use</summary>
+          <dl>${tiers.map(([tier, label]) => {
+            const keys = rowsFor([...used.keys()].filter((k) => k.startsWith(`${tier}:`)), page, ctx);
+            if (!keys.length) return '';
+            return `
+            <dt>${esc(label)}</dt>
+            <dd>${keys.map((k) => termLink(k, page, ctx)).join(' ')}</dd>`;
+          }).join('')}
+          </dl>
+          <p class="hint">Names the analysis can prove are called, and the line each one is documented on. Local variables and members of an unknown receiver are left out.</p>
+        </details>
+      </section>`;
+}
+
 // ── The tree ────────────────────────────────────────────────────────────────
 
 /** Pages as a navigation tree: `_index` pages are the nodes, others the leaves. */
@@ -319,7 +446,7 @@ export function render(pages, parsed, ctx) {
     const body = `
     <article class="page">
       <h1>${esc(p.title)}</h1>${apiStrip(p, d, ctx)}
-      <div class="prose">${bodyHtml(p)}</div>${childrenHtml(p, ctx)}${prevNext(p, ctx)}
+      <div class="prose">${bodyHtml(p, ctx)}</div>${childrenHtml(p, ctx)}${usesBlock(p, ctx)}${prevNext(p, ctx)}
     </article>`;
     files.set(`${urlOf(p.path)}index.html`, shell({
       page: p, title: p.title, ctx, examples, body,
@@ -333,7 +460,7 @@ export function render(pages, parsed, ctx) {
       stub(to ? from(stand, urlOf(to)) : from(stand, 'index.html'), from(stand, 'index.html')));
   }
 
-  files.set(site.index, JSON.stringify(searchIndex(pages, doclets)));
+  files.set(site.index, JSON.stringify(searchIndex(pages, doclets, ctx)));
   return files;
 }
 
@@ -354,11 +481,19 @@ function stub(target, home) {
 `;
 }
 
-/** One entry per page and per surface: what the sidebar search looks through. */
-function searchIndex(pages, doclets) {
+/** One entry per page, per surface and per host term: what the search looks through. */
+function searchIndex(pages, doclets, ctx) {
   const out = [];
   for (const d of doclets.values()) {
     out.push({ t: d.name, h: urlOf(d.page ?? `${d.group}/${snake(d.name)}`), k: 'symbol', s: firstSentence(d.description) });
+  }
+  for (const key of ctx.uses.counts.keys()) {
+    if (key.startsWith('quadrille:')) continue;
+    const bare = key.slice(key.indexOf(':') + 1);
+    out.push({
+      t: bare, h: `${urlOf('reference/host')}#${slug(bare)}`, k: key.split(':')[0],
+      s: ctx.terms[key]?.gloss ?? '',
+    });
   }
   for (const p of pages) {
     out.push({ t: p.title, h: urlOf(p.path), k: p.isIndex ? 'section' : 'page', s: firstSentence(firstParagraph(p.body)) });
