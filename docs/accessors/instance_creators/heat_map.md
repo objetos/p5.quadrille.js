@@ -8,7 +8,7 @@ Returns this quadrille's numbers as a new **color** quadrille: `hot` at `0`, `co
 
 ## Example
 
-(move the mouse to seed the field; click to regenerate the maze)\
+(move the mouse to seed the field; click to regenerate the maze)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

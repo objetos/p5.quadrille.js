@@ -8,7 +8,7 @@ Deletes a row from the quadrille.
 
 ## Example
 
-(click on any cell; press any key to reset)\
+(click on any cell; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

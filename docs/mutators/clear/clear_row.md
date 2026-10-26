@@ -8,7 +8,7 @@ Clears an entire row in the quadrille, setting each cell in the row to empty (i.
 
 ## Example
 
-(click on a row to clear it; press any key to reset)\
+(click on a row to clear it; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

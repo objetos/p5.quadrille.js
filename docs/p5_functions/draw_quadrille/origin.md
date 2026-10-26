@@ -7,7 +7,7 @@ The `origin` parameter defines the top-left corner of the quadrille for drawing:
 
 ## Example
 
-(click or press any key to toggle the origin of `q` between `CORNER` and `CENTER`)\
+(click or press any key to toggle the origin of `q` between `CORNER` and `CENTER`)
 ```js
 'use strict';
 // q0 is the reference quadrille

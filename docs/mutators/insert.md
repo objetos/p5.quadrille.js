@@ -8,7 +8,7 @@ Inserts an empty row into the quadrille.
 
 ## Example
 
-(click any row; press any key to reset)\
+(click any row; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

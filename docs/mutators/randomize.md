@@ -8,7 +8,7 @@ Randomly re-arranges the quadrille cells.
 
 ## Example
 
-(mouse click to randomize; press any key to reset)\
+(mouse click to randomize; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 32;

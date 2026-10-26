@@ -8,7 +8,7 @@ Fills **all** cells in the quadrille with a chessboard pattern using the given c
 
 ## Example
 
-(click or press any key to toggle between filling and clearing the quadrille)\
+(click or press any key to toggle between filling and clearing the quadrille)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

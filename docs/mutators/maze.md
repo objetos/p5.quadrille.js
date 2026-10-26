@@ -8,7 +8,7 @@ Clears the quadrille, then generates a [perfect maze](https://en.wikipedia.org/w
 
 ## Example
 
-(click to regenerate; press any key to toggle fat ⇄ thin)\
+(click to regenerate; press any key to toggle fat ⇄ thin)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

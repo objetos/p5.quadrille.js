@@ -8,7 +8,7 @@ Clears all cells in the quadrille, setting each cell to empty (i.e., `null`).
 
 ## Example
 
-(click or press any key to toggle between clearing all cells and resetting to random colors)\
+(click or press any key to toggle between clearing all cells and resetting to random colors)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

@@ -8,7 +8,7 @@ Randomly clears `times` number of cells in the quadrille. Same as [rand(times, n
 
 ## Example
 
-(numeric keys define `times`; mouse click randomly clears `times` number of cells)\
+(numeric keys define `times`; mouse click randomly clears `times` number of cells)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

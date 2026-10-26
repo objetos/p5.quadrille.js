@@ -8,7 +8,7 @@ Replaces all cells containing `value1` — matched by identity (`===`) — with 
 
 ## Example
 
-(click on any cell to replace all cells with the same value with a 🙈; press any key to reset)\
+(click on any cell to replace all cells with the same value with a 🙈; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 40;

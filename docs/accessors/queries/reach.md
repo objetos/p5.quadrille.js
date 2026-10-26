@@ -14,7 +14,7 @@ Returns the seed cell's reach as a **number-field quadrille** — `0` at the see
 
 ## Example
 
-(move the mouse to seed the field; press **d** to toggle 4- and 8-direction; click to regenerate the maze)\
+(move the mouse to seed the field; press **d** to toggle 4- and 8-direction; click to regenerate the maze)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

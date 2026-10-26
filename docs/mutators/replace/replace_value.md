@@ -8,7 +8,7 @@ Replaces all **filled** cells in the quadrille with the specified `value` — em
 
 ## Example
 
-(click or press any key to toggle between replacing cells and resetting)\
+(click or press any key to toggle between replacing cells and resetting)
 ```js
 'use strict';
 Quadrille.cellLength = 40;

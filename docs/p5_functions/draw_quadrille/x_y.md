@@ -7,7 +7,7 @@ The `x` and `y` parameters define the upper-left corner where the quadrille is d
 
 ## Example
 
-(move the mouse to position `q`)\
+(move the mouse to position `q`)
 ```js
 'use strict';
 // q0 is the reference quadrille

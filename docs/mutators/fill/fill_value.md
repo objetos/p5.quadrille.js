@@ -8,7 +8,7 @@ Fills all **empty** cells in the quadrille with the specified `value` — filled
 
 ## Example
 
-(click or press a key to toggle between filling empty cells and resetting to random colors)\
+(click or press a key to toggle between filling empty cells and resetting to random colors)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

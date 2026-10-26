@@ -9,7 +9,7 @@ That is the whole mechanism. A cell-stored function has no other way to learn wh
 
 ## Example
 
-(move the mouse: horizontally sets the ring count, vertically the shade — both are custom `options` keys)\
+(move the mouse: horizontally sets the ring count, vertically the shade — both are custom `options` keys)
 ```js
 'use strict';
 // All 64 cells store the SAME function object. Each call learns its

@@ -8,7 +8,7 @@ Iterates cells in **row-major** order and calls `callback({ row, col, value })` 
 
 ## Example
 
-(move mouse to highlight `🐸` filled cells in the hovered col, and click to randomize `q`)\
+(move mouse to highlight `🐸` filled cells in the hovered col, and click to randomize `q`)
 ```js
 'use strict';
 Quadrille.cellLength = 50;

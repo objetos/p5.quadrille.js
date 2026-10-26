@@ -63,7 +63,14 @@
   function srcdoc(code) {
     return `<!doctype html>
 <html><head><meta charset="utf-8">
-<style>html,body{margin:0;padding:0;overflow:hidden;background:#0a0a0e}canvas{display:block}</style>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:#0a0a0e;color:#e4e6ea;
+  font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+canvas{display:block}
+/* p5's DOM helpers (createP, createDiv, createSlider…) append beside the canvas,
+   where a black-on-black default would make their text invisible. */
+body > *:not(canvas){margin:4px 8px 6px}
+</style>
 <script src="${attr(cfg.p5)}"></script>
 <script src="${attr(cfg.lib)}"></script>
 </head><body>
@@ -125,8 +132,11 @@ ${esc(mediaPaths(code))}
     // Every canvas: a hidden 1×1 measurement canvas precedes the real one.
     const canvases = doc.querySelectorAll('canvas');
     for (const canvas of canvases) {
-      w = Math.max(w, canvas.offsetWidth);
-      h = Math.max(h, canvas.offsetHeight);
+      // Laid-out box, not the border box: a padded body offsets the canvas, and
+      // the frame has to include that offset or it clips the last few pixels.
+      const r = canvas.getBoundingClientRect();
+      w = Math.max(w, Math.ceil(r.right));
+      h = Math.max(h, Math.ceil(r.bottom));
     }
     // And the flow: each child's own box, because `position()` lays controls out
     // against the initial containing block and scrollHeight ignores absolutely

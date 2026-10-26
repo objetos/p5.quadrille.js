@@ -8,7 +8,7 @@ Iterates cells in **row-major** order and calls `callback({ row, col, value })` 
 
 ## Example
 
-(click to refill `q` with random emojis; monkey cells get highlighted)\
+(click to refill `q` with random emojis; monkey cells get highlighted)
 ```js
 'use strict';
 

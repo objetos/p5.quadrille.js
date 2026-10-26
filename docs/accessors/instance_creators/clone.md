@@ -8,7 +8,7 @@ Returns a [shallow copy](https://en.wikipedia.org/wiki/Object_copying#Shallow_co
 
 ## Example
 
-(click on canvas and / or press any key)\
+(click on canvas and / or press any key)
 ```js
 'use strict';
 Quadrille.cellLength = 50;

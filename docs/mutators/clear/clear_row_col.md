@@ -8,7 +8,7 @@ Clears a specific cell in the quadrille, setting it to empty (i.e., `null`).
 
 ## Example
 
-(click on any cell to clear it; press any key to reset)\
+(click on any cell to clear it; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

@@ -8,7 +8,7 @@ Swaps the contents of `row1` and `row2` in the `quadrille`.
 
 ## Example
 
-(click to select rows, press `s` to swap, or `r` to randomize)\
+(click to select rows, press `s` to swap, or `r` to randomize)
 ```js
 'use strict';
 

@@ -7,7 +7,7 @@ The `graphics` parameter renders quadrilles onto a custom [p5.Graphics](https://
 
 ## Example 1
 
-(click and drag the canvas to move the quadrille graphics)\
+(click and drag the canvas to move the quadrille graphics)
 ```js
 'use strict';
 Quadrille.cellLength = 50;
@@ -39,7 +39,7 @@ function draw() {
 
 ## Example 2
 
-(click and drag to orbit; dynamic Game of Life pattern rendered as a 3D texture)\
+(click and drag to orbit; dynamic Game of Life pattern rendered as a 3D texture)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

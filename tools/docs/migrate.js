@@ -170,8 +170,23 @@ function convert(p, byBase) {
   body = body.replace(YOUTUBE_RE, (_, id) => `https://www.youtube.com/watch?v=${id}`);
   body = body.replace(ALERT_RE, (_, kind) =>
     `> **${kind[0]}${kind.slice(1).toLowerCase()}**\n>`);
+  body = stripHardBreaks(body);
   body = body.replace(/[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n').replace(/^\n+/, '').replace(/\n+$/, '');
   return `${body}\n`;
+}
+
+/**
+ * A trailing backslash was a Markdown hard break, and its only reason was the
+ * p5 shortcode that followed it. With the sketch a fenced block of its own the
+ * break is meaningless and the backslash renders as text.
+ */
+function stripHardBreaks(text) {
+  let fence = false;
+  return text.split('\n').map((line) => {
+    if (/^ {0,3}(?:```|~~~)/.test(line)) { fence = !fence; return line; }
+    if (fence) return line;
+    return line.replace(/(?<!\\)[ \t]*\\[ \t]*$/, '');
+  }).join('\n');
 }
 
 // ── Entry ───────────────────────────────────────────────────────────────────

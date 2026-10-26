@@ -24,21 +24,33 @@
  *     python3 -m http.server -d site 8000
  *     node tools/docs/browser-check.mjs http://127.0.0.1:8000/
  *
- * `CHROME` names the binary (default `chromium`). Exit 1 on any failure.
+ * `CHROME` names the binary (default `chromium`). Extensions are off: a
+ * system-wide entry (`plasma-browser-integration`) would otherwise load its
+ * native host, which aborts without a display. Exit 1 on any failure.
  */
 
 import { spawn } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const base = (process.argv[2] ?? 'http://127.0.0.1:8000/').replace(/\/$/, '');
 const BIN = process.env.CHROME ?? 'chromium';
-const PORT = 9222;
+
+/** A port nobody holds: a fixed one would attach to whatever browser already owns it. */
+const PORT = await new Promise((resolve) => {
+  const probe = createServer();
+  probe.listen(0, '127.0.0.1', () => {
+    const { port } = probe.address();
+    probe.close(() => resolve(port));
+  });
+});
 
 /** Pages that exercise each shape: a sketch, a listing, a folder page, search. */
 const checks = [
   { path: 'docs/properties/read_write/width/', sketch: true },
+  { path: 'docs/mutators/rand/rand_times/', sketch: true, domText: true },
   { path: 'docs/p5_functions/create_quadrille/create_quadrille_FEN/', sketch: true },
   { path: 'docs/algebra/merge/', sketch: true, footnotes: true },
   { path: 'docs/mutators/fill/', folder: true },
@@ -49,11 +61,18 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const profile = mkdtempSync(join(tmpdir(), 'p5q-browser-'));
 const browser = spawn(BIN, [
   '--headless=new', '--no-sandbox', '--disable-gpu', '--hide-scrollbars',
+  // A throw-away profile must not fetch the system's Plasma integration
+  // extension, and no native host should reach the session bus from here.
+  '--disable-extensions',
+  '--disable-extensions',
   `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
   '--window-size=1400,1600', 'about:blank',
 ], { stdio: 'ignore' });
 
 const stop = () => { try { browser.kill('SIGTERM'); } catch (_) {} rmSync(profile, { recursive: true, force: true }); };
+browser.on('exit', (code) => {
+  if (code !== null && code !== 0) console.error(`[check] the browser exited early (${code}) — is ${BIN} installed?`);
+});
 process.on('exit', stop);
 
 async function pageTarget() {
@@ -107,6 +126,17 @@ await send('Runtime.enable');
 const failures = [];
 const fail = (page, msg) => { failures.push(`${page}  ${msg}`); };
 
+/** WCAG contrast ratio between two `rgb(…)` colours. */
+function contrast(a, b) {
+  const lum = (css) => {
+    const [r, g, bl] = (css.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
+    const f = (c) => c / 255 <= 0.03928 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4;
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bl);
+  };
+  const [la, lb] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (la + 0.05) / (lb + 0.05);
+}
+
 for (const check of checks) {
   consoleErrors.length = 0;
   await send('Page.navigate', { url: `${base}/${check.path}` });
@@ -128,6 +158,26 @@ for (const check of checks) {
   if (check.folder) {
     const kids = await evaluate(`document.querySelectorAll('.children h3').length`);
     if (!kids) fail(check.path, 'no child anchors on a directory page');
+  }
+  // p5's DOM helpers (createP, createDiv) put text beside the canvas, on the
+  // stage's own dark background: it has to be readable there.
+  if (check.domText) {
+    const info = await evaluate(`(() => {
+      const f = document.querySelector('iframe.sketch');
+      if (!f || !f.contentDocument) return null;
+      const d = f.contentDocument;
+      const el = [...d.body.children].find((e) => e.tagName !== 'CANVAS');
+      if (!el) return null;
+      const w = f.contentWindow;
+      return { text: el.textContent.trim().slice(0, 40),
+               color: w.getComputedStyle(el).color,
+               bg: w.getComputedStyle(d.body).backgroundColor };
+    })()`);
+    if (!info) fail(check.path, 'no DOM text beside the canvas to check');
+    else {
+      const ratio = contrast(info.color, info.bg);
+      if (!(ratio >= 4.5)) fail(check.path, `DOM text "${info.text}" is ${info.color} on ${info.bg} (contrast ${ratio.toFixed(1)}:1)`);
+    }
   }
   if (check.footnotes) {
     const notes = await evaluate(`document.querySelectorAll('.footnotes li').length`);

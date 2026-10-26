@@ -8,7 +8,7 @@ Swaps the contents of the cell at `(row1, col1)` with the cell at `(row2, col2)`
 
 ## Example
 
-(click to select cells, press `s` to swap, or `r` to randomize)\
+(click to select cells, press `s` to swap, or `r` to randomize)
 ```js
 'use strict';
 

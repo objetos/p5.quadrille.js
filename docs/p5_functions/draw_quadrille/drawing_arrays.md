@@ -14,7 +14,7 @@ weight: 15
 
 ## Example
 
-(click a cell to write `'🧱'` into the **raw array** — the next frame renders it live)\
+(click a cell to write `'🧱'` into the **raw array** — the next frame renders it live)
 ```js
 'use strict';
 Quadrille.cellLength = 40;

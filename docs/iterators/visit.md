@@ -8,7 +8,7 @@ Iterates **all cells** (empty ones included) in row-major order and calls `callb
 
 ## Example
 
-(click to randomly refill `q` with `emojis`)\
+(click to randomly refill `q` with `emojis`)
 ```js
 'use strict';
 Quadrille.cellLength = 50;

@@ -8,7 +8,7 @@ Randomly fills the quadrille with the specified `value` a given number of `times
 
 ## Example
 
-(numeric keys define `times`; other keys define `value`)\
+(numeric keys define `times`; other keys define `value`)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

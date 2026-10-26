@@ -20,7 +20,7 @@ Each wall cell reads its orientation from its own index parity: odd row + even c
 
 ## Example
 
-(same board drawn twice — fat left, thin right; click to regenerate, alternating the wall value: color ⇄ 🧱)\
+(same board drawn twice — fat left, thin right; click to regenerate, alternating the wall value: color ⇄ 🧱)
 ```js
 'use strict';
 Quadrille.cellLength = 24;

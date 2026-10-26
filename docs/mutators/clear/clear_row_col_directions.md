@@ -8,7 +8,7 @@ Clears a specific cell and all connected cells **holding the same value as it**,
 
 ## Example
 
-(click on any cell to perform flood fill based on selected directions; press any key to reset)\
+(click on any cell to perform flood fill based on selected directions; press any key to reset)
 ```js
 'use strict';
 Quadrille.cellLength = 20;

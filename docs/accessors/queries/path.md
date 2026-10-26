@@ -14,7 +14,7 @@ Returns a [shortest path](https://en.wikipedia.org/wiki/Shortest_path_problem) b
 
 ## Example
 
-(move the mouse to lead the 🐭; click to regenerate the maze)\
+(move the mouse to lead the 🐭; click to regenerate the maze)
 ```js
 'use strict';
 Quadrille.cellLength = 30;

@@ -30,7 +30,7 @@ Primitives compare by value (`'hi' === 'hi'`), so strict mode bites on objects â
 
 ## Example
 
-(click cells to edit pattern and quadrille; left / right arrow keys to move to next found hit)\
+(click cells to edit pattern and quadrille; left / right arrow keys to move to next found hit)
 ```js
 'use strict';
 const COLS = 20, ROWS = 14;
