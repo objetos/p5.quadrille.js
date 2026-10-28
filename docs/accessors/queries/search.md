@@ -12,18 +12,15 @@ What counts as a match depends on `strict`:
 - **Strict**: the values must additionally be **the same instances** (`===`) — reference identity, not lookalikes.
 
 ```js
-let shared;
-let quadrille, pattern;
+let shared = color('blue');          // one instance, stored once, used twice
+let quadrille = createQuadrille([125, shared, 'hi']);
 
-function setup() {
-  shared = color('blue');           // one instance, stored once, used twice
-  quadrille = createQuadrille([125, shared, 'hi']);
-  pattern = createQuadrille([shared, 'hi']);
-  quadrille.search(pattern, true);  // [{row: 0, col: 1}] — same 'blue' instance
-  pattern = createQuadrille([color('blue'), 'hi']);
-  quadrille.search(pattern, true);  // [] — a lookalike 'blue' is a different instance
-  quadrille.search(pattern);        // [{row: 0, col: 0}, {row: 0, col: 1}] — non-strict: shape only
-}
+let pattern = createQuadrille([shared, 'hi']);
+quadrille.search(pattern, true);     // [{row: 0, col: 1}] — same 'blue' instance
+
+pattern = createQuadrille([color('blue'), 'hi']);
+quadrille.search(pattern, true);     // [] — a lookalike 'blue' is a different instance
+quadrille.search(pattern);           // [{row: 0, col: 0}, {row: 0, col: 1}] — non-strict: shape only
 ```
 
 Primitives compare by value (`'hi' === 'hi'`), so strict mode bites on objects — colors, images, class instances: two calls to `color('blue')` produce two distinct instances that render identically yet never strict-match. Store a shared instance once (the `shared` variable above) when strict matching is the goal.
