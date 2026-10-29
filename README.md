@@ -1,6 +1,6 @@
 [![npm version](https://img.shields.io/npm/v/p5.quadrille.svg)](https://www.npmjs.com/package/p5.quadrille)
 [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)
-[![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)<!-- [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/) -->
+[![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)
 [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)
 [![Blog](https://img.shields.io/badge/Blog-0A0A0A?logo=dev.to&logoColor=white)](https://jpcharalambosh.co/tags/p5.quadrille.js/)
 
@@ -126,21 +126,20 @@ Let `n` be the total number of cells in the quadrille.
   – Object-Oriented Programming courses at UNAL.  
   – National and international game jams with the UNGames group.  
 - Fosters creativity and problem-solving in both classroom and jam settings.  
-- Publicly showcased at [objetos.github.io/docs/showcase](https://objetos.github.io/docs/showcase/), featuring student projects, games, and demos.
 
 # Releases
 
-- **Latest (v3.5.0):**  
+- **Latest (v3.5.1):**  
   These links always point to the latest stable version on npm.
   - [p5.quadrille.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.js)
   - [p5.quadrille.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille/dist/p5.quadrille.min.js)
   - [npm package](https://www.npmjs.com/package/p5.quadrille)
 
-- **Current tagged version (v3.5.0):**  
+- **Current tagged version (v3.5.1):**  
   Use these if you want to lock to a specific version.
-  - [p5.quadrille@3.5.0.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.5.0/dist/p5.quadrille.js)
-  - [p5.quadrille@3.5.0.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.5.0/dist/p5.quadrille.min.js)
-  - [npm package (v3.5.0)](https://www.npmjs.com/package/p5.quadrille/v/3.5.0)
+  - [p5.quadrille@3.5.1.js (unminified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.5.1/dist/p5.quadrille.js)
+  - [p5.quadrille@3.5.1.min.js (minified)](https://cdn.jsdelivr.net/npm/p5.quadrille@3.5.1/dist/p5.quadrille.min.js)
+  - [npm package (v3.5.1)](https://www.npmjs.com/package/p5.quadrille/v/3.5.1)
 
 - **Legacy (v2.x):**  
   GitHub CDN links compatible with p5 v1.
@@ -180,15 +179,6 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
   The creative coding library powering this project. From newcomers to advanced users—explore the [reference](https://beta.p5js.org/reference/), [examples](https://beta.p5js.org/examples/), [tutorials](https://beta.p5js.org/learn/), and [libraries](https://beta.p5js.org/libraries/).
 - [![p5.quadrille.js API](https://img.shields.io/badge/p5.quadrille.js_API-ED225D?logo=p5.js&logoColor=white)](https://objetos.github.io/p5.quadrille.js/)  
   Browse the full API reference, including all methods, usage patterns, and detailed explanations—each with interactive examples. Start with `createQuadrille()` and `drawQuadrille()`, then explore shape manipulation, color handling, I/O, WebGL rendering, and more.
- <!--  
-- [![Book Draft](https://img.shields.io/badge/Book_Draft-228B22?logo=mdbook)](https://objetos.github.io/docs/)  
-  An evolving educational resource covering:  
-  – Object-Oriented and Functional Programming essentials  
-  – Game design principles  
-  – Tutorials & step-by-step guides  
-  – Real-world projects by students and jam participants  
-  – Advanced demos by the author
--->
 - [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)  
   Published in *SoftwareX*. Goes beyond technical documentation—explains the motivation, research hypothesis, design rationale, and internal architecture of **p5.quadrille.js**.
 - [![Source Code](https://img.shields.io/badge/Source_Code-181717?logo=github)](https://github.com/objetos/p5.quadrille.js)  

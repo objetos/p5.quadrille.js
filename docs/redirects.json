@@ -1,5 +1,5 @@
 {
-  "note": "Paths the pages branch published outside its final tree, and the page that answers each one now. Stubs are written for every entry; `null` means the landing page. Harvested once from the published site and from every link the gbgs book and the blog carry (docs/inventory.json holds the branch tree itself).",
+  "note": "Paths the pages branch published outside its final tree, and the page that answers each one now. Stubs are written for every entry; `null` means the landing page. Harvested once from the published site and from the deep links still in use (docs/inventory.json holds the branch tree itself).",
   "pages": {
     "accessors/clone": "accessors/instance_creators/clone",
     "accessors/is_empty": "accessors/cell_contents/is_empty",

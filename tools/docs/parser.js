@@ -18,9 +18,6 @@
  *   - `@page <path>` — the page the surface renders on, relative to `docs/`
  *     and without its `.md`: `accessors/instance_creators/ring`. Absent, the
  *     page is `<group>/<snake_case(name)>`.
- *   - `@gbg <chapter>` — the Grid-Based Games chapter that teaches this
- *     surface: `mechanics/walk`, `foundations/data`. Repeatable. Collected
- *     into docs/book-map.json for the tutor index; never rendered.
  *   - `@ignore` — deliberately absent from the site (a seam, or a surface
  *     whose page does not exist yet). Documented in source, skipped by the
  *     renderer, and exempt from the coverage check in both directions.
@@ -135,15 +132,6 @@ function classRange(lines, name) {
   return null;
 }
 
-/** `@gbg` payloads: space-, comma- or newline-separated chapter paths. */
-function chaptersOf(tags) {
-  const out = [];
-  for (const t of tags) {
-    for (const part of tail(t).split(/[\s,]+/)) if (part) out.push(part);
-  }
-  return [...new Set(out)];
-}
-
 // ── Per-file parse ──────────────────────────────────────────────────────────
 
 function parseFile(srcDir, file) {
@@ -229,7 +217,6 @@ function parseFile(srcDir, file) {
       type:          typeTag?.type ?? constTag?.type ?? tdTag?.type ?? null,
       group:         tagOf('group')?.name ?? null,
       page:          tagOf('page') ? tail(tagOf('page')).trim() : null,
-      chapters:      chaptersOf(all('gbg')),
       ignore:        !!tagOf('ignore'),
       static:        staticMember,
       surfaces:      [via === 'member' ? (staticMember ? 'static' : 'instance') : 'namespace'],
@@ -283,7 +270,6 @@ function parseFile(srcDir, file) {
     first.kind = 'surface';
     first.params = first.params.length ? first.params : second.params;
     first.returns ??= second.returns;
-    first.chapters = [...new Set([...first.chapters, ...second.chapters])];
     second.mergedInto = first.name;
     merged.push(first);
   }

@@ -24,10 +24,9 @@ const VOCABULARY = new Set([
   'function', 'memberof', 'name', 'param', 'returns', 'type',
   'constant', 'typedef', 'property', 'example', 'details',
   'instance', 'private', 'throws',
-  'group', 'page', 'gbg', 'ignore',
+  'group', 'page', 'ignore',
 ]);
 
-const LEARN_RE  = /^(mechanics|foundations|annexes|intro|strategies)\/[a-z0-9_]+$/;
 const SETUP_RE  = /(^|[^\w$])(?:async\s+)?function\s+setup\s*\(/;
 
 // ── The built surface ───────────────────────────────────────────────────────
@@ -180,9 +179,6 @@ export function validateSources(parsed, surface) {
       else if (!groupSlugs.has(d.group)) fail(d, `${key} names unknown @group ${d.group}`);
       if (!resolves(d, surface.Quadrille, surface.fn)) fail(d, `${key} does not exist on the built surface`);
       if (d.page && !/^[a-z0-9_]+(\/[a-z0-9_]+)*$/.test(d.page)) fail(d, `@page ${d.page} is not a docs path`);
-    }
-    for (const ch of d.chapters) {
-      if (!LEARN_RE.test(ch)) fail(d, `@gbg ${ch} is not <area>/<chapter>`);
     }
     for (const o of d.orphans) warn(d, `dotted @param ${o} has no parent parameter`);
 

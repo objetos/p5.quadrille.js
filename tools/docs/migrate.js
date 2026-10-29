@@ -5,7 +5,7 @@
  * @module tools/docs/migrate
  * @license GPL-3.0-only
  *
- *     node tools/docs/migrate.js ~/books/gbgs/.import
+ *     node tools/docs/migrate.js <dir-of-the-nine-repos>
  *
  * The import directory holds the nine repositories the old site mounted under
  * `content/docs/` — `q_p5fx`, `q_props`, `q_bool`, `q_geom`, `q_immutable`,

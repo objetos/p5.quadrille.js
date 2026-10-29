@@ -1,7 +1,7 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
  * @module p5.quadrille/quadrille
- * @version 3.5.0
+ * @version 3.5.1
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -27,7 +27,7 @@ class Quadrille {
    * @type {string}
    * @group p5_functions
    */
-  static VERSION = '3.5.0';
+  static VERSION = '3.5.1';
 
   // Factory
 
@@ -39,10 +39,6 @@ class Quadrille {
    * @param {*} fn - A function returning a value to fill cells with, or a direct value.
    * @returns {Function|*} The same function tagged with `._isFactory = true`, or the value itself.
    * @group p5_functions
-   * @gbg foundations/data
-   * @gbg mechanics/behave
-   * @gbg mechanics/meet
-   * @gbg mechanics/shine
    */
   static factory(fn) {
     this.isFunction(fn) && (fn._isFactory = true);
@@ -77,7 +73,6 @@ class Quadrille {
    * @returns {string}
    * @group p5_functions
    * @page p5_functions/draw_quadrille/text_color
-   * @gbg foundations/rendering
    */
   static get textColor() {
     return this._textColor;
@@ -119,9 +114,6 @@ class Quadrille {
    * @returns {number}
    * @group p5_functions
    * @page p5_functions/draw_quadrille/text_zoom
-   * @gbg annexes/animating_boards
-   * @gbg foundations/rendering
-   * @gbg mechanics/walk
    */
   static get textZoom() {
     return this._textZoom;
@@ -146,8 +138,6 @@ class Quadrille {
    * @returns {string}
    * @group p5_functions
    * @page p5_functions/draw_quadrille/outline
-   * @gbg foundations/rendering
-   * @gbg mechanics/drag
    */
   static get outline() {
     return this._outline;
@@ -173,8 +163,6 @@ class Quadrille {
    * @returns {number}
    * @group p5_functions
    * @page p5_functions/draw_quadrille/outline_weight
-   * @gbg foundations/rendering
-   * @gbg mechanics/stick
    */
   static get outlineWeight() {
     return this._outlineWeight;
@@ -199,21 +187,6 @@ class Quadrille {
    * @returns {number}
    * @group p5_functions
    * @page p5_functions/draw_quadrille/cell_length
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/shine
-   * @gbg mechanics/stick
-   * @gbg mechanics/swap
-   * @gbg mechanics/walk
    */
   static get cellLength() {
     return this._cellLength;
@@ -413,7 +386,6 @@ class Quadrille {
    * @param {number} col Relative column offset from q1
    * @returns {Quadrille} A new quadrille containing only cells filled in both q1 and q2
    * @group algebra
-   * @gbg mechanics/stick
    */
   static and(q1, q2, row, col) {
     return this.merge(q1, q2, (a, b) => {
@@ -431,9 +403,6 @@ class Quadrille {
    * @param {number} col Relative column offset from q1
    * @returns {Quadrille} A new quadrille containing cells filled in either q1 or q2
    * @group algebra
-   * @gbg annexes/drawing_arrays
-   * @gbg mechanics/reveal
-   * @gbg mechanics/stick
    */
   static or(q1, q2, row, col) {
     return this.merge(q1, q2, (a, b) => {
@@ -493,7 +462,6 @@ class Quadrille {
    * @param {number} [col]
    * @returns {Quadrille}
    * @group algebra
-   * @gbg mechanics/stick
    */
   static merge(q1, q2, operator, row, col) {
     const sameOrigin = q1._row !== undefined && q2._row !== undefined &&
@@ -908,9 +876,6 @@ class Quadrille {
    * @returns {void}
    * @group iterators
    * @page iterators
-   * @gbg annexes/drawing_arrays
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
    */
   visit(callback, filter) {
     const memory2D = this._memory2D;
@@ -1057,10 +1022,6 @@ class Quadrille {
    * @returns {number}
    * @group properties
    * @page properties/read_only/size
-   * @gbg foundations/play
-   * @gbg foundations/timelines
-   * @gbg mechanics/match
-   * @gbg mechanics/stick
    */
   get size() {
     return this.width * this.height;
@@ -1071,12 +1032,6 @@ class Quadrille {
    * @returns {number}
    * @group properties
    * @page properties/read_only/order
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/play
-   * @gbg foundations/timelines
-   * @gbg mechanics/match
-   * @gbg mechanics/reveal
-   * @gbg mechanics/stick
    */
   get order() {
     let result = 0;
@@ -1091,22 +1046,6 @@ class Quadrille {
    * @returns {number}
    * @group properties
    * @page properties/read_only/mouse_row
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/shine
-   * @gbg mechanics/stick
-   * @gbg mechanics/swap
-   * @gbg mechanics/walk
    */
   get mouseRow() {
     return this.screenRow(this._p.mouseY);
@@ -1117,22 +1056,6 @@ class Quadrille {
    * @returns {number}
    * @group properties
    * @page properties/read_only/mouse_col
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/shine
-   * @gbg mechanics/stick
-   * @gbg mechanics/swap
-   * @gbg mechanics/walk
    */
   get mouseCol() {
     return this.screenCol(this._p.mouseX);
@@ -1209,9 +1132,6 @@ class Quadrille {
    * @returns {Array<{ row: number, col: number }>} An array of match locations. Empty if no match.
    * @group accessors
    * @page accessors/queries/search
-   * @gbg annexes/bitboards
-   * @gbg mechanics/match
-   * @gbg mechanics/swap
    */
   search(pattern, strict = false) {
     const hits = [];
@@ -1244,8 +1164,6 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille holding the reach field.
    * @group accessors
    * @page accessors/queries/reach
-   * @gbg annexes/animating_boards
-   * @gbg mechanics/walk
    */
   reach(row, col, directions = 4) {
     if (directions !== 4 && directions !== 8) {
@@ -1305,8 +1223,6 @@ class Quadrille {
    * @returns {Array<{ row: number, col: number }>} Steps from start to target. Empty on failure.
    * @group accessors
    * @page accessors/queries/path
-   * @gbg annexes/animating_boards
-   * @gbg mechanics/walk
    */
   path(row1, col1, row2, col2, directions = 4) {
     const dist = this.reach(row1, col1, directions); // warns on invalid directions
@@ -1374,13 +1290,6 @@ class Quadrille {
    * @returns {*} Quadrille entry at (row, col), or `undefined` if out of bounds.
    * @group accessors
    * @page accessors/cell_contents/read
-   * @gbg annexes/animating_boards
-   * @gbg foundations/data
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/meet
-   * @gbg mechanics/shine
-   * @gbg mechanics/walk
    */
   read(row, col) {
     if (this.isValid(row, col)) {
@@ -1400,21 +1309,6 @@ class Quadrille {
    * @returns {boolean} True if the cell is within bounds.
    * @group accessors
    * @page accessors/cell_contents/is_valid
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/shine
-   * @gbg mechanics/swap
-   * @gbg mechanics/walk
    */
   isValid(row, col) {
     return row >= 0 && row < this.height && col >= 0 && col < this.width;
@@ -1426,13 +1320,6 @@ class Quadrille {
    * @returns {boolean}
    * @group accessors
    * @page accessors/cell_contents/is_empty
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
    */
   static isEmpty(value) {
     return value == null;
@@ -1444,9 +1331,6 @@ class Quadrille {
    * @returns {boolean}
    * @group accessors
    * @page accessors/cell_contents/is_filled
-   * @gbg annexes/drawing_arrays
-   * @gbg mechanics/drag
-   * @gbg mechanics/reveal
    */
   static isFilled(value) {
     return value != null;
@@ -1546,7 +1430,6 @@ class Quadrille {
    * @returns {boolean}
    * @group accessors
    * @page accessors/cell_contents/is_array
-   * @gbg annexes/drawing_arrays
    */
   static isArray(value) {
     return Array.isArray(value);
@@ -1699,9 +1582,6 @@ class Quadrille {
    * @param {...*} args
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg mechanics/match
-   * @gbg mechanics/reveal
-   * @gbg mechanics/stick
    */
   replace(...args) {
     args.length === 1 && this.visit(({ row, col }) => this.fill(row, col, args[0]), ({ value }) => this.constructor.isFilled(value));
@@ -1722,15 +1602,6 @@ class Quadrille {
    * @param {...*} args
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg mechanics/behave
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/walk
    */
   clear(...args) {
     if (args.length === 0) {
@@ -1808,21 +1679,6 @@ class Quadrille {
    * @param {...*} args - Arguments as described above.
    * @returns {Quadrille} This quadrille (for chaining).
    * @group mutators
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/data
-   * @gbg foundations/play
-   * @gbg foundations/rendering
-   * @gbg foundations/sketch
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/drag
-   * @gbg mechanics/match
-   * @gbg mechanics/meet
-   * @gbg mechanics/reveal
-   * @gbg mechanics/shine
-   * @gbg mechanics/stick
-   * @gbg mechanics/walk
    */
   fill(...args) {
     if (args.length === 0) {
@@ -1993,8 +1849,6 @@ class Quadrille {
    * @param {*} [value=null] - Value to fill, or `null` to clear cells.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg mechanics/behave
-   * @gbg mechanics/meet
    */
   rand(times, value = null) {
     times = this._p.abs(times);
@@ -2019,7 +1873,6 @@ class Quadrille {
    * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg mechanics/swap
    */
   randomize() {
     const clone = this.clone();
@@ -2055,10 +1908,6 @@ class Quadrille {
    * @param {*} value - Wall value: literal, display function, or factory.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg annexes/animating_boards
-   * @gbg annexes/bitboards
-   * @gbg foundations/rendering
-   * @gbg mechanics/walk
    */
   maze(value) {
     const width = this.width;
@@ -2143,8 +1992,6 @@ class Quadrille {
    * @param {...number} args - Either 2 or 4 integers.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
-   * @gbg mechanics/meet
-   * @gbg mechanics/swap
    */
   swap(...args) {
     const isInteger = Number.isInteger;
@@ -2362,7 +2209,6 @@ class Quadrille {
    * Reverses the order of the rows.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group transforms
-   * @gbg mechanics/match
    */
   reflect() {
     this._memory2D.reverse();
@@ -2373,7 +2219,6 @@ class Quadrille {
    * Transposes the quadrille matrix (rows become columns).
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group transforms
-   * @gbg mechanics/match
    */
   transpose() {
     // credit goes to Fawad Ghafoorwho wrote about it here:
@@ -2387,9 +2232,6 @@ class Quadrille {
    * Rotates the quadrille 90 degrees clockwise.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group transforms
-   * @gbg annexes/animating_boards
-   * @gbg annexes/drawing_arrays
-   * @gbg mechanics/stick
    */
   rotate() {
     // credit goes to Nitin Jadhav: https://github.com/nitinja who wrote about it here:
@@ -2411,7 +2253,6 @@ class Quadrille {
    * @returns {bigint} Binary representation of the filled pattern.
    * @group reformatter
    * @page reformatter/to_bigint
-   * @gbg annexes/bitboards
    */
   toBigInt(littleEndian = false) {
     let result = 0n;
@@ -2429,8 +2270,6 @@ class Quadrille {
    * Returns a flattened array representation of the quadrille.
    * @returns {Array<*>}
    * @group reformatter
-   * @gbg annexes/animating_boards
-   * @gbg mechanics/walk
    */
   toArray() {
     // flatMap + Array.from (not flat): hole-safe for array views — flat() drops holes,
@@ -2535,13 +2374,6 @@ class Quadrille {
    * @returns {Quadrille} A new Quadrille with the same content.
    * @group accessors
    * @page accessors/instance_creators/clone
-   * @gbg annexes/drawing_arrays
-   * @gbg foundations/timelines
-   * @gbg mechanics/behave
-   * @gbg mechanics/match
-   * @gbg mechanics/reveal
-   * @gbg mechanics/stick
-   * @gbg mechanics/swap
    */
   clone() {
     const H = this.height;
@@ -2626,9 +2458,6 @@ class Quadrille {
    * @returns {Quadrille|undefined}
    * @group accessors
    * @page accessors/instance_creators/ring
-   * @gbg annexes/drawing_arrays
-   * @gbg mechanics/drag
-   * @gbg mechanics/reveal
    */
   ring(row, col, ...args) {
     const [a, b] = args;
@@ -2688,7 +2517,6 @@ class Quadrille {
    * @returns {Quadrille} A new quadrille of colors.
    * @group accessors
    * @page accessors/instance_creators/heat_map
-   * @gbg mechanics/walk
    */
   heatMap(hot = this.constructor.outline, cold) {
     const ctor = this.constructor;
@@ -3411,9 +3239,6 @@ class Quadrille {
    * @param {number} [params.cellLength=this.cellLength] - Cell size in pixels.
    * @group p5_functions
    * @page p5_functions/draw_quadrille/thin_wall
-   * @gbg annexes/animating_boards
-   * @gbg foundations/rendering
-   * @gbg mechanics/walk
    */
   static thinWall({
     graphics,
