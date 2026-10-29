@@ -6,10 +6,16 @@
 # deploys `site/`. A push to main without a matching tag builds nothing, so the
 # page and the published package cannot skew.
 #
+# A documentation-only main may publish ahead of the release: when the tree has
+# not touched `src/`, the version or the build config since the tag, the job
+# checks out main instead. The served bundle is still the release's code; a
+# change to the library itself falls back to the tag until the next release, so
+# the page cannot advertise code npm does not have.
+#
 # Why main, not the tag: the `github-pages` environment admits deployments from
 # the branches `main`, `pages` and `gh-pages` only — a tag push has no branch
 # for that policy to admit. The deployment therefore runs on `main` while the
-# tree it publishes is the tag's.
+# tree it publishes is the tag's, or main's when only documentation changed.
 #
 # Pages serves the artifact at https://objetos.github.io/p5.quadrille.js/. The
 # generated pages use relative URLs only, so no base URL needs injecting.
@@ -38,30 +44,38 @@ jobs:
   resolve:
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.tag.outputs.tag }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      ref: ${{ steps.resolve.outputs.ref }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
-      - id: tag
-        name: Resolve the release tag
+      - id: resolve
+        name: Resolve the tree to publish
         run: |
           tag="v$(node -p "require('./package.json').version")"
           if ! git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
             echo "No $tag in this clone — a main push without a release tag publishes nothing."
             exit 0
           fi
+          ref="$tag"
+          if [ "$GITHUB_SHA" != "$(git rev-parse "$tag")" ] &&
+             git diff --quiet "$tag" HEAD -- src package.json package-lock.json rollup.config.js tsconfig.json; then
+            ref="$GITHUB_SHA"
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "publishing $ref ($tag is the release)"
 
   site:
     needs: resolve
-    if: needs.resolve.outputs.tag != ''
+    if: needs.resolve.outputs.ref != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.resolve.outputs.tag }}
+          ref: ${{ needs.resolve.outputs.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -76,7 +90,7 @@ jobs:
 
   deploy:
     needs: [resolve, site]
-    if: needs.resolve.outputs.tag != ''
+    if: needs.resolve.outputs.ref != ''
     runs-on: ubuntu-latest
     environment:
       name: github-pages
