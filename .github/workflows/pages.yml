@@ -1,9 +1,15 @@
-# The project page — the API reference, generated from the tagged commit.
+# The project page — the API reference, generated from the release tag.
 #
-# One trigger: a release tag. The site is an artifact of that commit — the same
-# commit npm publishes — so the page and the package can never skew. The build
-# runs the pipeline the repository documents (`npm run build`, `npm run types`,
-# `npm run docs`) and deploys `site/`; nothing is rebuilt later from a branch.
+# The site is an artifact of one commit: the tag named by `package.json`'s
+# version. The job resolves that tag, checks it out, runs the pipeline the
+# repository documents (`npm run build`, `npm run types`, `npm run docs`) and
+# deploys `site/`. A push to main without a matching tag builds nothing, so the
+# page and the published package cannot skew.
+#
+# Why main, not the tag: the `github-pages` environment admits deployments from
+# the branches `main`, `pages` and `gh-pages` only — a tag push has no branch
+# for that policy to admit. The deployment therefore runs on `main` while the
+# tree it publishes is the tag's.
 #
 # Pages serves the artifact at https://objetos.github.io/p5.quadrille.js/. The
 # generated pages use relative URLs only, so no base URL needs injecting.
@@ -11,8 +17,8 @@ name: Release — API site
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -29,10 +35,33 @@ defaults:
     shell: bash
 
 jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - id: tag
+        name: Resolve the release tag
+        run: |
+          tag="v$(node -p "require('./package.json').version")"
+          if ! git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "No $tag in this clone — a main push without a release tag publishes nothing."
+            exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
   site:
+    needs: resolve
+    if: needs.resolve.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.tag }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -46,7 +75,8 @@ jobs:
           path: site
 
   deploy:
-    needs: site
+    needs: [resolve, site]
+    if: needs.resolve.outputs.tag != ''
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -55,14 +85,20 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
-  release:
-    needs: site
+  note:
+    needs: [resolve, site]
+    if: needs.resolve.outputs.tag != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Write the release note
+        with:
+          ref: ${{ needs.resolve.outputs.tag }}
+      - name: Open the release note
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md --verify-tag
+          TAG: ${{ needs.resolve.outputs.tag }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 && exit 0
+          gh release create "$TAG" --title "$TAG" --notes-file RELEASE_NOTES.md --verify-tag
