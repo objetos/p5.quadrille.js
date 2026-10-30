@@ -15,6 +15,8 @@
  *
  *   - console errors raised by the page or by a sketch's frame;
  *   - a sketch frame that never got sized (the p5 canvas would stay 1×1);
+ *   - a video shortcode that does not play: the poster must link to the watch
+ *     page and must become the in-page player when it is clicked;
  *   - the search field, on a nested page: type a query, click the first hit,
  *     and require the landing page to be the one the query names.
  *
@@ -53,7 +55,7 @@ const checks = [
   { path: 'docs/mutators/rand/rand_times/', sketch: true, domText: true, uses: true },
   { path: 'docs/reference/host/', terms: 60 },
   { path: 'docs/reference/quadrille_surface/', terms: 40 },
-  { path: 'docs/p5_functions/create_quadrille/create_quadrille_FEN/', sketch: true },
+  { path: 'docs/p5_functions/create_quadrille/create_quadrille_FEN/', sketch: true, video: true },
   { path: 'docs/algebra/merge/', sketch: true, footnotes: true },
   { path: 'docs/mutators/fill/', folder: true },
 ];
@@ -207,6 +209,27 @@ for (const check of checks) {
     if (!notes) fail(check.path, 'footnotes did not render');
   }
   for (const err of consoleErrors) fail(check.path, `console: ${err.split('\n')[0]}`);
+
+  // The shortcode: a poster that links out, which `assets/video.js` upgrades to
+  // the in-page player. The click is the assertion — a page ships no frame, so
+  // what reaches YouTube is the reader's request, and the upgrade is invisible
+  // to every file-level gate. After the console check on purpose: the frame's
+  // own noise is the reader's, not the page's.
+  if (check.video) {
+    const poster = await evaluate(`(() => {
+      const a = document.querySelector('.video .play');
+      return a && { href: a.href, img: !!a.querySelector('img') };
+    })()`);
+    if (!poster) fail(check.path, 'no video poster');
+    else if (!poster.img) fail(check.path, 'the video poster carries no thumbnail');
+    else if (!/youtube\.com\/watch\?v=/.test(poster.href)) fail(check.path, `the poster links to ${poster.href}`);
+    await evaluate(`document.querySelector('.video .play')?.click()`);
+    await sleep(400);
+    const player = await evaluate(`document.querySelector('.video iframe')?.src || ''`);
+    if (!player.includes('youtube-nocookie.com/embed/')) {
+      fail(check.path, `the poster did not become a player (${player || 'no frame'})`);
+    }
+  }
 
   // The search: only from a nested page, where a missing prefix shows.
   if (check.path.includes('/width/')) {

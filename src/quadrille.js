@@ -2079,13 +2079,13 @@ class Quadrille {
 
   /**
    * Logical AND between this quadrille and another.
-   * @param {Quadrille} q Second quadrille
+   * @param {Quadrille} other Quadrille to intersect with this one
    * @param {number} row Relative row offset from this
    * @param {number} col Relative column offset from this
    * @returns {Quadrille} This quadrille containing only cells filled in both
    */
-  and(q, row, col) {
-    return this.merge(q, (a, b) => {
+  and(other, row, col) {
+    return this.merge(other, (a, b) => {
       if (this.constructor.isFilled(a) && this.constructor.isFilled(b)) {
         return a;
       }
@@ -2094,13 +2094,13 @@ class Quadrille {
 
   /**
    * Logical OR between this quadrille and another.
-   * @param {Quadrille} q Second quadrille
+   * @param {Quadrille} other Quadrille to unite with this one
    * @param {number} row Relative row offset from this
    * @param {number} col Relative column offset from this
    * @returns {Quadrille} This quadrille containing cells filled in either
    */
-  or(q, row, col) {
-    return this.merge(q, (a, b) => {
+  or(other, row, col) {
+    return this.merge(other, (a, b) => {
       if (this.constructor.isFilled(a)) {
         return a;
       }
@@ -2112,13 +2112,13 @@ class Quadrille {
 
   /**
    * Logical XOR between this quadrille and another.
-   * @param {Quadrille} q Second quadrille
+   * @param {Quadrille} other Quadrille to combine with this one
    * @param {number} row Relative row offset from this
    * @param {number} col Relative column offset from this
    * @returns {Quadrille} This quadrille containing cells filled in one, but not both
    */
-  xor(q, row, col) {
-    return this.merge(q, (a, b) => {
+  xor(other, row, col) {
+    return this.merge(other, (a, b) => {
       if (this.constructor.isFilled(a) && this.constructor.isEmpty(b)) {
         return a;
       }
@@ -2129,14 +2129,14 @@ class Quadrille {
   }
 
   /**
-   * Logical difference (this minus q) between two quadrilles.
-   * @param {Quadrille} q Second quadrille
+   * Logical difference (this minus other) between two quadrilles.
+   * @param {Quadrille} other Quadrille to subtract from this one
    * @param {number} row Relative row offset from this
    * @param {number} col Relative column offset from this
-   * @returns {Quadrille} This quadrille with cells filled in this but not in q
+   * @returns {Quadrille} This quadrille with cells filled in this but not in other
    */
-  diff(q, row, col) {
-    return this.merge(q, (a, b) => {
+  diff(other, row, col) {
+    return this.merge(other, (a, b) => {
       if (this.constructor.isFilled(a) && this.constructor.isEmpty(b)) {
         return a;
       }
@@ -2146,23 +2146,23 @@ class Quadrille {
   /**
    * Merges another quadrille into this one by applying a binary operator.
    * Uses an in-place fast path when dimensions match and there is no offset.
-   * @param {Quadrille} q
+   * @param {Quadrille} other Quadrille to merge into this one
    * @param {(a: *, b: *) => *} operator
    * @param {number} [row]
    * @param {number} [col]
    * @returns {Quadrille} this
    */
-  merge(q, operator, row, col) {
-    const sameOrigin = this._row !== undefined && q._row !== undefined &&
-      this._cellLength !== undefined && this._cellLength === q._cellLength;
-    row ??= sameOrigin ? q._row - this._row : 0;
-    col ??= sameOrigin ? q._col - this._col : 0;
+  merge(other, operator, row, col) {
+    const sameOrigin = this._row !== undefined && other._row !== undefined &&
+      this._cellLength !== undefined && this._cellLength === other._cellLength;
+    row ??= sameOrigin ? other._row - this._row : 0;
+    col ??= sameOrigin ? other._col - this._col : 0;
     const ctor = this.constructor;
     // Hot path: exact same size and no offset → safe in-place update
-    if (row === 0 && col === 0 && this.width === q.width && this.height === q.height) {
+    if (row === 0 && col === 0 && this.width === other.width && this.height === other.height) {
       const H = this.height, W = this.width;
       const m0 = this._memory2D;
-      const mQ = q._memory2D;
+      const mQ = other._memory2D;
       for (let i = 0; i < H; i++) {
         const r0 = m0[i], rQ = mQ[i];
         for (let j = 0; j < W; j++) {
@@ -2173,17 +2173,17 @@ class Quadrille {
       return this;
     }
     // General path: compute output bounds
-    const width = col < 0 ? Math.max(q.width, this.width - col) : Math.max(this.width, q.width + col);
-    const height = row < 0 ? Math.max(q.height, this.height - row) : Math.max(this.height, q.height + row);
+    const width = col < 0 ? Math.max(other.width, this.width - col) : Math.max(this.width, other.width + col);
+    const height = row < 0 ? Math.max(other.height, this.height - row) : Math.max(this.height, other.height + row);
     const H0 = this.height, W0 = this.width;
-    const Hq = q.height, Wq = q.width;
+    const Hq = other.height, Wq = other.width;
     const rNeg = row < 0, rPos = row > 0;
     const cNeg = col < 0, cPos = col > 0;
     const mem = ctor._allocNullMemory(height, width);
-    const m0 = this._memory2D, mQ = q._memory2D;
+    const m0 = this._memory2D, mQ = other._memory2D;
     for (let i = 0; i < height; i++) {
       const i1 = rNeg ? i + row : i;     // index into this
-      const i2 = rPos ? i - row : i;     // index into q
+      const i2 = rPos ? i - row : i;     // index into other
       const outRow = mem[i];
       // cache source row pointers (or null) to skip row checks in inner loop
       const rowThis = (i1 >= 0 && i1 < H0) ? m0[i1] : null;

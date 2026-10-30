@@ -19,8 +19,10 @@
  *
  * The body is Markdown. A ```js fence that defines `setup()` is a sketch and
  * runs in the example runner; any other fence is a listing and renders as
- * code. Hugo shortcodes the nine content repositories used are resolved by the
- * renderer, which also checks that each target is a page that exists.
+ * code. The old site's Hugo shortcodes were resolved once, at migration, into
+ * links and fences; the one shortcode a page may carry now is
+ * `{{< youtube ID "caption" >}}`, which the renderer resolves and whose every
+ * malformed form the validator fails (tools/docs/shortcode.js).
  */
 
 import { readdirSync, readFileSync } from 'node:fs';

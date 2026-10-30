@@ -92,6 +92,7 @@ export const site = {
   style:  'assets/style.css',
   runner: 'assets/runner.js',
   search: 'assets/search.js',
+  video:  'assets/video.js',      // a page that carries a video shortcode only
   index:  'search.json',
 };
 

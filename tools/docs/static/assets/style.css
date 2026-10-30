@@ -250,6 +250,35 @@ footer {
   color: var(--muted);
 }
 
+/* ── Video shortcodes ───────────────────────────────────────────────────── */
+/* The poster is a link; assets/video.js swaps the player in on click. The
+   thumbnail is 4:3 with the video letterboxed, so `cover` crops the bars. */
+
+.video { margin: 1.25rem 0 2rem; }
+.video .play { position: relative; display: block; border-radius: 6px; overflow: hidden; background: #000; }
+.video .play img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; opacity: .85; transition: opacity .15s; }
+.video .play:hover img, .video .play:focus-visible img { opacity: 1; }
+.video .play::after {
+  content: "▶";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3.5rem;
+  height: 3.5rem;
+  display: grid;
+  place-items: center;
+  padding-left: .2rem;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, .65);
+}
+.video .play:hover::after { background: #cc0000; }
+.video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 6px; background: #000; }
+.video figcaption { margin-top: .45rem; font-size: .8125rem; color: var(--muted); }
+blockquote .video { margin: .9rem 0 0; }     /* a note already carries the padding */
+
 /* ── Examples ───────────────────────────────────────────────────────────── */
 
 .example { margin: 1.25rem 0 2rem; }

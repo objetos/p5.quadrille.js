@@ -11,13 +11,16 @@
  * What a page shows, in order: its title, the source-backed signature strip
  * when it documents a surface (`@page` says which page that is), its Markdown,
  * its children, and the previous/next pages. A ```js fence that defines
- * `setup()` runs in the example runner; any other fence is a listing.
+ * `setup()` runs in the example runner; any other fence is a listing; and the
+ * one shortcode a page may carry, `{{< youtube ID "caption" >}}`, becomes a
+ * video (tools/docs/shortcode.js).
  */
 
 import { Marked } from 'marked';
 
 import { p5, codemirror, site } from './config.js';
 import { slug, snake } from './pages.js';
+import { expand, withoutShortcodes } from './shortcode.js';
 
 const SETUP_RE = /(^|[^\w$])(?:async\s+)?function\s+setup\s*\(/;
 
@@ -62,9 +65,9 @@ const from = (page, url) => `${'../'.repeat(depthOf(page.path))}${url}`;
 
 // ── The signature strip ─────────────────────────────────────────────────────
 
-/** `(...)` from a doclet's params, variadics and optionals marked. */
-function paramsOf(d) {
-  return `(${d.params.map((prm) => {
+/** `(...)` from a surface's params, variadics and optionals marked. */
+function paramsOf(list) {
+  return `(${list.map((prm) => {
     const name = prm.type?.startsWith('...') ? `...${prm.name}` : prm.name;
     return prm.optional ? `[${name}]` : name;
   }).join(', ')})`;
@@ -72,14 +75,20 @@ function paramsOf(d) {
 
 const type = (t) => (t ? `<code class="type">${esc(t)}</code>` : '');
 
-/** One line per surface the doclet documents. */
+/**
+ * One line per surface the doclet documents, each with the parameter list that
+ * surface declares: a static helper and the instance method that delegates to
+ * it are one page with two signatures, `Quadrille.and(q1, q2, row, col)` and
+ * `q.and(other, row, col)`, and one list cannot be both.
+ */
 function signatures(d) {
   const owner = d.owner === 'p5' ? 'p5' : 'Quadrille';
   const lines = [];
   for (const surface of d.surfaces ?? ['instance']) {
-    if (surface === 'static') lines.push(`${owner}.${esc(d.name)}${d.kind === 'accessor' ? '' : esc(paramsOf(d))}`);
-    else if (surface === 'instance') lines.push(`q.${esc(d.name)}${d.kind === 'accessor' ? '' : esc(paramsOf(d))}`);
-    else if (surface === 'namespace') lines.push(`${owner}.${esc(d.name)}${esc(paramsOf(d))}`);
+    const call = `${esc(d.name)}${d.kind === 'accessor' ? '' : esc(paramsOf(d.surfaceParams?.[surface] ?? d.params))}`;
+    if (surface === 'static') lines.push(`${owner}.${call}`);
+    else if (surface === 'instance') lines.push(`q.${call}`);
+    else if (surface === 'namespace') lines.push(`${owner}.${call}`);
   }
   return lines.length ? lines : [`${owner}.${esc(d.name)}`];
 }
@@ -165,10 +174,28 @@ function footnotes(md) {
   return `${linked}\n\n<section class="footnotes">\n<ol>\n${list}\n</ol>\n</section>\n`;
 }
 
+/**
+ * A shortcode's figure: the poster is a link to the watch page, and
+ * `assets/video.js` upgrades the click to the privacy-enhanced player. The
+ * poster is a thumbnail, not a frame, so the page's own `load` never waits on
+ * YouTube, an offline reader still sees what the video is, and the caption is
+ * the poster's label as well as the player's accessible title.
+ */
+function video(id, caption) {
+  return `
+      <figure class="video" data-video="${esc(id)}">
+        <a class="play" href="https://www.youtube.com/watch?v=${esc(id)}">
+          <img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt="" loading="lazy" width="480" height="360">
+        </a>${caption ? `
+        <figcaption>${esc(caption)}</figcaption>` : ''}
+      </figure>`;
+}
+
 function bodyHtml(page, ctx) {
   lifted.clear();
+  const { body: prose, videos } = expand(page.body);
   const tables = new Map();
-  const body = page.body.replace(/<!--\s*uses:\s*(\w+)\s*-->\n?/g, (_, which) => {
+  const body = prose.replace(/<!--\s*uses:\s*(\w+)\s*-->\n?/g, (_, which) => {
     const id = `table-${which}`;
     tables.set(id, which === 'host' ? hostTables(page, ctx) : quadrilleTables(page, ctx));
     return `<p>@@${id}@@</p>\n`;
@@ -176,6 +203,10 @@ function bodyHtml(page, ctx) {
   let html = marked.parse(footnotes(body));
   for (const [id, table] of tables) {
     html = html.replace(`<p>@@${id}@@</p>\n`, table).replace(`@@${id}@@`, table);
+  }
+  for (const { placeholder, id, caption } of videos) {
+    const figure = video(id, caption);
+    html = html.replace(`<p>${placeholder}</p>\n`, figure).replace(placeholder, figure);
   }
   for (const [id, figure] of lifted) {
     html = html.replace(`<p>@@${id}@@</p>\n`, figure).replace(`@@${id}@@`, figure);
@@ -196,11 +227,13 @@ function navList(nodes, page, activePath) {
       </ul>`;
 }
 
-function shell({ page, title, body, ctx, examples }) {
+function shell({ page, title, body, ctx, examples, videos }) {
   const cm = examples ? `
   <link rel="stylesheet" href="${codemirror.css}">
   ${codemirror.js.map((u) => `<script src="${u}"></script>`).join('\n  ')}` : '';
   const v = (url) => `${url}?v=${ctx.stamp}`;   // a reload after a rebuild gets the new file
+  const player = videos ? `
+  <script src="${v(from(page, site.video))}" defer></script>` : '';
   const cfg = {
     p5: p5.url,
     // The index's own hrefs are site-root-relative: a result opened from a page
@@ -221,7 +254,7 @@ function shell({ page, title, body, ctx, examples }) {
   <link rel="stylesheet" href="${v(from(page, site.style))}">${cm}
   <script>window.quadrilleDocs = ${JSON.stringify(cfg)};</script>
   <script src="${v(from(page, site.runner))}" defer></script>
-  <script src="${v(from(page, site.search))}" defer></script>
+  <script src="${v(from(page, site.search))}" defer></script>${player}
 </head>
 <body>
   <nav class="sidebar">
@@ -443,13 +476,14 @@ export function render(pages, parsed, ctx) {
   for (const p of pages) {
     const d = canonical.get(p.path) ?? null;
     const examples = /```js[\s\S]*?function setup\s*\(/.test(p.body);
+    const videos = /\{\{<\s*youtube\b/.test(p.body);
     const body = `
     <article class="page">
       <h1>${esc(p.title)}</h1>${apiStrip(p, d, ctx)}
       <div class="prose">${bodyHtml(p, ctx)}</div>${childrenHtml(p, ctx)}${usesBlock(p, ctx)}${prevNext(p, ctx)}
     </article>`;
     files.set(`${urlOf(p.path)}index.html`, shell({
-      page: p, title: p.title, ctx, examples, body,
+      page: p, title: p.title, ctx, examples, videos, body,
     }));
   }
 
@@ -503,7 +537,7 @@ function searchIndex(pages, doclets, ctx) {
 
 /** The first paragraph of a page's Markdown, shortcodes already resolved. */
 function firstParagraph(md) {
-  const withoutFences = md.replace(/```[\s\S]*?```/g, '');
+  const withoutFences = withoutShortcodes(md).replace(/```[\s\S]*?```/g, '');
   for (const block of withoutFences.split(/\n\s*\n/)) {
     const t = block.trim();
     if (!t || t.startsWith('#') || t.startsWith('>') || t.startsWith('|') || t.startsWith('-') || t.startsWith('*')) continue;

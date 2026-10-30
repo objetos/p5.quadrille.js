@@ -220,6 +220,7 @@ function parseFile(srcDir, file) {
       ignore:        !!tagOf('ignore'),
       static:        staticMember,
       surfaces:      [via === 'member' ? (staticMember ? 'static' : 'instance') : 'namespace'],
+      surfaceParams: null,
       sigs:          [],
       explicitName:  fnTag?.name ?? nameTag?.name ?? null,
       exportName:    exp ? exp[2] : null,
@@ -264,6 +265,14 @@ function parseFile(srcDir, file) {
     if (!other) { merged.push(d); continue; }
     if (d.mergedInto || other.mergedInto) continue;
     const [first, second] = d.surfaces[0] === 'static' ? [d, other] : [other, d];
+    // Each surface keeps the parameter list it declares, because the strip
+    // prints both lines and one list cannot be both: `first.params` stays the
+    // surface that heads the page (and the fallback parameter table), the
+    // other is reached through `surfaceParams`.
+    first.surfaceParams = {
+      [first.surfaces[0]]: first.params,
+      [second.surfaces[0]]: second.params,
+    };
     first.description = first.description === second.description ? first.description
       : [first.description, second.description].filter(Boolean).join('\n\n');
     first.surfaces = ['static', 'instance'];

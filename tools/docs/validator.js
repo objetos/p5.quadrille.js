@@ -18,6 +18,7 @@ import { readFileSync } from 'node:fs';
 
 import { groupSlugs, navSlugs, p5RefUrl } from './config.js';
 import { snake, slug, symbolOfTitle } from './pages.js';
+import { shortcodeErrors } from './shortcode.js';
 
 const VOCABULARY = new Set([
   'file', 'module', 'license', 'description', 'version', 'author',
@@ -103,23 +104,16 @@ function signatureOf(fn) {
   return { names, rest, destructured };
 }
 
-/** The function a doclet documents, when the build exposes one. */
-function functionOf(d, Quadrille, fn) {
+/** The function a doclet documents on one surface, when the build exposes one. */
+function functionOn(surface, d, Quadrille, fn) {
   if (d.owner === 'p5') return fn?.[d.name] ?? null;
   if (!Quadrille) return null;
-  const descriptor = (obj, key) => obj && Object.getOwnPropertyDescriptor(obj, key);
-  if ((d.surfaces ?? []).includes('static')) {
-    const desc = descriptor(Quadrille, d.name);
-    if (desc?.set) return desc.set;      // an accessor's setter names its `value`
-    if (typeof desc?.value === 'function') return desc.value;
-    if (typeof desc?.get === 'function') return desc.get;
-  }
-  if ((d.surfaces ?? []).includes('instance')) {
-    const desc = descriptor(Quadrille.prototype, d.name);
-    if (desc?.set) return desc.set;
-    if (typeof desc?.value === 'function') return desc.value;
-    if (typeof desc?.get === 'function') return desc.get;
-  }
+  const holder = surface === 'static' ? Quadrille : surface === 'instance' ? Quadrille.prototype : null;
+  if (!holder) return null;
+  const desc = Object.getOwnPropertyDescriptor(holder, d.name);
+  if (desc?.set) return desc.set;      // an accessor's setter names its `value`
+  if (typeof desc?.value === 'function') return desc.value;
+  if (typeof desc?.get === 'function') return desc.get;
   return null;
 }
 
@@ -182,20 +176,23 @@ export function validateSources(parsed, surface) {
     }
     for (const o of d.orphans) warn(d, `dotted @param ${o} has no parent parameter`);
 
-    // Signatures: the declared parameter names against the function's own. A
-    // doc block that names a parameter the code dropped is the drift this
-    // pipeline exists to catch, and it is invisible in the rendered page.
-    const declared = d.params.map((prm) => prm.name);
-    const sig = signatureOf(functionOf(d, surface.Quadrille, surface.fn) ?? signatureOf);
-    // A destructured parameter carries its shape in the doc block's dotted
-    // params, and a rest parameter absorbs whatever follows it: both are
-    // compared as far as the code actually names something.
-    if (declared.length && sig && !sig.destructured) {
+    // Signatures, one per surface. The declared names are the surface's own —
+    // `Quadrille.and(q1, q2, row, col)` and `q.and(other, row, col)` are two
+    // lists on one doclet — and a doc block that names a parameter the code
+    // dropped is the drift this pipeline exists to catch, invisible in the
+    // rendered page. A destructured parameter carries its shape in the doc
+    // block's dotted params, and a rest parameter absorbs whatever follows it:
+    // both are compared as far as the code actually names something.
+    for (const on of d.surfaces ?? ['instance']) {
+      const declared = (d.surfaceParams?.[on] ?? d.params).map((prm) => prm.name);
+      const sig = signatureOf(functionOn(on, d, surface.Quadrille, surface.fn) ?? signatureOf);
+      if (!declared.length || !sig || sig.destructured) continue;
       const fixed = sig.rest ? sig.names.slice(0, -1) : sig.names;
       const mine = declared.slice(0, fixed.length);
       const extra = sig.rest ? declared.length >= fixed.length : declared.length === fixed.length;
       if (!extra || (fixed.length && mine.join() !== fixed.join())) {
-        warn(d, `@param (${declared.join(', ')}) but the code declares (${sig.names.join(', ')}${sig.rest ? ', …' : ''})`);
+        warn(d, `${on} @param (${declared.join(', ')}) but the code declares ` +
+                `(${sig.names.join(', ')}${sig.rest ? ', …' : ''})`);
       }
     }
     d.examples.forEach((ex, i) => {
@@ -268,6 +265,12 @@ export function validatePages(pages, parsed, inventory) {
     // footnotes the renderer appends — so it is an error, never a warning.
     const fences = p.body.split('\n').filter((l) => /^ {0,3}(?:```|~~~)/.test(l)).length;
     if (fences % 2) fail(p, `${fences} code fence(s): one is never closed, and everything after it renders as code`);
+
+    // A shortcode the renderer cannot resolve is a line of literal
+    // `{{< … >}}` in the prose, so a typo fails the build rather than shipping.
+    for (const { line, text } of shortcodeErrors(p.body)) {
+      fail(p, `line ${line}: ${text} is not \`{{< youtube ID "caption" >}}\``);
+    }
     if (!Number.isFinite(p.weight) || p.weight <= 0) warn(p, 'no positive weight — sibling order is undefined');
 
     // One anchor per title among siblings: the parent's child list must not

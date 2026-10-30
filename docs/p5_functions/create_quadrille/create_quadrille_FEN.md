@@ -34,7 +34,7 @@ function draw() {
 > **Capablanca vs Marshall, 1918 – The Birth of the Marshall Attack**
 > This [iconic game](https://www.chessgames.com/perl/chessgame?gid=1095025), played in New York in 1918, marked the debut of the [Marshall Attack](https://en.wikipedia.org/wiki/Ruy_Lopez,_Marshall_Attack) in top-level play. [Frank Marshall](https://en.wikipedia.org/wiki/Frank_Marshall_(chess_player)) unveiled his long-prepared gambit against [José Raúl Capablanca](https://en.wikipedia.org/wiki/Jos%C3%A9_Ra%C3%BAl_Capablanca), sacrificing a pawn for dynamic counterplay in the [Ruy López](https://en.wikipedia.org/wiki/Ruy_Lopez). Despite the sharp attack, Capablanca defended flawlessly and won—cementing both the opening's legacy and his own positional brilliance.
 >
-> https://www.youtube.com/watch?v=v7hc715hvVg
+> {{< youtube v7hc715hvVg "agadmator's Chess Channel — Marshall saved his famous weapon for 8 years" >}}
 
 ## Example 2: Custom Chess Symbols with Chess.com Colors
 
