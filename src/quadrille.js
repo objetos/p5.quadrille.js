@@ -1,7 +1,7 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
  * @module p5.quadrille/quadrille
- * @version 3.5.1
+ * @version 3.5.2
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -27,7 +27,7 @@ class Quadrille {
    * @type {string}
    * @group p5_functions
    */
-  static VERSION = '3.5.1';
+  static VERSION = '3.5.2';
 
   // Factory
 
