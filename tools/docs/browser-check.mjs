@@ -18,7 +18,11 @@
  *   - a video shortcode that does not play: the poster must link to the watch
  *     page and must become the in-page player when it is clicked;
  *   - the search field, on a nested page: type a query, click the first hit,
- *     and require the landing page to be the one the query names.
+ *     and require the landing page to be the one the query names;
+ *   - the editor, on a page with sketches: the package's bundle mounts one view
+ *     per figure, hides its textarea, marks no fallback, draws its focus ring,
+ *     and every `--cm-*` role it states clears 4.5:1 on the editor's own
+ *     surface in both themes.
  *
  * The site must be served first, since the search index is fetched:
  *
@@ -51,7 +55,7 @@ const PORT = await new Promise((resolve) => {
 
 /** Pages that exercise each shape: a sketch, a listing, a folder page, search. */
 const checks = [
-  { path: 'docs/properties/read_write/width/', sketch: true },
+  { path: 'docs/properties/read_write/width/', sketch: true, editor: true },
   { path: 'docs/mutators/rand/rand_times/', sketch: true, domText: true, uses: true },
   { path: 'docs/reference/host/', terms: 60 },
   { path: 'docs/reference/quadrille_surface/', terms: 40 },
@@ -130,10 +134,20 @@ await send('Runtime.enable');
 const failures = [];
 const fail = (page, msg) => { failures.push(`${page}  ${msg}`); };
 
-/** WCAG contrast ratio between two `rgb(…)` colours. */
+/** `#rgb` / `#rrggbb` / `rgb(…)` → `[r, g, b]`. */
+function channels(css) {
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(css).trim());
+  if (hex) {
+    const h = hex[1].length === 3 ? hex[1].split('').map((c) => c + c).join('') : hex[1];
+    return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  }
+  return (String(css).match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
+}
+
+/** WCAG contrast ratio between two colours. */
 function contrast(a, b) {
   const lum = (css) => {
-    const [r, g, bl] = (css.match(/[\d.]+/g) ?? [0, 0, 0]).slice(0, 3).map(Number);
+    const [r, g, bl] = channels(css);
     const f = (c) => c / 255 <= 0.03928 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4;
     return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(bl);
   };
@@ -192,6 +206,77 @@ for (const check of checks) {
     else {
       const ratio = contrast(info.color, info.bg);
       if (!(ratio >= 4.5)) fail(check.path, `DOM text "${info.text}" is ${info.color} on ${info.bg} (contrast ${ratio.toFixed(1)}:1)`);
+    }
+  }
+  // The editor: the package's bundle, one view per figure, the box the sketch's
+  // code sits in, its focus ring, and the token roles the site states.
+  if (check.editor) {
+    const editor = await evaluate(`(() => {
+      const figure = document.querySelector('figure.example');
+      const view = figure && figure.querySelector('.cm-editor');
+      const textarea = figure && figure.querySelector('textarea.source');
+      return {
+        views: document.querySelectorAll('.cm-editor').length,
+        fallback: document.querySelectorAll('figure.example[data-editor="fallback"]').length,
+        hidden: textarea ? (textarea.hidden || getComputedStyle(textarea).display === 'none') : false,
+        hasView: !!view,
+      };
+    })()`);
+    if (!editor.hasView) fail(check.path, 'the editor did not mount');
+    if (editor.fallback) fail(check.path, `${editor.fallback} figure(s) fell back to a bare textarea`);
+    if (!editor.hidden) fail(check.path, 'the textarea is still visible under the editor');
+
+    // The ring: `:has(.cm-content:focus-visible)` is what the theme draws it
+    // from, and Chromium matches that on a real pointer press — not on a script's
+    // `focus()`, which is not a user interaction. So the editor is clicked.
+    const box = await evaluate(`(() => {
+      const c = document.querySelector('.cm-content');
+      if (!c) return null;
+      c.scrollIntoView({ block: 'center' });
+      const r = c.getBoundingClientRect();
+      return { x: Math.round(r.left + 40), y: Math.round(r.top + 12) };
+    })()`);
+    if (!box) fail(check.path, 'no editor content to focus');
+    else {
+      for (const type of ['mousePressed', 'mouseReleased']) {
+        await send('Input.dispatchMouseEvent', { type, x: box.x, y: box.y, button: 'left', clickCount: 1 });
+      }
+      await sleep(250);
+      const ring = await evaluate(`(() => {
+        const view = document.querySelector('.cm-editor');
+        const css = getComputedStyle(view);
+        return { width: css.outlineWidth, style: css.outlineStyle, color: css.outlineColor };
+      })()`);
+      if (!ring || ring.style === 'none' || parseFloat(ring.width) < 2) {
+        fail(check.path, `the editor drew no focus ring (${JSON.stringify(ring)})`);
+      }
+    }
+
+    // Every role the site states, against the editor's own surface, in both
+    // themes. A custom property's value is not resolved until something uses it,
+    // so each role is read through an element that does.
+    const tokens = ['keyword', 'atom', 'builtin', 'tag', 'def', 'type', 'string', 'string-2',
+      'variable-2', 'property', 'operator', 'number', 'comment', 'invalid'];
+    for (const theme of ['light', 'dark']) {
+      const measured = await evaluate(`(() => {
+        const root = document.documentElement;
+        const was = root.dataset.theme;
+        root.dataset.theme = ${JSON.stringify(theme)};
+        const probe = document.createElement('div');
+        probe.style.display = 'none';
+        document.body.appendChild(probe);
+        const read = (prop) => { probe.style.color = prop; return getComputedStyle(probe).color; };
+        const surface = read('var(--bg-2)');
+        const roles = ${JSON.stringify(tokens)}.map((name) => [name, read('var(--cm-' + name + ')')]);
+        probe.remove();
+        root.dataset.theme = was;
+        return { roles, surface };
+      })()`);
+      for (const [name, value] of measured.roles) {
+        if (!value) continue;                       // the sheet states only the roles it states
+        const ratio = contrast(value, measured.surface);
+        if (!(ratio >= 4.5)) fail(check.path, `--cm-${name} is ${value} on ${measured.surface} in ${theme} (${ratio.toFixed(2)}:1)`);
+      }
     }
   }
   // The generated tables: a page with a directive must carry its rows.
