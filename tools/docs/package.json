@@ -5,6 +5,6 @@
   "type": "module",
   "description": "The API site's generator dependency: @nakednous/scholion and nothing else.",
   "dependencies": {
-    "@nakednous/scholion": "file:../../../../scholion"
+    "@nakednous/scholion": "0.0.1"
   }
 }
