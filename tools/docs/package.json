@@ -1,0 +1,10 @@
+{
+  "name": "p5.quadrille.js-docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The API site's generator dependency: @nakednous/scholion and nothing else.",
+  "dependencies": {
+    "@nakednous/scholion": "file:../../../../scholion"
+  }
+}
