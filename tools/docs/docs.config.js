@@ -141,6 +141,14 @@ export default {
   },
 
   /**
+   * Every site-local asset URL carries the build stamp: a rebuild has to
+   * invalidate what the browser cached, or the new pages run the old client —
+   * the sheet, the scripts and the index the page fetches, and the bundle the
+   * frames load.
+   */
+  stamp: true,
+
+  /**
    * The runner's contract: the page's config block, its `{tokens}` resolved by
    * the build — `{root}` (this page's prefix to the site root), `{bundle}`,
    * `{index}`, `{editor}`, `{pin:<name>:<field>}`. `media` names the
@@ -155,10 +163,10 @@ export default {
     video: 'assets/video.js',      // a page that carries a video shortcode only
     config: {
       p5: '{pin:p5:script}',
-      lib: '{bundle}',
+      lib: '{bundle}?v={stamp}',
       root: '{root}',
       media: ['fonts', 'images', 'paintings', 'videos'],
-      index: '{index}',
+      index: '{index}?v={stamp}',
       editor: '{editor}',
     },
   },
