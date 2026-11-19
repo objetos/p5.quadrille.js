@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/badge/dynamic/json?url=https://registry.npmjs.org/p5.quadrille&query=$.dist-tags.latest&label=npm&color=007e69&logo=npm&logoColor=white)](https://www.npmjs.com/package/p5.quadrille)
+[![npm](https://img.shields.io/badge/dynamic/json?url=https://registry.npmjs.org/p5.quadrille&query=$.dist-tags.latest&label=npm&color=007e69)](https://www.npmjs.com/package/p5.quadrille)
 [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)
 [![Source Code](https://img.shields.io/badge/Source_Code-181717?logo=github)](https://github.com/objetos/p5.quadrille.js)
 [![SoftwareX Paper](https://img.shields.io/badge/SoftwareX_Paper-0066CC?logo=livejournal)](https://www.sciencedirect.com/science/article/pii/S2352711024002097)
@@ -172,7 +172,7 @@ Fork the repo and submit a pull request to help with any of the following ([GitH
 
 # Further Reading
 
-- [![npm](https://img.shields.io/badge/dynamic/json?url=https://registry.npmjs.org/p5.quadrille&query=$.dist-tags.latest&label=npm&color=007e69&logo=npm&logoColor=white)](https://www.npmjs.com/package/p5.quadrille)  
+- [![npm](https://img.shields.io/badge/dynamic/json?url=https://registry.npmjs.org/p5.quadrille&query=$.dist-tags.latest&label=npm&color=007e69)](https://www.npmjs.com/package/p5.quadrille)  
   Always use the latest version of **p5.quadrille.js** from npm. Supports modern p5.js v2 and includes ESM and IIFE builds.  
   Install with `npm i p5.quadrille`.
 - [![p5.js](https://img.shields.io/badge/p5.js-ED225D?logo=p5.js&logoColor=white)](https://beta.p5js.org/)  
