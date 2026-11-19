@@ -19,6 +19,10 @@
 #
 # Pages serves the artifact at https://objetos.github.io/p5.quadrille.js/. The
 # generated pages use relative URLs only, so no base URL needs injecting.
+#
+# The docs toolchain is the published package, `@nakednous/scholion`, and the
+# nested project under `tools/docs` is where it is installed: its lock is
+# committed, so the step is `npm ci --prefix tools/docs`.
 name: Release — API site
 
 on:
@@ -81,6 +85,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm ci --prefix tools/docs
       - run: npm run build
       - run: npm run types
       - run: npm run docs
