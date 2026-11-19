@@ -144,6 +144,8 @@ td > :last-child  { margin-bottom: 0; }
   text-decoration: none;
 }
 .version { font-size: .75rem; color: var(--muted); }
+.badge { align-self: center; }
+.badge img { display: block; height: 1.15rem; width: auto; }
 
 .rail-toggle, .head-theme {
   align-self: center;

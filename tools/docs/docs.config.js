@@ -130,6 +130,12 @@ export default {
    * them.
    */
   shell: {
+    // The rail's badge in place of the version line: on every page, and the
+    // landing page keeps its space.
+    badge: {
+      src: 'https://img.shields.io/badge/dynamic/json?url=https://registry.npmjs.org/p5.quadrille&query=$.dist-tags.latest&label=npm&color=007e69',
+      href: 'https://www.npmjs.com/package/p5.quadrille',
+    },
     stylesheet: 'assets/style.css',
     favicon: [],
   },
