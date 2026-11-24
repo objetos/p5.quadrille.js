@@ -48,7 +48,7 @@ function reset() {
 
 > **Note**
 >
-> **Connected means same value, and sameness is identity.** The flood expands only through cells holding the start cell's exact value (`===`) and stops at anything else. Cells filled by one [fill(value)](../../fill/fill_value/) call share one instance and flood as one region; per-cell instances — e.g. a fresh `color('green')` per cell via `Quadrille.factory` — would stop the flood at every cell. Flood-clearing from an **empty** cell is a no-op: the region's value is already the cleared one.
+> **Connected means same value, and sameness is identity.** The flood expands only through cells holding the start cell's exact value (`===`) and stops at anything else. Cells filled by one [fill(value)](../../fill/fill_value/) call share one instance and flood as one region; per-cell instances — e.g. a fresh `color('green')` per cell from a function that returns a color — would stop the flood at every cell. Flood-clearing from an **empty** cell is a no-op: the region's value is already the cleared one.
 
 ## Syntax
 

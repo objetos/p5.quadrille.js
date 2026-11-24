@@ -43,7 +43,7 @@ function reset() {
 
 > **Note**
 >
-> Like [fill(value)](../../fill/fill_value/), a non-factory `value` is stored as **one shared instance** across all replaced cells — see the identity note there: it is what makes the replaced region strict-[search](../../../accessors/queries/search/)able and floodable as one.
+> Like [fill(value)](../../fill/fill_value/), a literal `value` is stored as **one shared instance** across all replaced cells — see the identity note there: it is what makes the replaced region strict-[search](../../../accessors/queries/search/)able and floodable as one.
 
 ## Syntax
 
@@ -55,4 +55,4 @@ function reset() {
 |-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `value`[^1] | Any: A valid JavaScript value                                                        |
 
-[^1]: A plain function `value` is **stored, not called** — it becomes a per-cell display routine `({ row, col, options }) => { ... }` (see [`options`](../../../p5_functions/draw_quadrille/display_fns/)). To have a function **evaluated per cell** at replace time — a fresh object or a varied tile per cell — tag it: `Quadrille.factory(({ row, col }) => new Object(...))`.
+[^1]: A plain function `value` is **called once**, in the first cell it lands in, to find out what it is: if it **returns a value**, that value is the cell's content and the function is called once per cell — a fresh object or a varied tile per cell; if it **returns nothing**, the cell holds the function itself, a per-cell display routine drawn with the `options` object alone (see [`options`](../../../p5_functions/draw_quadrille/display_fns/)). Return `null` to leave a cell empty.

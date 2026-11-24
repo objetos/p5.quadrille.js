@@ -1,7 +1,7 @@
 /**
  * @file Defines the Quadrille class — the core data structure of the p5.quadrille.js library.
  * @module p5.quadrille/quadrille
- * @version 3.5.2
+ * @version 3.6.0
  * @author JP Charalambos
  * @license GPL-3.0-only
  *
@@ -27,37 +27,44 @@ class Quadrille {
    * @type {string}
    * @group p5_functions
    */
-  static VERSION = '3.5.2';
+  static VERSION = '3.6.0';
 
-  // Factory
-
-  /**
-   * Tags a function as a factory, meaning it should be executed during `fill`.
-   * The function will be called with `{ row, col }` and must return a value
-   * to be stored in the quadrille. Display functions (returning `undefined`)
-   * should not use this. If a non-function is passed, it is returned as-is.
-   * @param {*} fn - A function returning a value to fill cells with, or a direct value.
-   * @returns {Function|*} The same function tagged with `._isFactory = true`, or the value itself.
-   * @group p5_functions
-   */
-  static factory(fn) {
-    this.isFunction(fn) && (fn._isFactory = true);
-    return fn;
-  }
+  // CLASSIFIER
 
   /**
-   * Declares that a value is a shared singleton to be reused across cells. 
-   * Unlike `Quadrille.factory(fn)`, this method is purely semantic and does
-   * not modify the value. It clarifies that the same instance is intended
-   * to be reused when passed to `fill()`, particularly for object values
-   * like class instances.
-   * This is useful for improving code readability and documenting intent.
-   * @param {*} value - A literal or object to share across multiple cells.
-   * @returns {*} The same value, unmodified.
-   * @group p5_functions
+   * Verdicts for the functions handed to a value position: `true` when the
+   * function produces a cell value, `false` when it is a display. Keyed by the
+   * function itself, so each one is classified once, wherever it is used.
+   * @type {WeakMap<Function, boolean>}
+   * @private
    */
-  static singleton(value) {
-    return value;
+  static _producers = new WeakMap();
+
+  /**
+   * One scratch surface per p5 instance, for the classifier. A probe must not
+   * paint the sketch, so the function it calls draws into `cellLength²` of
+   * throwaway canvas instead.
+   * @type {WeakMap<p5, p5.Graphics>}
+   * @private
+   */
+  static _surfaces = new WeakMap();
+
+  /**
+   * Returns the library's scratch surface for `p`, creating it on first use.
+   * `null` until the sketch has a canvas: there is nothing to protect yet, and
+   * p5 cannot make a graphics before its own renderer exists.
+   * @param {p5} p - The p5 instance.
+   * @param {number} cellLength - Side of the surface, in pixels.
+   * @returns {p5.Graphics|null}
+   * @private
+   */
+  static _surface(p, cellLength) {
+    let surface = this._surfaces.get(p);
+    if (surface === undefined && p._renderer) {
+      surface = p.createGraphics(cellLength, cellLength);
+      this._surfaces.set(p, surface);
+    }
+    return surface ?? null;
   }
 
   // STYLE
@@ -1667,7 +1674,7 @@ class Quadrille {
   /**
    * Fills the quadrille using a variety of modes:
    * 1. `fill()` — fills all cells in chessboard pattern using default colors.
-   * 2. `fill(value)` — fills all empty cells with a value or factory.
+   * 2. `fill(value)` — fills all empty cells with a value, or with what a function returns per cell.
    * 3. `fill(predicate, value)` — fills matching cells with a value.
    * 4. `fill(color1, color2)` — fills chessboard with specified colors.
    * 5. `fill(row, value)` — fills a specific row.
@@ -1780,15 +1787,98 @@ class Quadrille {
 
   /**
    * Internal helper to evaluate a value for a given cell.
-   * If the value is a function tagged with `._isFactory`, it is called
-   * with `{ row, col }`. Otherwise, the value is returned as-is.
-   * @param {*} value - A literal, display function, or factory function.
+   *
+   * A function is called once, in the first cell it lands in, with that cell's
+   * `{ row, col }`: what it returns becomes the cell's content. Returning
+   * nothing means the cell holds the function itself, which is a display and is
+   * drawn, per cell, at draw time. The verdict is cached per function, so a
+   * function is classified once, however many fill sites use it.
+   *
+   * The classifying call is reused: a producing function's first cell is the
+   * cell the call was made for, so only a display pays for it, and a display's
+   * discarded call leaves nothing behind — no pixel, no style change, no draw
+   * from the sketch's random stream.
+   * @param {*} value - A literal, a display function, or a function producing cell values.
    * @param {number} row - Row index of the cell.
    * @param {number} col - Column index of the cell.
    * @returns {*} Evaluated cell content.
+   * @private
    */
   _parseFn(value, row, col) {
-    return typeof value === 'function' && value._isFactory ? value({ row, col }) : value;
+    if (typeof value !== 'function') {
+      return value;
+    }
+    let producer = this.constructor._producers.get(value);
+    if (producer === undefined) {
+      const probe = this._probe(value, row, col);
+      this.constructor._producers.set(value, probe.producer);
+      if (!probe.producer) {
+        return value;
+      }
+      return probe.value === undefined ? null : probe.value;
+    }
+    if (!producer) {
+      return value;
+    }
+    const product = value({ row, col });
+    return product === undefined ? null : product;
+  }
+
+  /**
+   * Classifies a function with one call, on the sketch's scratch surface.
+   *
+   * A function is a producer when the call returns a cell value. It is a
+   * display when the call returns nothing — or when it returns the drawing
+   * context itself, which is what p5's drawing methods hand back (`rect`
+   * returns the instance, `translate` the renderer), and which no cell can
+   * hold. A call that throws is a display too, except that anything other
+   * than a `TypeError` is worth a word: a display destructuring the draw
+   * params throws a `TypeError` on being handed coordinates, a producing
+   * function that breaks never gets to produce anything.
+   * @param {Function} fn - The function to classify.
+   * @param {number} row - Row index of the cell the call is made for.
+   * @param {number} col - Column index of the cell the call is made for.
+   * @returns {{producer: boolean, value: *}} The verdict, and what the call returned.
+   * @private
+   */
+  _probe(fn, row, col) {
+    const p = this._p;
+    const surface = p ? this.constructor._surface(p, this._cellLength || this.constructor.cellLength) : null;
+    if (!surface) {
+      let value;
+      try {
+        value = fn({ row, col });
+      } catch (error) {
+        return { producer: false, value };
+      }
+      return { producer: value !== undefined, value };
+    }
+    const renderer = p._renderer;
+    const seed = p._lcg_random_state;
+    let value, threw = false;
+    surface.push();
+    try {
+      p._renderer = surface._renderer;
+      value = fn.call(surface, { row, col });
+    } catch (error) {
+      threw = true;
+      if (!(error instanceof TypeError)) {
+        console.warn(
+          `A function passed to a quadrille threw when called with { row, col }: ${error.message}. ` +
+          `It is drawn as a display. A function that produces cell values returns them.`
+        );
+      }
+    } finally {
+      p._renderer = renderer;
+      surface.pop();
+    }
+    const drawing = value === p || value === renderer || value === surface ||
+      value === surface._renderer || (renderer && value === renderer.drawingContext);
+    const producer = !threw && value !== undefined && !drawing;
+    if (!producer && seed !== undefined) {
+      p._lcg_random_state = seed; // a discarded call leaves the random stream as it found it
+    }
+    return { producer, value };
   }
 
   /**
@@ -1898,14 +1988,14 @@ class Quadrille {
    * canonical: on even ones a warning is issued and the trailing row/col,
    * holding no rooms, seals as a wall strip. The generator is an iterative
    * randomized depth-first search (explicit stack, no recursion), O(size).
-   * `value` is stored through `fill` internals, honoring the
-   * `Quadrille.factory` contract: a plain function is stored as a
-   * display-contract wall, whereas a factory-tagged one is evaluated per
-   * wall cell. For the shipped thin-wall look, see `Quadrille.thinWall` — a
+   * `value` is stored through `fill` internals, so it carries the same
+   * contract as any other fill: a literal is stored, a display function is
+   * drawn per wall cell, and a function that returns a value produces one
+   * wall value per cell. For the shipped thin-wall look, see `Quadrille.thinWall` — a
    * value-agnostic display styled by the draw call's `outline`/`outlineWeight`,
    * so any wall value renders thin.
    * Note: For deterministic behavior, call `randomSeed(seed)` explicitly before this method.
-   * @param {*} value - Wall value: literal, display function, or factory.
+   * @param {*} value - Wall value: a literal, a display function, or a function producing wall values.
    * @returns {Quadrille} The modified quadrille (for chaining).
    * @group mutators
    */

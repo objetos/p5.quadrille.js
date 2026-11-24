@@ -40,7 +40,7 @@ function highlight() {
 > **Note**
 >
 > * The single `value` filter visits exactly the cells whose value `=== value`.
-> * **Identity matters for objects:** cells filled from one shared `color('green')` instance are all visited when filtering by that instance, while per-cell `Quadrille.factory` instances would each need their own filter. Strings, numbers, and emojis compare by value, so `'🐸'` just works.
+> * **Identity matters for objects:** cells filled from one shared `color('green')` instance are all visited when filtering by that instance, while per-cell instances from a function that returns a value would each need their own filter. Strings, numbers, and emojis compare by value, so `'🐸'` just works.
 > * Functions and `Array`/`Set` values can't be single-value filters — they dispatch as [predicate](../visit_predicate/) and [collection](../visit_collection/) filters instead.
 
 ## Syntax

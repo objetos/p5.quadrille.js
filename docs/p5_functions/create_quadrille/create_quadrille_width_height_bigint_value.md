@@ -116,4 +116,4 @@ function draw() {
 | `value`[^1]    | Any: [valid JavaScript value](https://www.w3schools.com/js/js_datatypes.asp), with `null` representing empty cells |
 | `littleEndian` | Optional Boolean: If `true`, reads the bitboard in little-endian order (default is `false`, big-endian)            |
 
-[^1]: A plain function `value` is **stored, not called** — it becomes a per-cell display routine `({ row, col, options }) => { ... }` (see [`options`](../../draw_quadrille/display_fns/)). To have a function **evaluated per cell** at creation time — a fresh object or a varied tile per cell — tag it: `Quadrille.factory(({ row, col }) => new Object(...))`.
+[^1]: A plain function `value` is **called once**, in the first cell it lands in, to find out what it is: if it **returns a value**, that value is the cell's content and the function is called once per cell — a fresh object or a varied tile per cell; if it **returns nothing**, the cell holds the function itself, a per-cell display routine drawn with the `options` object alone (see [`options`](../../draw_quadrille/display_fns/)). Return `null` to leave a cell empty.

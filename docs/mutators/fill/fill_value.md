@@ -47,7 +47,7 @@ function reset() {
 
 > **Note**
 >
-> **One value, one instance.** A non-factory `value` is stored **as-is in every cell**: all cells filled by the call share the same instance. That single fact powers two idioms elsewhere in the API — strict [search](../../../accessors/queries/search/) matches across cells (`===`), and [flood fill](../fill_row_col_value_directions/)/[flood clear](../../clear/clear_row_col_directions/) treat them as one connected region, since the flood matches the start cell's value by identity. Per-cell instances instead — e.g. a fresh `color('green')` per cell via `Quadrille.factory` — would strict-match nothing and flood nowhere. When sharing is the point, `Quadrille.singleton(value)` names the intent in code: a pure identity function — the value passes through unmodified — that reads as the semantic mirror of `Quadrille.factory`.
+> **One value, one instance.** A literal `value` is stored **as-is in every cell**: all cells filled by the call share the same instance. That single fact powers two idioms elsewhere in the API — strict [search](../../../accessors/queries/search/) matches across cells (`===`), and [flood fill](../fill_row_col_value_directions/)/[flood clear](../../clear/clear_row_col_directions/) treat them as one connected region, since the flood matches the start cell's value by identity. Per-cell instances instead — e.g. a fresh `color('green')` per cell from a function that returns a color — would strict-match nothing and flood nowhere.
 
 ## Syntax
 
@@ -59,4 +59,4 @@ function reset() {
 |-----------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `value`[^1] | Any: A valid JavaScript value                                                        |
 
-[^1]: A plain function `value` is **stored, not called** — it becomes a per-cell display routine, invoked with the `options` object **alone** — `({ row, col, origin }) => { ... }` — and with `this` bound to the drawing context (see [display functions](../../../p5_functions/draw_quadrille/display_fns/)). To have a function **evaluated per cell** at fill time — a fresh object or a varied tile per cell — tag it: `Quadrille.factory(({ row, col }) => new Object(...))`, which marks the function **in place** and returns that same function.
+[^1]: A plain function `value` is **called once**, in the first cell it lands in, to find out what it is. If it **returns a value**, that value is the cell's content and the function is called once per cell — a fresh object or a varied tile per cell. If it **returns nothing**, the cell holds the function itself: a per-cell display routine, invoked with the `options` object **alone** — `({ row, col, origin }) => { ... }` — and with `this` bound to the drawing context (see [display functions](../../../p5_functions/draw_quadrille/display_fns/)). Return `null` to leave a cell empty.

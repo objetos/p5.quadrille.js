@@ -51,7 +51,7 @@ function keyPressed() {
 
 > **Note**
 >
-> `value` goes through [fill](../fill/) internals, so the `Quadrille.factory` contract is honored: a plain function is stored as a display-contract wall drawing, whereas a factory-tagged one is evaluated per wall cell — e.g. `board.maze(Quadrille.factory(() => random(['🧱', '🪨'])))` yields varied wall tiles.
+> `value` goes through [fill](../fill/) internals, so it carries the same contract as any other fill: a literal is stored as-is, a function that **returns nothing** is stored as a wall drawing, and a function that **returns a value** produces one wall value per cell — e.g. `board.maze(() => random(['🧱', '🪨']))` yields varied wall tiles.
 
 > **Note**
 >
@@ -85,4 +85,4 @@ function keyPressed() {
 
 | Param   | Description                                                                                                                                     |
 |---------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| `value` | Any: wall value — a literal (color, string, image, …), a display-contract function (stored as-is), or a `Quadrille.factory`-tagged function (evaluated per wall cell) |
+| `value` | Any: wall value — a literal (color, string, image, …), a function returning nothing (stored as a wall drawing), or a function returning wall values (one per wall cell) |

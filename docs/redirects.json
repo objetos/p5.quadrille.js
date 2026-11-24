@@ -11,6 +11,8 @@
     "api/iterators/visit": "iterators",
     "classes": null,
     "conversion_methods/to_bigint": "reformatter/to_bigint",
+    "p5_functions/factory": "mutators/fill/fill_value",
+    "p5_functions/singleton": "mutators/fill/fill_value",
     "p5_functions/visit_quadrille": "iterators",
     "properties/height": "properties/read_write/height",
     "properties/mouse_col": "properties/read_only/mouse_col",

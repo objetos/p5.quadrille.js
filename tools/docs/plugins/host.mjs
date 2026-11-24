@@ -288,7 +288,6 @@ const terms = {
   'js:String':       { area: 'builtin', gloss: 'converts a value to a string', href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String' },
   'js:Symbol':       { area: 'builtin', gloss: 'a unique, immutable key — a value type a cell can hold', href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol' },
   'js:console.log':  { area: 'console', gloss: 'prints to the browser console, for what is easier to read there than on the canvas', href: 'https://developer.mozilla.org/en-US/docs/Web/API/console/log_static' },
-  'js:console.assert': { area: 'console', gloss: 'prints only when the condition is false — a one-line invariant check', href: 'https://developer.mozilla.org/en-US/docs/Web/API/console/assert_static' },
 };
 
 /**
